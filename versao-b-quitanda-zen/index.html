@@ -59,6 +59,7 @@ button:disabled{opacity:.45;cursor:default}
 .cell.has{background:var(--cell);box-shadow:0 3px 0 var(--lc,var(--line))}
 .cell.sel{outline:3px solid var(--accent);outline-offset:1px}
 .cell.drag{opacity:.3}
+.cell.trail{outline:3px solid var(--gold);outline-offset:1px;transform:scale(1.08)}
 .cell.hint{animation:hint .9s ease-in-out infinite}
 @keyframes hint{50%{transform:scale(1.1);outline:2px solid var(--gold)}}
 .cell .em{font-size:calc(var(--cs)*.54);line-height:1}
@@ -193,27 +194,33 @@ const need=n=>50+15*n;                                 // XP do nível n para n+
 const goal=s=>Math.min(24,6+2*s);                      // clientes para concluir a feira s
 // Itens: [emoji, nome em português, nome em inglês]. Nomes brasileiros ficam em português e ganham explicação em GLOSS.
 const LINES={
- fr:{name:['Frutas','Fruits'],hue:28,it:[['🍋','Limão','Lime'],['🍊','Laranja','Orange'],['🍌','Banana','Banana'],['🥭','Manga','Mango'],['🍍','Abacaxi','Pineapple'],['🍉','Melancia','Watermelon'],['🍇','Uva','Grapes'],['🍓','Morango','Strawberry']]},
- ve:{name:['Verduras','Veggies'],hue:120,it:[['🌿','Cheiro-verde','Cheiro-verde'],['🥬','Couve','Collard greens'],['🥕','Cenoura','Carrot'],['🍅','Tomate','Tomato'],['🌽','Milho','Corn'],['🥦','Brócolis','Broccoli'],['🎃','Abóbora','Pumpkin'],['🥗','Salada','Salad']]},
- pe:{name:['Peixes','Seafood'],hue:200,it:[['🦐','Camarão','Shrimp'],['🐟','Sardinha','Sardine'],['🐠','Peixe','Fish'],['🦀','Caranguejo','Crab'],['🦑','Lula','Squid'],['🦞','Lagosta','Lobster'],['🐙','Polvo','Octopus'],['🍲','Moqueca','Moqueca']]},
- te:{name:['Temperos','Spices'],hue:350,it:[['🧂','Sal','Salt'],['🧄','Alho','Garlic'],['🧅','Cebola','Onion'],['🌶️','Pimenta','Chili pepper'],['🫑','Pimentão','Bell pepper'],['🫒','Azeitona','Olive'],['🍯','Mel','Honey'],['🥫','Molho','Sauce']]},
- be:{name:['Bebidas','Drinks'],hue:180,it:[['💧','Água','Water'],['🥥','Água de coco','Coconut water'],['🧃','Suco','Juice'],['☕','Café','Coffee'],['🍵','Chá','Tea'],['🧉','Mate','Mate'],['🥤','Guaraná','Guaraná'],['🍹','Refresco','Fruit cooler']]},
- ar:{name:['Artesanato','Crafts'],hue:275,it:[['🧵','Linha','Thread'],['🧶','Novelo','Ball of yarn'],['🧦','Meia','Sock'],['🧣','Cachecol','Scarf'],['👒','Chapéu de palha','Straw hat'],['🧺','Cesto','Basket'],['🏺','Vaso de barro','Clay pot'],['🎸','Viola','Viola caipira']]},
- gr:{name:['Armazém','Pantry'],hue:45,it:[['🥜','Amendoim','Peanuts'],['🌰','Castanha-do-pará','Brazil nuts'],['🍿','Pipoca','Popcorn'],['🍚','Arroz','Rice'],['🥣','Mingau','Mingau'],['🍝','Macarrão','Pasta'],['🍜','Sopa','Soup'],['🍛','Baião de dois','Baião de dois']]},
- do:{name:['Doces','Sweets'],hue:320,it:[['🍬','Bala','Candy'],['🍭','Pirulito','Lollipop'],['🍫','Chocolate','Chocolate'],['🍪','Biscoito','Cookie'],['🧁','Bolinho','Cupcake'],['🍩','Sonho','Sonho'],['🍡','Doce no palito','Candy on a stick'],['🎁','Caixa de bombons','Box of chocolates']]},
- ca:{name:['Carnes','Meats'],hue:5,it:[['🥚','Ovo','Egg'],['🍗','Frango','Chicken'],['🥓','Bacon','Bacon'],['🌭','Linguiça','Linguiça'],['🥩','Carne','Steak'],['🍖','Costela','Ribs'],['🍢','Espetinho','Espetinho'],['🥘','Feijoada','Feijoada']]},
- la:{name:['Laticínios','Dairy'],hue:215,it:[['🥛','Leite','Milk'],['🧈','Manteiga','Butter'],['🧀','Queijo','Cheese'],['🍦','Casquinha','Ice cream cone'],['🍨','Sorvete','Ice cream'],['🍧','Taça gelada','Sundae'],['🍰','Torta de creme','Cream cake'],['🍮','Pudim','Pudim']]},
- ln:{name:['Lanches','Snacks'],hue:15,it:[['🥟','Pastel','Pastel'],['🫓','Tapioca','Tapioca'],['🥪','Sanduíche','Sandwich'],['🍟','Batata frita','Fries'],['🍕','Pizza','Pizza'],['🍔','Hambúrguer','Burger'],['🌮','Tapioca recheada','Filled tapioca'],['🍱','Marmita','Marmita']]},
- pa:{name:['Padaria','Bakery'],hue:35,it:[['🌾','Trigo','Wheat'],['🍞','Pão de forma','Sandwich loaf'],['🥖','Pão francês','Pão francês'],['🥐','Croissant','Croissant'],['🥯','Rosca','Sweet bread ring'],['🥞','Panqueca','Pancake'],['🥧','Torta','Pie'],['🎂','Bolo','Cake']]},
- fl:{name:['Flores','Flowers'],hue:300,it:[['🌱','Muda','Seedling'],['🌼','Margarida','Daisy'],['🌷','Tulipa','Tulip'],['🌻','Girassol','Sunflower'],['🌹','Rosa','Rose'],['🌺','Hibisco','Hibiscus'],['🪴','Vaso','Potted plant'],['💐','Buquê','Bouquet']]}
+ fr:{name:['Frutas','Fruits'],hue:28,it:[['🍋','Limão','Lime'],['🍊','Laranja','Orange'],['🍌','Banana','Banana'],['🥭','Manga','Mango'],['🍍','Abacaxi','Pineapple'],['🍎','Caju','Caju'],['🫐','Jabuticaba','Jabuticaba'],['🍇','Açaí na tigela','Açaí bowl']]},
+ ve:{name:['Verduras','Veggies'],hue:120,it:[['🌿','Cheiro-verde','Cheiro-verde'],['🥬','Couve','Collard greens'],['🥕','Cenoura','Carrot'],['🍅','Tomate','Tomato'],['🌽','Milho','Corn'],['🍠','Mandioca','Mandioca'],['🎃','Abóbora','Pumpkin'],['🥗','Salada','Salad']]},
+ pe:{name:['Peixes','Seafood'],hue:200,it:[['🦐','Camarão','Shrimp'],['🐟','Sardinha','Sardine'],['🐠','Peixe','Fish'],['🦀','Caranguejo','Crab'],['🐡','Tainha','Tainha'],['🦞','Lagosta','Lobster'],['🎣','Pirarucu','Pirarucu'],['🍲','Moqueca','Moqueca']]},
+ te:{name:['Temperos','Spices'],hue:350,it:[['🧂','Sal','Salt'],['🧄','Alho','Garlic'],['🧅','Cebola','Onion'],['🌶️','Pimenta-malagueta','Malagueta pepper'],['🫑','Pimentão','Bell pepper'],['🫒','Azeite de dendê','Dendê oil'],['🍯','Mel','Honey'],['🥫','Molho','Sauce']]},
+ be:{name:['Bebidas','Drinks'],hue:180,it:[['💧','Água','Water'],['🥥','Água de coco','Coconut water'],['🧃','Suco','Juice'],['☕','Café','Coffee'],['🍵','Caldo de cana','Caldo de cana'],['🧉','Chimarrão','Chimarrão'],['🥤','Guaraná','Guaraná'],['🍹','Cajuína','Cajuína']]},
+ ar:{name:['Artesanato','Crafts'],hue:275,it:[['🧵','Linha','Thread'],['🧶','Novelo','Ball of yarn'],['🎗️','Fita do Bonfim','Fita do Bonfim'],['🎀','Renda','Bobbin lace'],['👒','Chapéu de palha','Straw hat'],['🧺','Cesto de palha','Straw basket'],['🏺','Boneco de barro','Clay figurine'],['🎸','Viola','Viola caipira']]},
+ gr:{name:['Armazém','Pantry'],hue:45,it:[['🥜','Amendoim','Peanuts'],['🌰','Castanha-do-pará','Brazil nuts'],['🍿','Pipoca','Popcorn'],['🍚','Arroz','Rice'],['🥣','Farinha de mandioca','Cassava flour'],['🫘','Feijão','Beans'],['🥮','Cuscuz','Cuscuz'],['🍛','Baião de dois','Baião de dois']]},
+ do:{name:['Doces','Sweets'],hue:320,it:[['🍬','Rapadura','Rapadura'],['🍭','Paçoca','Paçoca'],['🍫','Chocolate','Chocolate'],['🍪','Cocada','Cocada'],['🧁','Quindim','Quindim'],['🍩','Sonho','Sonho'],['🍡','Goiabada','Goiabada'],['🍥','Bolo de rolo','Bolo de rolo']]},
+ ca:{name:['Carnes','Meats'],hue:5,it:[['🥚','Ovo','Egg'],['🍗','Frango','Chicken'],['🥓','Torresmo','Torresmo'],['🌭','Linguiça','Linguiça'],['🥩','Carne de sol','Carne de sol'],['🍖','Costela','Ribs'],['🍢','Espetinho','Espetinho'],['🥘','Feijoada','Feijoada']]},
+ la:{name:['Laticínios','Dairy'],hue:215,it:[['🥛','Leite','Milk'],['🧈','Manteiga','Butter'],['🧀','Queijo minas','Queijo minas'],['🍶','Requeijão','Requeijão'],['🧇','Queijo coalho','Queijo coalho'],['🍨','Doce de leite','Doce de leite'],['🍰','Romeu e Julieta','Romeu e Julieta'],['🍮','Pudim','Pudim']]},
+ ln:{name:['Lanches','Snacks'],hue:15,it:[['🥟','Pastel','Pastel'],['🫓','Tapioca','Tapioca'],['🥪','Sanduíche de mortadela','Mortadella sandwich'],['🍤','Coxinha','Coxinha'],['🧆','Acarajé','Acarajé'],['🍔','X-tudo','X-tudo'],['🌮','Tapioca recheada','Filled tapioca'],['🍱','Marmita','Marmita']]},
+ pa:{name:['Padaria','Bakery'],hue:35,it:[['🌾','Trigo','Wheat'],['🍞','Pão de forma','Sandwich loaf'],['🥖','Pão francês','Pão francês'],['🥯','Pão de queijo','Pão de queijo'],['🥨','Rosca','Sweet bread ring'],['🥞','Bolo de fubá','Bolo de fubá'],['🥧','Empadão','Empadão'],['🎂','Bolo de festa','Party cake']]},
+ fl:{name:['Flores','Flowers'],hue:300,it:[['🌱','Muda','Seedling'],['🌼','Margarida','Daisy'],['🌷','Orquídea','Orchid'],['🌻','Girassol','Sunflower'],['🌹','Bromélia','Bromeliad'],['🌺','Hibisco','Hibiscus'],['🌳','Ipê-amarelo','Ipê-amarelo'],['💐','Buquê tropical','Tropical bouquet']]}
 };
 // Explicações curtas (só na versão em inglês) dos nomes mantidos em português. Chave: linha + nível.
-const GLOSS={ve1:'bundle of parsley and green onion, in almost every Brazilian dish',pe8:'Brazilian fish stew, often with coconut milk and dendê palm oil',
- be6:'herbal tea made from yerba mate leaves',be7:'soda made from an Amazonian berry',ar8:'ten-string Brazilian country guitar',
- gr5:'warm, creamy porridge',gr8:'rice and beans cooked together with cheese, from Ceará',do6:'cream-filled doughnut; the name means “dream”',
- ca4:'Brazilian pork sausage',ca7:'street-food skewer grilled on charcoal',ca8:'black bean and pork stew, a national favorite',
- la8:'Brazilian caramel flan made with condensed milk',ln1:'crispy fried pastry, the classic street-market snack',ln2:'crepe made from cassava starch',
- ln8:'home-style packed lunch',pa3:'crusty bread roll eaten every morning in Brazil'};
+const GLOSS={fr6:'cashew fruit: the juicy part that grows above the nut',fr7:'grape-like berry that grows right on the tree trunk',fr8:'frozen Amazonian berry purée, eaten with a spoon',
+ ve1:'bundle of parsley and green onion, in almost every Brazilian dish',ve6:'cassava root, a staple all over Brazil',
+ pe5:'mullet, the winter catch of southern Brazil',pe7:'giant Amazon river fish',pe8:'Brazilian fish stew, often with coconut milk and dendê oil',
+ te4:'small, fiery Brazilian chili',te6:'red palm oil, the soul of Bahian cooking',
+ be5:'fresh-pressed sugarcane juice',be6:'hot yerba mate sipped from a gourd',be7:'soda made from an Amazonian berry',be8:'clear, sweet cashew-fruit drink from the Northeast',
+ ar3:'wish ribbon from Salvador: tie it on and make three wishes',ar8:'ten-string Brazilian country guitar',
+ gr7:'steamed cornmeal cake from the Northeast',gr8:'rice and beans cooked together with cheese, from Ceará',
+ do1:'block of unrefined cane sugar',do2:'crumbly peanut candy',do4:'chewy coconut candy',do5:'glossy coconut and egg-yolk custard',do6:'cream-filled doughnut; the name means “dream”',do7:'thick guava paste',do8:'thin rolled cake with guava filling, from Pernambuco',
+ ca3:'crispy pork crackling',ca4:'Brazilian pork sausage',ca5:'salted, sun-cured beef',ca7:'street-food skewer grilled on charcoal',ca8:'black bean and pork stew, a national favorite',
+ la3:'mild fresh cheese from Minas Gerais',la4:'creamy spreadable cheese',la5:'firm cheese grilled on a stick',la6:'slow-cooked milk caramel',la7:'cheese with guava paste, a classic pairing',la8:'Brazilian caramel flan made with condensed milk',
+ ln1:'crispy fried pastry, the classic street-market snack',ln2:'crepe made from cassava starch',ln4:'teardrop-shaped chicken croquette',ln5:'black-eyed pea fritter fried in dendê oil',ln6:'“cheese-everything”: a fully loaded burger',ln8:'home-style packed lunch',
+ pa3:'crusty bread roll eaten every morning in Brazil',pa4:'chewy little cheese bread',pa6:'cornmeal cake',pa7:'savory pot pie',fl7:'tree that bursts into yellow bloom'};
 const REG={Norte:'North',Nordeste:'Northeast','Centro-Oeste':'Center-West',Sudeste:'Southeast',Sul:'South'};
 // Rota das Feiras: 12 paradas por volta, voltas infinitas. Textos curtos, a validar com pesquisa local.
 const FEIRAS=[
@@ -268,12 +275,12 @@ const RECIPES=[
  {name:['Camarão no alho','Garlic shrimp'],it:[['pe',1],['te',2]],note:['Camarão salteado com alho.','Shrimp sautéed with garlic.']},
  {name:['Moqueca caprichada','Deluxe moqueca'],it:[['pe',3],['te',5]],note:['Peixe cozido com pimentão.','Fish stewed with bell peppers.']},
  {name:['Peixe com arroz','Fish and rice'],it:[['pe',3],['gr',4]],note:['Prato simples de beira de rio.','A simple riverside meal.']},
- {name:['Macarrão ao molho','Pasta with sauce'],it:[['gr',6],['te',8]],note:['Macarrão com molho de tomate.','Pasta with tomato sauce.']},
+ {name:['Feijão-tropeiro','Feijão-tropeiro'],it:[['gr',6],['ca',4]],note:['Feijão com linguiça e farinha.','Beans tossed with sausage and cassava flour.']},
  {name:['Pipoca com chocolate','Chocolate popcorn'],it:[['gr',3],['do',3]],note:['Pipoca coberta de chocolate.','Popcorn coated in chocolate.']},
  {name:['Arroz-doce','Arroz-doce'],it:[['gr',4],['la',1]],note:['Arroz cozido no leite.','Rice pudding cooked in milk.']},
  {name:['Arroz com ovo','Rice and egg'],it:[['gr',4],['ca',1]],note:['O socorro de todo dia.','The everyday go-to meal.']},
- {name:['Carne com queijo','Steak with cheese'],it:[['ca',5],['la',3]],note:['Carne com queijo derretido.','Steak topped with melted cheese.']},
- {name:['Doce de banana','Doce de banana'],it:[['fr',3],['do',1]],note:['Banana cozida com açúcar.','Banana slowly cooked with sugar.']},
+ {name:['Carne de sol com queijo','Carne de sol with cheese'],it:[['ca',5],['la',3]],note:['Carne de sol com queijo derretido.','Sun-cured beef topped with melted cheese.']},
+ {name:['Doce de banana','Doce de banana'],it:[['fr',3],['do',1]],note:['Banana cozida com rapadura.','Banana slowly cooked with rapadura.']},
  {name:['Pastel com suco','Pastel and juice'],it:[['ln',1],['be',3]],note:['A dupla clássica da feira.','The classic street-market pair.']},
  {name:['Omelete de tomate','Tomato omelette'],it:[['ca',1],['ve',4]],note:['Ovos batidos com tomate.','Beaten eggs with tomato.']},
  {name:['Vitamina de banana','Vitamina de banana'],it:[['fr',3],['la',1]],note:['Banana batida com leite.','Banana blended with milk.']},
@@ -286,7 +293,7 @@ const RECIPES=[
  {name:['Curau de milho','Curau'],it:[['ve',5],['la',1]],note:['Creme de milho-verde com leite.','Sweet corn custard made with milk.']},
  {name:['Peixe com legumes','Fish with vegetables'],it:[['pe',3],['ve',3]],note:['Peixe assado com cenoura.','Fish roasted with carrots.']},
  {name:['Bolo de cenoura','Bolo de cenoura'],it:[['ve',3],['pa',1]],note:['Massa de cenoura com farinha de trigo.','Brazilian carrot cake.']},
- {name:['Pão doce','Sweet bread'],it:[['pa',2],['do',1]],note:['Pão macio com cobertura.','Soft bread with icing.']}
+ {name:['Pão doce','Sweet bread'],it:[['pa',2],['do',1]],note:['Pão macio adoçado com rapadura.','Soft bread sweetened with rapadura.']}
 ];
 const DECOR=[['⛱️',['Toldo listrado','Striped awning'],150],['🪴',['Vasos de ervas','Herb pots'],250],['🪑',['Banco de madeira','Wooden bench'],400],['📋',['Lousa de preços','Price chalkboard'],600],['⚖️',['Balança antiga','Vintage scale'],900],['✨',['Luzinhas','String lights'],1300],['📻',['Rádio de pilha','Transistor radio'],1800],['🚲',['Bicicleta de entrega','Delivery bike'],2500],['🛒',['Carrinho de feira','Market trolley'],3400],['🕰️',['Relógio de parede','Wall clock'],4500],['🎊',['Bandeirinhas','Bandeirinhas (festa junina flags)'],6000],['🐈',['Caminha do Mingau','Mingau’s cat bed'],8000]];
 const EXPS=[{cols:6,rows:8,cost:300,lvl:5},{cols:7,rows:8,cost:1500,lvl:12},{cols:7,rows:9,cost:6000,lvl:20}];
@@ -294,7 +301,7 @@ const UPS={far:{n:['Cestos fartos','Bountiful baskets'],d:['Mais chance de colhe
            cap:{n:['Cestos maiores','Bigger baskets'],d:['+4 cargas em cada cesto.','+4 charges in every basket.'],base:60,k:1.6,max:10},
            spd:{n:['Recarga rápida','Quick refill'],d:['Cestos recarregam 8% mais rápido.','Baskets refill 8% faster.'],base:100,k:1.8,max:8}};
 const MTYPES={merges:[['Faça {n} fusões','Make {n} merges'],20],orders:[['Atenda {n} pedidos','Fill {n} orders'],5],spawn:[['Colha {n} itens dos cestos','Pick {n} items from baskets'],30],big:[['Crie {n} itens de nível 5 ou mais','Make {n} items of level 5+'],2],triple:[['Faça {n} fusões triplas','Make {n} triple merges'],3],sell:[['Venda {n} itens','Sell {n} items'],6]};
-const TIPS=[['Três iguais lado a lado sobem 2 níveis de uma vez.','Three of a kind side by side jump 2 levels at once.'],['Toque num pedido com borda verde para entregar direto.','Tap a green-bordered order to deliver it right away.'],['Fusões em sequência rendem XP extra de combo.','Quick merges in a row earn bonus combo XP.'],['Pedido com ⚡ paga em dobro se você for rápido.','⚡ orders pay double if you’re quick.'],['Concluiu a feira? Viaje pelo mapa para conhecer gente nova.','Finished a market? Travel the map to meet new friends.'],['Sem espaço? Venda um item ou use Organizar.','Out of space? Sell an item or tap Sort.']];
+const TIPS=[['Arraste um item por cima de dois iguais que estejam lado a lado: os três se juntam e sobem 2 níveis.','Drag an item across two matching neighbors: all three merge and jump 2 levels.'],['Toque num pedido com borda verde para entregar direto.','Tap a green-bordered order to deliver it right away.'],['Fusões em sequência rendem XP extra de combo.','Quick merges in a row earn bonus combo XP.'],['Pedido com ⚡ paga em dobro se você for rápido.','⚡ orders pay double if you’re quick.'],['Concluiu a feira? Viaje pelo mapa para conhecer gente nova.','Finished a market? Travel the map to meet new friends.'],['Sem espaço? Venda um item ou use Organizar.','Out of space? Sell an item or tap Sort.']];
 
 /* ===================== TEXTOS DA INTERFACE ===================== */
 const UI={
@@ -433,14 +440,13 @@ const needH=lv=>3+2*lv;
 let S, sel=null, selOrder=null, offer=null, drag=null, popAt=-1, noClick=false, sheetName=null, adTimer=null, toastTimer=null, audio=null;
 let homeOn=true, lastAct=Date.now(), combo=0, lastMerge=0, fxQ=[], modalQ=[], tip=Math.floor(Math.random()*TIPS.length);
 
-function doMerge(b,cols,rows,from,to){
+const isAdj=(x,y,cols)=>{ const d=Math.abs(x-y); return d===cols||(d===1&&Math.floor(x/cols)===Math.floor(y/cols)); };
+function doMerge(b,cols,rows,from,to,via){
   const a=b[from],t=b[to];
   if(!a||!t||from===to||a.l!==t.l||a.n!==t.n||a.n>=MAX) return null;
   let n=a.n+1, third=-1;
-  if(a.n+2<=MAX){ const r=Math.floor(to/cols),c=to%cols;
-    for(const [dr,dc] of [[-1,0],[1,0],[0,-1],[0,1]]){ const rr=r+dr,cc=c+dc;
-      if(rr<0||cc<0||rr>=rows||cc>=cols) continue; const k=rr*cols+cc;
-      if(k!==from&&b[k]&&b[k].l===a.l&&b[k].n===a.n){third=k;break;} } }
+  // Fusão tripla só com intenção: via = item igual, vizinho do destino, por cima do qual o dedo passou.
+  if(via!=null&&via>=0&&via!==from&&via!==to&&a.n+2<=MAX&&b[via]&&b[via].l===a.l&&b[via].n===a.n&&isAdj(via,to,cols)) third=via;
   if(third>=0){b[third]=null;n=a.n+2;}
   b[from]=null; b[to]={l:a.l,n}; return {n,third};
 }
@@ -536,18 +542,18 @@ function spawn(k){
   if(b.c>=cap())b.t=Date.now(); b.c--; const f=S.up.far, r=Math.random(), n=r<Math.min(.2,.03*f)?3:r<Math.min(.6,.1+.06*f)?2:1;
   const i=pick(empty); S.board[i]={l:k,n}; popAt=i; S.stats.items++; bump('spawn',1); beep(520); render();
 }
-function merge(from,to,quiet){
-  const r=doMerge(S.board,S.cols,S.rows,from,to); if(!r) return false;
+function merge(from,to,quiet,via){
+  const r=doMerge(S.board,S.cols,S.rows,from,to,via); if(!r) return false;
   const now=Date.now(); combo=now-lastMerge<3500?combo+1:1; lastMerge=now;
   S.stats.merges++; bump('merges',1); if(r.third>=0) bump('triple',1); if(r.n>=5) bump('big',1);
   const x=gain(Math.ceil(r.n/2)+(r.third>=0?2:0)+Math.min(5,Math.floor(combo/4)),0);
   popAt=to; fx(to,`+${x} XP${combo>=3?' · combo ×'+combo:''}${r.third>=0?(LANG==='en'?' · triple!':' · tripla!'):''}`);
   if(!quiet) beep(r.third>=0?780:600+Math.min(combo,10)*20); return true;
 }
-function drop(from,to){
+function drop(from,to,via){
   if(from===to) return; const a=S.board[from], b=S.board[to];
   if(!b){ S.board[to]=a; S.board[from]=null; }
-  else if(!merge(from,to)){ S.board[to]=a; S.board[from]=b; }
+  else if(!merge(from,to,false,via)){ S.board[to]=a; S.board[from]=b; }
   sel=null; render();
 }
 function findPair(){ const seen={}; let best=null;
@@ -820,19 +826,25 @@ document.addEventListener('click',e=>{
   } else if(sel===i) sel=null; else if(it) sel=i;
   render();
 });
-$('board').addEventListener('pointerdown',e=>{ lastAct=Date.now(); const c=e.target.closest('[data-cell]'); if(!c) return; const i=+c.dataset.cell; if(!S.board[i]) return; drag={i,x:e.clientX,y:e.clientY,on:false,id:e.pointerId,g:null}; });
+$('board').addEventListener('pointerdown',e=>{ lastAct=Date.now(); const c=e.target.closest('[data-cell]'); if(!c) return; const i=+c.dataset.cell; if(!S.board[i]) return; drag={i,x:e.clientX,y:e.clientY,on:false,id:e.pointerId,g:null,cur:-1,prev:-1}; });
 window.addEventListener('pointermove',e=>{
   if(!drag||e.pointerId!==drag.id) return;
   if(!drag.on&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>8){ drag.on=true; const it=S.board[drag.i]; drag.g=document.createElement('div'); drag.g.className='ghost'; drag.g.textContent=item(it.l,it.n)[0]; document.body.appendChild(drag.g);
     const c=$('board').querySelector(`[data-cell="${drag.i}"]`); if(c)c.classList.add('drag'); }
-  if(drag.on){ drag.g.style.left=e.clientX+'px'; drag.g.style.top=e.clientY+'px'; }
+  if(drag.on){ drag.g.style.left=e.clientX+'px'; drag.g.style.top=e.clientY+'px';
+    // Guarda o último item igual por onde o dedo passou; ele só entra na fusão se for vizinho do destino.
+    const el=document.elementFromPoint(e.clientX,e.clientY), c=el&&el.closest('#board [data-cell]'), k=c?+c.dataset.cell:-1;
+    if(k>=0&&k!==drag.cur){ const it=S.board[drag.i], same=j=>j>=0&&j!==drag.i&&S.board[j]&&S.board[j].l===it.l&&S.board[j].n===it.n;
+      drag.prev=same(k)&&same(drag.cur)?drag.cur:same(k)&&same(drag.prev)&&isAdj(k,drag.prev,S.cols)?drag.prev:-1; drag.cur=k;
+      $('board').querySelectorAll('.trail').forEach(x=>x.classList.remove('trail'));
+      if(drag.prev>=0&&it.n+2<=MAX&&isAdj(k,drag.prev,S.cols)) [k,drag.prev].forEach(j=>$('board').querySelector(`[data-cell="${j}"]`).classList.add('trail')); } }
 });
 function endDrag(e,cancel){
   if(!drag||e.pointerId!==drag.id) return; const d=drag; drag=null; if(!d.on) return;
   d.g.remove(); noClick=true; setTimeout(()=>noClick=false,60); lastAct=Date.now();
   const el=cancel?null:document.elementFromPoint(e.clientX,e.clientY);
   const c=el&&el.closest('[data-cell]'), o=el&&el.closest('[data-order]'), en=el&&el.closest('[data-enc]');
-  if(c) drop(d.i,+c.dataset.cell); else if(o) deliver(d.i,+o.dataset.order); else if(en) deliverEnc(d.i); else render();
+  if(c) drop(d.i,+c.dataset.cell,d.prev); else if(o) deliver(d.i,+o.dataset.order); else if(en) deliverEnc(d.i); else render();
 }
 window.addEventListener('pointerup',e=>endDrag(e,false));
 window.addEventListener('pointercancel',e=>endDrag(e,true));

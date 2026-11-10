@@ -45,9 +45,9 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 | 3 | `itens/fr-3.png` | Banana | Banana |  | 🍌 |
 | 4 | `itens/fr-4.png` | Manga | Mango |  | 🥭 |
 | 5 | `itens/fr-5.png` | Abacaxi | Pineapple |  | 🍍 |
-| 6 | `itens/fr-6.png` | Melancia | Watermelon |  | 🍉 |
-| 7 | `itens/fr-7.png` | Uva | Grapes |  | 🍇 |
-| 8 | `itens/fr-8.png` | Morango | Strawberry |  | 🍓 |
+| 6 | `itens/fr-6.png` | Caju | Caju | cashew fruit: the juicy part that grows above the nut | 🍎 |
+| 7 | `itens/fr-7.png` | Jabuticaba | Jabuticaba | grape-like berry that grows right on the tree trunk | 🫐 |
+| 8 | `itens/fr-8.png` | Açaí na tigela | Açaí bowl | frozen Amazonian berry purée, eaten with a spoon | 🍇 |
 
 ### Verduras / Veggies (`ve`)
 
@@ -58,7 +58,7 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 | 3 | `itens/ve-3.png` | Cenoura | Carrot |  | 🥕 |
 | 4 | `itens/ve-4.png` | Tomate | Tomato |  | 🍅 |
 | 5 | `itens/ve-5.png` | Milho | Corn |  | 🌽 |
-| 6 | `itens/ve-6.png` | Brócolis | Broccoli |  | 🥦 |
+| 6 | `itens/ve-6.png` | Mandioca | Mandioca | cassava root, a staple all over Brazil | 🍠 |
 | 7 | `itens/ve-7.png` | Abóbora | Pumpkin |  | 🎃 |
 | 8 | `itens/ve-8.png` | Salada | Salad |  | 🥗 |
 
@@ -70,10 +70,10 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 | 2 | `itens/pe-2.png` | Sardinha | Sardine |  | 🐟 |
 | 3 | `itens/pe-3.png` | Peixe | Fish |  | 🐠 |
 | 4 | `itens/pe-4.png` | Caranguejo | Crab |  | 🦀 |
-| 5 | `itens/pe-5.png` | Lula | Squid |  | 🦑 |
+| 5 | `itens/pe-5.png` | Tainha | Tainha | mullet, the winter catch of southern Brazil | 🐡 |
 | 6 | `itens/pe-6.png` | Lagosta | Lobster |  | 🦞 |
-| 7 | `itens/pe-7.png` | Polvo | Octopus |  | 🐙 |
-| 8 | `itens/pe-8.png` | Moqueca | Moqueca | Brazilian fish stew, often with coconut milk and dendê palm oil | 🍲 |
+| 7 | `itens/pe-7.png` | Pirarucu | Pirarucu | giant Amazon river fish | 🎣 |
+| 8 | `itens/pe-8.png` | Moqueca | Moqueca | Brazilian fish stew, often with coconut milk and dendê oil | 🍲 |
 
 ### Temperos / Spices (`te`)
 
@@ -82,9 +82,9 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 | 1 | `itens/te-1.png` | Sal | Salt |  | 🧂 |
 | 2 | `itens/te-2.png` | Alho | Garlic |  | 🧄 |
 | 3 | `itens/te-3.png` | Cebola | Onion |  | 🧅 |
-| 4 | `itens/te-4.png` | Pimenta | Chili pepper |  | 🌶️ |
+| 4 | `itens/te-4.png` | Pimenta-malagueta | Malagueta pepper | small, fiery Brazilian chili | 🌶️ |
 | 5 | `itens/te-5.png` | Pimentão | Bell pepper |  | 🫑 |
-| 6 | `itens/te-6.png` | Azeitona | Olive |  | 🫒 |
+| 6 | `itens/te-6.png` | Azeite de dendê | Dendê oil | red palm oil, the soul of Bahian cooking | 🫒 |
 | 7 | `itens/te-7.png` | Mel | Honey |  | 🍯 |
 | 8 | `itens/te-8.png` | Molho | Sauce |  | 🥫 |
 
@@ -96,10 +96,10 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 | 2 | `itens/be-2.png` | Água de coco | Coconut water |  | 🥥 |
 | 3 | `itens/be-3.png` | Suco | Juice |  | 🧃 |
 | 4 | `itens/be-4.png` | Café | Coffee |  | ☕ |
-| 5 | `itens/be-5.png` | Chá | Tea |  | 🍵 |
-| 6 | `itens/be-6.png` | Mate | Mate | herbal tea made from yerba mate leaves | 🧉 |
+| 5 | `itens/be-5.png` | Caldo de cana | Caldo de cana | fresh-pressed sugarcane juice | 🍵 |
+| 6 | `itens/be-6.png` | Chimarrão | Chimarrão | hot yerba mate sipped from a gourd | 🧉 |
 | 7 | `itens/be-7.png` | Guaraná | Guaraná | soda made from an Amazonian berry | 🥤 |
-| 8 | `itens/be-8.png` | Refresco | Fruit cooler |  | 🍹 |
+| 8 | `itens/be-8.png` | Cajuína | Cajuína | clear, sweet cashew-fruit drink from the Northeast | 🍹 |
 
 ### Artesanato / Crafts (`ar`)
 
@@ -107,11 +107,11 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 |---|---|---|---|---|---|
 | 1 | `itens/ar-1.png` | Linha | Thread |  | 🧵 |
 | 2 | `itens/ar-2.png` | Novelo | Ball of yarn |  | 🧶 |
-| 3 | `itens/ar-3.png` | Meia | Sock |  | 🧦 |
-| 4 | `itens/ar-4.png` | Cachecol | Scarf |  | 🧣 |
+| 3 | `itens/ar-3.png` | Fita do Bonfim | Fita do Bonfim | wish ribbon from Salvador: tie it on and make three wishes | 🎗️ |
+| 4 | `itens/ar-4.png` | Renda | Bobbin lace |  | 🎀 |
 | 5 | `itens/ar-5.png` | Chapéu de palha | Straw hat |  | 👒 |
-| 6 | `itens/ar-6.png` | Cesto | Basket |  | 🧺 |
-| 7 | `itens/ar-7.png` | Vaso de barro | Clay pot |  | 🏺 |
+| 6 | `itens/ar-6.png` | Cesto de palha | Straw basket |  | 🧺 |
+| 7 | `itens/ar-7.png` | Boneco de barro | Clay figurine |  | 🏺 |
 | 8 | `itens/ar-8.png` | Viola | Viola caipira | ten-string Brazilian country guitar | 🎸 |
 
 ### Armazém / Pantry (`gr`)
@@ -122,23 +122,23 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 | 2 | `itens/gr-2.png` | Castanha-do-pará | Brazil nuts |  | 🌰 |
 | 3 | `itens/gr-3.png` | Pipoca | Popcorn |  | 🍿 |
 | 4 | `itens/gr-4.png` | Arroz | Rice |  | 🍚 |
-| 5 | `itens/gr-5.png` | Mingau | Mingau | warm, creamy porridge | 🥣 |
-| 6 | `itens/gr-6.png` | Macarrão | Pasta |  | 🍝 |
-| 7 | `itens/gr-7.png` | Sopa | Soup |  | 🍜 |
+| 5 | `itens/gr-5.png` | Farinha de mandioca | Cassava flour |  | 🥣 |
+| 6 | `itens/gr-6.png` | Feijão | Beans |  | 🫘 |
+| 7 | `itens/gr-7.png` | Cuscuz | Cuscuz | steamed cornmeal cake from the Northeast | 🥮 |
 | 8 | `itens/gr-8.png` | Baião de dois | Baião de dois | rice and beans cooked together with cheese, from Ceará | 🍛 |
 
 ### Doces / Sweets (`do`)
 
 | Nível | Arquivo | Português | Inglês | Explicação (inglês) | Emoji provisório |
 |---|---|---|---|---|---|
-| 1 | `itens/do-1.png` | Bala | Candy |  | 🍬 |
-| 2 | `itens/do-2.png` | Pirulito | Lollipop |  | 🍭 |
+| 1 | `itens/do-1.png` | Rapadura | Rapadura | block of unrefined cane sugar | 🍬 |
+| 2 | `itens/do-2.png` | Paçoca | Paçoca | crumbly peanut candy | 🍭 |
 | 3 | `itens/do-3.png` | Chocolate | Chocolate |  | 🍫 |
-| 4 | `itens/do-4.png` | Biscoito | Cookie |  | 🍪 |
-| 5 | `itens/do-5.png` | Bolinho | Cupcake |  | 🧁 |
+| 4 | `itens/do-4.png` | Cocada | Cocada | chewy coconut candy | 🍪 |
+| 5 | `itens/do-5.png` | Quindim | Quindim | glossy coconut and egg-yolk custard | 🧁 |
 | 6 | `itens/do-6.png` | Sonho | Sonho | cream-filled doughnut; the name means “dream” | 🍩 |
-| 7 | `itens/do-7.png` | Doce no palito | Candy on a stick |  | 🍡 |
-| 8 | `itens/do-8.png` | Caixa de bombons | Box of chocolates |  | 🎁 |
+| 7 | `itens/do-7.png` | Goiabada | Goiabada | thick guava paste | 🍡 |
+| 8 | `itens/do-8.png` | Bolo de rolo | Bolo de rolo | thin rolled cake with guava filling, from Pernambuco | 🍥 |
 
 ### Carnes / Meats (`ca`)
 
@@ -146,9 +146,9 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 |---|---|---|---|---|---|
 | 1 | `itens/ca-1.png` | Ovo | Egg |  | 🥚 |
 | 2 | `itens/ca-2.png` | Frango | Chicken |  | 🍗 |
-| 3 | `itens/ca-3.png` | Bacon | Bacon |  | 🥓 |
+| 3 | `itens/ca-3.png` | Torresmo | Torresmo | crispy pork crackling | 🥓 |
 | 4 | `itens/ca-4.png` | Linguiça | Linguiça | Brazilian pork sausage | 🌭 |
-| 5 | `itens/ca-5.png` | Carne | Steak |  | 🥩 |
+| 5 | `itens/ca-5.png` | Carne de sol | Carne de sol | salted, sun-cured beef | 🥩 |
 | 6 | `itens/ca-6.png` | Costela | Ribs |  | 🍖 |
 | 7 | `itens/ca-7.png` | Espetinho | Espetinho | street-food skewer grilled on charcoal | 🍢 |
 | 8 | `itens/ca-8.png` | Feijoada | Feijoada | black bean and pork stew, a national favorite | 🥘 |
@@ -159,11 +159,11 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 |---|---|---|---|---|---|
 | 1 | `itens/la-1.png` | Leite | Milk |  | 🥛 |
 | 2 | `itens/la-2.png` | Manteiga | Butter |  | 🧈 |
-| 3 | `itens/la-3.png` | Queijo | Cheese |  | 🧀 |
-| 4 | `itens/la-4.png` | Casquinha | Ice cream cone |  | 🍦 |
-| 5 | `itens/la-5.png` | Sorvete | Ice cream |  | 🍨 |
-| 6 | `itens/la-6.png` | Taça gelada | Sundae |  | 🍧 |
-| 7 | `itens/la-7.png` | Torta de creme | Cream cake |  | 🍰 |
+| 3 | `itens/la-3.png` | Queijo minas | Queijo minas | mild fresh cheese from Minas Gerais | 🧀 |
+| 4 | `itens/la-4.png` | Requeijão | Requeijão | creamy spreadable cheese | 🍶 |
+| 5 | `itens/la-5.png` | Queijo coalho | Queijo coalho | firm cheese grilled on a stick | 🧇 |
+| 6 | `itens/la-6.png` | Doce de leite | Doce de leite | slow-cooked milk caramel | 🍨 |
+| 7 | `itens/la-7.png` | Romeu e Julieta | Romeu e Julieta | cheese with guava paste, a classic pairing | 🍰 |
 | 8 | `itens/la-8.png` | Pudim | Pudim | Brazilian caramel flan made with condensed milk | 🍮 |
 
 ### Lanches / Snacks (`ln`)
@@ -172,10 +172,10 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 |---|---|---|---|---|---|
 | 1 | `itens/ln-1.png` | Pastel | Pastel | crispy fried pastry, the classic street-market snack | 🥟 |
 | 2 | `itens/ln-2.png` | Tapioca | Tapioca | crepe made from cassava starch | 🫓 |
-| 3 | `itens/ln-3.png` | Sanduíche | Sandwich |  | 🥪 |
-| 4 | `itens/ln-4.png` | Batata frita | Fries |  | 🍟 |
-| 5 | `itens/ln-5.png` | Pizza | Pizza |  | 🍕 |
-| 6 | `itens/ln-6.png` | Hambúrguer | Burger |  | 🍔 |
+| 3 | `itens/ln-3.png` | Sanduíche de mortadela | Mortadella sandwich |  | 🥪 |
+| 4 | `itens/ln-4.png` | Coxinha | Coxinha | teardrop-shaped chicken croquette | 🍤 |
+| 5 | `itens/ln-5.png` | Acarajé | Acarajé | black-eyed pea fritter fried in dendê oil | 🧆 |
+| 6 | `itens/ln-6.png` | X-tudo | X-tudo | “cheese-everything”: a fully loaded burger | 🍔 |
 | 7 | `itens/ln-7.png` | Tapioca recheada | Filled tapioca |  | 🌮 |
 | 8 | `itens/ln-8.png` | Marmita | Marmita | home-style packed lunch | 🍱 |
 
@@ -186,11 +186,11 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 | 1 | `itens/pa-1.png` | Trigo | Wheat |  | 🌾 |
 | 2 | `itens/pa-2.png` | Pão de forma | Sandwich loaf |  | 🍞 |
 | 3 | `itens/pa-3.png` | Pão francês | Pão francês | crusty bread roll eaten every morning in Brazil | 🥖 |
-| 4 | `itens/pa-4.png` | Croissant | Croissant |  | 🥐 |
-| 5 | `itens/pa-5.png` | Rosca | Sweet bread ring |  | 🥯 |
-| 6 | `itens/pa-6.png` | Panqueca | Pancake |  | 🥞 |
-| 7 | `itens/pa-7.png` | Torta | Pie |  | 🥧 |
-| 8 | `itens/pa-8.png` | Bolo | Cake |  | 🎂 |
+| 4 | `itens/pa-4.png` | Pão de queijo | Pão de queijo | chewy little cheese bread | 🥯 |
+| 5 | `itens/pa-5.png` | Rosca | Sweet bread ring |  | 🥨 |
+| 6 | `itens/pa-6.png` | Bolo de fubá | Bolo de fubá | cornmeal cake | 🥞 |
+| 7 | `itens/pa-7.png` | Empadão | Empadão | savory pot pie | 🥧 |
+| 8 | `itens/pa-8.png` | Bolo de festa | Party cake |  | 🎂 |
 
 ### Flores / Flowers (`fl`)
 
@@ -198,12 +198,12 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 |---|---|---|---|---|---|
 | 1 | `itens/fl-1.png` | Muda | Seedling |  | 🌱 |
 | 2 | `itens/fl-2.png` | Margarida | Daisy |  | 🌼 |
-| 3 | `itens/fl-3.png` | Tulipa | Tulip |  | 🌷 |
+| 3 | `itens/fl-3.png` | Orquídea | Orchid |  | 🌷 |
 | 4 | `itens/fl-4.png` | Girassol | Sunflower |  | 🌻 |
-| 5 | `itens/fl-5.png` | Rosa | Rose |  | 🌹 |
+| 5 | `itens/fl-5.png` | Bromélia | Bromeliad |  | 🌹 |
 | 6 | `itens/fl-6.png` | Hibisco | Hibiscus |  | 🌺 |
-| 7 | `itens/fl-7.png` | Vaso | Potted plant |  | 🪴 |
-| 8 | `itens/fl-8.png` | Buquê | Bouquet |  | 💐 |
+| 7 | `itens/fl-7.png` | Ipê-amarelo | Ipê-amarelo | tree that bursts into yellow bloom | 🌳 |
+| 8 | `itens/fl-8.png` | Buquê tropical | Tropical bouquet |  | 💐 |
 
 ## Personagens (28)
 
@@ -258,7 +258,3 @@ Aparecem na banca da tela inicial.
 | `decoracao/10-relogio-de-parede.png` | Relógio de parede | Wall clock | 🕰️ |
 | `decoracao/11-bandeirinhas.png` | Bandeirinhas | Bandeirinhas (festa junina flags) | 🎊 |
 | `decoracao/12-caminha-do-mingau.png` | Caminha do Mingau | Mingau’s cat bed | 🐈 |
-
-## Sugestão antes de gerar a arte
-
-Algumas linhas ainda têm itens genéricos (uva, morango, croissant, tulipa, pizza, hambúrguer). Se a ideia é mostrar o Brasil para o mundo, este é o melhor momento para trocá-los, antes de gastar com imagens. Candidatos: **caju, acerola, jabuticaba, cupuaçu e açaí** (Frutas); **pão de queijo** (Padaria); **coxinha e acarajé** (Lanches); **brigadeiro, cocada e rapadura** (Doces); **ipê** (Flores); **cuscuz** (Armazém). Para trocar, basta editar `LINES` no início do script do jogo e gerar esta lista de novo.

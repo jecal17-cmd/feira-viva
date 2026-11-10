@@ -20,7 +20,7 @@ Duas versões do mesmo jogo de merge com tema de feiras brasileiras. Compartilha
 
 **Itens.** Cada item tem uma linha (ex.: Açaí) e um nível (1 a 5 na Versão A, 1 a 6 na B). Arrastar um item sobre outro de mesma linha e nível funde os dois em um item de nível +1 na célula de destino; a origem fica vazia. Itens no nível máximo não fundem, só são entregues.
 
-**Fusão tripla.** Se, ao fundir, existir um terceiro item idêntico adjacente (4 direções) à célula de destino, ele é absorvido e o resultado sobe +2 níveis. Recompensa o planejamento do tabuleiro.
+**Fusão tripla.** Só acontece por escolha do jogador: ao arrastar um item, se o dedo passar por cima de um item idêntico e soltar em outro idêntico vizinho dele (4 direções), os três se juntam e o resultado sobe +2 níveis. As duas células ficam destacadas durante o arraste. Soltar direto sobre um item, ou juntar por toque, funde só dois, mesmo que haja um terceiro igual ao lado. Recompensa o planejamento do tabuleiro sem gastar itens sem querer.
 
 **Cesto (gerador).** Um toque gera um item nível 1 da linha do cesto em uma célula vazia aleatória. Sem célula vazia, não gera.
 
