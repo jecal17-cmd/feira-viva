@@ -59,6 +59,7 @@ button:disabled{opacity:.45;cursor:default}
 .cell.has{background:var(--cell);box-shadow:0 3px 0 var(--lc,var(--line))}
 .cell.sel{outline:3px solid var(--accent);outline-offset:1px}
 .cell.drag{opacity:.3}
+.cell.trail{outline:3px solid var(--gold);outline-offset:1px;transform:scale(1.08)}
 .cell.hint{animation:hint .9s ease-in-out infinite}
 @keyframes hint{50%{transform:scale(1.1);outline:2px solid var(--gold)}}
 .cell .em{font-size:calc(var(--cs)*.54);line-height:1}
@@ -147,11 +148,16 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
 .adbox{border:2px dashed var(--line);border-radius:14px;padding:24px 12px;color:var(--muted)}
 .toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(58px + env(safe-area-inset-top,0px));z-index:35;background:var(--ink);color:var(--bg);border-radius:99px;padding:8px 16px;font-weight:800;max-width:calc(100% - 32px);text-align:center}
 .warn{color:var(--warn)}
+.logo .say{font-family:var(--text);font-weight:600;font-size:13px;color:var(--muted);margin:8px 0 0;line-height:1.3}
+.seg{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.seg button{background:var(--panel);border-radius:99px;padding:7px 12px;font-weight:800;font-size:13px;box-shadow:inset 0 0 0 2px var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);box-shadow:none}
+.info i{color:var(--muted);font-size:12px}
 </style>
 </head>
 <body>
 <div class="app" id="app">
-  <div class="top"><button class="icon" data-act="home" aria-label="Tela inicial">🏠</button><div class="lvl" id="lvl"></div><div class="xp"><div class="bar"><i id="xpbar"></i></div><small id="xptxt"></small></div><div class="coins" id="coins"></div></div>
+  <div class="top"><button class="icon" id="homebtn" data-act="home" aria-label="Tela inicial">🏠</button><div class="lvl" id="lvl"></div><div class="xp"><div class="bar"><i id="xpbar"></i></div><small id="xptxt"></small></div><div class="coins" id="coins"></div></div>
   <div class="orders" id="orders"></div>
   <div id="stripbox"></div>
   <div class="wrap" id="wrap"><div class="board" id="board"></div></div>
@@ -165,115 +171,263 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <script>
+/* ===================== IDIOMA ===================== */
+// Textos da interface em UI.pt / UI.en; textos de conteúdo em pares [pt, en] dentro dos dados.
+let LANG='pt';
+const tx=a=>Array.isArray(a)?(LANG==='en'&&a[1]!=null?a[1]:a[0]):a;
+const t=(k,...a)=>{ const v=(UI[LANG]&&UI[LANG][k]!=null)?UI[LANG][k]:UI.pt[k]; return typeof v==='function'?v(...a):v; };
+function detectLang(){
+  try{ const q=new URLSearchParams(location.search).get('lang'); if(q==='en'||q==='pt') return q; }catch(e){}
+  return /^pt/i.test(navigator.language||'pt')?'pt':'en';
+}
+function applyLang(){
+  document.documentElement.lang=LANG==='en'?'en':'pt-BR';
+  document.title=t('docTitle');
+  $('homebtn').setAttribute('aria-label',t('home'));
+}
+
 /* ===================== DADOS (balanceamento: tudo aqui em cima) ===================== */
 const MAX=8, KEY='quitanda-zen-v2', ENC_N=5;
 const XPV=[0,1,4,9,18,36,70,140,280], COV=[0,1,2,5,10,22,45,90,180];
 const BASE_CAP=20, BASE_PERIOD=10000;                 // cargas por cesto e ms por carga
 const need=n=>50+15*n;                                 // XP do nível n para n+1 (sem teto de nível)
 const goal=s=>Math.min(24,6+2*s);                      // clientes para concluir a feira s
+// Itens: [emoji, nome em português, nome em inglês]. Nomes brasileiros ficam em português e ganham explicação em GLOSS.
 const LINES={
- fr:{name:'Frutas',hue:28,it:[['🍋','Limão'],['🍊','Laranja'],['🍌','Banana'],['🥭','Manga'],['🍍','Abacaxi'],['🍉','Melancia'],['🍇','Uva'],['🍓','Morango']]},
- ve:{name:'Verduras',hue:120,it:[['🌿','Cheiro-verde'],['🥬','Couve'],['🥕','Cenoura'],['🍅','Tomate'],['🌽','Milho'],['🥦','Brócolis'],['🎃','Abóbora'],['🥗','Salada']]},
- pe:{name:'Peixes',hue:200,it:[['🦐','Camarão'],['🐟','Sardinha'],['🐠','Peixe'],['🦀','Caranguejo'],['🦑','Lula'],['🦞','Lagosta'],['🐙','Polvo'],['🍲','Moqueca']]},
- te:{name:'Temperos',hue:350,it:[['🧂','Sal'],['🧄','Alho'],['🧅','Cebola'],['🌶️','Pimenta'],['🫑','Pimentão'],['🫒','Azeitona'],['🍯','Mel'],['🥫','Molho']]},
- be:{name:'Bebidas',hue:180,it:[['💧','Água'],['🥥','Água de coco'],['🧃','Suco'],['☕','Café'],['🍵','Chá'],['🧉','Mate'],['🥤','Guaraná'],['🍹','Refresco']]},
- ar:{name:'Artesanato',hue:275,it:[['🧵','Linha'],['🧶','Novelo'],['🧦','Meia'],['🧣','Cachecol'],['👒','Chapéu de palha'],['🧺','Cesto'],['🏺','Vaso de barro'],['🎸','Viola']]},
- gr:{name:'Armazém',hue:45,it:[['🥜','Amendoim'],['🌰','Castanha'],['🍿','Pipoca'],['🍚','Arroz'],['🥣','Mingau'],['🍝','Macarrão'],['🍜','Sopa'],['🍛','Baião de dois']]},
- do:{name:'Doces',hue:320,it:[['🍬','Bala'],['🍭','Pirulito'],['🍫','Chocolate'],['🍪','Biscoito'],['🧁','Bolinho'],['🍩','Sonho'],['🍡','Doce no palito'],['🎁','Caixa de bombons']]},
- ca:{name:'Carnes',hue:5,it:[['🥚','Ovo'],['🍗','Frango'],['🥓','Bacon'],['🌭','Linguiça'],['🥩','Carne'],['🍖','Costela'],['🍢','Espetinho'],['🥘','Feijoada']]},
- la:{name:'Laticínios',hue:215,it:[['🥛','Leite'],['🧈','Manteiga'],['🧀','Queijo'],['🍦','Casquinha'],['🍨','Sorvete'],['🍧','Taça gelada'],['🍰','Torta de creme'],['🍮','Pudim']]},
- ln:{name:'Lanches',hue:15,it:[['🥟','Pastel'],['🫓','Tapioca'],['🥪','Sanduíche'],['🍟','Batata frita'],['🍕','Pizza'],['🍔','Hambúrguer'],['🌮','Tapioca recheada'],['🍱','Marmita']]},
- pa:{name:'Padaria',hue:35,it:[['🌾','Trigo'],['🍞','Pão de forma'],['🥖','Pão francês'],['🥐','Croissant'],['🥯','Rosca'],['🥞','Panqueca'],['🥧','Torta'],['🎂','Bolo']]},
- fl:{name:'Flores',hue:300,it:[['🌱','Muda'],['🌼','Margarida'],['🌷','Tulipa'],['🌻','Girassol'],['🌹','Rosa'],['🌺','Hibisco'],['🪴','Vaso'],['💐','Buquê']]}
+ fr:{name:['Frutas','Fruits'],hue:28,it:[['🍋','Limão','Lime'],['🍊','Laranja','Orange'],['🍌','Banana','Banana'],['🥭','Manga','Mango'],['🍍','Abacaxi','Pineapple'],['🍎','Caju','Caju'],['🫐','Jabuticaba','Jabuticaba'],['🍇','Açaí na tigela','Açaí bowl']]},
+ ve:{name:['Verduras','Veggies'],hue:120,it:[['🌿','Cheiro-verde','Cheiro-verde'],['🥬','Couve','Collard greens'],['🥕','Cenoura','Carrot'],['🍅','Tomate','Tomato'],['🌽','Milho','Corn'],['🍠','Mandioca','Mandioca'],['🎃','Abóbora','Pumpkin'],['🥗','Salada','Salad']]},
+ pe:{name:['Peixes','Seafood'],hue:200,it:[['🦐','Camarão','Shrimp'],['🐟','Sardinha','Sardine'],['🐠','Peixe','Fish'],['🦀','Caranguejo','Crab'],['🐡','Tainha','Tainha'],['🦞','Lagosta','Lobster'],['🎣','Pirarucu','Pirarucu'],['🍲','Moqueca','Moqueca']]},
+ te:{name:['Temperos','Spices'],hue:350,it:[['🧂','Sal','Salt'],['🧄','Alho','Garlic'],['🧅','Cebola','Onion'],['🌶️','Pimenta-malagueta','Malagueta pepper'],['🫑','Pimentão','Bell pepper'],['🫒','Azeite de dendê','Dendê oil'],['🍯','Mel','Honey'],['🥫','Molho','Sauce']]},
+ be:{name:['Bebidas','Drinks'],hue:180,it:[['💧','Água','Water'],['🥥','Água de coco','Coconut water'],['🧃','Suco','Juice'],['☕','Café','Coffee'],['🍵','Caldo de cana','Caldo de cana'],['🧉','Chimarrão','Chimarrão'],['🥤','Guaraná','Guaraná'],['🍹','Cajuína','Cajuína']]},
+ ar:{name:['Artesanato','Crafts'],hue:275,it:[['🧵','Linha','Thread'],['🧶','Novelo','Ball of yarn'],['🎗️','Fita do Bonfim','Fita do Bonfim'],['🎀','Renda','Bobbin lace'],['👒','Chapéu de palha','Straw hat'],['🧺','Cesto de palha','Straw basket'],['🏺','Boneco de barro','Clay figurine'],['🎸','Viola','Viola caipira']]},
+ gr:{name:['Armazém','Pantry'],hue:45,it:[['🥜','Amendoim','Peanuts'],['🌰','Castanha-do-pará','Brazil nuts'],['🍿','Pipoca','Popcorn'],['🍚','Arroz','Rice'],['🥣','Farinha de mandioca','Cassava flour'],['🫘','Feijão','Beans'],['🥮','Cuscuz','Cuscuz'],['🍛','Baião de dois','Baião de dois']]},
+ do:{name:['Doces','Sweets'],hue:320,it:[['🍬','Rapadura','Rapadura'],['🍭','Paçoca','Paçoca'],['🍫','Chocolate','Chocolate'],['🍪','Cocada','Cocada'],['🧁','Quindim','Quindim'],['🍩','Sonho','Sonho'],['🍡','Goiabada','Goiabada'],['🍥','Bolo de rolo','Bolo de rolo']]},
+ ca:{name:['Carnes','Meats'],hue:5,it:[['🥚','Ovo','Egg'],['🍗','Frango','Chicken'],['🥓','Torresmo','Torresmo'],['🌭','Linguiça','Linguiça'],['🥩','Carne de sol','Carne de sol'],['🍖','Costela','Ribs'],['🍢','Espetinho','Espetinho'],['🥘','Feijoada','Feijoada']]},
+ la:{name:['Laticínios','Dairy'],hue:215,it:[['🥛','Leite','Milk'],['🧈','Manteiga','Butter'],['🧀','Queijo minas','Queijo minas'],['🍶','Requeijão','Requeijão'],['🧇','Queijo coalho','Queijo coalho'],['🍨','Doce de leite','Doce de leite'],['🍰','Romeu e Julieta','Romeu e Julieta'],['🍮','Pudim','Pudim']]},
+ ln:{name:['Lanches','Snacks'],hue:15,it:[['🥟','Pastel','Pastel'],['🫓','Tapioca','Tapioca'],['🥪','Sanduíche de mortadela','Mortadella sandwich'],['🍤','Coxinha','Coxinha'],['🧆','Acarajé','Acarajé'],['🍔','X-tudo','X-tudo'],['🌮','Tapioca recheada','Filled tapioca'],['🍱','Marmita','Marmita']]},
+ pa:{name:['Padaria','Bakery'],hue:35,it:[['🌾','Trigo','Wheat'],['🍞','Pão de forma','Sandwich loaf'],['🥖','Pão francês','Pão francês'],['🥯','Pão de queijo','Pão de queijo'],['🥨','Rosca','Sweet bread ring'],['🥞','Bolo de fubá','Bolo de fubá'],['🥧','Empadão','Empadão'],['🎂','Bolo de festa','Party cake']]},
+ fl:{name:['Flores','Flowers'],hue:300,it:[['🌱','Muda','Seedling'],['🌼','Margarida','Daisy'],['🌷','Orquídea','Orchid'],['🌻','Girassol','Sunflower'],['🌹','Bromélia','Bromeliad'],['🌺','Hibisco','Hibiscus'],['🌳','Ipê-amarelo','Ipê-amarelo'],['💐','Buquê tropical','Tropical bouquet']]}
 };
+// Explicações curtas (só na versão em inglês) dos nomes mantidos em português. Chave: linha + nível.
+const GLOSS={fr6:'cashew fruit: the juicy part that grows above the nut',fr7:'grape-like berry that grows right on the tree trunk',fr8:'frozen Amazonian berry purée, eaten with a spoon',
+ ve1:'bundle of parsley and green onion, in almost every Brazilian dish',ve6:'cassava root, a staple all over Brazil',
+ pe5:'mullet, the winter catch of southern Brazil',pe7:'giant Amazon river fish',pe8:'Brazilian fish stew, often with coconut milk and dendê oil',
+ te4:'small, fiery Brazilian chili',te6:'red palm oil, the soul of Bahian cooking',
+ be5:'fresh-pressed sugarcane juice',be6:'hot yerba mate sipped from a gourd',be7:'soda made from an Amazonian berry',be8:'clear, sweet cashew-fruit drink from the Northeast',
+ ar3:'wish ribbon from Salvador: tie it on and make three wishes',ar8:'ten-string Brazilian country guitar',
+ gr7:'steamed cornmeal cake from the Northeast',gr8:'rice and beans cooked together with cheese, from Ceará',
+ do1:'block of unrefined cane sugar',do2:'crumbly peanut candy',do4:'chewy coconut candy',do5:'glossy coconut and egg-yolk custard',do6:'cream-filled doughnut; the name means “dream”',do7:'thick guava paste',do8:'thin rolled cake with guava filling, from Pernambuco',
+ ca3:'crispy pork crackling',ca4:'Brazilian pork sausage',ca5:'salted, sun-cured beef',ca7:'street-food skewer grilled on charcoal',ca8:'black bean and pork stew, a national favorite',
+ la3:'mild fresh cheese from Minas Gerais',la4:'creamy spreadable cheese',la5:'firm cheese grilled on a stick',la6:'slow-cooked milk caramel',la7:'cheese with guava paste, a classic pairing',la8:'Brazilian caramel flan made with condensed milk',
+ ln1:'crispy fried pastry, the classic street-market snack',ln2:'crepe made from cassava starch',ln4:'teardrop-shaped chicken croquette',ln5:'black-eyed pea fritter fried in dendê oil',ln6:'“cheese-everything”: a fully loaded burger',ln8:'home-style packed lunch',
+ pa3:'crusty bread roll eaten every morning in Brazil',pa4:'chewy little cheese bread',pa6:'cornmeal cake',pa7:'savory pot pie',fl7:'tree that bursts into yellow bloom'};
+const REG={Norte:'North',Nordeste:'Northeast','Centro-Oeste':'Center-West',Sudeste:'Southeast',Sul:'South'};
 // Rota das Feiras: 12 paradas por volta, voltas infinitas. Textos curtos, a validar com pesquisa local.
 const FEIRAS=[
- {n:'Ver-o-Peso',c:'Belém',uf:'PA',reg:'Norte',ic:'🛶',lon:-48.5,lat:-1.45,lines:['fr','pe','te','be'],txt:'Feira à beira da baía do Guajará.'},
- {n:'Mercado Adolpho Lisboa',c:'Manaus',uf:'AM',reg:'Norte',ic:'🌳',lon:-60,lat:-3.1,lines:['pe','fr','ar','gr'],txt:'Mercado às margens do rio Negro.'},
- {n:'Feira de São Joaquim',c:'Salvador',uf:'BA',reg:'Nordeste',ic:'🥁',lon:-38.5,lat:-13,lines:['te','pe','gr','do'],txt:'Feira popular junto à Baía de Todos-os-Santos.'},
- {n:'Mercado de São José',c:'Recife',uf:'PE',reg:'Nordeste',ic:'🎭',lon:-34.9,lat:-8.05,lines:['ca','gr','la','ar'],txt:'Mercado de ferro do século XIX.'},
- {n:'Mercado Central',c:'Fortaleza',uf:'CE',reg:'Nordeste',ic:'⛵',lon:-38.5,lat:-3.7,lines:['fr','ar','do','pe'],txt:'Conhecido pelo artesanato.'},
- {n:'Feira Central',c:'Campo Grande',uf:'MS',reg:'Centro-Oeste',ic:'🐆',lon:-54.6,lat:-20.45,lines:['ln','be','ca','ve'],txt:'Famosa pelo sobá.'},
- {n:'Mercadão',c:'São Paulo',uf:'SP',reg:'Sudeste',ic:'🏙️',lon:-46.6,lat:-23.55,lines:['ln','fr','la','pa'],txt:'Lembrado pelo sanduíche de mortadela e pelos vitrais.'},
- {n:'Mercado Central',c:'Belo Horizonte',uf:'MG',reg:'Sudeste',ic:'⛰️',lon:-43.9,lat:-19.9,lines:['la','do','pa','be'],txt:'Queijos, doces e café de Minas.'},
- {n:'Feira de São Cristóvão',c:'Rio de Janeiro',uf:'RJ',reg:'Sudeste',ic:'🪗',lon:-43.2,lat:-22.9,lines:['gr','ca','ln','te'],txt:'Tradições nordestinas no Rio.'},
- {n:'Mercado Público',c:'Porto Alegre',uf:'RS',reg:'Sul',ic:'🧉',lon:-51.2,lat:-30,lines:['be','ca','la','ve'],txt:'No centro histórico da cidade.'},
- {n:'Mercado Público',c:'Florianópolis',uf:'SC',reg:'Sul',ic:'🏝️',lon:-48.55,lat:-27.6,lines:['pe','ve','pa','fl'],txt:'Frutos do mar perto do cais.'},
- {n:'Mercado Municipal',c:'Curitiba',uf:'PR',reg:'Sul',ic:'🌲',lon:-49.3,lat:-25.4,lines:['gr','pa','fl','do'],txt:'Bancas com produtos de muitas origens.'}
+ {n:'Ver-o-Peso',c:'Belém',uf:'PA',reg:'Norte',ic:'🛶',lon:-48.5,lat:-1.45,lines:['fr','pe','te','be'],txt:['Feira à beira da baía do Guajará.','Market on the shore of Guajará Bay.']},
+ {n:'Mercado Adolpho Lisboa',c:'Manaus',uf:'AM',reg:'Norte',ic:'🌳',lon:-60,lat:-3.1,lines:['pe','fr','ar','gr'],txt:['Mercado às margens do rio Negro.','Market hall on the banks of the Rio Negro.']},
+ {n:'Feira de São Joaquim',c:'Salvador',uf:'BA',reg:'Nordeste',ic:'🥁',lon:-38.5,lat:-13,lines:['te','pe','gr','do'],txt:['Feira popular junto à Baía de Todos-os-Santos.','Bustling market by the Bay of All Saints.']},
+ {n:'Mercado de São José',c:'Recife',uf:'PE',reg:'Nordeste',ic:'🎭',lon:-34.9,lat:-8.05,lines:['ca','gr','la','ar'],txt:['Mercado de ferro do século XIX.','A 19th-century iron market hall.']},
+ {n:'Mercado Central',c:'Fortaleza',uf:'CE',reg:'Nordeste',ic:'⛵',lon:-38.5,lat:-3.7,lines:['fr','ar','do','pe'],txt:['Conhecido pelo artesanato.','Known for its handicrafts.']},
+ {n:'Feira Central',c:'Campo Grande',uf:'MS',reg:'Centro-Oeste',ic:'🐆',lon:-54.6,lat:-20.45,lines:['ln','be','ca','ve'],txt:['Famosa pelo sobá.','Famous for sobá noodle soup.']},
+ {n:'Mercadão',c:'São Paulo',uf:'SP',reg:'Sudeste',ic:'🏙️',lon:-46.6,lat:-23.55,lines:['ln','fr','la','pa'],txt:['Lembrado pelo sanduíche de mortadela e pelos vitrais.','Loved for its mortadella sandwich and stained-glass windows.']},
+ {n:'Mercado Central',c:'Belo Horizonte',uf:'MG',reg:'Sudeste',ic:'⛰️',lon:-43.9,lat:-19.9,lines:['la','do','pa','be'],txt:['Queijos, doces e café de Minas.','Cheeses, sweets and coffee from Minas Gerais.']},
+ {n:'Feira de São Cristóvão',c:'Rio de Janeiro',uf:'RJ',reg:'Sudeste',ic:'🪗',lon:-43.2,lat:-22.9,lines:['gr','ca','ln','te'],txt:['Tradições nordestinas no Rio.','Northeastern Brazilian traditions in Rio.']},
+ {n:'Mercado Público',c:'Porto Alegre',uf:'RS',reg:'Sul',ic:'🧉',lon:-51.2,lat:-30,lines:['be','ca','la','ve'],txt:['No centro histórico da cidade.','In the heart of the historic center.']},
+ {n:'Mercado Público',c:'Florianópolis',uf:'SC',reg:'Sul',ic:'🏝️',lon:-48.55,lat:-27.6,lines:['pe','ve','pa','fl'],txt:['Frutos do mar perto do cais.','Fresh seafood near the waterfront.']},
+ {n:'Mercado Municipal',c:'Curitiba',uf:'PR',reg:'Sul',ic:'🌲',lon:-49.3,lat:-25.4,lines:['gr','pa','fl','do'],txt:['Bancas com produtos de muitas origens.','Stalls with goods from many origins.']}
 ];
 // Turma da Feira: at = índice da feira (-1 = viaja com você). fav = linha preferida.
 const CAST=[
- {id:'ze',f:'👨‍🌾',n:'Seu Zé',role:'feirante e seu guia',q:'Freguês bem atendido sempre volta.',fav:'fr',at:-1},
- {id:'bia',f:'👧',n:'Bia',role:'aprendiz da banca',q:'Posso ajudar a arrumar as caixas?',fav:'do',at:-1},
- {id:'mingau',f:'🐈',n:'Mingau',role:'gato da quitanda',q:'Miau. (Ele quer peixe.)',fav:'pe',at:-1},
- {id:'tonho',f:'🚚',n:'Tonho',role:'caminhoneiro',q:'Tô com pressa, a estrada é longa!',fav:'ca',at:-1},
- {id:'naza',f:'👵',n:'Dona Nazaré',role:'tacacazeira',q:'Égua, que fruta bonita!',fav:'pe',at:0},
- {id:'raimundo',f:'🧔',n:'Seu Raimundo',role:'pescador',q:'O rio deu peixe bom hoje.',fav:'pe',at:0},
- {id:'iara',f:'👩‍🦱',n:'Iara',role:'artesã',q:'Cada cesto leva um dia inteiro.',fav:'ar',at:1},
- {id:'chico',f:'🧑‍🌾',n:'Seu Chico',role:'ribeirinho',q:'Vim de barco, três horas de rio.',fav:'gr',at:1},
- {id:'dada',f:'👩🏾‍🍳',n:'Dona Dadá',role:'baiana de tabuleiro',q:'Tempero é o segredo, meu bem.',fav:'te',at:2},
- {id:'jorginho',f:'🧑🏾‍🎤',n:'Jorginho',role:'percussionista',q:'Depois da feira tem ensaio!',fav:'do',at:2},
- {id:'biu',f:'👨🏽‍🎨',n:'Mestre Biu',role:'ceramista',q:'Barro bom canta quando seca.',fav:'ar',at:3},
- {id:'flor',f:'👩🏽',n:'Maria Flor',role:'rendeira',q:'Oxente, que capricho!',fav:'la',at:3},
- {id:'cicero',f:'👨🏽‍🌾',n:'Seu Cícero',role:'vendedor de frutas',q:'Fruta doce igual a essa, só aqui.',fav:'fr',at:4},
- {id:'rosinha',f:'👧🏽',n:'Rosinha',role:'neta da rendeira',q:'Vovó mandou buscar doce.',fav:'do',at:4},
- {id:'keiko',f:'👩🏻‍🍳',n:'Dona Keiko',role:'cozinheira de sobá',q:'O caldo ferve desde cedo.',fav:'ln',at:5},
- {id:'antenor',f:'🤠',n:'Seu Antenor',role:'peão pantaneiro',q:'Um tereré e a prosa rende.',fav:'be',at:5},
- {id:'giuseppe',f:'👨🏻‍🍳',n:'Seu Giuseppe',role:'dono da lanchonete',q:'Capricha no recheio, hein!',fav:'ln',at:6},
- {id:'paula',f:'👩🏻‍💼',n:'Paula',role:'sempre apressada',q:'Tenho dez minutos de almoço.',fav:'pa',at:6},
- {id:'geralda',f:'👵🏽',n:'Dona Geralda',role:'quitandeira mineira',q:'Uai, senta e toma um café.',fav:'la',at:7},
- {id:'tiao',f:'🧑🏽‍🍳',n:'Tiãozinho',role:'queijeiro',q:'Queijo bom é queijo curado.',fav:'do',at:7},
- {id:'jacinto',f:'👨🏾‍🦳',n:'Seu Jacinto',role:'sanfoneiro',q:'Hoje tem forró até tarde.',fav:'gr',at:8},
- {id:'dandara',f:'👩🏾',n:'Dandara',role:'cozinheira',q:'Minha panela não para.',fav:'ca',at:8},
- {id:'gaudencio',f:'🧔🏻',n:'Seu Gaudêncio',role:'assador',q:'Bah, o fogo já está no ponto.',fav:'ca',at:9},
- {id:'livia',f:'👩🏼',n:'Lívia',role:'dona da cuia',q:'Aceita um mate, tchê?',fav:'be',at:9},
- {id:'dico',f:'🧑🏼‍🦰',n:'Dico',role:'pescador',q:'O mar hoje tava bom demais.',fav:'pe',at:10},
- {id:'zulma',f:'👩🏼‍🦳',n:'Dona Zulma',role:'florista',q:'Flor fresca alegra a casa.',fav:'fl',at:10},
- {id:'halina',f:'👩🏼‍🍳',n:'Dona Halina',role:'cozinheira',q:'Receita da minha avó.',fav:'pa',at:11},
- {id:'estanislau',f:'👨🏻‍🦳',n:'Seu Estanislau',role:'vendedor do armazém',q:'Leva um pouco mais, vai esfriar.',fav:'gr',at:11}
+ {id:'ze',f:'👨‍🌾',n:'Seu Zé',role:['feirante e seu guia','market vendor and your guide'],q:['Freguês bem atendido sempre volta.','A happy customer always comes back.'],fav:'fr',at:-1},
+ {id:'bia',f:'👧',n:'Bia',role:['aprendiz da banca','stall apprentice'],q:['Posso ajudar a arrumar as caixas?','Can I help stack the crates?'],fav:'do',at:-1},
+ {id:'mingau',f:'🐈',n:'Mingau',role:['gato da quitanda','the shop cat'],q:['Miau. (Ele quer peixe.)','Miau. (He wants fish.)'],fav:'pe',at:-1},
+ {id:'tonho',f:'🚚',n:'Tonho',role:['caminhoneiro','truck driver'],q:['Tô com pressa, a estrada é longa!','In a hurry, it’s a long road!'],fav:'ca',at:-1},
+ {id:'naza',f:'👵',n:'Dona Nazaré',role:['tacacazeira','tacacá soup cook'],q:['Égua, que fruta bonita!','Égua, what lovely fruit!'],fav:'pe',at:0},
+ {id:'raimundo',f:'🧔',n:'Seu Raimundo',role:['pescador','fisherman'],q:['O rio deu peixe bom hoje.','The river was generous today.'],fav:'pe',at:0},
+ {id:'iara',f:'👩‍🦱',n:'Iara',role:['artesã','artisan'],q:['Cada cesto leva um dia inteiro.','Each basket takes a whole day.'],fav:'ar',at:1},
+ {id:'chico',f:'🧑‍🌾',n:'Seu Chico',role:['ribeirinho','riverside dweller'],q:['Vim de barco, três horas de rio.','Came by boat, three hours on the river.'],fav:'gr',at:1},
+ {id:'dada',f:'👩🏾‍🍳',n:'Dona Dadá',role:['baiana de tabuleiro','baiana street-food cook'],q:['Tempero é o segredo, meu bem.','Seasoning is the secret, meu bem.'],fav:'te',at:2},
+ {id:'jorginho',f:'🧑🏾‍🎤',n:'Jorginho',role:['percussionista','percussionist'],q:['Depois da feira tem ensaio!','Band practice after the market!'],fav:'do',at:2},
+ {id:'biu',f:'👨🏽‍🎨',n:'Mestre Biu',role:['ceramista','master potter'],q:['Barro bom canta quando seca.','Good clay sings as it dries.'],fav:'ar',at:3},
+ {id:'flor',f:'👩🏽',n:'Maria Flor',role:['rendeira','lacemaker'],q:['Oxente, que capricho!','Oxente, such fine work!'],fav:'la',at:3},
+ {id:'cicero',f:'👨🏽‍🌾',n:'Seu Cícero',role:['vendedor de frutas','fruit seller'],q:['Fruta doce igual a essa, só aqui.','Fruit this sweet? Only here.'],fav:'fr',at:4},
+ {id:'rosinha',f:'👧🏽',n:'Rosinha',role:['neta da rendeira','the lacemaker’s granddaughter'],q:['Vovó mandou buscar doce.','Grandma sent me for sweets.'],fav:'do',at:4},
+ {id:'keiko',f:'👩🏻‍🍳',n:'Dona Keiko',role:['cozinheira de sobá','sobá noodle cook'],q:['O caldo ferve desde cedo.','The broth’s been simmering since dawn.'],fav:'ln',at:5},
+ {id:'antenor',f:'🤠',n:'Seu Antenor',role:['peão pantaneiro','Pantanal cowboy'],q:['Um tereré e a prosa rende.','Share a tereré and the stories flow.'],fav:'be',at:5},
+ {id:'giuseppe',f:'👨🏻‍🍳',n:'Seu Giuseppe',role:['dono da lanchonete','snack bar owner'],q:['Capricha no recheio, hein!','Go big on the filling, eh!'],fav:'ln',at:6},
+ {id:'paula',f:'👩🏻‍💼',n:'Paula',role:['sempre apressada','always in a rush'],q:['Tenho dez minutos de almoço.','I’ve got ten minutes for lunch.'],fav:'pa',at:6},
+ {id:'geralda',f:'👵🏽',n:'Dona Geralda',role:['quitandeira mineira','quitandeira from Minas'],q:['Uai, senta e toma um café.','Uai, sit down and have a coffee.'],fav:'la',at:7},
+ {id:'tiao',f:'🧑🏽‍🍳',n:'Tiãozinho',role:['queijeiro','cheesemaker'],q:['Queijo bom é queijo curado.','Good cheese is aged cheese.'],fav:'do',at:7},
+ {id:'jacinto',f:'👨🏾‍🦳',n:'Seu Jacinto',role:['sanfoneiro','accordion player'],q:['Hoje tem forró até tarde.','Forró tonight until late!'],fav:'gr',at:8},
+ {id:'dandara',f:'👩🏾',n:'Dandara',role:['cozinheira','cook'],q:['Minha panela não para.','My pot never rests.'],fav:'ca',at:8},
+ {id:'gaudencio',f:'🧔🏻',n:'Seu Gaudêncio',role:['assador','churrasco grill master'],q:['Bah, o fogo já está no ponto.','Bah, the fire is just right.'],fav:'ca',at:9},
+ {id:'livia',f:'👩🏼',n:'Lívia',role:['dona da cuia','keeper of the mate gourd'],q:['Aceita um mate, tchê?','Fancy a mate, tchê?'],fav:'be',at:9},
+ {id:'dico',f:'🧑🏼‍🦰',n:'Dico',role:['pescador','fisherman'],q:['O mar hoje tava bom demais.','The sea was wonderful today.'],fav:'pe',at:10},
+ {id:'zulma',f:'👩🏼‍🦳',n:'Dona Zulma',role:['florista','florist'],q:['Flor fresca alegra a casa.','Fresh flowers brighten a home.'],fav:'fl',at:10},
+ {id:'halina',f:'👩🏼‍🍳',n:'Dona Halina',role:['cozinheira','cook'],q:['Receita da minha avó.','My grandmother’s recipe.'],fav:'pa',at:11},
+ {id:'estanislau',f:'👨🏻‍🦳',n:'Seu Estanislau',role:['vendedor do armazém','general store keeper'],q:['Leva um pouco mais, vai esfriar.','Take a little extra, it’s getting cold.'],fav:'gr',at:11}
 ];
 const RECIPES=[
- {name:'Laranjada',it:[['fr',2],['be',1]],note:'Suco de laranja com água.'},
- {name:'Suco de abacaxi',it:[['fr',5],['be',1]],note:'Abacaxi batido com água.'},
- {name:'Peixe com limão',it:[['pe',3],['fr',1]],note:'Peixe temperado com limão.'},
- {name:'Camarão no alho',it:[['pe',1],['te',2]],note:'Camarão salteado com alho.'},
- {name:'Moqueca caprichada',it:[['pe',3],['te',5]],note:'Peixe cozido com pimentão.'},
- {name:'Peixe com arroz',it:[['pe',3],['gr',4]],note:'Prato simples de beira de rio.'},
- {name:'Macarrão ao molho',it:[['gr',6],['te',8]],note:'Macarrão com molho de tomate.'},
- {name:'Pipoca com chocolate',it:[['gr',3],['do',3]],note:'Pipoca coberta de chocolate.'},
- {name:'Arroz-doce',it:[['gr',4],['la',1]],note:'Arroz cozido no leite.'},
- {name:'Arroz com ovo',it:[['gr',4],['ca',1]],note:'O socorro de todo dia.'},
- {name:'Carne com queijo',it:[['ca',5],['la',3]],note:'Carne com queijo derretido.'},
- {name:'Doce de banana',it:[['fr',3],['do',1]],note:'Banana cozida com açúcar.'},
- {name:'Pastel com suco',it:[['ln',1],['be',3]],note:'A dupla clássica da feira.'},
- {name:'Omelete de tomate',it:[['ca',1],['ve',4]],note:'Ovos batidos com tomate.'},
- {name:'Vitamina de banana',it:[['fr',3],['la',1]],note:'Banana batida com leite.'},
- {name:'Misto-quente',it:[['ln',3],['la',3]],note:'Sanduíche com queijo derretido.'},
- {name:'Pão com manteiga',it:[['pa',3],['la',2]],note:'Pão francês na chapa.'},
- {name:'Queijo-quente',it:[['pa',2],['la',3]],note:'Pão de forma com queijo.'},
- {name:'Brigadeiro',it:[['do',3],['la',2]],note:'Chocolate e manteiga na panela.'},
- {name:'Pingado',it:[['be',4],['la',1]],note:'Café com um pouco de leite.'},
- {name:'Frango ao alho',it:[['ca',2],['te',2]],note:'Frango dourado com alho.'},
- {name:'Curau de milho',it:[['ve',5],['la',1]],note:'Creme de milho-verde com leite.'},
- {name:'Peixe com legumes',it:[['pe',3],['ve',3]],note:'Peixe assado com cenoura.'},
- {name:'Bolo de cenoura',it:[['ve',3],['pa',1]],note:'Massa de cenoura com farinha de trigo.'},
- {name:'Pão doce',it:[['pa',2],['do',1]],note:'Pão macio com cobertura.'}
+ {name:['Laranjada','Laranjada'],it:[['fr',2],['be',1]],note:['Suco de laranja com água.','Orange juice cut with water.']},
+ {name:['Suco de abacaxi','Pineapple juice'],it:[['fr',5],['be',1]],note:['Abacaxi batido com água.','Pineapple blended with water.']},
+ {name:['Peixe com limão','Fish with lime'],it:[['pe',3],['fr',1]],note:['Peixe temperado com limão.','Fish seasoned with lime.']},
+ {name:['Camarão no alho','Garlic shrimp'],it:[['pe',1],['te',2]],note:['Camarão salteado com alho.','Shrimp sautéed with garlic.']},
+ {name:['Moqueca caprichada','Deluxe moqueca'],it:[['pe',3],['te',5]],note:['Peixe cozido com pimentão.','Fish stewed with bell peppers.']},
+ {name:['Peixe com arroz','Fish and rice'],it:[['pe',3],['gr',4]],note:['Prato simples de beira de rio.','A simple riverside meal.']},
+ {name:['Feijão-tropeiro','Feijão-tropeiro'],it:[['gr',6],['ca',4]],note:['Feijão com linguiça e farinha.','Beans tossed with sausage and cassava flour.']},
+ {name:['Pipoca com chocolate','Chocolate popcorn'],it:[['gr',3],['do',3]],note:['Pipoca coberta de chocolate.','Popcorn coated in chocolate.']},
+ {name:['Arroz-doce','Arroz-doce'],it:[['gr',4],['la',1]],note:['Arroz cozido no leite.','Rice pudding cooked in milk.']},
+ {name:['Arroz com ovo','Rice and egg'],it:[['gr',4],['ca',1]],note:['O socorro de todo dia.','The everyday go-to meal.']},
+ {name:['Carne de sol com queijo','Carne de sol with cheese'],it:[['ca',5],['la',3]],note:['Carne de sol com queijo derretido.','Sun-cured beef topped with melted cheese.']},
+ {name:['Doce de banana','Doce de banana'],it:[['fr',3],['do',1]],note:['Banana cozida com rapadura.','Banana slowly cooked with rapadura.']},
+ {name:['Pastel com suco','Pastel and juice'],it:[['ln',1],['be',3]],note:['A dupla clássica da feira.','The classic street-market pair.']},
+ {name:['Omelete de tomate','Tomato omelette'],it:[['ca',1],['ve',4]],note:['Ovos batidos com tomate.','Beaten eggs with tomato.']},
+ {name:['Vitamina de banana','Vitamina de banana'],it:[['fr',3],['la',1]],note:['Banana batida com leite.','Banana blended with milk.']},
+ {name:['Misto-quente','Misto-quente'],it:[['ln',3],['la',3]],note:['Sanduíche com queijo derretido.','Toasted sandwich with melted cheese.']},
+ {name:['Pão com manteiga','Bread and butter'],it:[['pa',3],['la',2]],note:['Pão francês na chapa.','Pão francês toasted on the griddle.']},
+ {name:['Queijo-quente','Grilled cheese'],it:[['pa',2],['la',3]],note:['Pão de forma com queijo.','Sandwich loaf with cheese.']},
+ {name:['Brigadeiro','Brigadeiro'],it:[['do',3],['la',2]],note:['Chocolate e manteiga na panela.','Chocolate and butter stirred in a pan.']},
+ {name:['Pingado','Pingado'],it:[['be',4],['la',1]],note:['Café com um pouco de leite.','Coffee with a splash of milk.']},
+ {name:['Frango ao alho','Garlic chicken'],it:[['ca',2],['te',2]],note:['Frango dourado com alho.','Chicken browned with garlic.']},
+ {name:['Curau de milho','Curau'],it:[['ve',5],['la',1]],note:['Creme de milho-verde com leite.','Sweet corn custard made with milk.']},
+ {name:['Peixe com legumes','Fish with vegetables'],it:[['pe',3],['ve',3]],note:['Peixe assado com cenoura.','Fish roasted with carrots.']},
+ {name:['Bolo de cenoura','Bolo de cenoura'],it:[['ve',3],['pa',1]],note:['Massa de cenoura com farinha de trigo.','Brazilian carrot cake.']},
+ {name:['Pão doce','Sweet bread'],it:[['pa',2],['do',1]],note:['Pão macio adoçado com rapadura.','Soft bread sweetened with rapadura.']}
 ];
-const DECOR=[['⛱️','Toldo listrado',150],['🪴','Vasos de ervas',250],['🪑','Banco de madeira',400],['📋','Lousa de preços',600],['⚖️','Balança antiga',900],['✨','Luzinhas',1300],['📻','Rádio de pilha',1800],['🚲','Bicicleta de entrega',2500],['🛒','Carrinho de feira',3400],['🕰️','Relógio de parede',4500],['🎊','Bandeirinhas',6000],['🐈','Caminha do Mingau',8000]];
+const DECOR=[['⛱️',['Toldo listrado','Striped awning'],150],['🪴',['Vasos de ervas','Herb pots'],250],['🪑',['Banco de madeira','Wooden bench'],400],['📋',['Lousa de preços','Price chalkboard'],600],['⚖️',['Balança antiga','Vintage scale'],900],['✨',['Luzinhas','String lights'],1300],['📻',['Rádio de pilha','Transistor radio'],1800],['🚲',['Bicicleta de entrega','Delivery bike'],2500],['🛒',['Carrinho de feira','Market trolley'],3400],['🕰️',['Relógio de parede','Wall clock'],4500],['🎊',['Bandeirinhas','Bandeirinhas (festa junina flags)'],6000],['🐈',['Caminha do Mingau','Mingau’s cat bed'],8000]];
 const EXPS=[{cols:6,rows:8,cost:300,lvl:5},{cols:7,rows:8,cost:1500,lvl:12},{cols:7,rows:9,cost:6000,lvl:20}];
-const UPS={far:{n:'Cestos fartos',d:'Mais chance de colher itens já no nível 2 ou 3.',base:80,k:1.7,max:10},
-           cap:{n:'Cestos maiores',d:'+4 cargas em cada cesto.',base:60,k:1.6,max:10},
-           spd:{n:'Recarga rápida',d:'Cestos recarregam 8% mais rápido.',base:100,k:1.8,max:8}};
-const MTYPES={merges:['Faça {n} fusões',20],orders:['Atenda {n} pedidos',5],spawn:['Colha {n} itens dos cestos',30],big:['Crie {n} itens de nível 5 ou mais',2],triple:['Faça {n} fusões triplas',3],sell:['Venda {n} itens',6]};
-const TIPS=['Três iguais lado a lado sobem 2 níveis de uma vez.','Toque num pedido com borda verde para entregar direto.','Fusões em sequência rendem XP extra de combo.','Pedido com ⚡ paga em dobro se você for rápido.','Concluiu a feira? Viaje pelo mapa para conhecer gente nova.','Sem espaço? Venda um item ou use Organizar.'];
+const UPS={far:{n:['Cestos fartos','Bountiful baskets'],d:['Mais chance de colher itens já no nível 2 ou 3.','Better odds of picking items at level 2 or 3.'],base:80,k:1.7,max:10},
+           cap:{n:['Cestos maiores','Bigger baskets'],d:['+4 cargas em cada cesto.','+4 charges in every basket.'],base:60,k:1.6,max:10},
+           spd:{n:['Recarga rápida','Quick refill'],d:['Cestos recarregam 8% mais rápido.','Baskets refill 8% faster.'],base:100,k:1.8,max:8}};
+const MTYPES={merges:[['Faça {n} fusões','Make {n} merges'],20],orders:[['Atenda {n} pedidos','Fill {n} orders'],5],spawn:[['Colha {n} itens dos cestos','Pick {n} items from baskets'],30],big:[['Crie {n} itens de nível 5 ou mais','Make {n} items of level 5+'],2],triple:[['Faça {n} fusões triplas','Make {n} triple merges'],3],sell:[['Venda {n} itens','Sell {n} items'],6]};
+const TIPS=[['Arraste um item por cima de dois iguais que estejam lado a lado: os três se juntam e sobem 2 níveis.','Drag an item across two matching neighbors: all three merge and jump 2 levels.'],['Toque num pedido com borda verde para entregar direto.','Tap a green-bordered order to deliver it right away.'],['Fusões em sequência rendem XP extra de combo.','Quick merges in a row earn bonus combo XP.'],['Pedido com ⚡ paga em dobro se você for rápido.','⚡ orders pay double if you’re quick.'],['Concluiu a feira? Viaje pelo mapa para conhecer gente nova.','Finished a market? Travel the map to meet new friends.'],['Sem espaço? Venda um item ou use Organizar.','Out of space? Sell an item or tap Sort.']];
+
+/* ===================== TEXTOS DA INTERFACE ===================== */
+const UI={
+ pt:{
+  docTitle:'Quitanda Zen', home:'Tela inicial', logo:'Quitanda<br>Zen', logoSub:'Feira Viva', logoSay:'',
+  lvlShort:n=>'Nv '+n, lvlTitle:n=>`Nível ${n}`, coinsN:c=>`${c} moedas`, and:' e ',
+  basketEmpty:'Cesto vazio. Ele recarrega em instantes.', boardFull:'Tabuleiro cheio. Junte, entregue ou venda um item.',
+  noMag:'Sem Junta-tudo. Ganhe subindo de nível, viajando e fazendo amizades.', noPair:'Nenhum par para juntar agora.',
+  magDone:n=>`Junta-tudo: ${n} ${n>1?'fusões':'fusão'}`, noRec:'Sem Recarga. Ganhe subindo de nível e nos presentes.', fullB:'Cestos cheios',
+  friendUp:(n,lv,co,m)=>`Amizade com ${n}: nível ${lv} · +${co} moedas${m?' e 🧲':''}`,
+  notOrdered:'Este cliente não pediu esse item.', rushDone:'Pedido relâmpago: recompensa em dobro', recipeFound:n=>`Receita descoberta: ${n} · +30 XP`,
+  fairDone:'Feira concluída', fairDoneP:(g,n)=>`Você atendeu ${g} clientes em ${n}.`, nextStop:(ic,n,c,uf)=>`Próxima parada: <b>${ic} ${n}</b>, ${c} (${uf}).`,
+  travelNow:'Viajar agora', stay:'Ficar mais um pouco',
+  encMin:L=>`A encomenda só aceita itens de nível ${L} ou mais.`, encDone:(x,co)=>`Encomenda entregue: +${x} XP, +${co} moedas e ⚡`,
+  encHint:(n,L)=>`A encomenda pede ${n} itens de nível ${L} ou mais. Escolha um item e toque aqui.`,
+  swapWait:w=>`Você pode trocar outro pedido em ${w} s.`, expanded:'Tabuleiro ampliado',
+  lapN:n=>'Volta '+n, stalls:'Bancas', willSell:(ls,v)=>`Itens de ${ls} serão vendidos por ${v} moedas`, arrivesFull:'O tabuleiro chega cheio de novidades',
+  hitRoad:'Pegar a estrada', notYet:'Ainda não', welcome:c=>`Bem-vindo a ${c}`, newLap:(n,p)=>`Volta ${n} pelo Brasil: +${p}% de XP e moedas`,
+  tripRew:v=>`+${v} moedas e 1 🧲 pela viagem.`, meet:'Quem você vai conhecer:', openStall:'Abrir a banca',
+  gift:(d,co,x)=>`Dia ${d} seguido: +${co} moedas${x?' e 2 🧲 + 2 ⚡':''}`,
+  uRush:'Pedidos relâmpago ⚡ (pagam em dobro)', uRec:'Caderno de Receitas', uDeco:'Decoração da quitanda (em Melhorias)',
+  uExp:i=>`${i}ª ampliação do tabuleiro (em Melhorias)`, uHarder:'Clientes passam a pedir itens de nível mais alto', uGift:'Presente: 🧲 Junta-tudo e ⚡ Recarga',
+  lvlP:co=>`+${co} moedas e cestos cheios.`, cont:'Continuar',
+  adTitle:'Anúncio simulado', adRew:'Aqui entraria um anúncio com recompensa.', adInt:'Aqui entraria um anúncio de tela cheia.', closeIn:s=>'Fechar em '+s, close:'Fechar',
+  goTravel:c=>`⭐ Feira concluída · viajar para ${c} ➜`, openMap:'Abrir o mapa', clients:(a,b)=>`${a}/${b} clientes`,
+  cellAria:(n,l)=>`${n} nível ${l}`, emptyCell:'Espaço vazio',
+  nav:{map:'Mapa',turma:'Turma',miss:'Missões',rec:'Receitas',up:'Melhorias',cfg:'Ajustes'},
+  orderAria:(w,its)=>`Pedido de ${w}: ${its}`, itemLv:(n,l)=>`${n} nível ${l}`, recipeTag:'Receita', enc:'Encomenda',
+  encAria:(n,L)=>`Encomenda: ${n} itens de nível ${L} ou mais`, levelPlus:L=>`nível ${L}+`,
+  itemInfo:(line,l,mx)=>`${line} nível ${l}${mx?' (máximo)':''}`, deliver:'Entregar', sellB:v=>`Vender +${v}`, swap:'Trocar pedido',
+  thanks:(w,xp,co)=>`${w} agradece: +${xp} XP e +${co} moedas`, double:'▶ Dobrar', help:'Junte itens iguais. Pedido com borda verde: toque para entregar.', sort:'Organizar',
+  bFull:'cheio', basketAria:n=>`Cesto de ${n}`, magAria:'Junta-tudo: funde todos os pares', magLbl:'junta', recAria:'Recarga: enche os cestos', recLbl:'recarga', adAria:'Assistir anúncio: mais cargas',
+  play:c=>c?'Continuar':'Jogar', giftBtn:(d,co)=>`🎁 Presente do dia ${d}: +${co} moedas`, decoAria:'Decoração',
+  homeLine:(l,s,p)=>`Nível ${l} · ⭐ ${s} feiras concluídas · ${'Volta '+p}`, ready:'pronto para viajar',
+  st:['Tempo de jogo','XP por minuto','Fusões','Itens colhidos','Pedidos atendidos','Feiras concluídas','Anúncios com recompensa','Anúncios de tela cheia'], waiting:'aguardando',
+  mapAria:'Mapa do Brasil com a Rota das Feiras',
+  T:{map:'Rota das Feiras',turma:'Turma da Feira',miss:'Missões',rec:'Caderno de Receitas',up:'Melhorias',cfg:'Ajustes'},
+  mapNote:(p,s,b)=>`Volta ${p} pelo Brasil · ⭐ ${s} feiras concluídas${b?` · bônus de +${b}% em XP e moedas`:''}. A rota recomeça ao fim de cada volta, sempre com um bônus maior.`, mapGloss:'',
+  goalN:g=>`meta: ${g} clientes`, served:(a,b)=>`${a}/${b} clientes atendidos`, travel:'Viajar',
+  turmaNote:'Cada pedido atendido rende ❤️. A cada nível de amizade você ganha moedas, e a cada dois níveis um 🧲 Junta-tudo. A amizade não tem limite.',
+  withYou:'viaja com você', likes:(e,n)=>`gosta de ${e} ${n}`, meetAt:(n,c)=>`Você encontra em ${n}, ${c}.`,
+  missNote:'Ao receber a recompensa, entra uma missão nova, um pouco maior. Elas não acabam.', worth:(co,xp)=>`vale ${co} moedas e ${xp} XP`, claim:'Receber',
+  encRow:k=>`📦 Encomenda nº ${k}`, encRowP:(g,n,L,xp,co)=>`${g}/${n} itens de nível ${L} ou mais · vale ${xp} XP, ${co} moedas e 1 ⚡`,
+  chest:'Baú diário', chestP:(c,co)=>`${c}/3 hoje · ${co} moedas e 1 🧲 por anúncio`, open:'▶ Abrir',
+  recLocked:'O Caderno de Receitas abre no nível 3. A partir daí, alguns clientes pedem dois ingredientes de bancas diferentes, e cada pedido atendido revela uma receita.',
+  recNote:(a,b)=>`${a} de ${b} descobertas. Cada feira tem as suas: atenda os pedidos marcados como Receita. Cada descoberta vale +30 XP e +30 moedas.`,
+  recHere:'Pode aparecer nesta feira', recOther:'De outra feira',
+  hBaskets:'Cestos', lvN:n=>`nível ${n}`, maxP:' (máximo)', costP:c=>` Custa ${c} moedas.`, upgrade:'Melhorar',
+  hBoard:'Tabuleiro', expandTo:(c,r)=>`Ampliar para ${c}×${r}`, boardNow:(c,r,co,l)=>`Hoje: ${c}×${r} · custa ${co} moedas${l?' · abre no nível '+l:''}`, buy:'Comprar', boardMax:'Tabuleiro no tamanho máximo.',
+  hDeco:'Decoração', decoNote:(lk,b)=>`${lk?'Abre no nível 6. ':''}Cada peça aparece na sua banca da tela inicial e dá +1% de XP. Bônus atual: +${b}%.`, onStall:'Na banca',
+  on:'Ligado', off:'Desligado', oSound:['Som','Toques suaves ao colher, juntar e entregar.'],
+  oNoAds:['Remover anúncios (simulado)','Simula a compra única: sem anúncios de tela cheia e +25% nas recompensas.'],
+  oTest:['Modo teste','Só para testadores: cestos recarregam 10 vezes mais rápido e os intervalos de anúncio encurtam.'],
+  lang:'Idioma', langP:'O jogo também está em inglês.', panel:'Painel do teste', panelNote:'Os anúncios são simulados. O progresso fica salvo só neste navegador.',
+  reset:'Recomeçar do zero', resetP:'Apaga todo o progresso.', resetB:'Recomeçar', resetQ:'Recomeçar do zero?', resetQP:'Todo o progresso desta quitanda será apagado.', resetYes:'Apagar e recomeçar', cancel:'Cancelar',
+  adCharge:g=>`+${g} cargas em cada cesto`, doubled:x=>`Recompensa dobrada: +${x} XP`, missDone:(co,x)=>`Missão cumprida: +${co} moedas e +${x} XP`,
+  pickFirst:'Escolha um item no tabuleiro primeiro.'
+ },
+ en:{
+  docTitle:'Quitanda: Merge Across Brazil', home:'Home', logo:'Quitanda', logoSub:'Merge across Brazil', logoSay:'<i>quitanda</i> (kee-TAHN-da): a little Brazilian produce shop',
+  lvlShort:n=>'Lv '+n, lvlTitle:n=>`Level ${n}`, coinsN:c=>`${c} coins`, and:' and ',
+  basketEmpty:'Basket empty. It refills in a moment.', boardFull:'Board full. Merge, deliver or sell an item.',
+  noMag:'No Merge-all left. Earn more by leveling up, traveling and making friends.', noPair:'No pairs to merge right now.',
+  magDone:n=>`Merge-all: ${n} merge${n>1?'s':''}`, noRec:'No Refills left. Earn more by leveling up and from gifts.', fullB:'Baskets full',
+  friendUp:(n,lv,co,m)=>`Friendship with ${n}: level ${lv} · +${co} coins${m?' and 🧲':''}`,
+  notOrdered:'This customer didn’t order that.', rushDone:'Rush order: double reward', recipeFound:n=>`Recipe discovered: ${n} · +30 XP`,
+  fairDone:'Market complete', fairDoneP:(g,n)=>`You served ${g} customers at ${n}.`, nextStop:(ic,n,c,uf)=>`Next stop: <b>${ic} ${n}</b>, ${c} (${uf}).`,
+  travelNow:'Travel now', stay:'Stay a little longer',
+  encMin:L=>`The bulk order only takes items of level ${L} or higher.`, encDone:(x,co)=>`Bulk order delivered: +${x} XP, +${co} coins and ⚡`,
+  encHint:(n,L)=>`The bulk order needs ${n} items of level ${L} or higher. Pick an item, then tap here.`,
+  swapWait:w=>`You can swap another order in ${w}s.`, expanded:'Board expanded',
+  lapN:n=>'Lap '+n, stalls:'Stalls', willSell:(ls,v)=>`${ls} items will be sold for ${v} coins`, arrivesFull:'Your board arrives full of new goods',
+  hitRoad:'Hit the road', notYet:'Not yet', welcome:c=>`Welcome to ${c}`, newLap:(n,p)=>`Lap ${n} around Brazil: +${p}% XP and coins`,
+  tripRew:v=>`+${v} coins and 1 🧲 for the trip.`, meet:'Who you’ll meet:', openStall:'Open the stall',
+  gift:(d,co,x)=>`Day ${d} streak: +${co} coins${x?' and 2 🧲 + 2 ⚡':''}`,
+  uRush:'⚡ Rush orders (pay double)', uRec:'Recipe Book', uDeco:'Shop decorations (in Upgrades)',
+  uExp:i=>`Board expansion #${i} (in Upgrades)`, uHarder:'Customers now order higher-level items', uGift:'Gift: 🧲 Merge-all and ⚡ Refill',
+  lvlP:co=>`+${co} coins and full baskets.`, cont:'Continue',
+  adTitle:'Simulated ad', adRew:'A rewarded ad would play here.', adInt:'A full-screen ad would play here.', closeIn:s=>'Close in '+s, close:'Close',
+  goTravel:c=>`⭐ Market complete · travel to ${c} ➜`, openMap:'Open the map', clients:(a,b)=>`${a}/${b} customers`,
+  cellAria:(n,l)=>`${n}, level ${l}`, emptyCell:'Empty space',
+  nav:{map:'Map',turma:'Friends',miss:'Missions',rec:'Recipes',up:'Upgrades',cfg:'Settings'},
+  orderAria:(w,its)=>`${w}’s order: ${its}`, itemLv:(n,l)=>`${n}, level ${l}`, recipeTag:'Recipe', enc:'Bulk order',
+  encAria:(n,L)=>`Bulk order: ${n} items of level ${L} or higher`, levelPlus:L=>`level ${L}+`,
+  itemInfo:(line,l,mx)=>`${line} level ${l}${mx?' (max)':''}`, deliver:'Deliver', sellB:v=>`Sell +${v}`, swap:'Swap order',
+  thanks:(w,xp,co)=>`${w} says obrigado: +${xp} XP and +${co} coins`, double:'▶ Double', help:'Merge matching items. Tap a green-bordered order to deliver.', sort:'Sort',
+  bFull:'full', basketAria:n=>`${n} basket`, magAria:'Merge-all: merges every pair', magLbl:'merge', recAria:'Refill: fills every basket', recLbl:'refill', adAria:'Watch an ad: more charges',
+  play:c=>c?'Continue':'Play', giftBtn:(d,co)=>`🎁 Day ${d} gift: +${co} coins`, decoAria:'Decorations',
+  homeLine:(l,s,p)=>`Level ${l} · ⭐ ${s} markets done · Lap ${p}`, ready:'ready to travel',
+  st:['Play time','XP per minute','Merges','Items picked','Orders filled','Markets completed','Rewarded ads','Full-screen ads'], waiting:'waiting',
+  mapAria:'Map of Brazil with the Market Trail',
+  T:{map:'Market Trail',turma:'Market Friends',miss:'Missions',rec:'Recipe Book',up:'Upgrades',cfg:'Settings'},
+  mapNote:(p,s,b)=>`Lap ${p} around Brazil · ⭐ ${s} markets done${b?` · +${b}% bonus on XP and coins`:''}. The trail starts over after each lap, always with a bigger bonus.`,
+  mapGloss:'In Portuguese, a <i>feira</i> is an open-air street market and a <i>mercado</i> is a covered market hall. <i>Mercadão</i> means “big market”.',
+  goalN:g=>`goal: ${g} customers`, served:(a,b)=>`${a}/${b} customers served`, travel:'Travel',
+  turmaNote:'Every order you fill earns ❤️. Each friendship level pays coins, and every two levels give a 🧲 Merge-all. Friendships never max out.',
+  withYou:'travels with you', likes:(e,n)=>`likes ${e} ${n}`, meetAt:(n,c)=>`You’ll meet them at ${n}, ${c}.`,
+  missNote:'Claim a reward and a new, slightly bigger mission takes its place. They never run out.', worth:(co,xp)=>`worth ${co} coins and ${xp} XP`, claim:'Claim',
+  encRow:k=>`📦 Bulk order #${k}`, encRowP:(g,n,L,xp,co)=>`${g}/${n} items of level ${L}+ · worth ${xp} XP, ${co} coins and 1 ⚡`,
+  chest:'Daily chest', chestP:(c,co)=>`${c}/3 today · ${co} coins and 1 🧲 per ad`, open:'▶ Open',
+  recLocked:'The Recipe Book opens at level 3. From then on, some customers ask for two ingredients from different stalls, and each one you serve reveals a Brazilian recipe.',
+  recNote:(a,b)=>`${a} of ${b} discovered. Each market has its own: fill the orders marked Recipe. Every discovery is worth +30 XP and +30 coins.`,
+  recHere:'May show up at this market', recOther:'From another market',
+  hBaskets:'Baskets', lvN:n=>`level ${n}`, maxP:' (max)', costP:c=>` Costs ${c} coins.`, upgrade:'Upgrade',
+  hBoard:'Board', expandTo:(c,r)=>`Expand to ${c}×${r}`, boardNow:(c,r,co,l)=>`Now: ${c}×${r} · costs ${co} coins${l?' · opens at level '+l:''}`, buy:'Buy', boardMax:'Your board is at full size.',
+  hDeco:'Decorations', decoNote:(lk,b)=>`${lk?'Opens at level 6. ':''}Each piece shows up on your stall on the home screen and adds +1% XP. Current bonus: +${b}%.`, onStall:'On display',
+  on:'On', off:'Off', oSound:['Sound','Soft chimes when you pick, merge and deliver.'],
+  oNoAds:['Remove ads (simulated)','Simulates the one-time purchase: no full-screen ads and +25% rewards.'],
+  oTest:['Test mode','Testers only: baskets refill 10 times faster and ad intervals are shorter.'],
+  lang:'Language', langP:'O jogo também está em português.', panel:'Test panel', panelNote:'Ads are simulated. Progress is saved only in this browser.',
+  reset:'Start over', resetP:'Erases all progress.', resetB:'Start over', resetQ:'Start over?', resetQP:'All progress at this quitanda will be erased.', resetYes:'Erase and start over', cancel:'Cancel',
+  adCharge:g=>`+${g} charges in every basket`, doubled:x=>`Reward doubled: +${x} XP`, missDone:(co,x)=>`Mission complete: +${co} coins and +${x} XP`,
+  pickFirst:'Pick an item on the board first.'
+ }
+};
 
 /* ===================== ESTADO ===================== */
-const $=id=>document.getElementById(id), fmt=n=>Math.round(n).toLocaleString('pt-BR');
+const $=id=>document.getElementById(id), fmt=n=>Math.round(n).toLocaleString(LANG==='en'?'en-US':'pt-BR');
 const dstr=t=>new Date(t).toLocaleDateString('sv'), today=()=>dstr(Date.now());
 const pick=a=>a[Math.floor(Math.random()*a.length)];
-const item=(l,n)=>LINES[l].it[n-1];
+const item=(l,n)=>{ const x=LINES[l].it[n-1]; return [x[0],LANG==='en'?x[2]:x[1]]; };
+const gloss=(l,n)=>LANG==='en'?GLOSS[l+n]:null;
+const lname=l=>tx(LINES[l].name);
 const lc=l=>`hsl(${LINES[l].hue} 62% 46%)`;
 const feira=s=>FEIRAS[s%FEIRAS.length], lap=s=>Math.floor(s/FEIRAS.length)+1;
+const reg=f=>LANG==='en'?REG[f.reg]:f.reg;
 const linesAt=s=>feira(s).lines.slice(0,s===0?2:s===1?3:4);
 const lines=()=>linesAt(S.stop);
 const castAt=s=>CAST.filter(c=>c.at<0||c.at===s%FEIRAS.length);
@@ -284,16 +438,15 @@ const upCost=k=>Math.round(UPS[k].base*Math.pow(UPS[k].k,S.up[k])/10)*10;
 const encLvl=()=>Math.min(7,4+Math.floor(S.enc.k/3));
 const needH=lv=>3+2*lv;
 let S, sel=null, selOrder=null, offer=null, drag=null, popAt=-1, noClick=false, sheetName=null, adTimer=null, toastTimer=null, audio=null;
-let homeOn=true, lastAct=Date.now(), combo=0, lastMerge=0, fxQ=[], modalQ=[], tip=pick(TIPS);
+let homeOn=true, lastAct=Date.now(), combo=0, lastMerge=0, fxQ=[], modalQ=[], tip=Math.floor(Math.random()*TIPS.length);
 
-function doMerge(b,cols,rows,from,to){
+const isAdj=(x,y,cols)=>{ const d=Math.abs(x-y); return d===cols||(d===1&&Math.floor(x/cols)===Math.floor(y/cols)); };
+function doMerge(b,cols,rows,from,to,via){
   const a=b[from],t=b[to];
   if(!a||!t||from===to||a.l!==t.l||a.n!==t.n||a.n>=MAX) return null;
   let n=a.n+1, third=-1;
-  if(a.n+2<=MAX){ const r=Math.floor(to/cols),c=to%cols;
-    for(const [dr,dc] of [[-1,0],[1,0],[0,-1],[0,1]]){ const rr=r+dr,cc=c+dc;
-      if(rr<0||cc<0||rr>=rows||cc>=cols) continue; const k=rr*cols+cc;
-      if(k!==from&&b[k]&&b[k].l===a.l&&b[k].n===a.n){third=k;break;} } }
+  // Fusão tripla só com intenção: via = item igual, vizinho do destino, por cima do qual o dedo passou.
+  if(via!=null&&via>=0&&via!==from&&via!==to&&a.n+2<=MAX&&b[via]&&b[via].l===a.l&&b[via].n===a.n&&isAdj(via,to,cols)) third=via;
   if(third>=0){b[third]=null;n=a.n+2;}
   b[from]=null; b[to]={l:a.l,n}; return {n,third};
 }
@@ -307,7 +460,7 @@ function fresh(coins){
   const now=Date.now(), s={v:2,level:1,xp:0,coins:coins||0,cols:6,rows:7,exp:0,board:Array(42).fill(null),baskets:{},orders:[],nextId:1,
     stop:0,served:0,goalSeen:false,day:today(),daily:{adCharge:0,adDouble:0,chest:0},streak:0,giftDay:'',
     recipes:[],decor:[],friends:{},missions:[null,null,null],missTier:0,enc:{k:0,got:0},boost:{mag:2,rec:1},up:{far:0,cap:0,spd:0},swapAt:0,
-    stats:{merges:0,items:0,orders:0,rew:0,inter:0,playMs:0,xp:0,first:now,lastInter:0},opts:{sound:true,noAds:false,test:false}};
+    stats:{merges:0,items:0,orders:0,rew:0,inter:0,playMs:0,xp:0,first:now,lastInter:0},opts:{sound:true,noAds:false,test:false,lang:LANG}};
   fillBoard(s); linesAt(0).forEach(k=>s.baskets[k]={c:BASE_CAP,t:now});
   for(let i=0;i<3;i++) s.missions[i]=newMission(s,i);
   return s;
@@ -341,12 +494,12 @@ function tickBaskets(){
 }
 function refill(n){ for(const k of lines()){ const b=S.baskets[k]; b.c=n==null?Math.max(b.c,cap()):Math.min(cap()+10,b.c+n); } }
 function checkDay(){ if(S.day!==today()){ S.day=today(); S.daily={adCharge:0,adDouble:0,chest:0}; } }
-function toast(t){ const el=$('toast'); el.textContent=t; el.hidden=false; clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.hidden=true,2400); }
+function toast(m){ const el=$('toast'); el.textContent=m; el.hidden=false; clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.hidden=true,2400); }
 function beep(f,d){ if(!S.opts.sound) return; try{ audio=audio||new (window.AudioContext||window.webkitAudioContext)(); const o=audio.createOscillator(),g=audio.createGain(), t0=audio.currentTime+(d||0);
   o.type='sine'; o.frequency.value=f; g.gain.setValueAtTime(.08,t0); g.gain.exponentialRampToValueAtTime(.001,t0+.25);
   o.connect(g); g.connect(audio.destination); o.start(t0); o.stop(t0+.26);}catch(e){} }
-function bump(t,n){ for(const m of S.missions) if(m.t===t) m.p+=n; }
-function fx(i,t){ fxQ.push([i,t]); }
+function bump(k,n){ for(const m of S.missions) if(m.t===k) m.p+=n; }
+function fx(i,m){ fxQ.push([i,m]); }
 
 function gain(xp,co){
   xp=Math.round(xp*(1+S.decor.length/100)*lapBonus()); co=Math.round(co*lapBonus()); S.xp+=xp; S.coins+=co; S.stats.xp+=xp;
@@ -356,24 +509,24 @@ function gain(xp,co){
 function levelUp(ups){
   const news=[]; let co=0;
   for(const n of ups){ co+=20+5*n;
-    if(n===2) news.push('Pedidos relâmpago ⚡ (pagam em dobro)');
-    if(n===3) news.push('Caderno de Receitas');
-    if(n===6) news.push('Decoração da quitanda (em Melhorias)');
-    EXPS.forEach((e,i)=>{ if(e.lvl===n) news.push(`${i+1}ª ampliação do tabuleiro (em Melhorias)`); });
-    if(n%6===0&&n<=30) news.push('Clientes passam a pedir itens de nível mais alto');
-    if(n%5===0){ S.boost.mag++; S.boost.rec++; news.push('Presente: 🧲 Junta-tudo e ⚡ Recarga'); }
+    if(n===2) news.push(t('uRush'));
+    if(n===3) news.push(t('uRec'));
+    if(n===6) news.push(t('uDeco'));
+    EXPS.forEach((e,i)=>{ if(e.lvl===n) news.push(t('uExp',i+1)); });
+    if(n%6===0&&n<=30) news.push(t('uHarder'));
+    if(n%5===0){ S.boost.mag++; S.boost.rec++; news.push(t('uGift')); }
   }
   S.coins+=co; refill(); beep(660); beep(880,.12); beep(1100,.24);
-  modal(`<div class="big">🎉</div><h1>Nível ${S.level}</h1><p>+${fmt(co)} moedas e cestos cheios.</p>${news.length?'<ul>'+news.map(x=>`<li>${x}</li>`).join('')+'</ul>':''}<button class="btn" data-act="lvlok">Continuar</button>`);
+  modal(`<div class="big">🎉</div><h1>${t('lvlTitle',S.level)}</h1><p>${t('lvlP',fmt(co))}</p>${news.length?'<ul>'+news.map(x=>`<li>${x}</li>`).join('')+'</ul>':''}<button class="btn" data-act="lvlok">${t('cont')}</button>`);
 }
 function modal(html){ if(!$('over').hidden){ modalQ.push(html); return; } $('card').innerHTML=html; $('over').hidden=false; const b=$('card').querySelector('button:not(:disabled)'); if(b)b.focus(); }
 function closeModal(){ $('over').hidden=true; clearInterval(adTimer); if(modalQ.length) modal(modalQ.shift()); }
 function showAd(kind,cb){
-  let t=kind==='rew'?4:3; if(kind==='rew')S.stats.rew++; else S.stats.inter++;
-  const draw=()=>{ $('card').innerHTML=`<h2>Anúncio simulado</h2><div class="adbox">Aqui entraria ${kind==='rew'?'um anúncio com recompensa':'um anúncio de tela cheia'}.</div><button class="btn" id="adclose" ${t>0?'disabled':''}>${t>0?'Fechar em '+t:'Fechar'}</button>`;
-    if(t<=0){ $('adclose').onclick=()=>{ closeModal(); if(cb)cb(); render(); }; $('adclose').focus(); } };
+  let s=kind==='rew'?4:3; if(kind==='rew')S.stats.rew++; else S.stats.inter++;
+  const draw=()=>{ $('card').innerHTML=`<h2>${t('adTitle')}</h2><div class="adbox">${t(kind==='rew'?'adRew':'adInt')}</div><button class="btn" id="adclose" ${s>0?'disabled':''}>${s>0?t('closeIn',s):t('close')}</button>`;
+    if(s<=0){ $('adclose').onclick=()=>{ closeModal(); if(cb)cb(); render(); }; $('adclose').focus(); } };
   $('over').hidden=false; draw(); clearInterval(adTimer);
-  adTimer=setInterval(()=>{ t--; draw(); if(t<=0)clearInterval(adTimer); },1000);
+  adTimer=setInterval(()=>{ s--; draw(); if(s<=0)clearInterval(adTimer); },1000);
 }
 function maybeInter(){
   const k=S.opts.test?.1:1, now=Date.now();
@@ -383,65 +536,65 @@ function maybeInter(){
 const bonus=()=>S.opts.noAds?1.25:1;
 
 function spawn(k){
-  tickBaskets(); const b=S.baskets[k]; if(!b||b.c<=0){ toast('Cesto vazio. Ele recarrega em instantes.'); return; }
+  tickBaskets(); const b=S.baskets[k]; if(!b||b.c<=0){ toast(t('basketEmpty')); return; }
   const empty=[]; S.board.forEach((x,i)=>{ if(!x)empty.push(i); });
-  if(!empty.length){ toast('Tabuleiro cheio. Junte, entregue ou venda um item.'); return; }
+  if(!empty.length){ toast(t('boardFull')); return; }
   if(b.c>=cap())b.t=Date.now(); b.c--; const f=S.up.far, r=Math.random(), n=r<Math.min(.2,.03*f)?3:r<Math.min(.6,.1+.06*f)?2:1;
   const i=pick(empty); S.board[i]={l:k,n}; popAt=i; S.stats.items++; bump('spawn',1); beep(520); render();
 }
-function merge(from,to,quiet){
-  const r=doMerge(S.board,S.cols,S.rows,from,to); if(!r) return false;
+function merge(from,to,quiet,via){
+  const r=doMerge(S.board,S.cols,S.rows,from,to,via); if(!r) return false;
   const now=Date.now(); combo=now-lastMerge<3500?combo+1:1; lastMerge=now;
   S.stats.merges++; bump('merges',1); if(r.third>=0) bump('triple',1); if(r.n>=5) bump('big',1);
   const x=gain(Math.ceil(r.n/2)+(r.third>=0?2:0)+Math.min(5,Math.floor(combo/4)),0);
-  popAt=to; fx(to,`+${x} XP${combo>=3?' · combo ×'+combo:''}${r.third>=0?' · tripla!':''}`);
+  popAt=to; fx(to,`+${x} XP${combo>=3?' · combo ×'+combo:''}${r.third>=0?(LANG==='en'?' · triple!':' · tripla!'):''}`);
   if(!quiet) beep(r.third>=0?780:600+Math.min(combo,10)*20); return true;
 }
-function drop(from,to){
-  if(from===to) return; const a=S.board[from], t=S.board[to];
-  if(!t){ S.board[to]=a; S.board[from]=null; }
-  else if(!merge(from,to)){ S.board[to]=a; S.board[from]=t; }
+function drop(from,to,via){
+  if(from===to) return; const a=S.board[from], b=S.board[to];
+  if(!b){ S.board[to]=a; S.board[from]=null; }
+  else if(!merge(from,to,false,via)){ S.board[to]=a; S.board[from]=b; }
   sel=null; render();
 }
 function findPair(){ const seen={}; let best=null;
   S.board.forEach((x,i)=>{ if(!x||x.n>=MAX) return; const k=x.l+x.n; if(seen[k]==null) seen[k]=i; else if(!best||x.n<best[2]) best=[i,seen[k],x.n]; });
   return best; }
 function magnet(){
-  if(S.boost.mag<=0){ toast('Sem Junta-tudo. Ganhe subindo de nível, viajando e fazendo amizades.'); return; }
+  if(S.boost.mag<=0){ toast(t('noMag')); return; }
   let n=0,p; while(n<300&&(p=findPair())){ merge(p[0],p[1],true); n++; }
-  if(!n){ toast('Nenhum par para juntar agora.'); return; }
-  S.boost.mag--; sel=null; beep(700); beep(900,.1); toast(`Junta-tudo: ${n} ${n>1?'fusões':'fusão'}`); render();
+  if(!n){ toast(t('noPair')); return; }
+  S.boost.mag--; sel=null; beep(700); beep(900,.1); toast(t('magDone',n)); render();
 }
-function recharge(){ if(S.boost.rec<=0){ toast('Sem Recarga. Ganhe subindo de nível e nos presentes.'); return; } S.boost.rec--; refill(); beep(820); toast('Cestos cheios'); render(); }
+function recharge(){ if(S.boost.rec<=0){ toast(t('noRec')); return; } S.boost.rec--; refill(); beep(820); toast(t('fullB')); render(); }
 const matches=(o,it)=>o.items.find(x=>!x.done&&x.l===it.l&&x.n===it.n);
 function orderFor(it){ return S.orders.find(o=>matches(o,it)); }
 function befriend(c){
   const f=S.friends[c.id]||(S.friends[c.id]={h:0,lv:0}); f.h++;
   if(f.h>=needH(f.lv)){ f.h=0; f.lv++; const co=30*f.lv; S.coins+=co; if(f.lv%2===0) S.boost.mag++;
-    toast(`Amizade com ${c.n}: nível ${f.lv} · +${co} moedas${f.lv%2===0?' e 🧲':''}`); }
+    toast(t('friendUp',c.n,f.lv,co,f.lv%2===0)); }
 }
 function deliver(i,id){
   const it=S.board[i]; if(!it) return; const o=id?S.orders.find(x=>x.id===id):orderFor(it);
   const nd=o&&matches(o,it);
-  if(!nd){ toast('Este cliente não pediu esse item.'); return; }
+  if(!nd){ toast(t('notOrdered')); return; }
   nd.done=true; S.board[i]=null; sel=null; selOrder=null; o.xp=(o.xp||0)+XPV[it.n]; o.co=(o.co||0)+COV[it.n]; gain(XPV[it.n],COV[it.n]); beep(700);
   if(o.items.every(x=>x.done)){
     const c=CAST.find(x=>x.id===o.who); S.stats.orders++; S.served++; bump('orders',1); refill(1); befriend(c); beep(940,.1);
-    if(o.rush&&Date.now()<o.rush){ gain(o.xp,o.co); o.xp*=2; o.co*=2; toast('Pedido relâmpago: recompensa em dobro'); }
-    if(o.rec!=null&&!S.recipes.includes(o.rec)){ S.recipes.push(o.rec); gain(30,30); toast('Receita descoberta: '+RECIPES[o.rec].name+' · +30 XP'); }
+    if(o.rush&&Date.now()<o.rush){ gain(o.xp,o.co); o.xp*=2; o.co*=2; toast(t('rushDone')); }
+    if(o.rec!=null&&!S.recipes.includes(o.rec)){ S.recipes.push(o.rec); gain(30,30); toast(t('recipeFound',tx(RECIPES[o.rec].name))); }
     S.orders[S.orders.indexOf(o)]=newOrder();
     offer={xp:o.xp,co:o.co,who:c,until:Date.now()+8000};
     if(S.served>=goal(S.stop)&&!S.goalSeen){ S.goalSeen=true; const nx=feira(S.stop+1);
-      modal(`<div class="big">⭐</div><h1>Feira concluída</h1><p>Você atendeu ${goal(S.stop)} clientes em ${feira(S.stop).n}.</p><p>Próxima parada: <b>${nx.ic} ${nx.n}</b>, ${nx.c} (${nx.uf}).</p><button class="btn" data-act="travelask">Viajar agora</button><button class="btn ghosty" data-act="mclose">Ficar mais um pouco</button>`); }
+      modal(`<div class="big">⭐</div><h1>${t('fairDone')}</h1><p>${t('fairDoneP',goal(S.stop),feira(S.stop).n)}</p><p>${t('nextStop',nx.ic,nx.n,nx.c,nx.uf)}</p><button class="btn" data-act="travelask">${t('travelNow')}</button><button class="btn ghosty" data-act="mclose">${t('stay')}</button>`); }
     if(S.stats.orders%6===0) maybeInter();
   }
   render();
 }
 function deliverEnc(i){
   const it=S.board[i]; if(!it) return; const L=encLvl();
-  if(it.n<L){ toast(`A encomenda só aceita itens de nível ${L} ou mais.`); return; }
+  if(it.n<L){ toast(t('encMin',L)); return; }
   S.board[i]=null; sel=null; S.enc.got++; beep(700);
-  if(S.enc.got>=ENC_N){ const xp=Math.round(XPV[L]*ENC_N*1.5), co=COV[L]*ENC_N*2; S.enc={k:S.enc.k+1,got:0}; S.boost.rec++; const x=gain(xp,co); toast(`Encomenda entregue: +${x} XP, +${co} moedas e ⚡`); }
+  if(S.enc.got>=ENC_N){ const xp=Math.round(XPV[L]*ENC_N*1.5), co=COV[L]*ENC_N*2; S.enc={k:S.enc.k+1,got:0}; S.boost.rec++; const x=gain(xp,co); toast(t('encDone',x,co)); }
   render();
 }
 function sell(i){ const it=S.board[i]; if(!it) return; S.board[i]=null; S.coins+=COV[it.n]; bump('sell',1); fx(i,'+'+COV[it.n]+' 🪙'); sel=null; render(); }
@@ -450,21 +603,21 @@ function sortBoard(){
   S.board=S.board.map((_,i)=>its[i]||null); sel=null; render();
 }
 function swapOrder(id){
-  const w=Math.ceil((S.swapAt-Date.now())/1000); if(w>0){ toast(`Você pode trocar outro pedido em ${w} s.`); return; }
+  const w=Math.ceil((S.swapAt-Date.now())/1000); if(w>0){ toast(t('swapWait',w)); return; }
   const k=S.orders.findIndex(o=>o.id===id); if(k<0) return; S.orders[k]=newOrder(); S.swapAt=Date.now()+20000; selOrder=null; render();
 }
 function expand(){
   const e=EXPS[S.exp]; if(!e||S.level<e.lvl||S.coins<e.cost) return;
   const nb=Array(e.cols*e.rows).fill(null);
   S.board.forEach((x,i)=>{ if(x) nb[Math.floor(i/S.cols)*e.cols+i%S.cols]=x; });
-  S.coins-=e.cost; S.board=nb; S.cols=e.cols; S.rows=e.rows; S.exp++; sel=null; render(); toast('Tabuleiro ampliado');
+  S.coins-=e.cost; S.board=nb; S.cols=e.cols; S.rows=e.rows; S.exp++; sel=null; render(); toast(t('expanded'));
 }
 function travelAsk(){
   const nx=S.stop+1, f=feira(nx), ls=linesAt(nx), gone=lines().filter(k=>!ls.includes(k));
   const val=S.board.reduce((a,x)=>a+(x&&gone.includes(x.l)?COV[x.n]:0),0);
-  modal(`<div class="big">${f.ic}</div><h1>${f.n}</h1><p>${f.c} (${f.uf}) · ${f.reg}${lap(nx)>1?' · Volta '+lap(nx):''}</p><p class="note">${f.txt}</p>
-   <ul><li>Bancas: ${ls.map(k=>LINES[k].it[0][0]+' '+LINES[k].name).join(', ')}</li>${gone.length?`<li>Itens de ${gone.map(k=>LINES[k].name).join(' e ')} serão vendidos por ${fmt(val)} moedas</li>`:''}<li>O tabuleiro chega cheio de novidades</li></ul>
-   <button class="btn" data-act="travel">Pegar a estrada</button><button class="btn ghosty" data-act="mclose">Ainda não</button>`);
+  modal(`<div class="big">${f.ic}</div><h1>${f.n}</h1><p>${f.c} (${f.uf}) · ${reg(f)}${lap(nx)>1?' · '+t('lapN',lap(nx)):''}</p><p class="note">${tx(f.txt)}</p>
+   <ul><li>${t('stalls')}: ${ls.map(k=>LINES[k].it[0][0]+' '+lname(k)).join(', ')}</li>${gone.length?`<li>${t('willSell',gone.map(lname).join(t('and')),fmt(val))}</li>`:''}<li>${t('arrivesFull')}</li></ul>
+   <button class="btn" data-act="travel">${t('hitRoad')}</button><button class="btn ghosty" data-act="mclose">${t('notYet')}</button>`);
 }
 function travel(){
   if(S.served<goal(S.stop)) return;
@@ -475,16 +628,17 @@ function travel(){
   const rew=Math.min(500,50+25*old); S.coins+=sold+rew; S.boost.mag++; sel=null; selOrder=null; offer=null;
   sheetName=null; $('sheet').hidden=true; homeOn=false; beep(520); beep(660,.12); beep(880,.24);
   const loc=CAST.filter(c=>c.at===S.stop%FEIRAS.length);
-  modal(`<div class="big">${f.ic}</div><h1>Bem-vindo a ${f.c}</h1><p><b>${f.n}</b>${lap(S.stop)>oldLap?`<br>Volta ${lap(S.stop)} pelo Brasil: +${Math.round((lapBonus()-1)*100)}% de XP e moedas`:''}</p>
-   <p>+${fmt(rew+sold)} moedas e 1 🧲 pela viagem.</p><p>Quem você vai conhecer:<br>${loc.map(c=>`${c.f} <b>${c.n}</b>, ${c.role}`).join('<br>')}</p><button class="btn" data-act="mclose">Abrir a banca</button>`);
+  modal(`<div class="big">${f.ic}</div><h1>${t('welcome',f.c)}</h1><p><b>${f.n}</b>${lap(S.stop)>oldLap?`<br>${t('newLap',lap(S.stop),Math.round((lapBonus()-1)*100))}`:''}</p>
+   <p>${t('tripRew',fmt(rew+sold))}</p><p>${t('meet')}<br>${loc.map(c=>`${c.f} <b>${c.n}</b>, ${tx(c.role)}`).join('<br>')}</p><button class="btn" data-act="mclose">${t('openStall')}</button>`);
   render();
 }
 function claimGift(){
   if(S.giftDay===today()) return;
   S.streak=S.giftDay===dstr(Date.now()-864e5)?S.streak+1:1; S.giftDay=today();
-  const co=20*Math.min(S.streak,7); S.coins+=co; let extra=''; if(S.streak%7===0){ S.boost.mag+=2; S.boost.rec+=2; extra=' e 2 🧲 + 2 ⚡'; }
-  beep(880); toast(`Dia ${S.streak} seguido: +${co} moedas${extra}`); render();
+  const co=20*Math.min(S.streak,7); S.coins+=co; const wk=S.streak%7===0; if(wk){ S.boost.mag+=2; S.boost.rec+=2; }
+  beep(880); toast(t('gift',S.streak,co,wk)); render();
 }
+function setLang(l){ LANG=l; S.opts.lang=l; applyLang(); render(); }
 
 /* ===================== DESENHO ===================== */
 function fit(){
@@ -496,22 +650,22 @@ function fit(){
 function render(){
   checkDay(); tickBaskets();
   while(S.orders.length<4) S.orders.push(newOrder());
-  $('lvl').textContent='Nv '+S.level;
+  $('lvl').textContent=t('lvlShort',S.level);
   $('xpbar').style.width=Math.min(100,S.xp/need(S.level)*100)+'%';
   $('xptxt').textContent=`XP ${fmt(S.xp)} / ${fmt(need(S.level))}`;
   $('coins').textContent='🪙 '+fmt(S.coins);
   renderOrders();
   const f=feira(S.stop), g=goal(S.stop), done=S.served>=g;
-  $('stripbox').innerHTML=done?`<button class="strip go" style="width:100%" data-act="travelask"><span>⭐ Feira concluída · viajar para ${feira(S.stop+1).c} ➜</span></button>`
-    :`<button class="strip" style="width:100%" data-act="nav:map" aria-label="Abrir o mapa"><span>${f.ic} ${f.n} · ${f.c}</span><div class="bar"><i style="width:${S.served/g*100}%"></i></div><span>${S.served}/${g} clientes</span></button>`;
+  $('stripbox').innerHTML=done?`<button class="strip go" style="width:100%" data-act="travelask"><span>${t('goTravel',feira(S.stop+1).c)}</span></button>`
+    :`<button class="strip" style="width:100%" data-act="nav:map" aria-label="${t('openMap')}"><span>${f.ic} ${f.n} · ${f.c}</span><div class="bar"><i style="width:${S.served/g*100}%"></i></div><span>${t('clients',S.served,g)}</span></button>`;
   $('board').innerHTML=S.board.map((x,i)=>x
-    ?`<button class="cell has${sel===i?' sel':''}${popAt===i?' pop':''}" style="--lc:${lc(x.l)}" data-cell="${i}" aria-label="${item(x.l,x.n)[1]} nível ${x.n}"><span class="em">${item(x.l,x.n)[0]}</span><span class="lv">${x.n}</span></button>`
-    :`<button class="cell" data-cell="${i}" aria-label="Espaço vazio"></button>`).join('');
+    ?`<button class="cell has${sel===i?' sel':''}${popAt===i?' pop':''}" style="--lc:${lc(x.l)}" data-cell="${i}" aria-label="${t('cellAria',item(x.l,x.n)[1],x.n)}"><span class="em">${item(x.l,x.n)[0]}</span><span class="lv">${x.n}</span></button>`
+    :`<button class="cell" data-cell="${i}" aria-label="${t('emptyCell')}"></button>`).join('');
   popAt=-1; fit(); renderInfo(); renderBaskets();
-  const mdot=S.missions.some(m=>m.p>=m.goal);
-  $('nav').innerHTML=[['map','🗺️','Mapa',done],['turma','🧑‍🤝‍🧑','Turma'],['miss','🎯','Missões',mdot],['rec','📖','Receitas'],['up','🛠️','Melhorias']].map(([k,i,t,d])=>`<button data-act="nav:${k}"><span>${i}</span>${t}${d?'<i class="dot"></i>':''}</button>`).join('');
-  for(const [i,t] of fxQ){ const c=$('board').querySelector(`[data-cell="${i}"]`); if(!c||homeOn) continue; const r=c.getBoundingClientRect(), d=document.createElement('div');
-    d.className='fx'; d.textContent=t; d.style.left=Math.min(innerWidth-70,Math.max(70,r.left+r.width/2))+'px'; d.style.top=r.top+'px'; document.body.appendChild(d); setTimeout(()=>d.remove(),950); }
+  const mdot=S.missions.some(m=>m.p>=m.goal), N=t('nav');
+  $('nav').innerHTML=[['map','🗺️',done],['turma','🧑‍🤝‍🧑'],['miss','🎯',mdot],['rec','📖'],['up','🛠️']].map(([k,i,d])=>`<button data-act="nav:${k}"><span>${i}</span>${N[k]}${d?'<i class="dot"></i>':''}</button>`).join('');
+  for(const [i,m] of fxQ){ const c=$('board').querySelector(`[data-cell="${i}"]`); if(!c||homeOn) continue; const r=c.getBoundingClientRect(), d=document.createElement('div');
+    d.className='fx'; d.textContent=m; d.style.left=Math.min(innerWidth-70,Math.max(70,r.left+r.width/2))+'px'; d.style.top=r.top+'px'; document.body.appendChild(d); setTimeout(()=>d.remove(),950); }
   fxQ=[];
   $('home').hidden=!homeOn; if(homeOn) renderHome();
   if(sheetName) renderSheet();
@@ -521,45 +675,46 @@ function renderOrders(){
   const cur=sel!=null?S.board[sel]:null, have=new Set(S.board.filter(Boolean).map(x=>x.l+x.n)), now=Date.now(), L=encLvl();
   $('orders').innerHTML=S.orders.map(o=>{
     const c=CAST.find(x=>x.id===o.who), want=cur&&matches(o,cur), ready=o.items.some(x=>!x.done&&have.has(x.l+x.n)), rush=o.rush&&now<o.rush, s=rush?Math.ceil((o.rush-now)/1000):0;
-    return `<button class="order${want?' want':''}${ready?' ready':''}${rush?' rush':''}${selOrder===o.id?' osel':''}" data-order="${o.id}" aria-label="Pedido de ${c.n}: ${o.items.map(x=>item(x.l,x.n)[1]+' nível '+x.n).join(' e ')}"><span class="who">${rush?`⚡ ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`:c.f+' '+(o.rec!=null?'Receita':c.n)}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub>${x.n}</sub></span>`).join('')}</span></button>`;
-  }).join('')+`<button class="order${cur&&cur.n>=L?' want':''}" data-enc="1" aria-label="Encomenda: ${ENC_N} itens de nível ${L} ou mais"><span class="who">Encomenda</span><span class="need"><span>📦<sub>${S.enc.got}/${ENC_N}</sub></span></span><span class="who">nível ${L}+</span></button>`;
+    return `<button class="order${want?' want':''}${ready?' ready':''}${rush?' rush':''}${selOrder===o.id?' osel':''}" data-order="${o.id}" aria-label="${t('orderAria',c.n,o.items.map(x=>t('itemLv',item(x.l,x.n)[1],x.n)).join(t('and')))}"><span class="who">${rush?`⚡ ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`:c.f+' '+(o.rec!=null?t('recipeTag'):c.n)}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub>${x.n}</sub></span>`).join('')}</span></button>`;
+  }).join('')+`<button class="order${cur&&cur.n>=L?' want':''}" data-enc="1" aria-label="${t('encAria',ENC_N,L)}"><span class="who">${t('enc')}</span><span class="need"><span>📦<sub>${S.enc.got}/${ENC_N}</sub></span></span><span class="who">${t('levelPlus',L)}</span></button>`;
 }
 function renderInfo(){
   const el=$('info'), it=sel!=null?S.board[sel]:null, o=selOrder!=null&&S.orders.find(x=>x.id===selOrder);
-  if(it){ const d=item(it.l,it.n);
-    el.innerHTML=`<p><b>${d[0]} ${d[1]}</b> · ${LINES[it.l].name} nível ${it.n}${it.n>=MAX?' (máximo)':''}</p>${orderFor(it)?'<button class="btn sm" data-act="deliver">Entregar</button>':''}${it.n>=encLvl()?'<button class="btn sm" data-act="enc">Encomenda</button>':''}<button class="btn sm ghosty" data-act="sell">Vender +${COV[it.n]}</button>`;
+  if(it){ const d=item(it.l,it.n), gl=gloss(it.l,it.n);
+    el.innerHTML=`<p><b>${d[0]} ${d[1]}</b> · ${t('itemInfo',lname(it.l),it.n,it.n>=MAX)}${gl?`<br><i>${gl}</i>`:''}</p>${orderFor(it)?`<button class="btn sm" data-act="deliver">${t('deliver')}</button>`:''}${it.n>=encLvl()?`<button class="btn sm" data-act="enc">${t('enc')}</button>`:''}<button class="btn sm ghosty" data-act="sell">${t('sellB',COV[it.n])}</button>`;
   } else if(o){ const c=CAST.find(x=>x.id===o.who), f=S.friends[c.id]||{h:0,lv:0};
-    el.innerHTML=`<p><b>${c.f} ${c.n}</b>, ${c.role} · ❤️ ${f.lv}<br>“${c.q}”</p><button class="btn sm ghosty" data-act="swap:${o.id}">Trocar pedido</button>`;
+    el.innerHTML=`<p><b>${c.f} ${c.n}</b>, ${tx(c.role)} · ❤️ ${f.lv}<br>“${tx(c.q)}”</p><button class="btn sm ghosty" data-act="swap:${o.id}">${t('swap')}</button>`;
   } else if(offer&&Date.now()<offer.until){
-    el.innerHTML=`<p>${offer.who.f} ${offer.who.n} agradece: +${fmt(offer.xp)} XP e +${fmt(offer.co)} moedas</p>${S.daily.adDouble<10?'<button class="btn sm" data-act="double">▶ Dobrar</button>':''}`;
-  } else { offer=null; el.innerHTML=`<p>Junte itens iguais. Pedido com borda verde: toque para entregar.</p><button class="btn sm ghosty" data-act="sort">Organizar</button>`; }
+    el.innerHTML=`<p>${t('thanks',offer.who.f+' '+offer.who.n,fmt(offer.xp),fmt(offer.co))}</p>${S.daily.adDouble<10?`<button class="btn sm" data-act="double">${t('double')}</button>`:''}`;
+  } else { offer=null; el.innerHTML=`<p>${t('help')}</p><button class="btn sm ghosty" data-act="sort">${t('sort')}</button>`; }
 }
-function left(b){ if(b.c>=cap()) return 'cheio'; const s=Math.max(0,Math.ceil((period()-(Date.now()-b.t))/1000)); return s+' s'; }
+function left(b){ if(b.c>=cap()) return t('bFull'); const s=Math.max(0,Math.ceil((period()-(Date.now()-b.t))/1000)); return s+' s'; }
 function renderBaskets(){
   $('baskets').innerHTML=lines().map(k=>{ const b=S.baskets[k];
-    return `<button class="basket" style="--lc:${lc(k)}" data-act="basket:${k}" aria-label="Cesto de ${LINES[k].name}"><span class="em">${LINES[k].it[0][0]}</span><b id="bc-${k}">${b.c}/${cap()}</b><small id="bt-${k}">${left(b)}</small></button>`; }).join('')
-    +`<button class="basket bo" data-act="magnet" aria-label="Junta-tudo: funde todos os pares"><span class="em">🧲</span><b>${S.boost.mag}</b><small>junta</small></button>`
-    +`<button class="basket bo" data-act="recharge" aria-label="Recarga: enche os cestos"><span class="em">⚡</span><b>${S.boost.rec}</b><small>recarga</small></button>`
-    +`<button class="basket ad bo" data-act="adcharge" ${S.daily.adCharge>=6?'disabled':''}><span class="em">▶</span><b>+${Math.round(10*bonus())}</b><small>${S.daily.adCharge}/6</small></button>`;
+    return `<button class="basket" style="--lc:${lc(k)}" data-act="basket:${k}" aria-label="${t('basketAria',lname(k))}"><span class="em">${LINES[k].it[0][0]}</span><b id="bc-${k}">${b.c}/${cap()}</b><small id="bt-${k}">${left(b)}</small></button>`; }).join('')
+    +`<button class="basket bo" data-act="magnet" aria-label="${t('magAria')}"><span class="em">🧲</span><b>${S.boost.mag}</b><small>${t('magLbl')}</small></button>`
+    +`<button class="basket bo" data-act="recharge" aria-label="${t('recAria')}"><span class="em">⚡</span><b>${S.boost.rec}</b><small>${t('recLbl')}</small></button>`
+    +`<button class="basket ad bo" data-act="adcharge" aria-label="${t('adAria')}" ${S.daily.adCharge>=6?'disabled':''}><span class="em">▶</span><b>+${Math.round(10*bonus())}</b><small>${S.daily.adCharge}/6</small></button>`;
 }
 function renderHome(){
-  const f=feira(S.stop), g=goal(S.stop), ls=lines(), gift=S.giftDay!==today(), d=Math.min((S.giftDay===dstr(Date.now()-864e5)?S.streak:0)+1,7);
-  $('homein').innerHTML=`<div class="floaty" aria-hidden="true"><i style="left:4%;top:6px">🍉</i><i style="right:6%;top:0;animation-delay:.8s">🧀</i><i style="left:16%;top:64px;animation-delay:1.5s;font-size:20px">🌽</i><i style="right:17%;top:66px;animation-delay:.4s;font-size:20px">🥖</i></div>
-   <div class="logo"><b>Quitanda<br>Zen</b><small>Feira Viva</small></div>
+  const f=feira(S.stop), g=goal(S.stop), ls=lines(), gift=S.giftDay!==today(), d=Math.min((S.giftDay===dstr(Date.now()-864e5)?S.streak:0)+1,7), N=t('nav');
+  $('homein').innerHTML=`<div class="floaty" aria-hidden="true"><i style="left:4%;top:6px">🍉</i><i style="right:6%;top:0;animation-delay:.8s">🧀</i><i style="left:1%;top:40px;animation-delay:1.5s;font-size:20px">🌽</i><i style="right:1%;top:44px;animation-delay:.4s;font-size:20px">🥖</i></div>
+   <div class="logo"><b>${t('logo')}</b><small>${t('logoSub')}</small>${t('logoSay')?`<p class="say">${t('logoSay')}</p>`:''}</div>
    <div class="stall"><div class="awning"></div><div class="shelf" aria-hidden="true">${ls.map(k=>LINES[k].it.slice(0,ls.length>3?2:3).map(x=>x[0]).join('')).join('')}</div>
-     <div class="deco" aria-label="Decoração">${S.decor.map(i=>DECOR[i][0]).join('')}</div>
-     <div class="keeper"><span>👨‍🌾</span><p><b>Seu Zé:</b> ${tip}</p></div></div>
-   <button class="play" data-act="play">▶ ${S.stats.items||S.stats.merges?'Continuar':'Jogar'}</button>
-   ${gift?`<button class="gift" data-act="gift">🎁 Presente do dia ${d}: +${20*d} moedas</button>`:''}
+     <div class="deco" aria-label="${t('decoAria')}">${S.decor.map(i=>DECOR[i][0]).join('')}</div>
+     <div class="keeper"><span>👨‍🌾</span><p><b>Seu Zé:</b> ${tx(TIPS[tip])}</p></div></div>
+   <button class="play" data-act="play">▶ ${t('play',S.stats.items||S.stats.merges)}</button>
+   ${gift?`<button class="gift" data-act="gift">${t('giftBtn',d,20*d)}</button>`:''}
    <button class="where" data-act="nav:map"><span><b>${f.ic} ${f.n}</b> · ${f.c} (${f.uf})</span><div class="bar"><i style="width:${Math.min(100,S.served/g*100)}%"></i></div>
-     <small>Nível ${S.level} · ⭐ ${S.stop} feiras concluídas · Volta ${lap(S.stop)} · ${S.served>=g?'pronto para viajar':S.served+'/'+g+' clientes'}</small></button>
-   <div class="hnav">${[['map','🗺️','Mapa',S.served>=g],['turma','🧑‍🤝‍🧑','Turma'],['miss','🎯','Missões',S.missions.some(m=>m.p>=m.goal)],['cfg','⚙️','Ajustes']].map(([k,i,t,dt])=>`<button data-act="nav:${k}"><span>${i}</span>${t}${dt?'<i class="dot"></i>':''}</button>`).join('')}</div>`;
+     <small>${t('homeLine',S.level,S.stop,lap(S.stop))} · ${S.served>=g?t('ready'):t('clients',S.served,g)}</small></button>
+   <div class="hnav">${[['map','🗺️',S.served>=g],['turma','🧑‍🤝‍🧑'],['miss','🎯',S.missions.some(m=>m.p>=m.goal)],['cfg','⚙️']].map(([k,i,dt])=>`<button data-act="nav:${k}"><span>${i}</span>${N[k]}${dt?'<i class="dot"></i>':''}</button>`).join('')}</div>
+   <div class="seg" role="group" aria-label="${t('lang')}"><button data-act="lang:pt" aria-pressed="${LANG==='pt'}">🇧🇷 Português</button><button data-act="lang:en" aria-pressed="${LANG==='en'}">🌎 English</button></div>`;
 }
 function tick(){
   if(document.visibilityState==='visible') S.stats.playMs+=1000;
   const d=S.day; checkDay(); if(d!==S.day){ render(); return; }
   tickBaskets(); const now=Date.now();
-  for(const k of lines()){ const b=S.baskets[k], c=$('bc-'+k), t=$('bt-'+k); if(c)c.textContent=b.c+'/'+cap(); if(t)t.textContent=left(b); }
+  for(const k of lines()){ const b=S.baskets[k], c=$('bc-'+k), e=$('bt-'+k); if(c)c.textContent=b.c+'/'+cap(); if(e)e.textContent=left(b); }
   if(S.orders.some(o=>o.rush&&now<o.rush+1500)) renderOrders();
   if(offer&&now>=offer.until&&sel==null&&selOrder==null){ offer=null; renderInfo(); }
   if(!homeOn&&!sheetName&&$('over').hidden&&!drag&&now-lastAct>7000){ const p=findPair(); if(p) p.slice(0,2).forEach(i=>{ const c=$('board').querySelector(`[data-cell="${i}"]`); if(c)c.classList.add('hint'); }); }
@@ -567,58 +722,57 @@ function tick(){
   if(S.stats.playMs%10000===0) save();
 }
 function statsHtml(){
-  const m=S.stats.playMs/60000, s=Math.floor(S.stats.playMs/1000);
-  return [['Tempo de jogo',Math.floor(s/60)+' min '+(s%60)+' s'],['XP por minuto',m>.2?(S.stats.xp/m).toFixed(1).replace('.',','):'aguardando'],['Fusões',fmt(S.stats.merges)],['Itens colhidos',fmt(S.stats.items)],['Pedidos atendidos',fmt(S.stats.orders)],['Feiras concluídas',S.stop],['Anúncios com recompensa',S.stats.rew],['Anúncios de tela cheia',S.stats.inter]].map(([a,b])=>`<span>${a}</span><span>${b}</span>`).join('');
+  const m=S.stats.playMs/60000, s=Math.floor(S.stats.playMs/1000), L=t('st');
+  return [Math.floor(s/60)+' min '+(s%60)+' s',m>.2?(S.stats.xp/m).toLocaleString(LANG==='en'?'en-US':'pt-BR',{maximumFractionDigits:1}):t('waiting'),fmt(S.stats.merges),fmt(S.stats.items),fmt(S.stats.orders),S.stop,S.stats.rew,S.stats.inter].map((b,i)=>`<span>${L[i]}</span><span>${b}</span>`).join('');
 }
 function mapSvg(){
   const P=(lon,lat)=>[(10+(lon+74)/39.5*280).toFixed(1),(10+(5.5-lat)/39.5*280).toFixed(1)];
   const out=[[-60,5.2],[-58,1.5],[-54,2.3],[-51.6,4.3],[-50,1],[-48.5,-1],[-44.3,-2.5],[-40,-2.8],[-37.3,-4.7],[-35.2,-5.5],[-34.8,-7.5],[-35.7,-9.7],[-37.5,-11.5],[-38.5,-13],[-39,-16.5],[-39.7,-19.5],[-40.3,-20.5],[-41,-22],[-43.2,-23],[-46.3,-24],[-48.5,-25.8],[-48.6,-27.6],[-49.7,-29.3],[-52.1,-32],[-53.4,-33.7],[-55.5,-30.9],[-57.6,-30.2],[-55.9,-28.4],[-53.8,-27.1],[-54.6,-25.6],[-54.3,-24],[-55.6,-22.3],[-57.9,-22.1],[-57.8,-19],[-58.2,-16.3],[-60.2,-16.2],[-60.5,-13.8],[-62.8,-13],[-65.3,-11],[-65.4,-9.7],[-68.7,-11],[-70.6,-11],[-70.5,-9.5],[-73,-9.4],[-73.9,-7.4],[-72.9,-5.2],[-70,-4.3],[-69.4,-1],[-69.8,1.1],[-67,1.2],[-65.5,.8],[-63.4,2.2],[-64.4,4.1],[-61.5,4.3]];
   const pts=FEIRAS.map(f=>P(f.lon,f.lat)), cur=S.stop%FEIRAS.length;
-  return `<svg viewBox="0 0 300 300" role="img" aria-label="Mapa do Brasil com a Rota das Feiras"><polygon class="land" points="${out.map(p=>P(...p).join(',')).join(' ')}"/>
+  return `<svg viewBox="0 0 300 300" role="img" aria-label="${t('mapAria')}"><polygon class="land" points="${out.map(p=>P(...p).join(',')).join(' ')}"/>
    <polyline class="route" points="${pts.map(p=>p.join(',')).join(' ')}"/><polyline class="route done" points="${pts.slice(0,cur+1).map(p=>p.join(',')).join(' ')}"/>
    ${pts.map((p,i)=>`<g class="node ${i<cur?'done':i===cur?'cur':''}"><title>${FEIRAS[i].n}, ${FEIRAS[i].c}</title><circle cx="${p[0]}" cy="${p[1]}" r="${i===cur?10:8}"/><text x="${p[0]}" y="${p[1]}">${i+1}</text></g>`).join('')}</svg>`;
 }
 function renderSheet(){
-  const T={map:'Rota das Feiras',turma:'Turma da Feira',miss:'Missões',rec:'Caderno de Receitas',up:'Melhorias',cfg:'Ajustes'}; let h='';
+  const T=t('T'); let h='';
   if(sheetName==='map'){
     const base=(lap(S.stop)-1)*FEIRAS.length, g=goal(S.stop), done=S.served>=g;
-    h=`<p class="note">Volta ${lap(S.stop)} pelo Brasil · ⭐ ${S.stop} feiras concluídas${lapBonus()>1?` · bônus de +${Math.round((lapBonus()-1)*100)}% em XP e moedas`:''}. A rota recomeça ao fim de cada volta, sempre com um bônus maior.</p><div class="map">${mapSvg()}</div>`
+    h=`<p class="note">${t('mapNote',lap(S.stop),S.stop,Math.round((lapBonus()-1)*100))}</p>${t('mapGloss')?`<p class="note">${t('mapGloss')}</p>`:''}<div class="map">${mapSvg()}</div>`
      +FEIRAS.map((f,i)=>{ const s=base+i, st=s<S.stop?'ok':s===S.stop?'cur':'lock', ls=linesAt(s), loc=CAST.filter(c=>c.at===i);
-        return `<div class="row ${st==='cur'?'cur':st==='lock'?'lock':''}"><span class="face">${st==='lock'?'🔒':f.ic}</span><div><b>${i+1}. ${f.n}</b> ${st==='ok'?'⭐':''}<p>${f.c} (${f.uf}) · ${f.reg}</p><p>${f.txt}</p><p>${ls.map(k=>LINES[k].it[0][0]).join(' ')} · ${loc.map(c=>c.f).join(' ')} · meta: ${goal(s)} clientes</p>${st==='cur'?`<div class="bar"><i style="width:${Math.min(100,S.served/g*100)}%"></i></div><p>${S.served}/${g} clientes atendidos</p>`:''}</div>${st==='cur'?`<button class="btn" data-act="travelask" ${done?'':'disabled'}>Viajar</button>`:''}</div>`; }).join('');
+        return `<div class="row ${st==='cur'?'cur':st==='lock'?'lock':''}"><span class="face">${st==='lock'?'🔒':f.ic}</span><div><b>${i+1}. ${f.n}</b> ${st==='ok'?'⭐':''}<p>${f.c} (${f.uf}) · ${reg(f)}</p><p>${tx(f.txt)}</p><p>${ls.map(k=>LINES[k].it[0][0]).join(' ')} · ${loc.map(c=>c.f).join(' ')} · ${t('goalN',goal(s))}</p>${st==='cur'?`<div class="bar"><i style="width:${Math.min(100,S.served/g*100)}%"></i></div><p>${t('served',S.served,g)}</p>`:''}</div>${st==='cur'?`<button class="btn" data-act="travelask" ${done?'':'disabled'}>${t('travel')}</button>`:''}</div>`; }).join('');
   } else if(sheetName==='turma'){
     const met=c=>c.at<0||S.stop>=c.at;
-    h=`<p class="note">Cada pedido atendido rende ❤️. A cada nível de amizade você ganha moedas, e a cada dois níveis um 🧲 Junta-tudo. A amizade não tem limite.</p>`
+    h=`<p class="note">${t('turmaNote')}</p>`
      +CAST.map(c=>{ const f=S.friends[c.id]||{h:0,lv:0}, here=c.at<0||c.at===S.stop%FEIRAS.length;
-        return met(c)?`<div class="row${here?' cur':''}"><span class="face">${c.f}</span><div><b>${c.n}</b> · ❤️ ${f.lv}<p>${c.role} · ${c.at<0?'viaja com você':FEIRAS[c.at].c} · gosta de ${LINES[c.fav].it[0][0]} ${LINES[c.fav].name}</p><p>“${c.q}”</p><div class="bar"><i style="width:${f.h/needH(f.lv)*100}%"></i></div></div></div>`
-          :`<div class="row lock"><span class="face">❔</span><div><b>???</b><p>Você encontra em ${FEIRAS[c.at].n}, ${FEIRAS[c.at].c}.</p></div></div>`; }).join('');
+        return met(c)?`<div class="row${here?' cur':''}"><span class="face">${c.f}</span><div><b>${c.n}</b> · ❤️ ${f.lv}<p>${tx(c.role)} · ${c.at<0?t('withYou'):FEIRAS[c.at].c} · ${t('likes',LINES[c.fav].it[0][0],lname(c.fav))}</p><p>“${tx(c.q)}”</p><div class="bar"><i style="width:${f.h/needH(f.lv)*100}%"></i></div></div></div>`
+          :`<div class="row lock"><span class="face">❔</span><div><b>???</b><p>${t('meetAt',FEIRAS[c.at].n,FEIRAS[c.at].c)}</p></div></div>`; }).join('');
   } else if(sheetName==='miss'){
     const L=encLvl();
-    h=`<p class="note">Ao receber a recompensa, entra uma missão nova, um pouco maior. Elas não acabam.</p>`+S.missions.map((m,i)=>{ const v=Math.min(m.p,m.goal);
-      return `<div class="row"><div><b>${MTYPES[m.t][0].replace('{n}',m.goal)}</b><p>${v}/${m.goal} · vale ${m.co} moedas e ${m.xp} XP</p><div class="bar"><i style="width:${v/m.goal*100}%"></i></div></div><button class="btn" data-act="claim:${i}" ${v<m.goal?'disabled':''}>Receber</button></div>`; }).join('')
-      +`<div class="row"><div><b>📦 Encomenda nº ${S.enc.k+1}</b><p>${S.enc.got}/${ENC_N} itens de nível ${L} ou mais · vale ${fmt(XPV[L]*ENC_N*1.5)} XP, ${fmt(COV[L]*ENC_N*2)} moedas e 1 ⚡</p></div></div>`
-      +`<div class="row"><div><b>Baú diário</b><p>${S.daily.chest}/3 hoje · ${Math.round(80*bonus())} moedas e 1 🧲 por anúncio</p></div><button class="btn" data-act="chest" ${S.daily.chest>=3?'disabled':''}>▶ Abrir</button></div>`;
+    h=`<p class="note">${t('missNote')}</p>`+S.missions.map((m,i)=>{ const v=Math.min(m.p,m.goal);
+      return `<div class="row"><div><b>${tx(MTYPES[m.t][0]).replace('{n}',m.goal)}</b><p>${v}/${m.goal} · ${t('worth',m.co,m.xp)}</p><div class="bar"><i style="width:${v/m.goal*100}%"></i></div></div><button class="btn" data-act="claim:${i}" ${v<m.goal?'disabled':''}>${t('claim')}</button></div>`; }).join('')
+      +`<div class="row"><div><b>${t('encRow',S.enc.k+1)}</b><p>${t('encRowP',S.enc.got,ENC_N,L,fmt(XPV[L]*ENC_N*1.5),fmt(COV[L]*ENC_N*2))}</p></div></div>`
+      +`<div class="row"><div><b>${t('chest')}</b><p>${t('chestP',S.daily.chest,Math.round(80*bonus()))}</p></div><button class="btn" data-act="chest" ${S.daily.chest>=3?'disabled':''}>${t('open')}</button></div>`;
   } else if(sheetName==='rec'){
     const ls=lines();
-    h=S.level<3?'<p class="note">O Caderno de Receitas abre no nível 3. A partir daí, alguns clientes pedem dois ingredientes de bancas diferentes, e cada pedido atendido revela uma receita.</p>'
-     :`<p class="note">${S.recipes.length} de ${RECIPES.length} descobertas. Cada feira tem as suas: atenda os pedidos marcados como Receita. Cada descoberta vale +30 XP e +30 moedas.</p>`+RECIPES.map((r,i)=>S.recipes.includes(i)
-        ?`<div class="row"><div><b>${r.name}</b><p>${r.it.map(([l,n])=>item(l,n)[0]+' '+item(l,n)[1]).join(' + ')} · ${r.note}</p></div></div>`
-        :`<div class="row lock"><div><b>???</b><p>${r.it.every(x=>ls.includes(x[0]))?'Pode aparecer nesta feira':'De outra feira'} · ${r.it.map(x=>LINES[x[0]].name).join(' + ')}</p></div></div>`).join('');
+    h=S.level<3?`<p class="note">${t('recLocked')}</p>`
+     :`<p class="note">${t('recNote',S.recipes.length,RECIPES.length)}</p>`+RECIPES.map((r,i)=>S.recipes.includes(i)
+        ?`<div class="row"><div><b>${tx(r.name)}</b><p>${r.it.map(([l,n])=>item(l,n)[0]+' '+item(l,n)[1]).join(' + ')} · ${tx(r.note)}</p></div></div>`
+        :`<div class="row lock"><div><b>???</b><p>${r.it.every(x=>ls.includes(x[0]))?t('recHere'):t('recOther')} · ${r.it.map(x=>lname(x[0])).join(' + ')}</p></div></div>`).join('');
   } else if(sheetName==='up'){
     const e=EXPS[S.exp];
-    h='<h2>Cestos</h2>'+Object.keys(UPS).map(k=>{ const u=UPS[k], lv=S.up[k], c=upCost(k), mx=lv>=u.max;
-        return `<div class="row"><div><b>${u.n}</b> · nível ${lv}${mx?' (máximo)':''}<p>${u.d}${mx?'':' Custa '+fmt(c)+' moedas.'}</p></div><button class="btn" data-act="buyup:${k}" ${mx||S.coins<c?'disabled':''}>Melhorar</button></div>`; }).join('')
-     +'<h2>Tabuleiro</h2>'+(e?`<div class="row"><div><b>Ampliar para ${e.cols}×${e.rows}</b><p>Hoje: ${S.cols}×${S.rows} · custa ${fmt(e.cost)} moedas${S.level<e.lvl?' · abre no nível '+e.lvl:''}</p></div><button class="btn" data-act="buyexp" ${S.level<e.lvl||S.coins<e.cost?'disabled':''}>Comprar</button></div>`:'<p class="note">Tabuleiro no tamanho máximo.</p>')
-     +`<h2>Decoração</h2><p class="note">${S.level<6?'Abre no nível 6. ':''}Cada peça aparece na sua banca da tela inicial e dá +1% de XP. Bônus atual: +${S.decor.length}%.</p>`
-     +DECOR.map(([em,n,c],i)=>{ const has=S.decor.includes(i); return `<div class="row"><span class="face">${em}</span><div><b>${n}</b><p>${fmt(c)} moedas</p></div><button class="btn" data-act="buydeco:${i}" ${has||S.level<6||S.coins<c?'disabled':''}>${has?'Na banca':'Comprar'}</button></div>`; }).join('');
+    h=`<h2>${t('hBaskets')}</h2>`+Object.keys(UPS).map(k=>{ const u=UPS[k], lv=S.up[k], c=upCost(k), mx=lv>=u.max;
+        return `<div class="row"><div><b>${tx(u.n)}</b> · ${t('lvN',lv)}${mx?t('maxP'):''}<p>${tx(u.d)}${mx?'':t('costP',fmt(c))}</p></div><button class="btn" data-act="buyup:${k}" ${mx||S.coins<c?'disabled':''}>${t('upgrade')}</button></div>`; }).join('')
+     +`<h2>${t('hBoard')}</h2>`+(e?`<div class="row"><div><b>${t('expandTo',e.cols,e.rows)}</b><p>${t('boardNow',S.cols,S.rows,fmt(e.cost),S.level<e.lvl?e.lvl:0)}</p></div><button class="btn" data-act="buyexp" ${S.level<e.lvl||S.coins<e.cost?'disabled':''}>${t('buy')}</button></div>`:`<p class="note">${t('boardMax')}</p>`)
+     +`<h2>${t('hDeco')}</h2><p class="note">${t('decoNote',S.level<6,S.decor.length)}</p>`
+     +DECOR.map(([em,n,c],i)=>{ const has=S.decor.includes(i); return `<div class="row"><span class="face">${em}</span><div><b>${tx(n)}</b><p>${t('coinsN',fmt(c))}</p></div><button class="btn" data-act="buydeco:${i}" ${has||S.level<6||S.coins<c?'disabled':''}>${has?t('onStall'):t('buy')}</button></div>`; }).join('');
   } else {
-    const tg=(k,t,d)=>`<div class="row"><div><b>${t}</b><p>${d}</p></div><button class="btn${S.opts[k]?'':' ghosty'}" data-act="opt:${k}" aria-pressed="${S.opts[k]}">${S.opts[k]?'Ligado':'Desligado'}</button></div>`;
-    h=tg('sound','Som','Toques suaves ao colher, juntar e entregar.')
-     +tg('noAds','Remover anúncios (simulado)','Simula a compra única: sem anúncios de tela cheia e +25% nas recompensas.')
-     +tg('test','Modo teste','Só para testadores: cestos recarregam 10 vezes mais rápido e os intervalos de anúncio encurtam.')
-     +`<h2>Painel do teste</h2><div class="stats" id="stats">${statsHtml()}</div><p class="note">Os anúncios são simulados. O progresso fica salvo só neste navegador.</p>`
-     +`<div class="row"><div><b>Recomeçar do zero</b><p class="warn">Apaga todo o progresso.</p></div><button class="btn ghosty" data-act="reset">Recomeçar</button></div>`;
+    const tg=(k,[a,b])=>`<div class="row"><div><b>${a}</b><p>${b}</p></div><button class="btn${S.opts[k]?'':' ghosty'}" data-act="opt:${k}" aria-pressed="${S.opts[k]}">${S.opts[k]?t('on'):t('off')}</button></div>`;
+    h=`<div class="row"><div><b>${t('lang')}</b><p>${t('langP')}</p></div><div class="seg"><button data-act="lang:pt" aria-pressed="${LANG==='pt'}">Português</button><button data-act="lang:en" aria-pressed="${LANG==='en'}">English</button></div></div>`
+     +tg('sound',t('oSound'))+tg('noAds',t('oNoAds'))+tg('test',t('oTest'))
+     +`<h2>${t('panel')}</h2><div class="stats" id="stats">${statsHtml()}</div><p class="note">${t('panelNote')}</p>`
+     +`<div class="row"><div><b>${t('reset')}</b><p class="warn">${t('resetP')}</p></div><button class="btn ghosty" data-act="reset">${t('resetB')}</button></div>`;
   }
-  $('sheetin').innerHTML=`<header><h1>${T[sheetName]}</h1><button class="btn ghosty" data-act="close">Fechar</button></header>${h}`;
+  $('sheetin').innerHTML=`<header><h1>${T[sheetName]}</h1><button class="btn ghosty" data-act="close">${t('close')}</button></header>${h}`;
 }
 
 /* ===================== ENTRADA ===================== */
@@ -628,20 +782,21 @@ document.addEventListener('click',e=>{
   if(a){ const [k,v]=a.dataset.act.split(':');
     if(k==='basket') spawn(v);
     else if(k==='play'){ homeOn=false; render(); }
-    else if(k==='home'){ homeOn=true; tip=pick(TIPS); sel=null; selOrder=null; render(); }
+    else if(k==='home'){ homeOn=true; tip=Math.floor(Math.random()*TIPS.length); sel=null; selOrder=null; render(); }
+    else if(k==='lang') setLang(v);
     else if(k==='gift') claimGift();
     else if(k==='magnet') magnet();
     else if(k==='recharge') recharge();
-    else if(k==='adcharge'){ if(S.daily.adCharge<6) showAd('rew',()=>{ S.daily.adCharge++; const g=Math.round(10*bonus()); refill(g); toast('+'+g+' cargas em cada cesto'); }); }
+    else if(k==='adcharge'){ if(S.daily.adCharge<6) showAd('rew',()=>{ S.daily.adCharge++; const g=Math.round(10*bonus()); refill(g); toast(t('adCharge',g)); }); }
     else if(k==='deliver'){ if(sel!=null) deliver(sel); }
     else if(k==='enc'){ if(sel!=null) deliverEnc(sel); }
     else if(k==='sell'){ if(sel!=null) sell(sel); }
     else if(k==='sort') sortBoard();
     else if(k==='swap') swapOrder(+v);
-    else if(k==='double'){ const o=offer; if(o&&S.daily.adDouble<10){ offer=null; showAd('rew',()=>{ S.daily.adDouble++; const x=gain(o.xp*bonus(),Math.round(o.co*bonus())); toast('Recompensa dobrada: +'+x+' XP'); }); } }
+    else if(k==='double'){ const o=offer; if(o&&S.daily.adDouble<10){ offer=null; showAd('rew',()=>{ S.daily.adDouble++; const x=gain(o.xp*bonus(),Math.round(o.co*bonus())); toast(t('doubled',x)); }); } }
     else if(k==='nav'){ sheetName=v; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
     else if(k==='close'){ sheetName=null; $('sheet').hidden=true; render(); }
-    else if(k==='claim'){ const m=S.missions[+v]; if(m&&m.p>=m.goal){ S.missions[+v]=newMission(S,+v); S.coins+=m.co; const x=gain(m.xp,0); beep(880); toast(`Missão cumprida: +${m.co} moedas e +${x} XP`); render(); } }
+    else if(k==='claim'){ const m=S.missions[+v]; if(m&&m.p>=m.goal){ S.missions[+v]=newMission(S,+v); S.coins+=m.co; const x=gain(m.xp,0); beep(880); toast(t('missDone',m.co,x)); render(); } }
     else if(k==='chest'){ if(S.daily.chest<3) showAd('rew',()=>{ S.daily.chest++; S.coins+=Math.round(80*bonus()); S.boost.mag++; }); }
     else if(k==='buyexp') expand();
     else if(k==='buyup'){ const c=upCost(v); if(S.up[v]<UPS[v].max&&S.coins>=c){ S.coins-=c; S.up[v]++; if(v==='cap') refill(); beep(820); render(); } }
@@ -650,7 +805,7 @@ document.addEventListener('click',e=>{
     else if(k==='travelask'){ closeModal(); travelAsk(); }
     else if(k==='travel'){ closeModal(); travel(); }
     else if(k==='mclose'){ closeModal(); render(); }
-    else if(k==='reset') modal('<h2>Recomeçar do zero?</h2><p>Todo o progresso desta quitanda será apagado.</p><button class="btn" data-act="resetyes">Apagar e recomeçar</button><button class="btn ghosty" data-act="mclose">Cancelar</button>');
+    else if(k==='reset') modal(`<h2>${t('resetQ')}</h2><p>${t('resetQP')}</p><button class="btn" data-act="resetyes">${t('resetYes')}</button><button class="btn ghosty" data-act="mclose">${t('cancel')}</button>`);
     else if(k==='resetyes'){ try{ localStorage.removeItem('quitanda-zen-v1'); }catch(e){} S=fresh(); sel=null; selOrder=null; offer=null; modalQ=[]; closeModal(); sheetName=null; $('sheet').hidden=true; homeOn=true; render(); }
     else if(k==='lvlok'){ closeModal(); render(); maybeInter(); }
     return;
@@ -662,7 +817,7 @@ document.addEventListener('click',e=>{
     const i=S.board.findIndex(x=>x&&matches(ord,x));
     if(i>=0) deliver(i,id); else { selOrder=selOrder===id?null:id; render(); }
     return; }
-  if(e.target.closest('[data-enc]')){ if(sel!=null) deliverEnc(sel); else toast(`A encomenda pede ${ENC_N} itens de nível ${encLvl()} ou mais. Escolha um item e toque aqui.`); return; }
+  if(e.target.closest('[data-enc]')){ if(sel!=null) deliverEnc(sel); else toast(t('encHint',ENC_N,encLvl())); return; }
   const c=e.target.closest('[data-cell]'); if(!c) return;
   const i=+c.dataset.cell, it=S.board[i]; selOrder=null;
   if(sel!=null&&sel!==i){ const a=S.board[sel];
@@ -671,25 +826,36 @@ document.addEventListener('click',e=>{
   } else if(sel===i) sel=null; else if(it) sel=i;
   render();
 });
-$('board').addEventListener('pointerdown',e=>{ lastAct=Date.now(); const c=e.target.closest('[data-cell]'); if(!c) return; const i=+c.dataset.cell; if(!S.board[i]) return; drag={i,x:e.clientX,y:e.clientY,on:false,id:e.pointerId,g:null}; });
+$('board').addEventListener('pointerdown',e=>{ lastAct=Date.now(); const c=e.target.closest('[data-cell]'); if(!c) return; const i=+c.dataset.cell; if(!S.board[i]) return; drag={i,x:e.clientX,y:e.clientY,on:false,id:e.pointerId,g:null,cur:-1,prev:-1}; });
 window.addEventListener('pointermove',e=>{
   if(!drag||e.pointerId!==drag.id) return;
   if(!drag.on&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>8){ drag.on=true; const it=S.board[drag.i]; drag.g=document.createElement('div'); drag.g.className='ghost'; drag.g.textContent=item(it.l,it.n)[0]; document.body.appendChild(drag.g);
     const c=$('board').querySelector(`[data-cell="${drag.i}"]`); if(c)c.classList.add('drag'); }
-  if(drag.on){ drag.g.style.left=e.clientX+'px'; drag.g.style.top=e.clientY+'px'; }
+  if(drag.on){ drag.g.style.left=e.clientX+'px'; drag.g.style.top=e.clientY+'px';
+    // Guarda o último item igual por onde o dedo passou; ele só entra na fusão se for vizinho do destino.
+    const el=document.elementFromPoint(e.clientX,e.clientY), c=el&&el.closest('#board [data-cell]'), k=c?+c.dataset.cell:-1;
+    if(k>=0&&k!==drag.cur){ const it=S.board[drag.i], same=j=>j>=0&&j!==drag.i&&S.board[j]&&S.board[j].l===it.l&&S.board[j].n===it.n;
+      drag.prev=same(k)&&same(drag.cur)?drag.cur:same(k)&&same(drag.prev)&&isAdj(k,drag.prev,S.cols)?drag.prev:-1; drag.cur=k;
+      $('board').querySelectorAll('.trail').forEach(x=>x.classList.remove('trail'));
+      if(drag.prev>=0&&it.n+2<=MAX&&isAdj(k,drag.prev,S.cols)) [k,drag.prev].forEach(j=>$('board').querySelector(`[data-cell="${j}"]`).classList.add('trail')); } }
 });
 function endDrag(e,cancel){
   if(!drag||e.pointerId!==drag.id) return; const d=drag; drag=null; if(!d.on) return;
   d.g.remove(); noClick=true; setTimeout(()=>noClick=false,60); lastAct=Date.now();
-  const t=cancel?null:document.elementFromPoint(e.clientX,e.clientY);
-  const c=t&&t.closest('[data-cell]'), o=t&&t.closest('[data-order]'), en=t&&t.closest('[data-enc]');
-  if(c) drop(d.i,+c.dataset.cell); else if(o) deliver(d.i,+o.dataset.order); else if(en) deliverEnc(d.i); else render();
+  const el=cancel?null:document.elementFromPoint(e.clientX,e.clientY);
+  const c=el&&el.closest('[data-cell]'), o=el&&el.closest('[data-order]'), en=el&&el.closest('[data-enc]');
+  if(c) drop(d.i,+c.dataset.cell,d.prev); else if(o) deliver(d.i,+o.dataset.order); else if(en) deliverEnc(d.i); else render();
 }
 window.addEventListener('pointerup',e=>endDrag(e,false));
 window.addEventListener('pointercancel',e=>endDrag(e,true));
 new ResizeObserver(()=>{ if(S) fit(); }).observe($('wrap'));
 
-function start(d){ S=(d&&d.v===2&&Array.isArray(d.board))?d:load(); render(); setInterval(tick,1000); }
+function start(d){
+  LANG=detectLang(); S=(d&&d.v===2&&Array.isArray(d.board))?d:load();
+  let q=null; try{ q=new URLSearchParams(location.search).get('lang'); }catch(e){}
+  if(q==='en'||q==='pt') S.opts.lang=q; LANG=S.opts.lang||LANG; S.opts.lang=LANG;
+  applyLang(); render(); setInterval(tick,1000);
+}
 window.claude?.hot?.snapshot?.(()=>S);
 window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
 </script>

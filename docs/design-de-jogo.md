@@ -20,7 +20,7 @@ Duas versões do mesmo jogo de merge com tema de feiras brasileiras. Compartilha
 
 **Itens.** Cada item tem uma linha (ex.: Açaí) e um nível (1 a 5 na Versão A, 1 a 6 na B). Arrastar um item sobre outro de mesma linha e nível funde os dois em um item de nível +1 na célula de destino; a origem fica vazia. Itens no nível máximo não fundem, só são entregues.
 
-**Fusão tripla.** Se, ao fundir, existir um terceiro item idêntico adjacente (4 direções) à célula de destino, ele é absorvido e o resultado sobe +2 níveis. Recompensa o planejamento do tabuleiro.
+**Fusão tripla.** Só acontece por escolha do jogador: ao arrastar um item, se o dedo passar por cima de um item idêntico e soltar em outro idêntico vizinho dele (4 direções), os três se juntam e o resultado sobe +2 níveis. As duas células ficam destacadas durante o arraste. Soltar direto sobre um item, ou juntar por toque, funde só dois, mesmo que haja um terceiro igual ao lado. Recompensa o planejamento do tabuleiro sem gastar itens sem querer.
 
 **Cesto (gerador).** Um toque gera um item nível 1 da linha do cesto em uma célula vazia aleatória. Sem célula vazia, não gera.
 
@@ -228,6 +228,10 @@ A pedido, o protótipo trocou a progressão lenta das seções 4.2 a 4.5 por um 
 ## 5. Localização e idiomas
 
 **Ordem de lançamento.** Português (BR) + inglês no início; espanhol em seguida (público latino-americano); outros idiomas (alemão, francês etc.) só depois que os dados mostrarem de onde vêm jogadores e receita. O inglês é quase obrigatório porque o dinheiro do gênero está concentrado em mercados ocidentais, em especial os EUA.
+
+**Nome internacional (Versão B):** *Quitanda: Merge Across Brazil*. “Quitanda” é fácil de pronunciar (kee-TAHN-da), desconhecido fora do Brasil (gera curiosidade) e mantém a marca da versão em português; o subtítulo explica o gênero e o tema. A tela inicial em inglês traz a pronúncia e o significado. Antes de adotar, verificar registro de marca e nomes parecidos nas lojas; uma busca rápida em 10/11/2026 não encontrou jogo com esse nome.
+
+**O que traduzir (protótipo da Versão B):** a interface, os papéis e falas dos personagens e as descrições. Ficam em português os nomes dos mercados, das cidades, dos personagens e dos pratos típicos (pastel, tapioca, feijoada, moqueca, brigadeiro…), que ganham uma explicação curta em inglês. As falas mantêm expressões regionais (égua, oxente, uai, bah, tchê).
 
 **Teste barato antes de traduzir o jogo.** Traduza apenas a página da loja (título, descrição, capturas de tela) e observe onde surgem os downloads.
 
