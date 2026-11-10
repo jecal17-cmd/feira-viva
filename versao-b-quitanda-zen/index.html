@@ -10,6 +10,7 @@
 <style>
 /* Telas: inicial (home), jogo (app), folhas (mapa, turma, missões, receitas, melhorias, ajustes) e cartões modais. */
 :root{
+  --r0:#9FD5B4; --r1:#F4C98E; --r2:#E6DA86; --r3:#A9C8EC; --r4:#C9B5E6;
   --bg:#DCEFE4; --panel:#F6FBF8; --cell:#FFFFFF; --hole:#C6E2D3; --ink:#1D4A3F; --muted:#557A6E;
   --accent:#2A8F63; --on-accent:#FFFFFF; --gold:#B87A00; --line:#B5D6C5; --scrim:rgba(16,40,33,.82); --warn:#B4472E;
   --sun:#F2B33D; --land:#BFE3CF; --stripe:#E4573D;
@@ -18,11 +19,13 @@
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --bg:#11231E; --panel:#1A332C; --cell:#27473D; --hole:#172E28; --ink:#E3F2EB; --muted:#9BBBAF;
   --accent:#4CC38A; --on-accent:#0B1F18; --gold:#F0C04A; --line:#2F5347; --scrim:rgba(5,14,11,.86); --warn:#F08A6E;
-  --sun:#F0C04A; --land:#21443A; --stripe:#D9604A; color-scheme:dark } }
+  --sun:#F0C04A; --land:#21443A; --stripe:#D9604A; color-scheme:dark;
+  --r0:#2F6A4E; --r1:#7A5A2E; --r2:#6A6230; --r3:#2F5579; --r4:#584575 } }
 :root[data-theme="dark"]{
   --bg:#11231E; --panel:#1A332C; --cell:#27473D; --hole:#172E28; --ink:#E3F2EB; --muted:#9BBBAF;
   --accent:#4CC38A; --on-accent:#0B1F18; --gold:#F0C04A; --line:#2F5347; --scrim:rgba(5,14,11,.86); --warn:#F08A6E;
-  --sun:#F0C04A; --land:#21443A; --stripe:#D9604A; color-scheme:dark }
+  --sun:#F0C04A; --land:#21443A; --stripe:#D9604A; color-scheme:dark;
+  --r0:#2F6A4E; --r1:#7A5A2E; --r2:#6A6230; --r3:#2F5579; --r4:#584575 }
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--text);font-weight:600;font-size:14px;overflow:hidden}
 *{box-sizing:border-box}
@@ -68,7 +71,7 @@ button:disabled{opacity:.45;cursor:default}
 @keyframes pop{0%{transform:scale(.5)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
 .fx{position:fixed;z-index:16;pointer-events:none;font-family:var(--display);font-weight:800;font-size:15px;color:var(--gold);text-shadow:0 1px 0 var(--panel),0 -1px 0 var(--panel),1px 0 0 var(--panel),-1px 0 0 var(--panel);transform:translate(-50%,-50%);animation:fx .9s ease-out forwards;white-space:nowrap}
 @keyframes fx{to{transform:translate(-50%,-260%);opacity:0}}
-@media (prefers-reduced-motion: reduce){.cell.pop,.cell.hint,.strip.go,.floaty i,.node.cur{animation:none!important}.fx{animation-duration:.01s}}
+@media (prefers-reduced-motion: reduce){.cell.pop,.cell.hint,.strip.go,.floaty i,.node .ring{animation:none!important}.fx{animation-duration:.01s}}
 .ghost{position:fixed;z-index:15;pointer-events:none;font-size:40px;line-height:1;transform:translate(-50%,-70%)}
 .info{min-height:42px;background:var(--panel);border-radius:14px;padding:5px 10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .info p{margin:0;flex:1;min-width:0;font-size:12.5px;line-height:1.25}
@@ -108,8 +111,8 @@ button:disabled{opacity:.45;cursor:default}
 .play:active{transform:translateY(3px);box-shadow:0 2px 0 color-mix(in srgb,var(--accent) 60%,#000)}
 .where{background:var(--panel);border-radius:14px;padding:10px 12px;text-align:left;display:flex;flex-direction:column;gap:6px}
 .where small{color:var(--muted)}
-.hnav{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.hnav button{background:var(--panel);border-radius:14px;padding:10px 2px;font-weight:800;font-size:12px;position:relative}
+.hnav{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.hnav button{background:var(--panel);border-radius:14px;padding:10px 2px;font-weight:800;font-size:11.5px;position:relative;min-width:0}
 .hnav span{display:block;font-size:22px}
 .gift{background:var(--sun);color:#3A2A00;font-weight:800;border-radius:14px;padding:10px}
 .sheet{z-index:20;background:var(--bg);overflow:auto;padding-block:calc(14px + env(safe-area-inset-top,0px)) calc(24px + env(safe-area-inset-bottom,0px));
@@ -128,16 +131,39 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
 .row .bar{margin-top:6px;height:8px}
 .note{color:var(--muted);font-size:13px;margin:0;max-width:60ch}
 .map{background:var(--panel);border-radius:20px;padding:8px}
-.map svg{display:block;width:100%;height:auto;max-height:46vh}
-.map .land{fill:var(--land);stroke:var(--accent);stroke-width:2;stroke-linejoin:round}
-.map .route{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:2 5;stroke-linecap:round}
-.map .route.done{stroke:var(--accent);stroke-dasharray:none;stroke-width:2.5}
-.node circle{fill:var(--hole);stroke:var(--muted);stroke-width:1.5}
-.node text{font:800 9px var(--text);fill:var(--muted);text-anchor:middle;dominant-baseline:central}
-.node.done circle{fill:var(--accent);stroke:var(--panel)} .node.done text{fill:var(--on-accent)}
-.node.cur circle{fill:var(--sun);stroke:var(--ink);stroke-width:2} .node.cur text{fill:#3A2A00}
-.node.cur{animation:blink 1.4s ease-in-out infinite}
-@keyframes blink{50%{opacity:.55}}
+.map svg{display:block;width:100%;height:auto;max-height:52vh}
+.uf{stroke:var(--panel);stroke-width:1.6;stroke-linejoin:round}
+.r0{fill:var(--r0)} .r1{fill:var(--r1)} .r2{fill:var(--r2)} .r3{fill:var(--r3)} .r4{fill:var(--r4)}
+.uflab{font:800 13px var(--text);fill:var(--ink);opacity:.5;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.uflab.s{font-size:9px}
+.route{fill:none;stroke:var(--ink);opacity:.35;stroke-width:2.5;stroke-dasharray:3 7;stroke-linecap:round}
+.route.done{stroke:var(--accent);opacity:1;stroke-dasharray:none;stroke-width:4}
+.trippath{fill:none;stroke:var(--gold);stroke-width:5;stroke-linecap:round}
+.node circle{fill:var(--panel);stroke:var(--muted);stroke-width:2}
+.node text,.veh{text-anchor:middle;dominant-baseline:central;font-size:20px}
+.node.done circle{stroke:var(--accent);stroke-width:3}
+.node .ok{fill:var(--accent);stroke:var(--panel);stroke-width:2} .node .okt{font:800 10px var(--text);fill:var(--on-accent)}
+.node.cur circle{stroke:var(--sun);stroke-width:4}
+.node .ring{fill:none;stroke:var(--sun);stroke-width:3;transform-box:fill-box;transform-origin:center;animation:ring 1.6s ease-out infinite}
+@keyframes ring{from{transform:scale(1);opacity:.9}to{transform:scale(1.9);opacity:0}}
+.node.lock{opacity:.75}
+.veh{font-size:40px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;font-size:12px;color:var(--muted);padding:6px 0 2px}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend i{width:12px;height:12px;border-radius:4px;display:inline-block}
+.trip{position:fixed;inset:0;z-index:32;background:var(--scrim);display:grid;place-items:center;padding:16px}
+.tripin{background:var(--panel);border-radius:20px;padding:14px;max-width:420px;width:100%;display:flex;flex-direction:column;gap:8px;text-align:center}
+.tripin .map{padding:0}
+.tripin p{margin:0;color:var(--muted)}
+.thumb{flex:0 0 auto;width:56px;height:56px;border-radius:14px;background:var(--bg);display:grid;place-items:center;font-size:30px;line-height:1;position:relative}
+.thumb b{position:absolute;right:-5px;bottom:-5px;min-width:22px;height:22px;padding:0 5px;border-radius:99px;background:var(--accent);color:var(--on-accent);font:800 12px var(--text);display:grid;place-items:center}
+.thumb svg{width:44px;height:44px}
+.thumb .gc{fill:var(--line)} .thumb .gn{fill:var(--gold)}
+.nn{color:var(--accent);font-weight:800}
+.btn.buy{display:flex;flex-direction:column;align-items:center;line-height:1.15;padding:6px 12px}
+.btn.buy small{font-size:12px}
+.help .thumb{font-size:26px}
+.card .btn{white-space:normal}
 .stats{display:grid;grid-template-columns:1fr auto;gap:6px 12px;background:var(--panel);border-radius:14px;padding:12px;font-variant-numeric:tabular-nums}
 .stats span:nth-child(even){font-weight:800;text-align:right}
 .over{z-index:30;background:var(--scrim);display:grid;place-items:center;padding:24px}
@@ -157,7 +183,7 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
 </head>
 <body>
 <div class="app" id="app">
-  <div class="top"><button class="icon" id="homebtn" data-act="home" aria-label="Tela inicial">🏠</button><div class="lvl" id="lvl"></div><div class="xp"><div class="bar"><i id="xpbar"></i></div><small id="xptxt"></small></div><div class="coins" id="coins"></div></div>
+  <div class="top"><button class="icon" id="homebtn" data-act="home" aria-label="Tela inicial">🏠</button><div class="lvl" id="lvl"></div><div class="xp"><div class="bar"><i id="xpbar"></i></div><small id="xptxt"></small></div><div class="coins" id="coins"></div><button class="icon" id="helpbtn" data-act="nav:help" aria-label="Ajuda">❓</button></div>
   <div class="orders" id="orders"></div>
   <div id="stripbox"></div>
   <div class="wrap" id="wrap"><div class="board" id="board"></div></div>
@@ -167,6 +193,7 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
 </div>
 <div class="home" id="home"><div class="homein" id="homein"></div></div>
 <div class="sheet" id="sheet" hidden><div id="sheetin"></div></div>
+<div class="trip" id="trip" hidden><div class="tripin"><h2 id="triph"></h2><div class="map" id="tripmap"></div><p id="tripp"></p><button class="btn ghosty" data-act="tripskip" id="tripskip"></button></div></div>
 <div class="over" id="over" hidden><div class="card" id="card"></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
@@ -183,15 +210,16 @@ function detectLang(){
 function applyLang(){
   document.documentElement.lang=LANG==='en'?'en':'pt-BR';
   document.title=t('docTitle');
-  $('homebtn').setAttribute('aria-label',t('home'));
+  $('homebtn').setAttribute('aria-label',t('home')); $('helpbtn').setAttribute('aria-label',t('help')); $('tripskip').textContent=t('skip');
 }
 
 /* ===================== DADOS (balanceamento: tudo aqui em cima) ===================== */
 const MAX=8, KEY='quitanda-zen-v2', ENC_N=5;
 const XPV=[0,1,4,9,18,36,70,140,280], COV=[0,1,2,5,10,22,45,90,180];
-const BASE_CAP=20, BASE_PERIOD=10000;                 // cargas por cesto e ms por carga
+const BASE_CAP=10, CAP_UP=2, BASE_PERIOD=90000;       // cargas por cesto, cargas por melhoria e ms por carga
+const AD_MAX=12, AD_CHARGE=6, CHEST_MAX=5, DOUBLE_MAX=15; // limites diários e prêmios de anúncio
 const need=n=>50+15*n;                                 // XP do nível n para n+1 (sem teto de nível)
-const goal=s=>Math.min(24,6+2*s);                      // clientes para concluir a feira s
+const goal=s=>Math.min(60,30+3*s);                     // clientes para concluir a feira s
 // Itens: [emoji, nome em português, nome em inglês]. Nomes brasileiros ficam em português e ganham explicação em GLOSS.
 const LINES={
  fr:{name:['Frutas','Fruits'],hue:28,it:[['🍋','Limão','Lime'],['🍊','Laranja','Orange'],['🍌','Banana','Banana'],['🥭','Manga','Mango'],['🍍','Abacaxi','Pineapple'],['🍎','Caju','Caju'],['🫐','Jabuticaba','Jabuticaba'],['🍇','Açaí na tigela','Açaí bowl']]},
@@ -221,6 +249,9 @@ const GLOSS={fr6:'cashew fruit: the juicy part that grows above the nut',fr7:'gr
  la3:'mild fresh cheese from Minas Gerais',la4:'creamy spreadable cheese',la5:'firm cheese grilled on a stick',la6:'slow-cooked milk caramel',la7:'cheese with guava paste, a classic pairing',la8:'Brazilian caramel flan made with condensed milk',
  ln1:'crispy fried pastry, the classic street-market snack',ln2:'crepe made from cassava starch',ln4:'teardrop-shaped chicken croquette',ln5:'black-eyed pea fritter fried in dendê oil',ln6:'“cheese-everything”: a fully loaded burger',ln8:'home-style packed lunch',
  pa3:'crusty bread roll eaten every morning in Brazil',pa4:'chewy little cheese bread',pa6:'cornmeal cake',pa7:'savory pot pie',fl7:'tree that bursts into yellow bloom'};
+const UFMAP={"ac":"M31 238L29 238L29 235L26 230L13 229L16 224L17 222L8 212L6 207L4 206L5 203L0 200L1 197L5 196L4 193L21 200L57 209L84 223L115 237L108 242L105 243L100 246L99 249L93 249L90 253L82 256L82 254L72 253L64 252L58 255L55 253L53 254L53 231L55 229L43 238Z","al":"M562 231L559 229L559 227L563 225L566 220L567 221L570 221L574 225L578 227L588 226L593 220L598 221L602 220L606 221L604 226L587 246L587 245L579 240L578 238L569 234Z","ap":"M345 100L339 100L336 96L334 88L331 85L329 85L328 82L326 76L326 71L322 68L321 63L318 60L314 60L308 55L301 55L301 47L300 44L302 44L302 46L311 49L316 45L320 47L323 46L324 48L330 48L335 43L338 33L347 20L351 18L352 21L351 14L355 18L357 22L358 22L359 34L364 49L368 54L372 54L376 56L377 62L373 63L376 63L376 64L368 72L363 79L360 80L354 86L352 90L348 94L348 98L345 100ZM369 53L367 50L369 49L370 52L369 53ZM371 71L371 70L372 69L375 68L374 70L371 71ZM375 68L374 67L376 66L375 68ZM367 49L367 48L369 48L367 49Z","am":"M166 48L168 49L170 48L171 51L174 51L177 52L175 57L178 61L181 70L179 71L180 74L179 78L179 83L182 87L183 91L182 93L180 93L180 94L187 100L190 104L194 104L195 93L200 90L204 91L207 95L209 95L214 93L213 89L218 79L236 79L237 87L239 89L238 92L243 95L244 98L255 107L264 110L270 116L271 117L274 116L275 119L246 183L243 186L244 190L247 192L248 196L247 198L247 201L244 204L245 208L243 218L242 218L194 219L192 217L189 220L186 219L185 216L183 216L182 212L179 211L176 208L174 207L164 207L162 209L160 210L161 211L158 212L157 213L158 215L154 218L155 222L151 221L147 223L144 222L142 223L142 226L140 229L138 229L137 226L131 229L129 231L126 229L119 229L119 230L117 232L112 235L84 223L57 209L21 200L4 193L4 189L10 184L13 184L14 181L12 177L17 170L18 162L24 159L26 156L33 152L45 150L48 150L51 146L54 147L58 146L60 149L63 149L64 148L72 103L72 98L69 94L69 90L62 85L62 73L66 73L71 71L74 72L76 72L76 69L74 66L65 66L65 56L70 54L73 55L92 55L90 53L91 51L95 55L103 49L104 49L108 57L108 64L112 63L121 71L123 71L129 67L132 67L133 68L132 71L133 72L136 68L138 68L139 64L144 62L146 63L150 59L152 59L155 58L156 52L166 49Z","ba":"M528 366L528 362L523 359L523 356L522 356L523 348L527 347L527 343L532 339L533 336L532 334L528 331L516 328L513 330L510 330L510 326L503 319L499 320L482 312L477 314L471 313L470 311L472 307L465 305L460 307L455 311L449 313L447 316L444 316L441 320L438 320L436 321L437 318L437 315L439 313L438 310L439 308L435 304L434 301L433 296L434 292L436 291L434 289L436 285L434 282L435 277L432 276L432 275L432 271L436 268L433 266L436 263L431 262L428 259L431 253L434 252L433 250L440 245L441 243L443 243L448 250L452 252L456 252L457 250L462 247L466 248L469 245L473 239L473 235L471 229L474 228L478 228L479 229L482 228L486 231L492 230L495 227L499 226L502 226L504 225L504 222L508 221L510 218L517 220L518 225L520 226L519 229L521 230L526 228L527 224L532 223L533 220L541 215L544 218L550 219L552 222L553 220L554 220L554 222L557 224L559 229L562 230L562 234L566 240L565 245L566 248L562 250L559 249L558 252L562 257L563 260L567 263L571 263L567 271L557 285L554 286L554 281L552 281L551 279L550 283L549 283L549 280L548 282L549 283L551 284L547 292L546 292L545 294L546 294L547 297L546 299L547 303L545 304L546 304L547 303L547 300L548 300L545 312L549 332L543 353L544 361L542 364L539 365L536 371L528 366ZM550 288L550 286L552 284L553 285L550 288ZM548 294L546 292L548 292L548 294Z","ce":"M574 157L567 161L560 174L558 177L555 176L553 180L553 181L554 182L552 186L553 187L551 191L552 194L554 196L551 201L549 202L547 204L545 204L541 200L537 197L523 197L522 194L525 188L524 187L520 186L519 183L516 167L515 166L517 163L515 158L516 151L509 135L512 127L524 125L531 126L554 140L568 153L574 156Z","df":"M417 334L402 334L402 331L403 325L415 325L417 327L416 333Z","es":"M502 412L502 404L504 402L510 402L513 393L516 390L516 385L514 381L512 380L517 379L516 377L515 376L515 373L513 371L516 368L519 368L517 365L524 364L527 365L536 371L535 377L536 387L534 393L531 395L527 403L526 403L525 404L527 404L525 409L521 413L519 413L516 420L504 417L504 412Z","go":"M417 334L416 333L417 327L415 325L403 325L402 331L402 334L417 334L417 337L415 342L418 344L419 349L414 355L413 357L417 359L416 363L417 367L407 374L402 371L394 372L392 371L385 376L381 375L378 376L375 376L370 377L366 384L364 384L362 387L361 390L358 387L346 383L336 378L330 377L332 373L327 372L326 361L325 358L325 354L328 350L328 348L334 342L337 335L340 332L346 330L348 325L349 320L353 317L355 318L358 316L360 310L360 305L362 302L361 297L366 290L368 281L371 277L369 283L378 285L385 288L387 282L390 278L392 282L394 288L395 288L396 286L404 286L403 288L410 290L411 287L414 290L418 287L424 286L434 282L436 285L434 289L436 291L434 292L433 297L435 304L439 307L438 310L438 313L436 316L433 316L429 313L428 314L428 319L424 318L423 321L424 322L423 326L424 331L418 334Z","ma":"M459 129L456 132L456 133L462 128L463 121L464 121L468 120L466 124L463 125L464 126L466 125L465 127L470 122L477 121L477 119L485 120L492 124L496 126L500 126L500 125L502 125L502 126L503 128L500 132L496 136L492 136L484 148L486 152L485 156L486 159L487 164L483 169L482 172L483 176L487 180L485 186L484 187L478 188L473 186L468 187L463 193L458 196L448 200L445 202L443 210L438 221L441 229L438 243L435 241L432 241L430 236L427 234L429 230L425 228L424 224L420 223L423 219L424 214L430 213L430 206L428 205L422 207L415 199L414 199L414 195L410 194L414 191L416 180L414 168L409 166L408 164L404 164L401 162L398 163L394 165L409 153L413 153L416 148L417 145L420 143L423 135L427 130L428 126L427 125L431 121L431 117L433 116L434 112L434 111L432 109L434 108L435 102L438 99L439 102L441 102L441 100L442 103L443 103L443 102L446 102L446 103L445 105L446 106L448 103L447 109L449 108L449 107L450 105L454 105L455 104L454 107L456 107L458 110L460 111L461 114L458 118L462 115L463 118L459 122L458 129L459 129ZM459 130L460 126L461 124L461 128L459 130ZM453 104L453 102L455 102L453 104ZM457 108L458 106L458 108L457 108ZM442 103L443 100L442 103Z","mt":"M207 296L213 292L215 286L218 284L221 279L221 271L219 268L218 268L217 264L220 260L219 256L213 255L212 254L195 254L196 245L194 240L196 232L194 227L196 221L194 219L242 218L243 218L245 208L244 204L247 201L247 198L248 196L252 201L255 211L256 218L264 223L265 226L268 226L269 229L308 232L371 236L366 249L363 261L365 263L364 266L365 268L365 279L366 282L367 284L366 286L366 290L361 297L362 302L360 305L360 310L356 317L353 317L349 320L348 325L346 330L340 332L337 335L333 344L328 348L325 358L327 366L316 366L313 365L314 361L316 360L318 354L316 354L311 360L306 361L304 358L302 358L299 360L294 361L289 358L288 356L279 353L274 355L270 355L264 362L258 364L254 361L254 359L252 357L250 358L244 354L243 344L245 342L245 338L243 339L216 338L215 325L210 319L215 319L214 311L211 304L213 301L211 298L208 297Z","ms":"M359 400L359 403L355 404L350 409L350 413L346 418L346 421L343 425L343 427L338 434L328 440L326 444L319 447L317 454L313 456L311 465L309 467L303 462L298 465L294 466L290 465L287 446L287 443L286 442L285 439L284 437L278 437L275 433L274 433L271 436L268 437L250 434L251 424L252 421L253 415L252 411L251 410L251 411L248 402L252 398L248 395L254 383L255 383L254 381L258 369L254 363L254 362L258 364L264 362L270 355L274 355L279 353L288 356L289 358L294 361L299 360L302 358L304 358L306 361L311 360L316 354L318 354L316 360L314 361L313 365L316 366L327 366L328 372L332 373L330 377L336 378L346 383L358 387L361 390L359 394L360 397Z","mg":"M528 366L524 364L517 365L519 368L516 368L513 371L515 373L515 376L516 377L517 379L512 380L514 381L516 385L516 390L513 393L510 402L504 402L502 404L502 412L498 415L498 415L494 425L495 427L483 433L479 432L477 433L472 433L465 436L462 436L452 440L447 443L442 443L443 442L442 442L442 445L439 447L432 447L430 443L431 443L431 441L427 439L427 429L429 423L426 421L422 422L418 414L420 409L417 406L418 402L415 398L412 399L408 399L408 401L405 401L402 399L401 401L393 401L392 406L391 405L390 401L387 404L386 399L382 397L377 398L370 397L367 395L359 400L360 390L362 390L362 387L363 385L366 384L370 377L375 376L378 376L381 375L385 376L392 371L394 372L402 371L407 374L417 367L416 363L417 359L413 357L414 355L419 349L418 344L415 342L417 337L417 334L424 331L423 326L424 322L423 321L424 318L428 319L428 314L429 313L433 316L436 316L437 315L437 318L436 321L439 319L441 320L444 316L447 316L449 313L464 305L472 307L470 311L471 313L477 314L482 312L499 320L503 319L510 326L510 329L518 328L528 331L532 334L533 336L532 339L527 343L527 347L524 348L522 352L521 356L523 356L523 359L528 362L527 365Z","pa":"M371 236L274 230L271 228L269 229L268 226L265 226L264 223L256 218L255 211L252 201L247 196L247 192L244 190L243 186L246 183L275 119L274 116L271 117L269 116L264 110L255 107L249 102L244 98L243 95L238 92L239 89L237 87L235 62L237 64L239 62L242 62L243 61L242 60L245 58L250 59L250 57L254 56L257 56L260 52L264 51L268 53L274 52L282 54L283 50L279 47L282 43L286 45L297 43L299 44L301 45L301 55L308 55L314 60L318 60L321 63L322 68L326 71L326 76L328 82L329 85L331 85L334 88L336 96L339 100L345 100L345 103L344 104L340 103L333 107L339 106L340 107L340 108L340 108L355 101L359 98L359 97L362 97L362 103L365 110L362 112L357 110L354 108L351 114L352 117L353 118L352 114L354 110L357 111L359 114L358 116L359 120L362 121L359 118L360 114L360 113L362 114L364 117L362 113L364 110L368 111L368 112L375 110L377 112L381 111L385 109L386 109L383 117L383 122L388 112L391 111L395 105L397 105L399 108L400 105L403 105L399 105L399 102L401 103L402 99L401 97L405 93L407 94L410 92L410 94L413 92L416 95L415 91L417 91L421 94L422 93L422 96L424 93L425 95L428 95L428 98L434 97L433 100L435 99L436 101L435 102L434 108L432 109L434 111L433 115L431 117L431 121L427 125L428 126L427 130L423 135L420 143L417 145L416 148L413 153L409 153L394 165L400 166L404 169L403 171L401 171L403 174L402 177L399 178L399 181L396 184L396 186L387 190L388 195L385 199L388 203L386 213L382 219L379 221L374 227L371 236ZM392 105L388 107L383 107L380 110L379 108L378 110L374 109L369 111L366 110L362 103L363 100L366 99L364 99L362 97L363 92L364 91L366 93L364 92L364 90L365 86L370 84L380 86L388 84L400 86L400 88L398 96L396 97L392 105ZM345 105L344 105L346 100L349 99L350 94L353 91L356 90L357 93L355 98L352 101L345 105ZM374 82L369 82L369 79L379 77L381 78L376 83L375 83L374 82ZM379 82L382 81L384 82L385 83L380 85L377 84L379 82ZM362 87L359 86L360 84L364 82L366 83L362 87ZM371 77L370 74L374 72L375 74L371 77ZM357 97L358 93L362 91L362 93L357 97ZM368 79L367 79L369 73L370 77L368 79ZM353 90L356 85L358 84L357 87L353 90ZM367 83L365 80L366 79L368 80L368 82L367 83ZM362 113L359 113L357 110L361 112L362 113ZM341 108L341 105L343 104L345 106L341 108ZM353 101L356 95L356 100L353 101ZM360 91L361 88L363 88L362 90L360 91ZM391 110L390 109L392 107L391 110ZM358 91L357 88L359 87L360 88L359 88L358 91ZM360 96L359 98L357 99L360 96ZM337 106L337 105L341 103L341 104L337 106ZM401 101L399 100L400 99L401 99L401 101ZM363 82L360 83L362 81L363 82ZM358 91L358 89L361 88L360 90L358 91ZM360 95L361 93L362 93L362 95L360 95ZM388 111L390 109L390 110L388 111ZM362 88L361 87L363 86L363 87L362 88ZM429 98L430 96L430 98L429 98Z","pb":"M611 199L608 197L605 197L599 202L585 205L583 207L583 208L578 211L576 209L576 206L572 206L575 203L575 200L578 198L577 197L574 195L570 197L563 203L558 204L557 202L553 203L551 200L554 196L552 194L551 191L553 187L552 186L554 181L560 183L565 180L566 178L574 176L575 177L570 184L570 186L573 186L574 188L577 187L581 187L582 191L585 189L585 185L586 185L586 181L587 180L589 180L590 182L594 183L610 183L611 190L611 193L612 191L612 194L612 199Z","pr":"M397 500L389 500L383 504L376 500L370 501L366 500L362 504L358 504L356 505L355 508L356 511L353 512L352 510L344 510L341 508L331 506L326 506L323 504L318 505L315 499L314 494L311 491L305 494L303 493L303 490L306 485L305 483L309 472L307 468L311 465L313 456L317 454L319 447L329 442L340 442L342 441L350 443L355 443L361 446L362 447L372 448L375 447L381 453L380 457L382 461L382 463L387 472L386 475L386 477L397 477L399 479L397 483L398 484L400 481L403 481L403 486L405 487L405 488L403 491L403 489L404 488L400 488L399 491L395 490L395 491L400 493L398 496L394 498L397 498L397 499Z","pe":"M559 227L557 223L554 221L554 220L553 220L552 222L550 219L544 218L541 215L533 220L532 223L529 224L527 223L526 228L521 230L519 229L520 226L518 225L517 220L514 218L510 218L518 212L522 208L523 204L521 202L520 198L537 197L541 200L545 204L547 204L549 202L551 201L554 203L557 202L558 204L563 203L570 197L574 195L577 197L578 198L575 200L575 203L572 206L576 206L576 209L578 211L583 208L583 207L585 205L599 202L605 197L608 197L612 200L612 201L611 204L612 206L607 221L602 220L598 221L593 220L588 226L578 227L574 225L570 221L567 221L566 220L563 225L560 226Z","pi":"M506 127L510 128L512 129L509 135L516 151L515 158L517 163L515 166L516 167L517 175L520 186L524 187L525 188L522 194L523 197L520 198L521 202L523 204L522 208L518 212L510 218L508 221L504 222L504 224L502 226L499 226L495 227L492 230L489 231L485 230L485 229L482 228L479 229L476 227L471 229L473 235L473 238L469 245L465 248L462 247L460 248L456 252L452 252L448 250L443 243L438 243L441 229L438 221L444 210L446 202L448 200L458 196L463 193L468 187L473 186L478 188L484 187L485 186L487 180L483 176L482 172L483 169L487 164L486 159L485 156L486 152L484 148L492 136L496 135L502 129L502 125L505 127Z","rj":"M469 451L469 449L475 449L472 448L468 448L466 450L463 447L458 451L458 453L461 454L460 455L457 455L455 452L456 449L460 447L464 446L466 444L465 442L459 442L456 439L456 438L462 436L465 436L472 433L476 433L479 432L483 433L496 427L494 425L498 415L498 415L502 412L504 412L505 417L516 420L515 425L516 432L504 438L500 442L499 447L483 448L482 447L484 444L483 443L480 445L482 447L481 449L469 451ZM464 453L463 452L465 450L467 452L464 453Z","rn":"M610 183L594 183L590 182L589 180L587 180L586 181L586 185L585 185L585 189L582 191L581 187L577 187L574 188L573 186L570 186L570 184L575 177L575 176L566 178L565 180L560 183L555 181L553 181L554 177L558 177L560 174L567 161L574 157L575 159L580 159L583 161L594 161L602 162L606 169L609 182Z","rs":"M322 639L320 637L320 628L327 620L319 615L318 610L314 606L308 603L305 601L303 597L300 596L293 593L290 588L288 586L284 590L281 590L281 585L269 572L265 572L262 576L257 575L256 574L261 570L261 567L265 565L270 559L272 555L275 554L277 549L280 546L283 541L286 542L286 540L285 539L290 536L292 533L297 532L300 527L302 527L308 525L312 521L315 520L319 521L322 519L324 520L331 521L333 522L340 522L344 524L345 526L349 526L358 532L365 542L379 543L380 545L376 547L375 553L372 556L372 558L374 559L374 557L376 556L380 558L374 567L370 579L364 589L358 596L352 602L346 605L343 610L343 606L342 603L346 604L349 602L353 598L355 597L357 594L357 590L360 591L360 587L364 584L364 579L366 579L367 575L365 574L364 576L361 576L360 578L358 575L357 575L355 571L354 573L356 578L355 581L355 585L354 582L352 587L352 589L349 592L344 594L343 601L340 602L341 606L340 608L342 610L340 611L338 616L334 627L324 637Z","ro":"M188 291L186 288L182 288L177 285L176 286L172 283L171 280L167 281L162 277L160 277L158 278L151 277L149 275L148 273L145 272L144 270L141 269L140 266L139 265L138 266L138 263L136 262L135 258L136 254L134 245L136 241L136 235L135 233L134 233L132 235L124 234L115 237L112 235L117 232L119 230L119 229L126 229L129 231L131 229L137 226L138 229L140 229L142 226L142 223L144 222L147 223L151 221L155 222L154 218L158 215L157 213L158 212L161 211L160 210L162 209L164 207L174 207L176 208L179 211L182 212L183 216L185 216L186 219L189 220L190 218L193 218L196 221L194 227L196 232L194 240L196 245L195 254L212 254L213 255L219 256L220 260L217 264L218 268L219 268L221 271L221 277L218 283L215 286L213 292L207 296L203 293L191 294L190 293Z","rr":"M235 62L236 79L218 79L213 89L214 93L209 95L207 95L204 91L200 90L195 93L194 104L190 104L187 100L180 94L180 93L182 93L183 91L182 87L179 83L179 78L180 74L179 71L181 70L178 61L175 57L177 52L174 51L171 51L170 48L167 48L166 45L156 44L157 40L153 33L153 26L147 21L144 17L145 16L147 18L154 18L156 22L162 21L164 22L165 21L167 21L174 27L176 25L176 20L178 19L181 17L185 19L190 18L191 16L195 16L195 14L198 12L203 12L205 9L208 8L210 5L209 2L207 1L214 1L216 0L217 1L219 4L218 9L217 12L224 14L223 17L226 22L221 27L222 30L219 35L219 40L221 45L223 47L223 53L225 54L224 55L227 56L231 61Z","sc":"M380 558L376 556L374 557L374 559L372 558L372 556L375 553L376 547L380 545L379 543L365 542L358 532L349 526L345 526L344 524L340 522L333 522L331 521L324 520L322 519L319 521L315 520L317 515L317 506L318 505L323 504L326 506L331 506L341 508L344 510L352 510L353 512L356 510L355 507L356 505L358 504L362 504L366 500L370 501L376 500L383 504L389 500L397 500L397 503L396 504L394 501L394 505L397 508L395 512L397 519L398 519L398 521L396 521L396 529L397 532L396 539L394 543L393 541L393 543L394 544L393 546L384 552L380 558ZM397 532L398 525L400 524L400 528L397 532ZM397 507L395 505L398 503L399 504L397 507Z","sp":"M405 488L405 487L403 486L403 481L400 481L398 484L397 484L398 480L399 479L397 477L386 477L386 475L387 472L382 463L382 461L380 457L381 453L375 447L372 448L362 447L361 446L355 443L350 443L342 441L340 442L329 442L326 444L328 440L338 434L343 427L343 425L346 421L346 418L350 413L350 409L355 404L359 403L360 399L364 397L366 396L368 395L370 397L377 398L382 397L386 399L387 404L390 401L391 405L392 406L393 401L401 401L402 399L405 401L408 401L408 399L412 399L415 398L418 402L417 406L420 408L420 409L418 414L422 422L426 421L429 423L427 429L426 437L427 439L431 441L431 443L430 443L432 447L441 446L442 442L443 442L443 443L447 443L456 439L459 442L465 442L466 444L463 446L457 448L455 452L457 455L454 455L452 457L447 459L447 463L439 462L436 463L433 466L431 463L431 466L423 470L418 475L406 483L405 484L408 484L408 485L405 488ZM449 465L446 464L448 461L449 462L449 465Z","se":"M570 262L567 263L563 260L562 257L558 252L559 249L562 250L566 248L565 245L566 239L562 234L562 231L578 238L579 240L587 245L587 246L580 250L578 253L576 250L575 250L576 251L577 251L577 253L575 255L574 254L575 255L575 257L572 261L573 257L572 257L571 261Z","to":"M434 282L424 286L418 287L414 290L411 287L410 290L403 288L404 286L396 286L395 288L394 288L392 282L390 278L387 282L385 288L378 285L369 283L371 277L367 283L365 279L365 268L364 266L365 263L363 261L366 249L374 227L379 221L382 219L387 207L388 203L385 199L388 195L387 190L396 186L396 184L399 181L399 178L402 177L403 174L402 171L404 171L404 169L400 166L395 165L400 162L404 164L408 164L409 166L414 168L416 179L414 191L410 194L414 195L415 199L415 199L422 207L428 205L430 206L430 213L424 214L423 219L420 223L424 224L425 228L429 230L428 234L430 236L432 241L441 243L440 245L433 250L434 252L431 253L428 259L431 262L436 263L433 266L436 268L432 272L432 276L435 278L434 281Z"};
+const UFLAB={"ac":[71,236,17],"al":[586,235,8],"ap":[346,63,22],"am":[139,145,66],"ba":[502,272,43],"ce":[540,159,23],"df":[408,330,4],"es":[525,383,9],"go":[375,345,30],"ma":[446,164,31],"mt":[289,291,60],"ms":[302,403,38],"mg":[467,362,47],"pa":[320,167,59],"pb":[594,193,10],"pr":[343,475,33],"pe":[534,208,10],"pi":[487,209,20],"rj":[505,427,9],"rn":[595,172,10],"rs":[318,562,37],"ro":[165,250,28],"rr":[203,63,23],"sc":[374,521,19],"sp":[397,432,26],"se":[573,244,7],"to":[400,246,30]};
+const REGS=['Norte','Nordeste','Centro-Oeste','Sudeste','Sul'], REGUF={ac:0,am:0,ap:0,pa:0,ro:0,rr:0,to:0,al:1,ba:1,ce:1,ma:1,pb:1,pe:1,pi:1,rn:1,se:1,df:2,go:2,mt:2,ms:2,es:3,mg:3,rj:3,sp:3,pr:4,rs:4,sc:4};
 const REG={Norte:'North',Nordeste:'Northeast','Centro-Oeste':'Center-West',Sudeste:'Southeast',Sul:'South'};
 // Rota das Feiras: 12 paradas por volta, voltas infinitas. Textos curtos, a validar com pesquisa local.
 const FEIRAS=[
@@ -297,15 +328,37 @@ const RECIPES=[
 ];
 const DECOR=[['⛱️',['Toldo listrado','Striped awning'],150],['🪴',['Vasos de ervas','Herb pots'],250],['🪑',['Banco de madeira','Wooden bench'],400],['📋',['Lousa de preços','Price chalkboard'],600],['⚖️',['Balança antiga','Vintage scale'],900],['✨',['Luzinhas','String lights'],1300],['📻',['Rádio de pilha','Transistor radio'],1800],['🚲',['Bicicleta de entrega','Delivery bike'],2500],['🛒',['Carrinho de feira','Market trolley'],3400],['🕰️',['Relógio de parede','Wall clock'],4500],['🎊',['Bandeirinhas','Bandeirinhas (festa junina flags)'],6000],['🐈',['Caminha do Mingau','Mingau’s cat bed'],8000]];
 const EXPS=[{cols:6,rows:8,cost:300,lvl:5},{cols:7,rows:8,cost:1500,lvl:12},{cols:7,rows:9,cost:6000,lvl:20}];
-const UPS={far:{n:['Cestos fartos','Bountiful baskets'],d:['Mais chance de colher itens já no nível 2 ou 3.','Better odds of picking items at level 2 or 3.'],base:80,k:1.7,max:10},
-           cap:{n:['Cestos maiores','Bigger baskets'],d:['+4 cargas em cada cesto.','+4 charges in every basket.'],base:60,k:1.6,max:10},
-           spd:{n:['Recarga rápida','Quick refill'],d:['Cestos recarregam 8% mais rápido.','Baskets refill 8% faster.'],base:100,k:1.8,max:8}};
+const UPS={far:{ic:'🧺',bd:'2',n:['Cestos fartos','Bountiful baskets'],d:['Cada toque no cesto tem mais chance de já colher o item no nível 2 ou 3, o que poupa fusões.','Each basket tap is more likely to give a level 2 or 3 item, which saves you merges.'],base:80,k:1.7,max:10},
+           cap:{ic:'🧺',bd:'+',n:['Cestos maiores','Bigger baskets'],d:['Cada cesto guarda mais cargas, então acumula mais enquanto você está fora.','Each basket holds more charges, so more pile up while you’re away.'],base:60,k:1.6,max:10},
+           spd:{ic:'⏱️',bd:'',n:['Recarga rápida','Quick refill'],d:['As cargas dos cestos chegam mais rápido.','Basket charges arrive faster.'],base:100,k:1.8,max:8}};
 const MTYPES={merges:[['Faça {n} fusões','Make {n} merges'],20],orders:[['Atenda {n} pedidos','Fill {n} orders'],5],spawn:[['Colha {n} itens dos cestos','Pick {n} items from baskets'],30],big:[['Crie {n} itens de nível 5 ou mais','Make {n} items of level 5+'],2],triple:[['Faça {n} fusões triplas','Make {n} triple merges'],3],sell:[['Venda {n} itens','Sell {n} items'],6]};
-const TIPS=[['Arraste um item por cima de dois iguais que estejam lado a lado: os três se juntam e sobem 2 níveis.','Drag an item across two matching neighbors: all three merge and jump 2 levels.'],['Toque num pedido com borda verde para entregar direto.','Tap a green-bordered order to deliver it right away.'],['Fusões em sequência rendem XP extra de combo.','Quick merges in a row earn bonus combo XP.'],['Pedido com ⚡ paga em dobro se você for rápido.','⚡ orders pay double if you’re quick.'],['Concluiu a feira? Viaje pelo mapa para conhecer gente nova.','Finished a market? Travel the map to meet new friends.'],['Sem espaço? Venda um item ou use Organizar.','Out of space? Sell an item or tap Sort.']];
+const TIPS=[['Arraste um item por cima de dois iguais que estejam lado a lado: os três se juntam e sobem 2 níveis.','Drag an item across two matching neighbors: all three merge and jump 2 levels.'],['Toque num pedido com borda verde para entregar direto.','Tap a green-bordered order to deliver it right away.'],['Fusões em sequência rendem XP extra de combo.','Quick merges in a row earn bonus combo XP.'],['Pedido com ⏱️ paga em dobro se você for rápido.','⏱️ orders pay double if you’re quick.'],['Concluiu a feira? Viaje pelo mapa para conhecer gente nova.','Finished a market? Travel the map to meet new friends.'],['Sem espaço? Venda um item ou use Organizar.','Out of space? Sell an item or tap Sort.']];
 
 /* ===================== TEXTOS DA INTERFACE ===================== */
 const UI={
  pt:{
+  help:'Ajuda', tripTitle:c=>`Rumo a ${c}`, tripP:(a,b,km,v)=>`${a} → ${b} · ${km} km de ${v}`, bus:'ônibus', plane:'avião', skip:'Pular',
+  tripDouble:v=>`▶ Dobrar o prêmio da viagem (+${v} moedas)`, tripDoubled:v=>`Prêmio da viagem dobrado: +${v} moedas`,
+  emptyT:'Cesto vazio', emptyP:(n,p,nx)=>`Cada cesto ganha 1 carga a cada ${p}, mesmo com o jogo fechado. Próxima carga de ${n}: ${nx}.`,
+  adFill:(g,a,m)=>`▶ Anúncio: +${g} cargas em todos os cestos (${a}/${m} hoje)`, adLimit:'Você já viu todos os anúncios de cargas de hoje.', useRec:n=>`⚡ Usar Recarga (${n})`, wait:'Esperar',
+  nowNext:(a,b)=>`Agora: ${a}<br>Depois: ${b}`, nowMax:a=>`Agora: ${a} (máximo)`,
+  farV:(a,b)=>`${a}% nível 2 · ${b}% nível 3`, capV:n=>`${n} cargas`, spdV:x=>`1 carga a cada ${x}`,
+  boardV:(c,r)=>`${c}×${r} (${c*r} casas)`, boardD:'Mais casas no tabuleiro para guardar e juntar itens.', opensAt:l=>`Abre no nível ${l}.`,
+  decoD:'Enfeita sua banca na tela inicial e dá +1% de XP em tudo, para sempre.', upNote:'Moedas vêm de pedidos, vendas, missões e viagens. Toque em Comprar para usar.',
+  bonusNow:b=>`Bônus atual: +${b}%.`, uGiftMag:'Presente: 1 🧲 Junta-tudo', uGiftRec:'Presente: 1 ⚡ Recarga',
+  credit:'Mapa do Brasil: @svg-maps/brazil, licença CC BY 4.0.',
+  helpNote:'Tudo o que você precisa saber para tocar a sua banca.',
+  HELP:[['🧺','Cestos','Toque num cesto para colher um item novo. Cada cesto ganha 1 carga a cada 90 s, até encher, mesmo com o jogo fechado. Ao chegar num mercado novo, os cestos começam vazios.'],
+   ['🔀','Juntar','Arraste um item até outro igual, ou toque em um e depois no outro. Os dois viram um item do nível seguinte.'],
+   ['✨','Fusão tripla','Arraste um item passando por cima de um igual e solte em outro igual ao lado dele. Os três viram um item 2 níveis acima.'],
+   ['🧑','Pedidos','Os clientes no alto pedem itens. Borda verde quer dizer que você já tem o item: toque para entregar. Cada entrega dá XP, moedas e amizade.'],
+   ['⏱️','Pedido relâmpago','Paga em dobro se for entregue antes do tempo acabar. Se o tempo acabar, nada de ruim acontece.'],
+   ['📦','Encomenda','Entregue 5 itens de nível alto, um de cada vez, para ganhar um prêmio grande.'],
+   ['🧲','Junta-tudo','Junta de uma vez todos os pares iguais do tabuleiro. Ganhe subindo de nível, viajando e fazendo amizades.'],
+   ['⚡','Recarga','Enche todos os cestos na hora. É rara: vem a cada 10 níveis e nas encomendas.'],
+   ['▶','Anúncios','Assista para ganhar cargas, dobrar prêmios e abrir o baú diário. Sempre opcionais.'],
+   ['🗺️','Viagem','Atenda a meta de clientes do mercado para viajar ao próximo. Itens de bancas que não existem lá são vendidos.'],
+   ['🪙','Moedas','Servem para comprar melhorias dos cestos, ampliar o tabuleiro e decorar a banca, em Melhorias.']],
   docTitle:'Quitanda Zen', home:'Tela inicial', logo:'Quitanda<br>Zen', logoSub:'Feira Viva', logoSay:'',
   lvlShort:n=>'Nv '+n, lvlTitle:n=>`Nível ${n}`, coinsN:c=>`${c} moedas`, and:' e ',
   basketEmpty:'Cesto vazio. Ele recarrega em instantes.', boardFull:'Tabuleiro cheio. Junte, entregue ou venda um item.',
@@ -322,13 +375,13 @@ const UI={
   hitRoad:'Pegar a estrada', notYet:'Ainda não', welcome:c=>`Bem-vindo a ${c}`, newLap:(n,p)=>`Volta ${n} pelo Brasil: +${p}% de XP e moedas`,
   tripRew:v=>`+${v} moedas e 1 🧲 pela viagem.`, meet:'Quem você vai conhecer:', openStall:'Abrir a banca',
   gift:(d,co,x)=>`Dia ${d} seguido: +${co} moedas${x?' e 2 🧲 + 2 ⚡':''}`,
-  uRush:'Pedidos relâmpago ⚡ (pagam em dobro)', uRec:'Caderno de Receitas', uDeco:'Decoração da quitanda (em Melhorias)',
+  uRush:'Pedidos relâmpago ⏱️ (pagam em dobro)', uRec:'Caderno de Receitas', uDeco:'Decoração da quitanda (em Melhorias)',
   uExp:i=>`${i}ª ampliação do tabuleiro (em Melhorias)`, uHarder:'Clientes passam a pedir itens de nível mais alto', uGift:'Presente: 🧲 Junta-tudo e ⚡ Recarga',
-  lvlP:co=>`+${co} moedas e cestos cheios.`, cont:'Continuar',
+  lvlP:co=>`+${co} moedas.`, cont:'Continuar',
   adTitle:'Anúncio simulado', adRew:'Aqui entraria um anúncio com recompensa.', adInt:'Aqui entraria um anúncio de tela cheia.', closeIn:s=>'Fechar em '+s, close:'Fechar',
   goTravel:c=>`⭐ Feira concluída · viajar para ${c} ➜`, openMap:'Abrir o mapa', clients:(a,b)=>`${a}/${b} clientes`,
   cellAria:(n,l)=>`${n} nível ${l}`, emptyCell:'Espaço vazio',
-  nav:{map:'Mapa',turma:'Turma',miss:'Missões',rec:'Receitas',up:'Melhorias',cfg:'Ajustes'},
+  nav:{help:'Ajuda',map:'Mapa',turma:'Turma',miss:'Missões',rec:'Receitas',up:'Melhorias',cfg:'Ajustes'},
   orderAria:(w,its)=>`Pedido de ${w}: ${its}`, itemLv:(n,l)=>`${n} nível ${l}`, recipeTag:'Receita', enc:'Encomenda',
   encAria:(n,L)=>`Encomenda: ${n} itens de nível ${L} ou mais`, levelPlus:L=>`nível ${L}+`,
   itemInfo:(line,l,mx)=>`${line} nível ${l}${mx?' (máximo)':''}`, deliver:'Entregar', sellB:v=>`Vender +${v}`, swap:'Trocar pedido',
@@ -338,14 +391,14 @@ const UI={
   homeLine:(l,s,p)=>`Nível ${l} · ⭐ ${s} feiras concluídas · ${'Volta '+p}`, ready:'pronto para viajar',
   st:['Tempo de jogo','XP por minuto','Fusões','Itens colhidos','Pedidos atendidos','Feiras concluídas','Anúncios com recompensa','Anúncios de tela cheia'], waiting:'aguardando',
   mapAria:'Mapa do Brasil com a Rota das Feiras',
-  T:{map:'Rota das Feiras',turma:'Turma da Feira',miss:'Missões',rec:'Caderno de Receitas',up:'Melhorias',cfg:'Ajustes'},
+  T:{help:'Como jogar',map:'Rota das Feiras',turma:'Turma da Feira',miss:'Missões',rec:'Caderno de Receitas',up:'Melhorias',cfg:'Ajustes'},
   mapNote:(p,s,b)=>`Volta ${p} pelo Brasil · ⭐ ${s} feiras concluídas${b?` · bônus de +${b}% em XP e moedas`:''}. A rota recomeça ao fim de cada volta, sempre com um bônus maior.`, mapGloss:'',
   goalN:g=>`meta: ${g} clientes`, served:(a,b)=>`${a}/${b} clientes atendidos`, travel:'Viajar',
   turmaNote:'Cada pedido atendido rende ❤️. A cada nível de amizade você ganha moedas, e a cada dois níveis um 🧲 Junta-tudo. A amizade não tem limite.',
   withYou:'viaja com você', likes:(e,n)=>`gosta de ${e} ${n}`, meetAt:(n,c)=>`Você encontra em ${n}, ${c}.`,
   missNote:'Ao receber a recompensa, entra uma missão nova, um pouco maior. Elas não acabam.', worth:(co,xp)=>`vale ${co} moedas e ${xp} XP`, claim:'Receber',
   encRow:k=>`📦 Encomenda nº ${k}`, encRowP:(g,n,L,xp,co)=>`${g}/${n} itens de nível ${L} ou mais · vale ${xp} XP, ${co} moedas e 1 ⚡`,
-  chest:'Baú diário', chestP:(c,co)=>`${c}/3 hoje · ${co} moedas e 1 🧲 por anúncio`, open:'▶ Abrir',
+  chest:'Baú diário', chestP:(c,co)=>`${c}/${CHEST_MAX} hoje · ${co} moedas e 1 🧲 por anúncio`, open:'▶ Abrir',
   recLocked:'O Caderno de Receitas abre no nível 3. A partir daí, alguns clientes pedem dois ingredientes de bancas diferentes, e cada pedido atendido revela uma receita.',
   recNote:(a,b)=>`${a} de ${b} descobertas. Cada feira tem as suas: atenda os pedidos marcados como Receita. Cada descoberta vale +30 XP e +30 moedas.`,
   recHere:'Pode aparecer nesta feira', recOther:'De outra feira',
@@ -361,6 +414,28 @@ const UI={
   pickFirst:'Escolha um item no tabuleiro primeiro.'
  },
  en:{
+  help:'Help', tripTitle:c=>`Heading to ${c}`, tripP:(a,b,km,v)=>`${a} → ${b} · ${km} km by ${v}`, bus:'bus', plane:'plane', skip:'Skip',
+  tripDouble:v=>`▶ Double the trip reward (+${v} coins)`, tripDoubled:v=>`Trip reward doubled: +${v} coins`,
+  emptyT:'Basket empty', emptyP:(n,p,nx)=>`Each basket gains 1 charge every ${p}, even while the game is closed. Next ${n} charge: ${nx}.`,
+  adFill:(g,a,m)=>`▶ Ad: +${g} charges in every basket (${a}/${m} today)`, adLimit:'You’ve watched all of today’s charge ads.', useRec:n=>`⚡ Use a Refill (${n})`, wait:'Wait',
+  nowNext:(a,b)=>`Now: ${a}<br>Next: ${b}`, nowMax:a=>`Now: ${a} (max)`,
+  farV:(a,b)=>`${a}% level 2 · ${b}% level 3`, capV:n=>`${n} charges`, spdV:x=>`1 charge every ${x}`,
+  boardV:(c,r)=>`${c}×${r} (${c*r} spaces)`, boardD:'More spaces on the board to store and merge items.', opensAt:l=>`Opens at level ${l}.`,
+  decoD:'Decorates your stall on the home screen and adds +1% XP to everything, forever.', upNote:'Coins come from orders, sales, missions and trips. Tap Buy to spend them.',
+  bonusNow:b=>`Current bonus: +${b}%.`, uGiftMag:'Gift: 1 🧲 Merge-all', uGiftRec:'Gift: 1 ⚡ Refill',
+  credit:'Map of Brazil: @svg-maps/brazil, CC BY 4.0 license.',
+  helpNote:'Everything you need to know to run your stall.',
+  HELP:[['🧺','Baskets','Tap a basket to pick a new item. Each basket gains 1 charge every 90 s until full, even while the game is closed. At a new market, baskets start empty.'],
+   ['🔀','Merge','Drag an item onto a matching one, or tap one and then the other. They become one item of the next level.'],
+   ['✨','Triple merge','Drag an item across a matching one and drop it on another match right next to it. All three become an item 2 levels up.'],
+   ['🧑','Orders','Customers at the top ask for items. A green border means you already have it: tap to deliver. Each delivery earns XP, coins and friendship.'],
+   ['⏱️','Rush order','Pays double if delivered before time runs out. If it runs out, nothing bad happens.'],
+   ['📦','Bulk order','Deliver 5 high-level items, one at a time, for a big reward.'],
+   ['🧲','Merge-all','Merges every matching pair on the board at once. Earn it by leveling up, traveling and making friends.'],
+   ['⚡','Refill','Fills every basket instantly. It’s rare: every 10 levels and from bulk orders.'],
+   ['▶','Ads','Watch to get charges, double rewards and open the daily chest. Always optional.'],
+   ['🗺️','Travel','Serve the market’s customer goal to travel to the next one. Items from stalls that don’t exist there are sold.'],
+   ['🪙','Coins','Spend them in Upgrades on basket upgrades, board expansions and stall decorations.']],
   docTitle:'Quitanda: Merge Across Brazil', home:'Home', logo:'Quitanda', logoSub:'Merge across Brazil', logoSay:'<i>quitanda</i> (kee-TAHN-da): a little Brazilian produce shop',
   lvlShort:n=>'Lv '+n, lvlTitle:n=>`Level ${n}`, coinsN:c=>`${c} coins`, and:' and ',
   basketEmpty:'Basket empty. It refills in a moment.', boardFull:'Board full. Merge, deliver or sell an item.',
@@ -377,13 +452,13 @@ const UI={
   hitRoad:'Hit the road', notYet:'Not yet', welcome:c=>`Welcome to ${c}`, newLap:(n,p)=>`Lap ${n} around Brazil: +${p}% XP and coins`,
   tripRew:v=>`+${v} coins and 1 🧲 for the trip.`, meet:'Who you’ll meet:', openStall:'Open the stall',
   gift:(d,co,x)=>`Day ${d} streak: +${co} coins${x?' and 2 🧲 + 2 ⚡':''}`,
-  uRush:'⚡ Rush orders (pay double)', uRec:'Recipe Book', uDeco:'Shop decorations (in Upgrades)',
+  uRush:'⏱️ Rush orders (pay double)', uRec:'Recipe Book', uDeco:'Shop decorations (in Upgrades)',
   uExp:i=>`Board expansion #${i} (in Upgrades)`, uHarder:'Customers now order higher-level items', uGift:'Gift: 🧲 Merge-all and ⚡ Refill',
-  lvlP:co=>`+${co} coins and full baskets.`, cont:'Continue',
+  lvlP:co=>`+${co} coins.`, cont:'Continue',
   adTitle:'Simulated ad', adRew:'A rewarded ad would play here.', adInt:'A full-screen ad would play here.', closeIn:s=>'Close in '+s, close:'Close',
   goTravel:c=>`⭐ Market complete · travel to ${c} ➜`, openMap:'Open the map', clients:(a,b)=>`${a}/${b} customers`,
   cellAria:(n,l)=>`${n}, level ${l}`, emptyCell:'Empty space',
-  nav:{map:'Map',turma:'Friends',miss:'Missions',rec:'Recipes',up:'Upgrades',cfg:'Settings'},
+  nav:{help:'Help',map:'Map',turma:'Friends',miss:'Missions',rec:'Recipes',up:'Upgrades',cfg:'Settings'},
   orderAria:(w,its)=>`${w}’s order: ${its}`, itemLv:(n,l)=>`${n}, level ${l}`, recipeTag:'Recipe', enc:'Bulk order',
   encAria:(n,L)=>`Bulk order: ${n} items of level ${L} or higher`, levelPlus:L=>`level ${L}+`,
   itemInfo:(line,l,mx)=>`${line} level ${l}${mx?' (max)':''}`, deliver:'Deliver', sellB:v=>`Sell +${v}`, swap:'Swap order',
@@ -393,7 +468,7 @@ const UI={
   homeLine:(l,s,p)=>`Level ${l} · ⭐ ${s} markets done · Lap ${p}`, ready:'ready to travel',
   st:['Play time','XP per minute','Merges','Items picked','Orders filled','Markets completed','Rewarded ads','Full-screen ads'], waiting:'waiting',
   mapAria:'Map of Brazil with the Market Trail',
-  T:{map:'Market Trail',turma:'Market Friends',miss:'Missions',rec:'Recipe Book',up:'Upgrades',cfg:'Settings'},
+  T:{help:'How to play',map:'Market Trail',turma:'Market Friends',miss:'Missions',rec:'Recipe Book',up:'Upgrades',cfg:'Settings'},
   mapNote:(p,s,b)=>`Lap ${p} around Brazil · ⭐ ${s} markets done${b?` · +${b}% bonus on XP and coins`:''}. The trail starts over after each lap, always with a bigger bonus.`,
   mapGloss:'In Portuguese, a <i>feira</i> is an open-air street market and a <i>mercado</i> is a covered market hall. <i>Mercadão</i> means “big market”.',
   goalN:g=>`goal: ${g} customers`, served:(a,b)=>`${a}/${b} customers served`, travel:'Travel',
@@ -401,7 +476,7 @@ const UI={
   withYou:'travels with you', likes:(e,n)=>`likes ${e} ${n}`, meetAt:(n,c)=>`You’ll meet them at ${n}, ${c}.`,
   missNote:'Claim a reward and a new, slightly bigger mission takes its place. They never run out.', worth:(co,xp)=>`worth ${co} coins and ${xp} XP`, claim:'Claim',
   encRow:k=>`📦 Bulk order #${k}`, encRowP:(g,n,L,xp,co)=>`${g}/${n} items of level ${L}+ · worth ${xp} XP, ${co} coins and 1 ⚡`,
-  chest:'Daily chest', chestP:(c,co)=>`${c}/3 today · ${co} coins and 1 🧲 per ad`, open:'▶ Open',
+  chest:'Daily chest', chestP:(c,co)=>`${c}/${CHEST_MAX} today · ${co} coins and 1 🧲 per ad`, open:'▶ Open',
   recLocked:'The Recipe Book opens at level 3. From then on, some customers ask for two ingredients from different stalls, and each one you serve reveals a Brazilian recipe.',
   recNote:(a,b)=>`${a} of ${b} discovered. Each market has its own: fill the orders marked Recipe. Every discovery is worth +30 XP and +30 coins.`,
   recHere:'May show up at this market', recOther:'From another market',
@@ -432,13 +507,16 @@ const linesAt=s=>feira(s).lines.slice(0,s===0?2:s===1?3:4);
 const lines=()=>linesAt(S.stop);
 const castAt=s=>CAST.filter(c=>c.at<0||c.at===s%FEIRAS.length);
 const lapBonus=()=>1+.1*(lap(S.stop)-1);
-const cap=()=>BASE_CAP+4*S.up.cap;
-const period=()=>BASE_PERIOD*Math.pow(.92,S.up.spd)/(S.opts.test?10:1);
+const cap=()=>BASE_CAP+CAP_UP*S.up.cap;
+const periodAt=lv=>BASE_PERIOD*Math.pow(.92,lv);
+const period=()=>periodAt(S.up.spd)/(S.opts.test?10:1);
+const farOdds=lv=>{ const p3=Math.min(.2,.03*lv), p2=Math.min(.6,.1+.06*lv); return [p2-p3,p3]; };
+const mmss=sec=>sec<60?sec+' s':Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');
 const upCost=k=>Math.round(UPS[k].base*Math.pow(UPS[k].k,S.up[k])/10)*10;
 const encLvl=()=>Math.min(7,4+Math.floor(S.enc.k/3));
 const needH=lv=>3+2*lv;
 let S, sel=null, selOrder=null, offer=null, drag=null, popAt=-1, noClick=false, sheetName=null, adTimer=null, toastTimer=null, audio=null;
-let homeOn=true, lastAct=Date.now(), combo=0, lastMerge=0, fxQ=[], modalQ=[], tip=Math.floor(Math.random()*TIPS.length);
+let trip=null, tripBonus=0, homeOn=true, lastAct=Date.now(), combo=0, lastMerge=0, fxQ=[], modalQ=[], tip=Math.floor(Math.random()*TIPS.length);
 
 const isAdj=(x,y,cols)=>{ const d=Math.abs(x-y); return d===cols||(d===1&&Math.floor(x/cols)===Math.floor(y/cols)); };
 function doMerge(b,cols,rows,from,to,via){
@@ -461,7 +539,7 @@ function fresh(coins){
     stop:0,served:0,goalSeen:false,day:today(),daily:{adCharge:0,adDouble:0,chest:0},streak:0,giftDay:'',
     recipes:[],decor:[],friends:{},missions:[null,null,null],missTier:0,enc:{k:0,got:0},boost:{mag:2,rec:1},up:{far:0,cap:0,spd:0},swapAt:0,
     stats:{merges:0,items:0,orders:0,rew:0,inter:0,playMs:0,xp:0,first:now,lastInter:0},opts:{sound:true,noAds:false,test:false,lang:LANG}};
-  fillBoard(s); linesAt(0).forEach(k=>s.baskets[k]={c:BASE_CAP,t:now});
+  fillBoard(s); linesAt(0).forEach(k=>s.baskets[k]={c:0,t:now});
   for(let i=0;i<3;i++) s.missions[i]=newMission(s,i);
   return s;
 }
@@ -514,9 +592,10 @@ function levelUp(ups){
     if(n===6) news.push(t('uDeco'));
     EXPS.forEach((e,i)=>{ if(e.lvl===n) news.push(t('uExp',i+1)); });
     if(n%6===0&&n<=30) news.push(t('uHarder'));
-    if(n%5===0){ S.boost.mag++; S.boost.rec++; news.push(t('uGift')); }
+    if(n%5===0){ S.boost.mag++; news.push(t('uGiftMag')); }
+    if(n%10===0){ S.boost.rec++; news.push(t('uGiftRec')); }
   }
-  S.coins+=co; refill(); beep(660); beep(880,.12); beep(1100,.24);
+  S.coins+=co; beep(660); beep(880,.12); beep(1100,.24);
   modal(`<div class="big">🎉</div><h1>${t('lvlTitle',S.level)}</h1><p>${t('lvlP',fmt(co))}</p>${news.length?'<ul>'+news.map(x=>`<li>${x}</li>`).join('')+'</ul>':''}<button class="btn" data-act="lvlok">${t('cont')}</button>`);
 }
 function modal(html){ if(!$('over').hidden){ modalQ.push(html); return; } $('card').innerHTML=html; $('over').hidden=false; const b=$('card').querySelector('button:not(:disabled)'); if(b)b.focus(); }
@@ -530,13 +609,13 @@ function showAd(kind,cb){
 }
 function maybeInter(){
   const k=S.opts.test?.1:1, now=Date.now();
-  if(S.opts.noAds||now-S.stats.first<9e5*k||now-S.stats.lastInter<3e5*k||!$('over').hidden) return;
+  if(S.opts.noAds||now-S.stats.first<3e5*k||now-S.stats.lastInter<1.8e5*k||!$('over').hidden||trip) return;
   S.stats.lastInter=now; showAd('int');
 }
 const bonus=()=>S.opts.noAds?1.25:1;
 
 function spawn(k){
-  tickBaskets(); const b=S.baskets[k]; if(!b||b.c<=0){ toast(t('basketEmpty')); return; }
+  tickBaskets(); const b=S.baskets[k]; if(!b||b.c<=0){ basketEmpty(k); return; }
   const empty=[]; S.board.forEach((x,i)=>{ if(!x)empty.push(i); });
   if(!empty.length){ toast(t('boardFull')); return; }
   if(b.c>=cap())b.t=Date.now(); b.c--; const f=S.up.far, r=Math.random(), n=r<Math.min(.2,.03*f)?3:r<Math.min(.6,.1+.06*f)?2:1;
@@ -579,14 +658,14 @@ function deliver(i,id){
   if(!nd){ toast(t('notOrdered')); return; }
   nd.done=true; S.board[i]=null; sel=null; selOrder=null; o.xp=(o.xp||0)+XPV[it.n]; o.co=(o.co||0)+COV[it.n]; gain(XPV[it.n],COV[it.n]); beep(700);
   if(o.items.every(x=>x.done)){
-    const c=CAST.find(x=>x.id===o.who); S.stats.orders++; S.served++; bump('orders',1); refill(1); befriend(c); beep(940,.1);
+    const c=CAST.find(x=>x.id===o.who); S.stats.orders++; S.served++; bump('orders',1); befriend(c); beep(940,.1);
     if(o.rush&&Date.now()<o.rush){ gain(o.xp,o.co); o.xp*=2; o.co*=2; toast(t('rushDone')); }
     if(o.rec!=null&&!S.recipes.includes(o.rec)){ S.recipes.push(o.rec); gain(30,30); toast(t('recipeFound',tx(RECIPES[o.rec].name))); }
     S.orders[S.orders.indexOf(o)]=newOrder();
     offer={xp:o.xp,co:o.co,who:c,until:Date.now()+8000};
     if(S.served>=goal(S.stop)&&!S.goalSeen){ S.goalSeen=true; const nx=feira(S.stop+1);
       modal(`<div class="big">⭐</div><h1>${t('fairDone')}</h1><p>${t('fairDoneP',goal(S.stop),feira(S.stop).n)}</p><p>${t('nextStop',nx.ic,nx.n,nx.c,nx.uf)}</p><button class="btn" data-act="travelask">${t('travelNow')}</button><button class="btn ghosty" data-act="mclose">${t('stay')}</button>`); }
-    if(S.stats.orders%6===0) maybeInter();
+    if(S.stats.orders%4===0) maybeInter();
   }
   render();
 }
@@ -624,13 +703,35 @@ function travel(){
   const old=S.stop, oldLap=lap(old); S.stop++; S.served=0; S.goalSeen=false;
   const ls=lines(), now=Date.now(), f=feira(S.stop); let sold=0;
   S.board=S.board.map(x=>{ if(x&&!ls.includes(x.l)){ sold+=COV[x.n]; return null; } return x; });
-  S.baskets={}; ls.forEach(k=>S.baskets[k]={c:cap(),t:now}); S.orders=[]; fillBoard(S);
-  const rew=Math.min(500,50+25*old); S.coins+=sold+rew; S.boost.mag++; sel=null; selOrder=null; offer=null;
-  sheetName=null; $('sheet').hidden=true; homeOn=false; beep(520); beep(660,.12); beep(880,.24);
+  S.baskets={}; ls.forEach(k=>S.baskets[k]={c:0,t:now}); S.orders=[]; fillBoard(S);
+  const rew=Math.min(500,50+25*old); S.coins+=sold+rew; S.boost.mag++; sel=null; selOrder=null; offer=null; tripBonus=rew;
+  sheetName=null; $('sheet').hidden=true; homeOn=false;
   const loc=CAST.filter(c=>c.at===S.stop%FEIRAS.length);
-  modal(`<div class="big">${f.ic}</div><h1>${t('welcome',f.c)}</h1><p><b>${f.n}</b>${lap(S.stop)>oldLap?`<br>${t('newLap',lap(S.stop),Math.round((lapBonus()-1)*100))}`:''}</p>
-   <p>${t('tripRew',fmt(rew+sold))}</p><p>${t('meet')}<br>${loc.map(c=>`${c.f} <b>${c.n}</b>, ${tx(c.role)}`).join('<br>')}</p><button class="btn" data-act="mclose">${t('openStall')}</button>`);
-  render();
+  const html=`<div class="big">${f.ic}</div><h1>${t('welcome',f.c)}</h1><p><b>${f.n}</b>${lap(S.stop)>oldLap?`<br>${t('newLap',lap(S.stop),Math.round((lapBonus()-1)*100))}`:''}</p>
+   <p>${t('tripRew',fmt(rew+sold))}</p><p>${t('meet')}<br>${loc.map(c=>`${c.f} <b>${c.n}</b>, ${tx(c.role)}`).join('<br>')}</p><button class="btn" data-act="arrive">${t('openStall')}</button><button class="btn ghosty" data-act="tripdouble">${t('tripDouble',fmt(rew))}</button>`;
+  render(); playTrip(old%FEIRAS.length,S.stop%FEIRAS.length,()=>{ beep(520); beep(660,.12); beep(880,.24); modal(html); });
+}
+const PXY=(lon,lat)=>{ const mer=a=>Math.log(Math.tan(Math.PI/4+a*Math.PI/360)), K=638.5/(mer(5.27)-mer(-33.75)); return [.3+(lon+73.99)*612/39.2,.3+(mer(5.27)-mer(lat))*K]; };
+const PF=f=>PXY(f.lon,f.lat);
+function km(a,b){ const r=Math.PI/180, d=Math.sin((b.lat-a.lat)*r/2)**2+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin((b.lon-a.lon)*r/2)**2; return 2*6371*Math.asin(Math.sqrt(d)); }
+function playTrip(a,b,cb){
+  const fa=FEIRAS[a], fb=FEIRAS[b], d=km(fa,fb), plane=d>900;
+  $('triph').textContent=t('tripTitle',fb.c); $('tripp').textContent=t('tripP',fa.c,fb.c,fmt(Math.round(d/10)*10),t(plane?'plane':'bus'));
+  $('tripmap').innerHTML=mapSvg({trip:[a,b],plane}); $('trip').hidden=false;
+  const path=$('trippath'), L=path.getTotalLength(), veh=$('veh'), [x1]=PF(fa), [x2]=PF(fb);
+  const flip=plane?(x2<x1?-1:1):(x2>x1?-1:1), reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, dur=reduce?1:3200, t0=performance.now();
+  path.style.strokeDasharray=L; path.style.strokeDashoffset=L; trip={cb};
+  const step=now=>{ if(!trip) return; const k=Math.min(1,(now-t0)/dur), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2, pt=path.getPointAtLength(L*e);
+    path.style.strokeDashoffset=L*(1-e); veh.setAttribute('transform',`translate(${pt.x.toFixed(1)} ${pt.y.toFixed(1)}) scale(${flip} 1)`);
+    if(k<1) trip.raf=requestAnimationFrame(step); else trip.end=setTimeout(endTrip,reduce?900:500); };
+  trip.raf=requestAnimationFrame(step);
+}
+function endTrip(){ if(!trip) return; cancelAnimationFrame(trip.raf); clearTimeout(trip.end); const cb=trip.cb; trip=null; $('trip').hidden=true; cb(); }
+function basketEmpty(k){
+  const b=S.baskets[k], nx=mmss(Math.max(0,Math.ceil((period()-(Date.now()-b.t))/1000))), ad=S.daily.adCharge<AD_MAX;
+  modal(`<div class="big">🧺</div><h2>${t('emptyT')}</h2><p>${t('emptyP',lname(k),mmss(Math.round(period()/1000)),nx)}</p>
+   ${ad?`<button class="btn" data-act="adcharge">${t('adFill',Math.round(AD_CHARGE*bonus()),S.daily.adCharge,AD_MAX)}</button>`:`<p class="note">${t('adLimit')}</p>`}
+   ${S.boost.rec>0?`<button class="btn${ad?' ghosty':''}" data-act="userec">${t('useRec',S.boost.rec)}</button>`:''}<button class="btn ghosty" data-act="mclose">${t('wait')}</button>`);
 }
 function claimGift(){
   if(S.giftDay===today()) return;
@@ -675,7 +776,7 @@ function renderOrders(){
   const cur=sel!=null?S.board[sel]:null, have=new Set(S.board.filter(Boolean).map(x=>x.l+x.n)), now=Date.now(), L=encLvl();
   $('orders').innerHTML=S.orders.map(o=>{
     const c=CAST.find(x=>x.id===o.who), want=cur&&matches(o,cur), ready=o.items.some(x=>!x.done&&have.has(x.l+x.n)), rush=o.rush&&now<o.rush, s=rush?Math.ceil((o.rush-now)/1000):0;
-    return `<button class="order${want?' want':''}${ready?' ready':''}${rush?' rush':''}${selOrder===o.id?' osel':''}" data-order="${o.id}" aria-label="${t('orderAria',c.n,o.items.map(x=>t('itemLv',item(x.l,x.n)[1],x.n)).join(t('and')))}"><span class="who">${rush?`⚡ ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`:c.f+' '+(o.rec!=null?t('recipeTag'):c.n)}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub>${x.n}</sub></span>`).join('')}</span></button>`;
+    return `<button class="order${want?' want':''}${ready?' ready':''}${rush?' rush':''}${selOrder===o.id?' osel':''}" data-order="${o.id}" aria-label="${t('orderAria',c.n,o.items.map(x=>t('itemLv',item(x.l,x.n)[1],x.n)).join(t('and')))}"><span class="who">${rush?`⏱️ ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`:c.f+' '+(o.rec!=null?t('recipeTag'):c.n)}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub>${x.n}</sub></span>`).join('')}</span></button>`;
   }).join('')+`<button class="order${cur&&cur.n>=L?' want':''}" data-enc="1" aria-label="${t('encAria',ENC_N,L)}"><span class="who">${t('enc')}</span><span class="need"><span>📦<sub>${S.enc.got}/${ENC_N}</sub></span></span><span class="who">${t('levelPlus',L)}</span></button>`;
 }
 function renderInfo(){
@@ -685,16 +786,16 @@ function renderInfo(){
   } else if(o){ const c=CAST.find(x=>x.id===o.who), f=S.friends[c.id]||{h:0,lv:0};
     el.innerHTML=`<p><b>${c.f} ${c.n}</b>, ${tx(c.role)} · ❤️ ${f.lv}<br>“${tx(c.q)}”</p><button class="btn sm ghosty" data-act="swap:${o.id}">${t('swap')}</button>`;
   } else if(offer&&Date.now()<offer.until){
-    el.innerHTML=`<p>${t('thanks',offer.who.f+' '+offer.who.n,fmt(offer.xp),fmt(offer.co))}</p>${S.daily.adDouble<10?`<button class="btn sm" data-act="double">${t('double')}</button>`:''}`;
+    el.innerHTML=`<p>${t('thanks',offer.who.f+' '+offer.who.n,fmt(offer.xp),fmt(offer.co))}</p>${S.daily.adDouble<DOUBLE_MAX?`<button class="btn sm" data-act="double">${t('double')}</button>`:''}`;
   } else { offer=null; el.innerHTML=`<p>${t('help')}</p><button class="btn sm ghosty" data-act="sort">${t('sort')}</button>`; }
 }
-function left(b){ if(b.c>=cap()) return t('bFull'); const s=Math.max(0,Math.ceil((period()-(Date.now()-b.t))/1000)); return s+' s'; }
+function left(b){ if(b.c>=cap()) return t('bFull'); const s=Math.max(0,Math.ceil((period()-(Date.now()-b.t))/1000)); return mmss(s); }
 function renderBaskets(){
   $('baskets').innerHTML=lines().map(k=>{ const b=S.baskets[k];
     return `<button class="basket" style="--lc:${lc(k)}" data-act="basket:${k}" aria-label="${t('basketAria',lname(k))}"><span class="em">${LINES[k].it[0][0]}</span><b id="bc-${k}">${b.c}/${cap()}</b><small id="bt-${k}">${left(b)}</small></button>`; }).join('')
     +`<button class="basket bo" data-act="magnet" aria-label="${t('magAria')}"><span class="em">🧲</span><b>${S.boost.mag}</b><small>${t('magLbl')}</small></button>`
     +`<button class="basket bo" data-act="recharge" aria-label="${t('recAria')}"><span class="em">⚡</span><b>${S.boost.rec}</b><small>${t('recLbl')}</small></button>`
-    +`<button class="basket ad bo" data-act="adcharge" aria-label="${t('adAria')}" ${S.daily.adCharge>=6?'disabled':''}><span class="em">▶</span><b>+${Math.round(10*bonus())}</b><small>${S.daily.adCharge}/6</small></button>`;
+    +`<button class="basket ad bo" data-act="adcharge" aria-label="${t('adAria')}" ${S.daily.adCharge>=AD_MAX?'disabled':''}><span class="em">▶</span><b>+${Math.round(AD_CHARGE*bonus())}</b><small>${S.daily.adCharge}/${AD_MAX}</small></button>`;
 }
 function renderHome(){
   const f=feira(S.stop), g=goal(S.stop), ls=lines(), gift=S.giftDay!==today(), d=Math.min((S.giftDay===dstr(Date.now()-864e5)?S.streak:0)+1,7), N=t('nav');
@@ -707,7 +808,7 @@ function renderHome(){
    ${gift?`<button class="gift" data-act="gift">${t('giftBtn',d,20*d)}</button>`:''}
    <button class="where" data-act="nav:map"><span><b>${f.ic} ${f.n}</b> · ${f.c} (${f.uf})</span><div class="bar"><i style="width:${Math.min(100,S.served/g*100)}%"></i></div>
      <small>${t('homeLine',S.level,S.stop,lap(S.stop))} · ${S.served>=g?t('ready'):t('clients',S.served,g)}</small></button>
-   <div class="hnav">${[['map','🗺️',S.served>=g],['turma','🧑‍🤝‍🧑'],['miss','🎯',S.missions.some(m=>m.p>=m.goal)],['cfg','⚙️']].map(([k,i,dt])=>`<button data-act="nav:${k}"><span>${i}</span>${N[k]}${dt?'<i class="dot"></i>':''}</button>`).join('')}</div>
+   <div class="hnav">${[['map','🗺️',S.served>=g],['turma','🧑‍🤝‍🧑'],['miss','🎯',S.missions.some(m=>m.p>=m.goal)],['help','❓'],['cfg','⚙️']].map(([k,i,dt])=>`<button data-act="nav:${k}"><span>${i}</span>${N[k]}${dt?'<i class="dot"></i>':''}</button>`).join('')}</div>
    <div class="seg" role="group" aria-label="${t('lang')}"><button data-act="lang:pt" aria-pressed="${LANG==='pt'}">🇧🇷 Português</button><button data-act="lang:en" aria-pressed="${LANG==='en'}">🌎 English</button></div>`;
 }
 function tick(){
@@ -725,19 +826,24 @@ function statsHtml(){
   const m=S.stats.playMs/60000, s=Math.floor(S.stats.playMs/1000), L=t('st');
   return [Math.floor(s/60)+' min '+(s%60)+' s',m>.2?(S.stats.xp/m).toLocaleString(LANG==='en'?'en-US':'pt-BR',{maximumFractionDigits:1}):t('waiting'),fmt(S.stats.merges),fmt(S.stats.items),fmt(S.stats.orders),S.stop,S.stats.rew,S.stats.inter].map((b,i)=>`<span>${L[i]}</span><span>${b}</span>`).join('');
 }
-function mapSvg(){
-  const P=(lon,lat)=>[(10+(lon+74)/39.5*280).toFixed(1),(10+(5.5-lat)/39.5*280).toFixed(1)];
-  const out=[[-60,5.2],[-58,1.5],[-54,2.3],[-51.6,4.3],[-50,1],[-48.5,-1],[-44.3,-2.5],[-40,-2.8],[-37.3,-4.7],[-35.2,-5.5],[-34.8,-7.5],[-35.7,-9.7],[-37.5,-11.5],[-38.5,-13],[-39,-16.5],[-39.7,-19.5],[-40.3,-20.5],[-41,-22],[-43.2,-23],[-46.3,-24],[-48.5,-25.8],[-48.6,-27.6],[-49.7,-29.3],[-52.1,-32],[-53.4,-33.7],[-55.5,-30.9],[-57.6,-30.2],[-55.9,-28.4],[-53.8,-27.1],[-54.6,-25.6],[-54.3,-24],[-55.6,-22.3],[-57.9,-22.1],[-57.8,-19],[-58.2,-16.3],[-60.2,-16.2],[-60.5,-13.8],[-62.8,-13],[-65.3,-11],[-65.4,-9.7],[-68.7,-11],[-70.6,-11],[-70.5,-9.5],[-73,-9.4],[-73.9,-7.4],[-72.9,-5.2],[-70,-4.3],[-69.4,-1],[-69.8,1.1],[-67,1.2],[-65.5,.8],[-63.4,2.2],[-64.4,4.1],[-61.5,4.3]];
-  const pts=FEIRAS.map(f=>P(f.lon,f.lat)), cur=S.stop%FEIRAS.length;
-  return `<svg viewBox="0 0 300 300" role="img" aria-label="${t('mapAria')}"><polygon class="land" points="${out.map(p=>P(...p).join(',')).join(' ')}"/>
-   <polyline class="route" points="${pts.map(p=>p.join(',')).join(' ')}"/><polyline class="route done" points="${pts.slice(0,cur+1).map(p=>p.join(',')).join(' ')}"/>
-   ${pts.map((p,i)=>`<g class="node ${i<cur?'done':i===cur?'cur':''}"><title>${FEIRAS[i].n}, ${FEIRAS[i].c}</title><circle cx="${p[0]}" cy="${p[1]}" r="${i===cur?10:8}"/><text x="${p[0]}" y="${p[1]}">${i+1}</text></g>`).join('')}</svg>`;
+function mapSvg(o={}){
+  const pts=FEIRAS.map(PF), cur=S.stop%FEIRAS.length, base=(lap(S.stop)-1)*FEIRAS.length;
+  const ufs=Object.entries(UFMAP).map(([k,d])=>`<path class="uf r${REGUF[k]}" d="${d}"><title>${k.toUpperCase()} · ${tx([REGS[REGUF[k]],REG[REGS[REGUF[k]]]])}</title></path>`).join('');
+  const labs=Object.entries(UFLAB).filter(([k])=>k!=='df').map(([k,[x,y,r]])=>`<text class="uflab${r<15?' s':''}" x="${x}" y="${y}">${k.toUpperCase()}</text>`).join('');
+  let route=`<polyline class="route" points="${pts.map(p=>p.join(',')).join(' ')}"/>`;
+  if(!o.trip) route+=`<polyline class="route done" points="${pts.slice(0,cur+1).map(p=>p.join(',')).join(' ')}"/>`;
+  let extra='';
+  if(o.trip){ const [a,b]=o.trip.map(i=>pts[i]), mx=(a[0]+b[0])/2, my=(a[1]+b[1])/2, dx=b[0]-a[0], dy=b[1]-a[1], L=Math.hypot(dx,dy)||1, off=L*(o.plane?.22:.08);
+    extra=`<path id="trippath" class="trippath" d="M${a[0].toFixed(1)} ${a[1].toFixed(1)} Q${(mx+dy/L*off).toFixed(1)} ${(my-dx/L*off).toFixed(1)} ${b[0].toFixed(1)} ${b[1].toFixed(1)}"/><g id="veh" transform="translate(${a[0]} ${a[1]})"><text class="veh">${o.plane?'✈️':'🚌'}</text></g>`; }
+  const nodes=pts.map((p,i)=>{ const st=base+i<S.stop?'done':i===cur?'cur':'lock';
+    return `<g class="node ${st}" transform="translate(${p[0].toFixed(1)} ${p[1].toFixed(1)})"><title>${i+1}. ${FEIRAS[i].n}, ${FEIRAS[i].c}</title>${st==='cur'?'<circle class="ring" r="18"/>':''}<circle r="18"/><text>${FEIRAS[i].ic}</text>${st==='done'?'<circle class="ok" cx="14" cy="-14" r="8"/><text class="okt" x="14" y="-14">✓</text>':''}</g>`; }).join('');
+  return `<svg viewBox="-8 -8 647 655" role="img" aria-label="${t('mapAria')}">${ufs}${labs}${route}${nodes}${extra}</svg>`;
 }
 function renderSheet(){
   const T=t('T'); let h='';
   if(sheetName==='map'){
     const base=(lap(S.stop)-1)*FEIRAS.length, g=goal(S.stop), done=S.served>=g;
-    h=`<p class="note">${t('mapNote',lap(S.stop),S.stop,Math.round((lapBonus()-1)*100))}</p>${t('mapGloss')?`<p class="note">${t('mapGloss')}</p>`:''}<div class="map">${mapSvg()}</div>`
+    h=`<p class="note">${t('mapNote',lap(S.stop),S.stop,Math.round((lapBonus()-1)*100))}</p>${t('mapGloss')?`<p class="note">${t('mapGloss')}</p>`:''}<div class="map">${mapSvg()}<div class="legend">${REGS.map((r,i)=>`<span><i class="r${i}" style="background:var(--r${i})"></i>${tx([r,REG[r]])}</span>`).join('')}</div></div>`
      +FEIRAS.map((f,i)=>{ const s=base+i, st=s<S.stop?'ok':s===S.stop?'cur':'lock', ls=linesAt(s), loc=CAST.filter(c=>c.at===i);
         return `<div class="row ${st==='cur'?'cur':st==='lock'?'lock':''}"><span class="face">${st==='lock'?'🔒':f.ic}</span><div><b>${i+1}. ${f.n}</b> ${st==='ok'?'⭐':''}<p>${f.c} (${f.uf}) · ${reg(f)}</p><p>${tx(f.txt)}</p><p>${ls.map(k=>LINES[k].it[0][0]).join(' ')} · ${loc.map(c=>c.f).join(' ')} · ${t('goalN',goal(s))}</p>${st==='cur'?`<div class="bar"><i style="width:${Math.min(100,S.served/g*100)}%"></i></div><p>${t('served',S.served,g)}</p>`:''}</div>${st==='cur'?`<button class="btn" data-act="travelask" ${done?'':'disabled'}>${t('travel')}</button>`:''}</div>`; }).join('');
   } else if(sheetName==='turma'){
@@ -751,7 +857,7 @@ function renderSheet(){
     h=`<p class="note">${t('missNote')}</p>`+S.missions.map((m,i)=>{ const v=Math.min(m.p,m.goal);
       return `<div class="row"><div><b>${tx(MTYPES[m.t][0]).replace('{n}',m.goal)}</b><p>${v}/${m.goal} · ${t('worth',m.co,m.xp)}</p><div class="bar"><i style="width:${v/m.goal*100}%"></i></div></div><button class="btn" data-act="claim:${i}" ${v<m.goal?'disabled':''}>${t('claim')}</button></div>`; }).join('')
       +`<div class="row"><div><b>${t('encRow',S.enc.k+1)}</b><p>${t('encRowP',S.enc.got,ENC_N,L,fmt(XPV[L]*ENC_N*1.5),fmt(COV[L]*ENC_N*2))}</p></div></div>`
-      +`<div class="row"><div><b>${t('chest')}</b><p>${t('chestP',S.daily.chest,Math.round(80*bonus()))}</p></div><button class="btn" data-act="chest" ${S.daily.chest>=3?'disabled':''}>${t('open')}</button></div>`;
+      +`<div class="row"><div><b>${t('chest')}</b><p>${t('chestP',S.daily.chest,Math.round(80*bonus()))}</p></div><button class="btn" data-act="chest" ${S.daily.chest>=CHEST_MAX?'disabled':''}>${t('open')}</button></div>`;
   } else if(sheetName==='rec'){
     const ls=lines();
     h=S.level<3?`<p class="note">${t('recLocked')}</p>`
@@ -759,17 +865,21 @@ function renderSheet(){
         ?`<div class="row"><div><b>${tx(r.name)}</b><p>${r.it.map(([l,n])=>item(l,n)[0]+' '+item(l,n)[1]).join(' + ')} · ${tx(r.note)}</p></div></div>`
         :`<div class="row lock"><div><b>???</b><p>${r.it.every(x=>ls.includes(x[0]))?t('recHere'):t('recOther')} · ${r.it.map(x=>lname(x[0])).join(' + ')}</p></div></div>`).join('');
   } else if(sheetName==='up'){
-    const e=EXPS[S.exp];
-    h=`<h2>${t('hBaskets')}</h2>`+Object.keys(UPS).map(k=>{ const u=UPS[k], lv=S.up[k], c=upCost(k), mx=lv>=u.max;
-        return `<div class="row"><div><b>${tx(u.n)}</b> · ${t('lvN',lv)}${mx?t('maxP'):''}<p>${tx(u.d)}${mx?'':t('costP',fmt(c))}</p></div><button class="btn" data-act="buyup:${k}" ${mx||S.coins<c?'disabled':''}>${t('upgrade')}</button></div>`; }).join('')
-     +`<h2>${t('hBoard')}</h2>`+(e?`<div class="row"><div><b>${t('expandTo',e.cols,e.rows)}</b><p>${t('boardNow',S.cols,S.rows,fmt(e.cost),S.level<e.lvl?e.lvl:0)}</p></div><button class="btn" data-act="buyexp" ${S.level<e.lvl||S.coins<e.cost?'disabled':''}>${t('buy')}</button></div>`:`<p class="note">${t('boardMax')}</p>`)
-     +`<h2>${t('hDeco')}</h2><p class="note">${t('decoNote',S.level<6,S.decor.length)}</p>`
-     +DECOR.map(([em,n,c],i)=>{ const has=S.decor.includes(i); return `<div class="row"><span class="face">${em}</span><div><b>${tx(n)}</b><p>${t('coinsN',fmt(c))}</p></div><button class="btn" data-act="buydeco:${i}" ${has||S.level<6||S.coins<c?'disabled':''}>${has?t('onStall'):t('buy')}</button></div>`; }).join('');
+    const e=EXPS[S.exp], buy=(act,c,dis)=>`<button class="btn buy" data-act="${act}" ${dis?'disabled':''}><span>${t('buy')}</span><small>🪙 ${fmt(c)}</small></button>`;
+    const val=(k,lv)=>k==='far'?t('farV',...farOdds(lv).map(x=>Math.round(x*100))):k==='cap'?t('capV',BASE_CAP+CAP_UP*lv):t('spdV',mmss(Math.round(periodAt(lv)/1000)));
+    const grid=(c,r,oc,or)=>{ const z=Math.min(44/c,44/r), q=(z*.8).toFixed(1); let g=''; for(let y=0;y<r;y++) for(let x=0;x<c;x++) g+=`<rect class="${x>=oc||y>=or?'gn':'gc'}" x="${(x*z+(44-c*z)/2).toFixed(1)}" y="${(y*z+(44-r*z)/2).toFixed(1)}" width="${q}" height="${q}" rx="1.5"/>`; return `<svg viewBox="0 0 44 44" aria-hidden="true">${g}</svg>`; };
+    h=`<p class="note">${t('upNote')}</p><h2>${t('hBaskets')}</h2>`+Object.keys(UPS).map(k=>{ const u=UPS[k], lv=S.up[k], c=upCost(k), mx=lv>=u.max;
+        return `<div class="row"><span class="thumb" aria-hidden="true">${u.ic}${u.bd?`<b>${u.bd}</b>`:''}</span><div><b>${tx(u.n)}</b> · ${t('lvN',lv)}<p>${tx(u.d)}</p><p class="nn">${mx?t('nowMax',val(k,lv)):t('nowNext',val(k,lv),val(k,lv+1))}</p></div>${mx?'':buy('buyup:'+k,c,S.coins<c)}</div>`; }).join('')
+     +`<h2>${t('hBoard')}</h2>`+(e?`<div class="row"><span class="thumb">${grid(e.cols,e.rows,S.cols,S.rows)}</span><div><b>${t('expandTo',e.cols,e.rows)}</b><p>${t('boardD')}${S.level<e.lvl?' '+t('opensAt',e.lvl):''}</p><p class="nn">${t('nowNext',t('boardV',S.cols,S.rows),t('boardV',e.cols,e.rows))}</p></div>${buy('buyexp',e.cost,S.level<e.lvl||S.coins<e.cost)}</div>`:`<p class="note">${t('boardMax')}</p>`)
+     +`<h2>${t('hDeco')}</h2><p class="note">${t('decoD')} ${S.level<6?t('opensAt',6):''} ${t('bonusNow',S.decor.length)}</p>`
+     +DECOR.map(([em,n,c],i)=>{ const has=S.decor.includes(i); return `<div class="row"><span class="thumb" aria-hidden="true">${em}</span><div><b>${tx(n)}</b><p>+1% XP</p></div>${has?`<button class="btn" disabled>${t('onStall')}</button>`:buy('buydeco:'+i,c,S.level<6||S.coins<c)}</div>`; }).join('');
+  } else if(sheetName==='help'){
+    h=`<p class="note">${t('helpNote')}</p><div class="help">`+t('HELP').map(([i,a,b])=>`<div class="row"><span class="thumb" aria-hidden="true">${i}</span><div><b>${a}</b><p>${b}</p></div></div>`).join('')+'</div>';
   } else {
     const tg=(k,[a,b])=>`<div class="row"><div><b>${a}</b><p>${b}</p></div><button class="btn${S.opts[k]?'':' ghosty'}" data-act="opt:${k}" aria-pressed="${S.opts[k]}">${S.opts[k]?t('on'):t('off')}</button></div>`;
     h=`<div class="row"><div><b>${t('lang')}</b><p>${t('langP')}</p></div><div class="seg"><button data-act="lang:pt" aria-pressed="${LANG==='pt'}">Português</button><button data-act="lang:en" aria-pressed="${LANG==='en'}">English</button></div></div>`
      +tg('sound',t('oSound'))+tg('noAds',t('oNoAds'))+tg('test',t('oTest'))
-     +`<h2>${t('panel')}</h2><div class="stats" id="stats">${statsHtml()}</div><p class="note">${t('panelNote')}</p>`
+     +`<h2>${t('panel')}</h2><div class="stats" id="stats">${statsHtml()}</div><p class="note">${t('panelNote')} ${t('credit')}</p>`
      +`<div class="row"><div><b>${t('reset')}</b><p class="warn">${t('resetP')}</p></div><button class="btn ghosty" data-act="reset">${t('resetB')}</button></div>`;
   }
   $('sheetin').innerHTML=`<header><h1>${T[sheetName]}</h1><button class="btn ghosty" data-act="close">${t('close')}</button></header>${h}`;
@@ -781,25 +891,29 @@ document.addEventListener('click',e=>{
   const a=e.target.closest('[data-act]');
   if(a){ const [k,v]=a.dataset.act.split(':');
     if(k==='basket') spawn(v);
-    else if(k==='play'){ homeOn=false; render(); }
+    else if(k==='play'){ homeOn=false; render(); if(!S.seenHelp){ S.seenHelp=true; sheetName='help'; $('sheet').hidden=false; renderSheet(); } }
     else if(k==='home'){ homeOn=true; tip=Math.floor(Math.random()*TIPS.length); sel=null; selOrder=null; render(); }
     else if(k==='lang') setLang(v);
     else if(k==='gift') claimGift();
     else if(k==='magnet') magnet();
     else if(k==='recharge') recharge();
-    else if(k==='adcharge'){ if(S.daily.adCharge<6) showAd('rew',()=>{ S.daily.adCharge++; const g=Math.round(10*bonus()); refill(g); toast(t('adCharge',g)); }); }
+    else if(k==='adcharge'){ if(S.daily.adCharge<AD_MAX) showAd('rew',()=>{ S.daily.adCharge++; const g=Math.round(AD_CHARGE*bonus()); refill(g); toast(t('adCharge',g)); }); else toast(t('adLimit')); }
+    else if(k==='userec'){ closeModal(); recharge(); }
+    else if(k==='tripskip') endTrip();
+    else if(k==='tripdouble'){ const v=tripBonus; tripBonus=0; if(v) showAd('rew',()=>{ S.coins+=v; toast(t('tripDoubled',v)); }); }
+    else if(k==='arrive'){ closeModal(); render(); maybeInter(); }
     else if(k==='deliver'){ if(sel!=null) deliver(sel); }
     else if(k==='enc'){ if(sel!=null) deliverEnc(sel); }
     else if(k==='sell'){ if(sel!=null) sell(sel); }
     else if(k==='sort') sortBoard();
     else if(k==='swap') swapOrder(+v);
-    else if(k==='double'){ const o=offer; if(o&&S.daily.adDouble<10){ offer=null; showAd('rew',()=>{ S.daily.adDouble++; const x=gain(o.xp*bonus(),Math.round(o.co*bonus())); toast(t('doubled',x)); }); } }
+    else if(k==='double'){ const o=offer; if(o&&S.daily.adDouble<DOUBLE_MAX){ offer=null; showAd('rew',()=>{ S.daily.adDouble++; const x=gain(o.xp*bonus(),Math.round(o.co*bonus())); toast(t('doubled',x)); }); } }
     else if(k==='nav'){ sheetName=v; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
     else if(k==='close'){ sheetName=null; $('sheet').hidden=true; render(); }
     else if(k==='claim'){ const m=S.missions[+v]; if(m&&m.p>=m.goal){ S.missions[+v]=newMission(S,+v); S.coins+=m.co; const x=gain(m.xp,0); beep(880); toast(t('missDone',m.co,x)); render(); } }
-    else if(k==='chest'){ if(S.daily.chest<3) showAd('rew',()=>{ S.daily.chest++; S.coins+=Math.round(80*bonus()); S.boost.mag++; }); }
+    else if(k==='chest'){ if(S.daily.chest<CHEST_MAX) showAd('rew',()=>{ S.daily.chest++; S.coins+=Math.round(80*bonus()); S.boost.mag++; }); }
     else if(k==='buyexp') expand();
-    else if(k==='buyup'){ const c=upCost(v); if(S.up[v]<UPS[v].max&&S.coins>=c){ S.coins-=c; S.up[v]++; if(v==='cap') refill(); beep(820); render(); } }
+    else if(k==='buyup'){ const c=upCost(v); if(S.up[v]<UPS[v].max&&S.coins>=c){ S.coins-=c; S.up[v]++; beep(820); render(); } }
     else if(k==='buydeco'){ const i=+v; if(!S.decor.includes(i)&&S.level>=6&&S.coins>=DECOR[i][2]){ S.coins-=DECOR[i][2]; S.decor.push(i); beep(820); render(); } }
     else if(k==='opt'){ S.opts[v]=!S.opts[v]; for(const x of lines()) S.baskets[x].t=Date.now(); render(); }
     else if(k==='travelask'){ closeModal(); travelAsk(); }

@@ -24,19 +24,21 @@ Para publicar online com GitHub Pages: **Settings → Pages → Deploy from a br
 
 ## Estado atual
 
-Protótipo da Versão B (revisão v0.3, mais rápida e sem fim):
+Protótipo da Versão B (revisão v0.4, sem fim e em dois idiomas):
 
-- **Tela inicial** com a banca, o Seu Zé, presente diário e atalhos.
-- **Mapa do Brasil** com a Rota das Feiras: 12 mercados por volta e voltas infinitas, cada uma com +10% de XP e moedas. Cada feira troca as bancas (linhas de itens) e o tabuleiro chega cheio.
-- **Turma da Feira:** 28 personagens (4 que viajam com o jogador e 2 por mercado), com amizade sem limite.
-- **13 linhas de itens com 8 níveis** (104 itens), cestos com 20 cargas e recarga de 10 s, combos, pedidos relâmpago, 🧲 Junta-tudo e ⚡ Recarga.
-- **Níveis sem teto**, missões e encomendas que se renovam, 25 receitas, melhorias de cestos, ampliações e decoração.
-- **Versão em inglês** com o nome internacional *Quitanda: Merge Across Brazil*. Nomes de mercados, cidades e personagens e pratos típicos ficam em português, com uma explicação curta em inglês.
-- Anúncios **simulados**; itens e personagens usam emojis como arte provisória.
-- O progresso fica salvo apenas no navegador de quem joga.
-- Em **Ajustes** (na tela inicial) há um painel com métricas de teste e um modo que acelera os cestos.
+- **Tela inicial** com a banca, o Seu Zé, presente diário, ajuda e escolha de idioma.
+- **Mapa do Brasil** com estados e regiões em cores e um ícone por mercado. Cada feira pede de 30 a 60 clientes; a rota tem 12 mercados por volta e voltas infinitas.
+- **Viagem animada** de ônibus ou avião pelo mapa até o próximo mercado.
+- **Turma da Feira:** 28 personagens, com amizade sem limite.
+- **13 linhas de itens com 8 níveis**, quase todos brasileiros; fusão tripla só por escolha do jogador.
+- **Cestos lentos:** 10 cargas, 1 a cada 90 s, vazios a cada mercado novo; anúncios simulados dão cargas, dobram prêmios e abrem o baú.
+- **Melhorias** com imagem e o efeito de agora e depois; tela **Como jogar** com cada elemento explicado.
+- **Versão em inglês** com o nome internacional *Quitanda: Merge Across Brazil*.
+- O progresso fica salvo apenas no navegador de quem joga. Em **Ajustes** há métricas de teste e um modo que acelera os cestos.
 
-Os números de balanceamento ficam no bloco `DADOS`, no topo do script, e ainda não foram testados com jogadores. Os textos curtos de cada mercado precisam de validação local.
+Os números de balanceamento ficam no bloco `DADOS`, no topo do script, e ainda não foram testados com jogadores.
+
+**Créditos:** contornos dos estados do pacote [@svg-maps/brazil](https://www.npmjs.com/package/@svg-maps/brazil), licença [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), simplificados para o jogo.
 
 ## Próximos passos
 
