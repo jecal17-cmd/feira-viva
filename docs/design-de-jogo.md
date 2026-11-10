@@ -1,6 +1,6 @@
 # Feira Viva — Design de Jogo (2 versões)
 
-Rascunho v0.2 · 1 de novembro de 2026 · Base para o primeiro prompt do Claude Code
+Rascunho v0.3 · 10 de novembro de 2026 · Base para o primeiro prompt do Claude Code
 
 ## 1. Visão geral
 
@@ -208,6 +208,22 @@ Nível da Quitanda de 1 a 50. XP para ir do nível n ao n+1 = **100 + 60 × n**.
 ### 4.7 Retenção
 
 No máximo 1 notificação por dia (cestos cheios). Recarga offline. Modo Zen com música e sons ambiente (liga/desliga).
+
+### 4.8 Revisão v0.3 do protótipo (ritmo rápido e jogo sem fim)
+
+A pedido, o protótipo trocou a progressão lenta das seções 4.2 a 4.5 por um ritmo rápido. Onde houver conflito, vale esta seção. Os valores são pontos de partida, ainda sem teste com jogadores.
+
+- **Tela inicial:** banca decorada, dica do Seu Zé, botão Jogar, presente diário (sequência de até 7 dias) e atalhos para Mapa, Turma, Missões e Ajustes.
+- **Mapa (Rota das Feiras):** os 12 mercados da seção 3.2 viram paradas. Concluir uma feira exige atender 6 + 2 × parada clientes (teto de 24). Ao viajar, as linhas que não existem na feira seguinte são vendidas, o tabuleiro é completado até ficar cheio e os cestos enchem. Depois da 12ª parada começa uma nova volta, com +10% de XP e moedas por volta, sem limite.
+- **Linhas por feira:** 13 linhas de 8 níveis; cada feira usa 4 (a 1ª usa 2 e a 2ª usa 3, como tutorial).
+- **Tabuleiro inicial cheio:** as 42 células começam ocupadas com itens de nível 1 a 4.
+- **Cestos:** 20 cargas, 1 carga a cada 10 s; cada pedido atendido devolve 1 carga; subir de nível enche os cestos. Anúncio recompensado: +10 cargas.
+- **XP:** fusões dão XP (metade do nível, mais bônus de combo e de fusão tripla). XP para ir do nível n ao n+1 = 50 + 15 × n, sem nível máximo.
+- **Pedidos:** 4 clientes; o nível pedido cresce com o nível do jogador; 22% são relâmpago (75 s, pagam em dobro, sem punição); um pedido pode ser trocado a cada 20 s.
+- **Turma da Feira:** 28 personagens com papel, fala e linha favorita. Cada pedido rende amizade; cada nível de amizade paga moedas, e a cada dois níveis um Junta-tudo.
+- **Auxílios:** 🧲 Junta-tudo (funde todos os pares) e ⚡ Recarga (enche os cestos), ganhos jogando.
+- **Metas sem fim:** missões que se renovam ao receber, encomendas numeradas com exigência crescente, melhorias de cestos e 12 decorações.
+- **Riscos a observar no teste:** o ritmo rápido reduz a necessidade de anúncio de recarga; a troca de linhas a cada feira pode frustrar quem acumulou itens altos.
 
 ## 5. Localização e idiomas
 
