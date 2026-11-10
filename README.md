@@ -12,6 +12,7 @@ Jogo mobile 2D de merge com tema de feiras e mercados brasileiros, planejado em 
 | `docs/design-de-jogo.md` | Documento de design completo das duas versões |
 | `docs/mockups/` | 7 telas de sugestão em SVG; abra `index.html` para ver todas |
 | `docs/arte/` | Lista de arte (mercados, itens, personagens) em Markdown e CSV, com prompts em inglês |
+| `app-android/` | App Android da Versão B (Capacitor) com anúncios de teste do AdMob; o APK é gerado na aba Actions |
 | `versao-b-quitanda-zen/` | Protótipo jogável da Versão B em HTML5, em português e inglês |
 
 ## Como jogar o protótipo

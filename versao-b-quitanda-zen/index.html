@@ -345,7 +345,7 @@ const UI={
   farV:(a,b)=>`${a}% nível 2 · ${b}% nível 3`, capV:n=>`${n} cargas`, spdV:x=>`1 carga a cada ${x}`,
   boardV:(c,r)=>`${c}×${r} (${c*r} casas)`, boardD:'Mais casas no tabuleiro para guardar e juntar itens.', opensAt:l=>`Abre no nível ${l}.`,
   decoD:'Enfeita sua banca na tela inicial e dá +1% de XP em tudo, para sempre.', upNote:'Moedas vêm de pedidos, vendas, missões e viagens. Toque em Comprar para usar.',
-  bonusNow:b=>`Bônus atual: +${b}%.`, uGiftMag:'Presente: 1 🧲 Junta-tudo', uGiftRec:'Presente: 1 ⚡ Recarga',
+  adFail:'O anúncio não carregou. Tente de novo em instantes.', bonusNow:b=>`Bônus atual: +${b}%.`, uGiftMag:'Presente: 1 🧲 Junta-tudo', uGiftRec:'Presente: 1 ⚡ Recarga',
   credit:'Mapa do Brasil: @svg-maps/brazil, licença CC BY 4.0.',
   helpNote:'Tudo o que você precisa saber para tocar a sua banca.',
   HELP:[['🧺','Cestos','Toque num cesto para colher um item novo. Cada cesto ganha 1 carga a cada 90 s, até encher, mesmo com o jogo fechado. Ao chegar num mercado novo, os cestos começam vazios.'],
@@ -422,7 +422,7 @@ const UI={
   farV:(a,b)=>`${a}% level 2 · ${b}% level 3`, capV:n=>`${n} charges`, spdV:x=>`1 charge every ${x}`,
   boardV:(c,r)=>`${c}×${r} (${c*r} spaces)`, boardD:'More spaces on the board to store and merge items.', opensAt:l=>`Opens at level ${l}.`,
   decoD:'Decorates your stall on the home screen and adds +1% XP to everything, forever.', upNote:'Coins come from orders, sales, missions and trips. Tap Buy to spend them.',
-  bonusNow:b=>`Current bonus: +${b}%.`, uGiftMag:'Gift: 1 🧲 Merge-all', uGiftRec:'Gift: 1 ⚡ Refill',
+  adFail:'The ad didn’t load. Please try again in a moment.', bonusNow:b=>`Current bonus: +${b}%.`, uGiftMag:'Gift: 1 🧲 Merge-all', uGiftRec:'Gift: 1 ⚡ Refill',
   credit:'Map of Brazil: @svg-maps/brazil, CC BY 4.0 license.',
   helpNote:'Everything you need to know to run your stall.',
   HELP:[['🧺','Baskets','Tap a basket to pick a new item. Each basket gains 1 charge every 90 s until full, even while the game is closed. At a new market, baskets start empty.'],
@@ -600,8 +600,33 @@ function levelUp(ups){
 }
 function modal(html){ if(!$('over').hidden){ modalQ.push(html); return; } $('card').innerHTML=html; $('over').hidden=false; const b=$('card').querySelector('button:not(:disabled)'); if(b)b.focus(); }
 function closeModal(){ $('over').hidden=true; clearInterval(adTimer); if(modalQ.length) modal(modalQ.shift()); }
+/* Anúncios reais (AdMob) quando o jogo roda como app Android; no navegador, anúncios simulados.
+   IDs abaixo são os IDs de TESTE do Google: troque pelos seus blocos do AdMob antes de publicar. */
+const ADMOB={test:true,rew:'ca-app-pub-3940256099942544/5224354917',int:'ca-app-pub-3940256099942544/1033173712'};
+const AdNet=(()=>{
+  const C=window.Capacitor, P=C&&C.isNativePlatform&&C.isNativePlatform()&&C.Plugins&&C.Plugins.AdMob; if(!P) return null;
+  const ready=P.initialize({initializeForTesting:ADMOB.test})
+    .then(()=>P.requestConsentInfo().then(i=>i&&i.isConsentFormAvailable&&i.status==='REQUIRED'?P.showConsentForm():null).catch(()=>{}))
+    .catch(()=>{});
+  let busy=false;
+  async function show(kind){
+    if(busy) return false; busy=true; const hs=[];
+    try{ await ready; const rew=kind==='rew';
+      await (rew?P.prepareRewardVideoAd({adId:ADMOB.rew,isTesting:ADMOB.test}):P.prepareInterstitial({adId:ADMOB.int,isTesting:ADMOB.test}));
+      return await new Promise(async res=>{ let got=false, end=false; const fin=ok=>{ if(!end){ end=true; res(ok); } };
+        const on=async(ev,fn)=>hs.push(await P.addListener(ev,fn));
+        if(rew){ await on('onRewardedVideoAdReward',()=>{ got=true; }); await on('onRewardedVideoAdDismissed',()=>fin(got)); await on('onRewardedVideoAdFailedToShow',()=>fin(false)); }
+        else { await on('interstitialAdDismissed',()=>fin(true)); await on('interstitialAdFailedToShow',()=>fin(false)); }
+        (rew?P.showRewardVideoAd():P.showInterstitial()).catch(()=>fin(false)); });
+    }catch(e){ return false; }
+    finally{ busy=false; hs.forEach(h=>h&&h.remove&&h.remove()); }
+  }
+  return {show};
+})();
 function showAd(kind,cb){
-  let s=kind==='rew'?4:3; if(kind==='rew')S.stats.rew++; else S.stats.inter++;
+  if(kind==='rew')S.stats.rew++; else S.stats.inter++;
+  if(AdNet){ closeModal(); AdNet.show(kind).then(ok=>{ if(kind==='rew'){ if(ok){ if(cb)cb(); } else toast(t('adFail')); } render(); }); return; }
+  let s=kind==='rew'?4:3;
   const draw=()=>{ $('card').innerHTML=`<h2>${t('adTitle')}</h2><div class="adbox">${t(kind==='rew'?'adRew':'adInt')}</div><button class="btn" id="adclose" ${s>0?'disabled':''}>${s>0?t('closeIn',s):t('close')}</button>`;
     if(s<=0){ $('adclose').onclick=()=>{ closeModal(); if(cb)cb(); render(); }; $('adclose').focus(); } };
   $('over').hidden=false; draw(); clearInterval(adTimer);

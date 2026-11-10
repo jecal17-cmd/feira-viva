@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Quitanda</string>
+    <string name="title_activity_main">Quitanda</string>
+    <string name="package_name">com.feiraviva.quitanda</string>
+    <string name="custom_url_scheme">com.feiraviva.quitanda</string>
+    <!-- ID de app de TESTE do Google (exemplo oficial). Troque pelo ID do seu app no AdMob antes de publicar. -->
+    <string name="admob_app_id">ca-app-pub-3940256099942544~3347511713</string>
+</resources>
