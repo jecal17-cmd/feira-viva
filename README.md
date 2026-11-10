@@ -3,7 +3,7 @@
 Jogo mobile 2D de merge com tema de feiras e mercados brasileiros, planejado em duas versões:
 
 - **Versão A · Rota das Feiras**: puzzle com fases, turnos limitados e um mapa do Brasil com mercados reais. Receita por compras no app.
-- **Versão B · Quitanda Zen**: passatempo relaxante, sem derrota e com progressão lenta. Receita por anúncios.
+- **Versão B · Quitanda Zen**: passatempo relaxante, sem derrota e com progressão contínua e sem fim. Receita por anúncios.
 
 ## Conteúdo
 
@@ -21,10 +21,18 @@ Para publicar online com GitHub Pages: **Settings → Pages → Deploy from a br
 
 ## Estado atual
 
-- O protótipo da Versão B tem o loop principal, níveis 1 a 50, receitas, decoração, missões diárias e anúncios **simulados**.
-- Os itens usam emojis como arte provisória.
+Protótipo da Versão B (revisão v0.3, mais rápida e sem fim):
+
+- **Tela inicial** com a banca, o Seu Zé, presente diário e atalhos.
+- **Mapa do Brasil** com a Rota das Feiras: 12 mercados por volta e voltas infinitas, cada uma com +10% de XP e moedas. Cada feira troca as bancas (linhas de itens) e o tabuleiro chega cheio.
+- **Turma da Feira:** 28 personagens (4 que viajam com o jogador e 2 por mercado), com amizade sem limite.
+- **13 linhas de itens com 8 níveis** (104 itens), cestos com 20 cargas e recarga de 10 s, combos, pedidos relâmpago, 🧲 Junta-tudo e ⚡ Recarga.
+- **Níveis sem teto**, missões e encomendas que se renovam, 25 receitas, melhorias de cestos, ampliações e decoração.
+- Anúncios **simulados**; itens e personagens usam emojis como arte provisória.
 - O progresso fica salvo apenas no navegador de quem joga.
-- Em **Ajustes** há um painel com métricas de teste (tempo de jogo, XP por minuto, anúncios vistos) e um modo que acelera os cestos.
+- Em **Ajustes** (na tela inicial) há um painel com métricas de teste e um modo que acelera os cestos.
+
+Os números de balanceamento ficam no bloco `DADOS`, no topo do script, e ainda não foram testados com jogadores. Os textos curtos de cada mercado precisam de validação local.
 
 ## Próximos passos
 
