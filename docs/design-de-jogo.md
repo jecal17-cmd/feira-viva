@@ -229,6 +229,10 @@ A pedido, o protótipo trocou a progressão lenta das seções 4.2 a 4.5 por um 
 
 **Ordem de lançamento.** Português (BR) + inglês no início; espanhol em seguida (público latino-americano); outros idiomas (alemão, francês etc.) só depois que os dados mostrarem de onde vêm jogadores e receita. O inglês é quase obrigatório porque o dinheiro do gênero está concentrado em mercados ocidentais, em especial os EUA.
 
+**Nome internacional (Versão B):** *Quitanda: Merge Across Brazil*. “Quitanda” é fácil de pronunciar (kee-TAHN-da), desconhecido fora do Brasil (gera curiosidade) e mantém a marca da versão em português; o subtítulo explica o gênero e o tema. A tela inicial em inglês traz a pronúncia e o significado. Antes de adotar, verificar registro de marca e nomes parecidos nas lojas; uma busca rápida em 10/11/2026 não encontrou jogo com esse nome.
+
+**O que traduzir (protótipo da Versão B):** a interface, os papéis e falas dos personagens e as descrições. Ficam em português os nomes dos mercados, das cidades, dos personagens e dos pratos típicos (pastel, tapioca, feijoada, moqueca, brigadeiro…), que ganham uma explicação curta em inglês. As falas mantêm expressões regionais (égua, oxente, uai, bah, tchê).
+
 **Teste barato antes de traduzir o jogo.** Traduza apenas a página da loja (título, descrição, capturas de tela) e observe onde surgem os downloads.
 
 **Regras técnicas desde o primeiro dia:**

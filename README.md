@@ -11,11 +11,14 @@ Jogo mobile 2D de merge com tema de feiras e mercados brasileiros, planejado em 
 |---|---|
 | `docs/design-de-jogo.md` | Documento de design completo das duas versões |
 | `docs/mockups/` | 7 telas de sugestão em SVG; abra `index.html` para ver todas |
-| `versao-b-quitanda-zen/` | Protótipo jogável da Versão B em HTML5 |
+| `docs/arte/` | Lista de arte (mercados, itens, personagens) em Markdown e CSV, com prompts em inglês |
+| `versao-b-quitanda-zen/` | Protótipo jogável da Versão B em HTML5, em português e inglês |
 
 ## Como jogar o protótipo
 
 Abra `versao-b-quitanda-zen/index.html` no navegador, de preferência no celular. Não precisa instalar nada.
+
+O jogo abre no idioma do navegador. Para escolher, use os botões na tela inicial, em **Ajustes**, ou o endereço com `?lang=en` ou `?lang=pt`.
 
 Para publicar online com GitHub Pages: **Settings → Pages → Deploy from a branch → `main` / root**. O jogo fica em `https://<usuario>.github.io/<repositorio>/versao-b-quitanda-zen/`.
 
@@ -28,6 +31,7 @@ Protótipo da Versão B (revisão v0.3, mais rápida e sem fim):
 - **Turma da Feira:** 28 personagens (4 que viajam com o jogador e 2 por mercado), com amizade sem limite.
 - **13 linhas de itens com 8 níveis** (104 itens), cestos com 20 cargas e recarga de 10 s, combos, pedidos relâmpago, 🧲 Junta-tudo e ⚡ Recarga.
 - **Níveis sem teto**, missões e encomendas que se renovam, 25 receitas, melhorias de cestos, ampliações e decoração.
+- **Versão em inglês** com o nome internacional *Quitanda: Merge Across Brazil*. Nomes de mercados, cidades e personagens e pratos típicos ficam em português, com uma explicação curta em inglês.
 - Anúncios **simulados**; itens e personagens usam emojis como arte provisória.
 - O progresso fica salvo apenas no navegador de quem joga.
 - Em **Ajustes** (na tela inicial) há um painel com métricas de teste e um modo que acelera os cestos.
