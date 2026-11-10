@@ -209,21 +209,21 @@ Nível da Quitanda de 1 a 50. XP para ir do nível n ao n+1 = **100 + 60 × n**.
 
 No máximo 1 notificação por dia (cestos cheios). Recarga offline. Modo Zen com música e sons ambiente (liga/desliga).
 
-### 4.8 Revisão v0.3 do protótipo (ritmo rápido e jogo sem fim)
+### 4.8 Revisão v0.4 do protótipo (jogo sem fim, ritmo mais lento e mais anúncios)
 
-A pedido, o protótipo trocou a progressão lenta das seções 4.2 a 4.5 por um ritmo rápido. Onde houver conflito, vale esta seção. Os valores são pontos de partida, ainda sem teste com jogadores.
+Onde houver conflito com as seções 4.2 a 4.6, vale esta seção. Os valores são pontos de partida, ainda sem teste com jogadores.
 
-- **Tela inicial:** banca decorada, dica do Seu Zé, botão Jogar, presente diário (sequência de até 7 dias) e atalhos para Mapa, Turma, Missões e Ajustes.
-- **Mapa (Rota das Feiras):** os 12 mercados da seção 3.2 viram paradas. Concluir uma feira exige atender 6 + 2 × parada clientes (teto de 24). Ao viajar, as linhas que não existem na feira seguinte são vendidas, o tabuleiro é completado até ficar cheio e os cestos enchem. Depois da 12ª parada começa uma nova volta, com +10% de XP e moedas por volta, sem limite.
-- **Linhas por feira:** 13 linhas de 8 níveis; cada feira usa 4 (a 1ª usa 2 e a 2ª usa 3, como tutorial).
-- **Tabuleiro inicial cheio:** as 42 células começam ocupadas com itens de nível 1 a 4.
-- **Cestos:** 20 cargas, 1 carga a cada 10 s; cada pedido atendido devolve 1 carga; subir de nível enche os cestos. Anúncio recompensado: +10 cargas.
-- **XP:** fusões dão XP (metade do nível, mais bônus de combo e de fusão tripla). XP para ir do nível n ao n+1 = 50 + 15 × n, sem nível máximo.
-- **Pedidos:** 4 clientes; o nível pedido cresce com o nível do jogador; 22% são relâmpago (75 s, pagam em dobro, sem punição); um pedido pode ser trocado a cada 20 s.
-- **Turma da Feira:** 28 personagens com papel, fala e linha favorita. Cada pedido rende amizade; cada nível de amizade paga moedas, e a cada dois níveis um Junta-tudo.
-- **Auxílios:** 🧲 Junta-tudo (funde todos os pares) e ⚡ Recarga (enche os cestos), ganhos jogando.
-- **Metas sem fim:** missões que se renovam ao receber, encomendas numeradas com exigência crescente, melhorias de cestos e 12 decorações.
-- **Riscos a observar no teste:** o ritmo rápido reduz a necessidade de anúncio de recarga; a troca de linhas a cada feira pode frustrar quem acumulou itens altos.
+- **Tela inicial:** banca decorada, dica do Seu Zé, botão Jogar, presente diário (sequência de até 7 dias), atalhos e escolha de idioma.
+- **Mapa (Rota das Feiras):** mapa do Brasil com os estados e as 5 regiões em cores diferentes; cada mercado aparece com um ícone. Concluir uma feira exige atender 30 + 3 × parada clientes (teto de 60). Depois da 12ª parada começa uma nova volta, com +10% de XP e moedas por volta, sem limite.
+- **Viagem animada:** ao viajar, um ônibus (até 900 km) ou um avião (acima disso) percorre o mapa até o próximo mercado, com a distância em km. Dá para pular.
+- **Ao chegar:** as linhas que não existem na feira nova são vendidas, o tabuleiro é completado até ficar cheio e **os cestos começam vazios**.
+- **Cestos:** 10 cargas, 1 carga a cada 90 s (também com o jogo fechado). Subir de nível e entregar pedidos não recarregam mais os cestos. ⚡ Recarga é rara: a cada 10 níveis e nas encomendas.
+- **Fusão tripla:** só por escolha do jogador (seção 2).
+- **Pedidos:** 4 clientes; o nível pedido cresce com o nível do jogador; 22% são relâmpago (⏱️ 75 s, pagam em dobro, sem punição).
+- **Anúncios (simulados):** +6 cargas em todos os cestos (12 por dia, também oferecido ao tocar num cesto vazio); dobrar a recompensa do pedido (15 por dia); dobrar o prêmio da viagem (1 por viagem); baú diário (5 por dia); intersticial no máximo a cada 3 min, a partir de 5 min de jogo, a cada 4 pedidos, ao subir de nível e ao chegar num mercado.
+- **Melhorias com imagem e efeito explícito:** cada compra mostra uma imagem, o que faz e o valor de agora e depois (ex.: "Agora: 10 cargas / Depois: 12 cargas").
+- **Ajuda:** tela "Como jogar" com ícone e explicação de cada elemento; abre sozinha no primeiro jogo e fica no botão ❓.
+- **Riscos a observar no teste:** com cestos lentos e vazios a cada mercado, o jogo depende mais de anúncios; vigiar fadiga de anúncios, desistência no primeiro mercado (30 clientes) e avaliações nas lojas. A regra antiga de "nenhum intersticial nos primeiros 15 min" foi reduzida para 5 min a pedido; vale testar as duas.
 
 ## 5. Localização e idiomas
 
