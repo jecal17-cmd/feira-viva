@@ -193,6 +193,11 @@ table.met{width:100%;border-collapse:collapse;background:var(--panel);border-rad
 .met tr+tr td{border-top:1px solid var(--line)}
 .met .alert{color:var(--warn);font-weight:800}
 .toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(64px + env(safe-area-inset-top,0px));z-index:35;background:var(--ink);color:var(--bg);border-radius:99px;padding:8px 16px;font-weight:800;max-width:calc(100% - 32px);text-align:center;pointer-events:none}
+.fxe{position:fixed;left:0;top:0;z-index:17;pointer-events:none;transform:translate(-50%,-50%);line-height:1;will-change:transform,opacity}
+.fxe.chip{width:8px;height:8px;border-radius:2px}
+.fxe.bub{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.9);box-shadow:inset 0 0 0 2px #7FB9E6}
+.fxe.ring{width:60px;height:60px;border-radius:50%;border:3px solid var(--gold)}
+.fxe.txt{font:800 22px var(--display);color:var(--gold);text-shadow:0 2px 0 var(--panel),0 -1px 0 var(--panel),1px 0 0 var(--panel),-1px 0 0 var(--panel);white-space:nowrap}
 .warn{color:var(--warn)}
 .seg{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
 .seg button{background:var(--panel);border-radius:99px;padding:7px 12px;font-weight:800;font-size:13px;box-shadow:inset 0 0 0 2px var(--line)}
@@ -672,6 +677,43 @@ function showCard(i,more){
   if(!S.diaryDone&&S.cards.length===CARDS.length){ S.diaryDone=true; S.coins+=150; save(); toast(tr('Coleção do Ver-o-Peso completa: +150 🪙','Ver-o-Peso collection complete: +150 🪙')); }
 }
 
+/* ===================== ANIMAÇÕES DAS FERRAMENTAS ===================== */
+// Camada de efeitos por cima do jogo (Web Animations API). Com "reduzir movimento" ligado, os efeitos são pulados.
+const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+const T=(x,y,s,r)=>`translate(calc(-50% + ${x}px),calc(-50% + ${y}px)) scale(${s})${r!=null?` rotate(${r}deg)`:''}`;
+const ctr=r=>[r.left+r.width/2,r.top+r.height/2];
+const cellEl=i=>$('board')&&$('board').querySelector(`[data-cell="${i}"]`);
+function fxEl(html,x,y,cls,size){ const d=document.createElement('div'); d.className='fxe'+(cls?' '+cls:''); d.innerHTML=html; d.style.left=x+'px'; d.style.top=y+'px'; if(size) d.style.fontSize=size+'px'; document.body.appendChild(d); return d; }
+function anim(el,kf,dur,ease,delay){ const a=el.animate(kf,{duration:dur,easing:ease||'ease-out',delay:delay||0,fill:'both'}); a.onfinish=()=>el.remove(); return a; }
+function bump(el,kf,dur,delay){ if(el) el.animate(kf,{duration:dur,delay:delay||0,easing:'ease-out'}); }
+function floatTxt(t,x,y,delay){ anim(fxEl(t,x,y,'txt'),[{transform:T(0,0,.6),opacity:0},{transform:T(0,-12,1.15),opacity:1,offset:.25},{transform:T(0,-56,1),opacity:0}],1000,'ease-out',delay); }
+function shake(el,amp){ bump(el,[0,1,2,3,4,5].map(k=>({transform:`translate(${k===5?0:(k%2?-1:1)*(amp||4)*(1-k/5)}px,0)`})),300); }
+// Martelo: desce sobre a casa, o item estala e se desfaz em lascas.
+function fxHammer(r,em,color){
+  if(RM()) return; const [cx,cy]=ctr(r), s=r.width;
+  if(em) anim(fxEl(em,cx,cy,'',s*.54),[{transform:T(0,0,1)},{transform:T(0,0,1),offset:.42},{transform:T(0,0,1.18),opacity:1,offset:.48},{transform:T(0,0,.2),opacity:0}],650);
+  const h=fxEl('🔨',cx+s*.5,cy-s*.6,'',s*.85); h.style.transformOrigin='75% 75%';
+  anim(h,[{transform:T(s*.2,-s*.2,.6,-40),opacity:0},{transform:T(0,0,1,-75),opacity:1,offset:.3},{transform:T(-s*.3,s*.3,1,20),offset:.48},{transform:T(-s*.24,s*.22,1,5),opacity:1,offset:.62},{transform:T(-s*.1,0,.9,-35),opacity:0}],720,'cubic-bezier(.5,0,.3,1)');
+  setTimeout(()=>{ shake($('board'),5); beep(180);
+    anim(fxEl('💥',cx,cy,'',s*.7),[{transform:T(0,0,.3),opacity:1},{transform:T(0,0,1.3),opacity:.9,offset:.4},{transform:T(0,0,1.6),opacity:0}],420);
+    for(let k=0;k<12;k++){ const a=Math.random()*Math.PI*2, d=s*(.55+Math.random()*.8), p=fxEl('',cx,cy,'chip'); p.style.background=k%3?color:'#fff';
+      anim(p,[{transform:T(0,0,1,0)},{transform:T(Math.cos(a)*d,Math.sin(a)*d*.7+s*.5,.5,rint(-200,200)),opacity:0}],650,'cubic-bezier(.2,.6,.4,1)'); } },340);
+}
+// Caldeirão: sobe por baixo da casa, borbulha, e o item sai brilhando um nível acima.
+function fxPot(i){
+  const c=cellEl(i); if(!c||RM()) return; const r=c.getBoundingClientRect(), [cx,cy]=ctr(r), s=r.width;
+  anim(fxEl('🫕',cx,cy+s*.55,'',s*.75),[{transform:T(0,s*.4,.3),opacity:0},{transform:T(0,0,1.05),opacity:1,offset:.22},{transform:T(0,0,1),opacity:1,offset:.7},{transform:T(0,s*.3,.6),opacity:0}],1150);
+  for(let k=0;k<8;k++) anim(fxEl('',cx+rint(-s*.25,s*.25),cy+s*.35,'bub'),[{transform:T(0,0,.4),opacity:0},{transform:T(0,-s*.2,1),opacity:1,offset:.3},{transform:T(rint(-8,8),-s*.85,1.2),opacity:0}],700,'ease-out',180+k*70);
+  bump(c,[{transform:'scale(1)',filter:'none'},{transform:'scale(.7)',offset:.35},{transform:'scale(1.28)',filter:'brightness(1.5) drop-shadow(0 0 10px #F7C51E)',offset:.62},{transform:'scale(1)',filter:'none'}],950,250);
+  setTimeout(()=>{ beep(990); anim(fxEl('✨',cx+s*.3,cy-s*.3,'',s*.45),[{transform:T(0,0,.3,0),opacity:0},{transform:T(0,0,1.2,40),opacity:1,offset:.4},{transform:T(6,-10,.8,90),opacity:0}],700); floatTxt('+1',cx,cy-s*.35); },780);
+}
+// +3 Turnos: a ampulheta gira e voa até o contador, que pulsa.
+function fxTurns(r){
+  const tc=document.querySelector('.turns'); if(!tc||RM()) return; const [x0,y0]=r?ctr(r):[innerWidth/2,innerHeight/2], [x1,y1]=ctr(tc.getBoundingClientRect());
+  anim(fxEl('⏳',x0,y0,'',42),[{transform:T(0,0,.6,0),opacity:0},{transform:T(0,-40,1.3,180),opacity:1,offset:.3},{transform:T((x1-x0)*.6,(y1-y0)*.6-60,1.1,360),offset:.65},{transform:T(x1-x0,y1-y0,.4,540),opacity:.2}],900,'ease-in-out');
+  setTimeout(()=>{ bump(tc,[{transform:'scale(1)'},{transform:'scale(1.35)',filter:'brightness(1.4)',offset:.4},{transform:'scale(1)'}],500); floatTxt('+3',x1,y1+34); },860);
+}
+
 /* ===================== ENTRADA ===================== */
 document.addEventListener('click',e=>{
   lastAct=Date.now();
@@ -688,9 +730,9 @@ document.addEventListener('click',e=>{
     else if(k==='locked') toast(tr('Vença a fase anterior para abrir esta.','Beat the previous level to open this one.'));
     else if(k==='spawn'){ if(!P.armed) { spawn(v); render(); } }
     else if(k==='tool'){
-      if(v==='turns'){ if(S.tools.turns>0&&P.toolsUsed<MAX_TOOLS&&!P.over){ S.tools.turns--; P.toolsUsed++; P.turns+=3; beep(820); render(); toast(tr('⏳ +3 turnos','⏳ +3 turns')); } }
+      if(v==='turns'){ if(S.tools.turns>0&&P.toolsUsed<MAX_TOOLS&&!P.over){ const r=a.getBoundingClientRect(); S.tools.turns--; P.toolsUsed++; P.turns+=3; beep(820); render(); fxTurns(r); toast(tr('⏳ +3 turnos','⏳ +3 turns')); } }
       else { P.armed=P.armed===v?null:v; sel=null; render(); } }
-    else if(k==='cont'){ if(S.tools.turns>0&&P.cont<MAX_CONT){ closeModal(); S.tools.turns--; P.cont++; P.turns+=3; P.over=null; phStat(P.i).losses--; render(); toast(tr('⏳ +3 turnos: continue!','⏳ +3 turns: keep going!')); } }
+    else if(k==='cont'){ if(S.tools.turns>0&&P.cont<MAX_CONT){ closeModal(); S.tools.turns--; P.cont++; P.turns+=3; P.over=null; phStat(P.i).losses--; render(); fxTurns(null); toast(tr('⏳ +3 turnos: continue!','⏳ +3 turns: keep going!')); } }
     else if(k==='shop'){ $('toast').hidden=true; closeModal(); sheetName='shop'; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
     else if(k==='iap') iapAsk(v);
     else if(k==='iapok') iapBuy(v);
@@ -720,7 +762,8 @@ document.addEventListener('click',e=>{
   if(e.target.closest('[data-seal]')){ if(sel!=null) deliverSeal(sel); else toast(tr('Entregue aqui itens de nível 5 para conquistar o Selo de Domínio.','Deliver level 5 items here to earn the Mastery Seal.')); render(); return; }
   const c=e.target.closest('[data-cell]'); if(!c) return;
   const i=+c.dataset.cell, x=P.board[i];
-  if(P.armed){ useTool(P.armed,i); render(); return; }
+  if(P.armed){ const k=P.armed, r=c.getBoundingClientRect(), em=isItem(x)?item(x.l,x.n)[0]:'', col=isItem(x)?lc(x.l):x&&x.o==='mold'?'#7FA65A':'#C99A63';
+    if(useTool(k,i)){ render(); if(k==='hammer') fxHammer(r,em,col); else fxPot(i); } else render(); return; }
   if(sel!=null&&sel!==i){ const s0=P.board[sel];
     if(free(i)&&!flooded(sel)){ P.board[i]=s0; P.board[sel]=null; sel=null; render(); return; }
     if(canMerge(s0,x)&&merge(sel,i)){ sel=null; render(); return; }

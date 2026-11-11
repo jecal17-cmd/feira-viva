@@ -220,6 +220,11 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
 @media (prefers-reduced-motion: reduce){.intro g{animation-duration:.01s!important;animation-delay:0s!important}}
 .toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(58px + env(safe-area-inset-top,0px));z-index:35;background:var(--ink);color:var(--bg);border-radius:99px;padding:8px 16px;font-weight:800;max-width:calc(100% - 32px);text-align:center;pointer-events:none}
 .tag{display:inline-block;background:var(--sun);color:#3A2A00;border-radius:99px;padding:1px 8px;font-size:11.5px;font-weight:800}
+.fxe{position:fixed;left:0;top:0;z-index:17;pointer-events:none;transform:translate(-50%,-50%);line-height:1;will-change:transform,opacity}
+.fxe.chip{width:8px;height:8px;border-radius:2px}
+.fxe.bub{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.9);box-shadow:inset 0 0 0 2px #7FB9E6}
+.fxe.ring{width:60px;height:60px;border-radius:50%;border:3px solid var(--gold)}
+.fxe.txt{font:800 22px var(--display);color:var(--gold);text-shadow:0 2px 0 var(--panel),0 -1px 0 var(--panel),1px 0 0 var(--panel),-1px 0 0 var(--panel);white-space:nowrap}
 .warn{color:var(--warn)}
 .logo .say{font-family:var(--text);font-weight:600;font-size:13px;color:var(--muted);margin:8px 0 0;line-height:1.3}
 .seg{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
@@ -705,7 +710,8 @@ function levelUp(ups){
   S.coins+=co; beep(660); beep(880,.12); beep(1100,.24);
   modal(`<div class="big">🎉</div><h1>${t('lvlTitle',S.level)}</h1><p>${t('lvlP',fmt(co))}</p>${news.length?'<ul>'+news.map(x=>`<li>${x}</li>`).join('')+'</ul>':''}<button class="btn" data-act="lvlok">${t('cont')}</button>`);
 }
-function modal(html){ if(!$('over').hidden){ modalQ.push(html); return; } $('card').innerHTML=html; $('over').hidden=false; const b=$('card').querySelector('button:not(:disabled)'); if(b)b.focus(); }
+let fxHold=false;   // durante a animação do Junta-tudo, avisos (como o de nível novo) esperam a animação terminar
+function modal(html){ if(fxHold||!$('over').hidden){ modalQ.push(html); return; } $('card').innerHTML=html; $('over').hidden=false; const b=$('card').querySelector('button:not(:disabled)'); if(b)b.focus(); }
 function closeModal(){ $('over').hidden=true; clearInterval(adTimer); if(modalQ.length) modal(modalQ.shift()); }
 /* Anúncios reais (AdMob) quando o jogo roda como app Android; no navegador, anúncios simulados.
    IDs abaixo são os IDs de TESTE do Google: troque pelos seus blocos do AdMob antes de publicar. */
@@ -772,11 +778,12 @@ function findPair(){ const seen={}; let best=null;
   return best; }
 function magnet(){
   if(S.boost.mag<=0){ toast(t('noMag')); return; }
-  let n=0,p; while(n<300&&(p=findPair())){ merge(p[0],p[1],true); n++; }
-  if(!n){ toast(t('noPair')); return; }
-  S.boost.mag--; sel=null; beep(700); beep(900,.1); toast(t('magDone',n)); render();
+  fxHold=true; let n=0,p; const moves=[]; while(n<300&&(p=findPair())){ moves.push([p[0],p[1],item(S.board[p[0]].l,S.board[p[0]].n)[0]]); merge(p[0],p[1],true); n++; }
+  if(!n){ fxHold=false; toast(t('noPair')); return; }
+  S.boost.mag--; sel=null; beep(700); beep(900,.1); fxQ=[]; render(); fxMagnet(moves); setTimeout(()=>toast(t('magDone',n)),400);
+  setTimeout(()=>{ fxHold=false; if($('over').hidden&&modalQ.length) modal(modalQ.shift()); },RM()?0:1100+Math.min(40,moves.length)*Math.min(60,900/Math.min(40,moves.length)));
 }
-function recharge(){ if(S.boost.rec<=0){ toast(t('noRec')); return; } S.boost.rec--; refill(); beep(820); toast(t('fullB')); render(); }
+function recharge(){ if(S.boost.rec<=0){ toast(t('noRec')); return; } S.boost.rec--; refill(); beep(820); render(); fxCharge('⚡'); toast(t('fullB')); }
 const matches=(o,it)=>o.items.find(x=>!x.done&&x.l===it.l&&x.n===it.n);
 function orderFor(it){ return S.orders.find(o=>matches(o,it)); }
 function befriend(c){
@@ -1054,6 +1061,38 @@ function renderSheet(){
   $('sheetin').innerHTML=`<header><h1>${T[sheetName]}</h1><button class="btn ghosty" data-act="close">${t('close')}</button></header>${h}`;
 }
 
+/* ===================== ANIMAÇÕES DAS FERRAMENTAS ===================== */
+// Camada de efeitos por cima do jogo (Web Animations API). Com "reduzir movimento" ligado, os efeitos são pulados.
+const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+const T=(x,y,s,r)=>`translate(calc(-50% + ${x}px),calc(-50% + ${y}px)) scale(${s})${r!=null?` rotate(${r}deg)`:''}`;
+const ctr=r=>[r.left+r.width/2,r.top+r.height/2];
+const cellEl=i=>$('board')&&$('board').querySelector(`[data-cell="${i}"]`);
+function fxEl(html,x,y,cls,size){ const d=document.createElement('div'); d.className='fxe'+(cls?' '+cls:''); d.innerHTML=html; d.style.left=x+'px'; d.style.top=y+'px'; if(size) d.style.fontSize=size+'px'; document.body.appendChild(d); return d; }
+function anim(el,kf,dur,ease,delay){ const a=el.animate(kf,{duration:dur,easing:ease||'ease-out',delay:delay||0,fill:'both'}); a.onfinish=()=>el.remove(); return a; }
+function bumpEl(el,kf,dur,delay){ if(el) el.animate(kf,{duration:dur,delay:delay||0,easing:'ease-out'}); }
+function floatTxt(t,x,y,delay){ anim(fxEl(t,x,y,'txt'),[{transform:T(0,0,.6),opacity:0},{transform:T(0,-12,1.15),opacity:1,offset:.25},{transform:T(0,-56,1),opacity:0}],1000,'ease-out',delay); }
+function shake(el,amp){ bumpEl(el,[0,1,2,3,4,5].map(k=>({transform:`translate(${k===5?0:(k%2?-1:1)*(amp||4)*(1-k/5)}px,0)`})),300); }
+// Junta-tudo: o ímã aparece no centro do tabuleiro e puxa cada par; os itens voam até a casa onde se juntam.
+function fxMagnet(moves){
+  const b=$('board'); if(!b||RM()||!moves.length) return; const [bx,by]=ctr(b.getBoundingClientRect()), mv=moves.slice(0,40), st=Math.min(60,900/mv.length);
+  anim(fxEl('🧲',bx,by,'',72),[{transform:T(0,0,.2,-30),opacity:0},{transform:T(0,0,1.2,10),opacity:1,offset:.15},{transform:T(0,0,1,-8),offset:.3},{transform:T(0,0,1.05,8),offset:.5},{transform:T(0,0,1,0),opacity:1,offset:.8},{transform:T(0,0,.3,0),opacity:0}],600+mv.length*st+500);
+  for(let k=0;k<3;k++) anim(fxEl('',bx,by,'ring'),[{transform:T(0,0,.3),opacity:.9},{transform:T(0,0,4.5),opacity:0}],900,'ease-out',k*250);
+  mv.forEach(([f,to,em],k)=>{ const a=cellEl(f), c=cellEl(to); if(!a||!c) return; const ra=a.getBoundingClientRect(), [x0,y0]=ctr(ra), [x1,y1]=ctr(c.getBoundingClientRect()), d=250+k*st;
+    anim(fxEl(em,x0,y0,'',ra.width*.54),[{transform:T(0,0,1),opacity:1},{transform:T((x1-x0)*.5+(bx-x0)*.25,(y1-y0)*.5+(by-y0)*.25,1.15),offset:.5},{transform:T(x1-x0,y1-y0,.7),opacity:.3}],420,'ease-in',d);
+    bumpEl(c,[{transform:'scale(1)'},{transform:'scale(1)',offset:.55},{transform:'scale(1.3)',filter:'brightness(1.4)',offset:.75},{transform:'scale(1)'}],560,d); });
+}
+// Recarga: um raio corre pelos cestos, que acendem um a um e mostram as cargas ganhas.
+function fxCharge(label){
+  if(homeOn||RM()) return; const bs=[...document.querySelectorAll('[data-act^="basket:"]')]; if(!bs.length) return;
+  const pts=bs.map(x=>ctr(x.getBoundingClientRect())), [x0,y0]=pts[0], last=pts[pts.length-1];
+  const kf=[{transform:T(-60,-40,.4,-20),opacity:0}]; pts.forEach(([x,y],k)=>kf.push({transform:T(x-x0,y-y0-(k%2?14:-6),1.2,k%2?15:-15),opacity:1,offset:(k+1)/(pts.length+1)})); kf.push({transform:T(last[0]-x0+50,last[1]-y0-30,.4,20),opacity:0});
+  anim(fxEl('⚡',x0,y0,'',44),kf,300+pts.length*160,'linear');
+  bs.forEach((x,k)=>{ const d=Math.round(300+pts.length*160)*(k+1)/(pts.length+1);
+    bumpEl(x,[{transform:'scale(1)',filter:'none'},{transform:'scale(1.12)',filter:'brightness(1.35) drop-shadow(0 0 10px #F7C51E)',offset:.35},{transform:'scale(1)',filter:'none'}],520,d);
+    floatTxt(label,pts[k][0],pts[k][1]-30,d); });
+  setTimeout(()=>beep(1180),150);
+}
+
 /* ===================== ENTRADA ===================== */
 document.addEventListener('click',e=>{
   lastAct=Date.now();
@@ -1067,7 +1106,7 @@ document.addEventListener('click',e=>{
     else if(k==='gift') claimGift();
     else if(k==='magnet') magnet();
     else if(k==='recharge') recharge();
-    else if(k==='adcharge'){ if(S.daily.adCharge<AD_MAX) showAd('rew',()=>{ S.daily.adCharge++; const g=Math.round(AD_CHARGE*bonus()); refill(g); toast(t('adCharge',g)); }); else toast(t('adLimit')); }
+    else if(k==='adcharge'){ if(S.daily.adCharge<AD_MAX) showAd('rew',()=>{ S.daily.adCharge++; const g=Math.round(AD_CHARGE*bonus()); refill(g); toast(t('adCharge',g)); setTimeout(()=>fxCharge('+'+g),80); }); else toast(t('adLimit')); }
     else if(k==='userec'){ closeModal(); recharge(); }
     else if(k==='shop'){ $('toast').hidden=true; closeModal(); sheetName='shop'; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
     else if(k==='iap') iapAsk(v);
