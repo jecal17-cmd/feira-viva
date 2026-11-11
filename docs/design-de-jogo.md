@@ -155,6 +155,27 @@ Implementado em `versao-a-rota-das-feiras/`, seguindo o marco 2 (seção 7), com
 - **Sem vidas** neste teste (as 15 primeiras fases não gastariam vida de qualquer forma), sem gemas e sem anúncios. Moedas vêm das vitórias e compram ferramentas.
 - **Balanceamento inicial** feito com um robô que joga cada fase 300 vezes: vence quase sempre as fases 1 a 5 e cerca de 55% a 65% das fases 6 e chefe. Os números devem ser ajustados com o painel de teste (taxa de derrota por fase) e jogadores reais.
 
+### 3.10 Loja do protótipo (compras simuladas)
+
+A pedido, o protótipo ganhou uma loja com preços de US$ 0,50 a US$ 9,99. As compras são simuladas (nada é cobrado); no app publicado passariam pela cobrança da loja do celular. Selos de Domínio e cartões do Diário continuam fora da loja, e não há caixas aleatórias pagas.
+
+**Valor de referência (item avulso):** 150 moedas = US$ 0,50 · Martelo = US$ 0,33 · Caldeirão = US$ 0,33 · +3 Turnos = US$ 0,50. A "economia" de cada kit é calculada sobre esses valores.
+
+| Produto | Conteúdo | Preço | Economia |
+|---|---|---|---|
+| Kit do Feirante (1 vez) | 300 moedas, 2 Martelos, 2 Caldeirões, 2 × +3 Turnos | US$ 1,99 | 40% |
+| Kit Maré Cheia | 2 Martelos, 2 Caldeirões, 4 × +3 Turnos | US$ 2,49 | 25% |
+| Kit Mestre da Feira | 1.500 moedas, 5 de cada ferramenta | US$ 5,99 | 45% |
+| Kit Banca Completa | 4.000 moedas, 10 de cada ferramenta | US$ 9,99 | 60% |
+| +3 Turnos | 1 / 3 / 10 | US$ 0,50 / 1,29 / 3,99 | — / 14% / 20% |
+| Martelo ou Caldeirão | 3 | US$ 0,99 | — |
+| Moedas | 150 / 500 / 1.200 / 2.500 / 6.000 | US$ 0,50 / 1,49 / 2,99 / 4,99 / 9,99 | bônus de 0 / 12 / 34 / 67 / 100% |
+
+- **+3 Turnos** é a ferramenta nova, só da loja (seção 3.4). Pode ser usada durante a fase (conta no limite de 2 ferramentas) ou ao ficar sem turnos, para continuar (até 2 vezes por fase). Esse é o principal ponto de conversão previsto na seção 3.7.
+- **Pedidos** agora rendem moedas (2 por nível de item entregue), mesmo quando não fazem parte do objetivo.
+- **Objetivo em destaque:** o painel "Para vencer a fase" mostra só o que libera a próxima fase; os pedidos ganham o rótulo "contam para vencer" ou "extras", os obstáculos pulsam quando limpar é objetivo e o cesto da linha a criar leva um 🎯.
+- **A observar:** neste teste as moedas só compram Martelo e Caldeirão, então os kits grandes de moedas têm pouco uso; vale criar mais usos para moedas antes de publicar.
+
 ## 4. Versão B — Quitanda Zen (passatempo, foco em anúncios)
 
 ### 4.1 Loop
@@ -244,6 +265,30 @@ Onde houver conflito com as seções 4.2 a 4.6, vale esta seção. Os valores s�
 - **Melhorias com imagem e efeito explícito:** cada compra mostra uma imagem, o que faz e o valor de agora e depois (ex.: "Agora: 10 cargas / Depois: 12 cargas").
 - **Ajuda:** tela "Como jogar" com ícone e explicação de cada elemento; abre sozinha no primeiro jogo e fica no botão ❓.
 - **Riscos a observar no teste:** com cestos lentos e vazios a cada mercado, o jogo depende mais de anúncios; vigiar fadiga de anúncios, desistência no primeiro mercado (30 clientes) e avaliações nas lojas. A regra antiga de "nenhum intersticial nos primeiros 15 min" foi reduzida para 5 min a pedido; vale testar as duas.
+
+### 4.9 Loja do protótipo (compras simuladas)
+
+A pedido, a Versão B passou a ter compras com dinheiro real além dos anúncios, o que muda a premissa da seção 4.6 (receita só por anúncios, com compras complementares). No protótipo as compras são simuladas; preços de US$ 0,50 a US$ 9,99.
+
+**Valor de referência (item avulso):** 300 moedas = US$ 0,50 · ⚡ Recarga = US$ 0,33 · 🧲 Junta-tudo = US$ 0,33 · 1 nível de melhoria = US$ 0,99 · remover anúncios = US$ 2,99.
+
+| Produto | Conteúdo | Preço | Economia |
+|---|---|---|---|
+| Kit Boas-vindas (1 vez) | 500 moedas, 3 ⚡, 3 🧲 | US$ 0,99 | 65% |
+| Kit Viajante | 2.000 moedas, 5 ⚡, 5 🧲 | US$ 3,99 | 40% |
+| Kit Feirante | 5.000 moedas, 10 ⚡, 10 🧲, +1 nível em cada melhoria de cesto | US$ 6,99 | 61% |
+| Kit Quitanda Lendária | 8.000 moedas, 15 ⚡, 15 🧲, sem anúncios de tela cheia | US$ 9,99 | 62% |
+| Moedas | 300 / 1.000 / 2.500 / 6.000 / 12.000 | US$ 0,50 / 1,49 / 2,99 / 5,99 / 9,99 | bônus de 0 / 12 / 39 / 67 / 100% |
+| ⚡ Recarga ou 🧲 Junta-tudo | 3 / 10 | US$ 0,99 / 2,49 | — / 25% |
+| Remover anúncios | intersticiais | US$ 2,99 | — |
+| Melhoria de cesto | +1 nível | US$ 0,99 | — |
+| Ampliação do tabuleiro | próxima ampliação | US$ 1,99 | — |
+| Decoração | 1 peça, conforme a faixa | US$ 0,50 / 0,99 / 1,99 | — |
+| Todas as decorações | as peças que faltam | US$ 7,99 | 43% com as 12 |
+
+- A loja abre pelo saldo de moedas no topo do jogo, pela tela inicial, por Melhorias e pelo aviso de cesto vazio.
+- **Pedidos em destaque:** cartões maiores, com o rosto do cliente, e o nível de cada item pedido na cor da banca. A encomenda foi para a faixa do mercado.
+- **A observar:** melhorias e decorações pagas encurtam a progressão; vigiar se quem compra perde o motivo para continuar. Verificar as regras das lojas e a legislação (seção 3.7) antes de publicar.
 
 ## 5. Localização e idiomas
 

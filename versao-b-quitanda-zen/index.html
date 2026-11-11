@@ -42,16 +42,26 @@ button:disabled{opacity:.45;cursor:default}
 .xp small{display:block;color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bar{height:10px;border-radius:5px;background:var(--hole);overflow:hidden}
 .bar i{display:block;height:100%;background:var(--accent);border-radius:5px;transition:width .3s}
-.coins{font-family:var(--display);font-weight:800;font-size:17px;color:var(--gold);font-variant-numeric:tabular-nums;white-space:nowrap}
-.orders{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
-.order{min-width:0;background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:5px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:58px}
-.order.ready{border-color:var(--accent);background:var(--cell)}
+.coins{font-family:var(--display);font-weight:800;font-size:16px;color:var(--gold);font-variant-numeric:tabular-nums;white-space:nowrap;background:var(--panel);border-radius:12px;padding:6px 8px}
+.coins b{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--accent);color:var(--on-accent);font:800 14px/1 var(--text);margin-left:4px;vertical-align:1px}
+.orders{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding-top:4px}
+.order{min-width:0;background:var(--cell);border:2.5px solid var(--line);border-radius:16px;padding:5px 3px 8px;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:72px;box-shadow:0 3px 0 var(--line);position:relative}
+.order.ready{border-color:var(--accent);box-shadow:0 3px 0 var(--accent);background:color-mix(in srgb,var(--accent) 14%,var(--cell))}
+.order.ready::after{content:"✓";position:absolute;top:-8px;right:-5px;width:20px;height:20px;border-radius:50%;background:var(--accent);color:var(--on-accent);font:800 12px/20px var(--text);text-align:center}
+.order.rush{border-color:var(--warn)}
 .order.want,.order.osel{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
-.order.rush .who{color:var(--warn);font-weight:800}
-.order .who{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.need{display:flex;gap:3px;font-size:18px;line-height:1.15}
-.need sub{font-size:10px;font-weight:800;color:var(--ink);vertical-align:baseline}
+.order .who{font-size:11.5px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:flex;align-items:center;gap:3px;line-height:1.2}
+.order .who i{font-style:normal;font-size:17px;line-height:1}
+.order.rush .who{color:var(--warn)}
+.need{display:flex;gap:9px;font-size:26px;line-height:1.1}
+.need span{position:relative}
+.need sub{position:absolute;right:-7px;bottom:-4px;min-width:17px;height:17px;padding:0 3px;border-radius:99px;background:var(--lc,var(--accent));color:#fff;font:800 11px/17px var(--text);text-align:center;box-shadow:0 0 0 1.5px var(--cell)}
 .need .ok{opacity:.3}
+.striprow{display:flex;gap:6px}
+.striprow .strip{flex:1;min-width:0}
+.encb{flex:0 0 auto;background:var(--panel);border:2px solid var(--line);border-radius:12px;padding:3px 8px;font-size:12px;white-space:nowrap;font-weight:800}
+.encb small{color:var(--muted);font-weight:600}
+.encb.want{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
 .strip{display:flex;align-items:center;gap:8px;background:var(--panel);border-radius:12px;padding:5px 10px;font-size:12px;text-align:left;min-height:28px}
 .strip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .strip .bar{flex:1;min-width:40px;height:8px}
@@ -112,8 +122,8 @@ button:disabled{opacity:.45;cursor:default}
 .play:active{transform:translateY(3px);box-shadow:0 2px 0 color-mix(in srgb,var(--accent) 60%,#000)}
 .where{background:var(--panel);border-radius:14px;padding:10px 12px;text-align:left;display:flex;flex-direction:column;gap:6px}
 .where small{color:var(--muted)}
-.hnav{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
-.hnav button{background:var(--panel);border-radius:14px;padding:10px 2px;font-weight:800;font-size:11.5px;position:relative;min-width:0}
+.hnav{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.hnav button{background:var(--panel);border-radius:14px;padding:8px 2px;font-weight:800;font-size:11.5px;position:relative;min-width:0}
 .hnav span{display:block;font-size:22px}
 .gift{background:var(--sun);color:#3A2A00;font-weight:800;border-radius:14px;padding:10px}
 .sheet{z-index:20;background:var(--bg);overflow:auto;padding-block:calc(14px + env(safe-area-inset-top,0px)) calc(24px + env(safe-area-inset-bottom,0px));
@@ -208,7 +218,8 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
 .wsub{font:800 13px var(--text);letter-spacing:6px;text-transform:uppercase;color:var(--muted);margin-top:12px;opacity:0;transition:opacity .5s}
 .wsub.on{opacity:1}
 @media (prefers-reduced-motion: reduce){.intro g{animation-duration:.01s!important;animation-delay:0s!important}}
-.toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(58px + env(safe-area-inset-top,0px));z-index:35;background:var(--ink);color:var(--bg);border-radius:99px;padding:8px 16px;font-weight:800;max-width:calc(100% - 32px);text-align:center}
+.toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(58px + env(safe-area-inset-top,0px));z-index:35;background:var(--ink);color:var(--bg);border-radius:99px;padding:8px 16px;font-weight:800;max-width:calc(100% - 32px);text-align:center;pointer-events:none}
+.tag{display:inline-block;background:var(--sun);color:#3A2A00;border-radius:99px;padding:1px 8px;font-size:11.5px;font-weight:800}
 .warn{color:var(--warn)}
 .logo .say{font-family:var(--text);font-weight:600;font-size:13px;color:var(--muted);margin:8px 0 0;line-height:1.3}
 .seg{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
@@ -219,7 +230,7 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
 </head>
 <body>
 <div class="app" id="app">
-  <div class="top"><button class="icon" id="homebtn" data-act="home" aria-label="Tela inicial">🏠</button><div class="lvl" id="lvl"></div><div class="xp"><div class="bar"><i id="xpbar"></i></div><small id="xptxt"></small></div><div class="coins" id="coins"></div><button class="icon" id="helpbtn" data-act="nav:help" aria-label="Ajuda">❓</button></div>
+  <div class="top"><button class="icon" id="homebtn" data-act="home" aria-label="Tela inicial">🏠</button><div class="lvl" id="lvl"></div><div class="xp"><div class="bar"><i id="xpbar"></i></div><small id="xptxt"></small></div><button class="coins" id="coins" data-act="nav:shop"></button><button class="icon" id="helpbtn" data-act="nav:help" aria-label="Ajuda">❓</button></div>
   <div class="orders" id="orders"></div>
   <div id="stripbox"></div>
   <div class="wrap" id="wrap"><div class="board" id="board"></div></div>
@@ -397,11 +408,32 @@ const UPS={far:{ic:'🧺',bd:'2',n:['Cestos fartos','Bountiful baskets'],d:['Cad
            cap:{ic:'🧺',bd:'+',n:['Cestos maiores','Bigger baskets'],d:['Cada cesto guarda mais cargas, então acumula mais enquanto você está fora.','Each basket holds more charges, so more pile up while you’re away.'],base:60,k:1.6,max:10},
            spd:{ic:'⏱️',bd:'',n:['Recarga rápida','Quick refill'],d:['As cargas dos cestos chegam mais rápido.','Basket charges arrive faster.'],base:100,k:1.8,max:8}};
 const MTYPES={merges:[['Faça {n} fusões','Make {n} merges'],20],orders:[['Atenda {n} pedidos','Fill {n} orders'],5],spawn:[['Colha {n} itens dos cestos','Pick {n} items from baskets'],30],big:[['Crie {n} itens de nível 5 ou mais','Make {n} items of level 5+'],2],triple:[['Faça {n} fusões triplas','Make {n} triple merges'],3],sell:[['Venda {n} itens','Sell {n} items'],6]};
+// Loja: compras com dinheiro real (simuladas neste protótipo). Preços em US$; as lojas convertem para a moeda local.
+// UNIT é o valor de referência de cada coisa comprada avulsa; serve para calcular a economia dos pacotes.
+const UNIT={coins:.5/300,rec:.33,mag:.33,up:.99,noAds:2.99};
+const SHOP={
+ coins:[['c1',300,.5],['c2',1000,1.49],['c3',2500,2.99],['c4',6000,5.99],['c5',12000,9.99]],
+ items:[['r3','rec',3,.99],['m3','mag',3,.99],['r10','rec',10,2.49],['m10','mag',10,2.49]],
+ packs:[{id:'p1',n:['Kit Boas-vindas','Welcome kit'],once:true,coins:500,rec:3,mag:3,usd:.99},
+        {id:'p2',n:['Kit Viajante','Traveler kit'],coins:2000,rec:5,mag:5,usd:3.99},
+        {id:'p3',n:['Kit Feirante','Vendor kit'],coins:5000,rec:10,mag:10,up:1,usd:6.99},
+        {id:'p4',n:['Kit Quitanda Lendária','Legendary Quitanda kit'],coins:8000,rec:15,mag:15,noAds:true,usd:9.99}],
+ up:.99, exp:1.99, noAds:2.99, decoAll:7.99
+};
+const decoUsd=c=>c<=600?.5:c<=2500?.99:1.99;                       // preço de cada decoração, pela faixa do preço em moedas
+const packValue=p=>p.coins*UNIT.coins+p.rec*UNIT.rec+p.mag*UNIT.mag+(p.up?3*UNIT.up*p.up:0)+(p.noAds?UNIT.noAds:0);
 const TIPS=[['Arraste um item por cima de dois iguais que estejam lado a lado: os três se juntam e sobem 2 níveis.','Drag an item across two matching neighbors: all three merge and jump 2 levels.'],['Toque num pedido com borda verde para entregar direto.','Tap a green-bordered order to deliver it right away.'],['Fusões em sequência rendem XP extra de combo.','Quick merges in a row earn bonus combo XP.'],['Pedido com ⏱️ paga em dobro se você for rápido.','⏱️ orders pay double if you’re quick.'],['Concluiu a feira? Viaje pelo mapa para conhecer gente nova.','Finished a market? Travel the map to meet new friends.'],['Sem espaço? Venda um item ou use Organizar.','Out of space? Sell an item or tap Sort.']];
 
 /* ===================== TEXTOS DA INTERFACE ===================== */
 const UI={
  pt:{
+  shopNote:'Compras simuladas neste teste: nada é cobrado. No app publicado, o pagamento é feito pela loja do celular, que converte o preço para a sua moeda.',
+  hPacks:'Pacotes', hCoins:'Moedas', hItems:'Itens', bonusPct:p=>`+${p}% de bônus`, savePct:p=>`Economia de ${p}%`, once:'Só 1 vez', bought:'Comprado',
+  recName:'Recarga', magName:'Junta-tudo', recD:'Enche todos os cestos na hora.', magD:'Junta de uma vez todos os pares iguais do tabuleiro.',
+  allUp:'+1 nível em cada melhoria de cesto', noAdsInc:'sem anúncios de tela cheia', decoAll:'Todas as decorações', decoAllD:n=>`As ${n} peças que faltam, de uma vez. Cada uma dá +1% de XP.`,
+  noAdsName:'Remover anúncios', noAdsD:'Sem anúncios de tela cheia e +25% nos prêmios dos anúncios opcionais.', hasIt:'Você já tem',
+  iapT:'Confirmar compra', iapSim:'Compra simulada: nada será cobrado.', iapConfirm:p=>`Comprar por ${p}`, iapDone:n=>`Compra feita: ${n}`,
+  buyRec:'🛒 Comprar Recargas na Loja', toShop:'Faltam moedas? Na Loja há kits de moedas e melhorias.', openShop:'🛒 Loja', shopAria:c=>`${c} moedas. Abrir a Loja`,
   help:'Ajuda', tripTitle:c=>`Rumo a ${c}`, tripP:(a,b,km,v)=>`${a} → ${b} · ${km} km de ${v}`, bus:'ônibus', plane:'avião', skip:'Pular',
   tripDouble:v=>`▶ Dobrar o prêmio da viagem (+${v} moedas)`, tripDoubled:v=>`Prêmio da viagem dobrado: +${v} moedas`,
   emptyT:'Cesto vazio', emptyP:(n,p,nx)=>`Cada cesto ganha 1 carga a cada ${p}, mesmo com o jogo fechado. Próxima carga de ${n}: ${nx}.`,
@@ -446,7 +478,7 @@ const UI={
   adTitle:'Anúncio simulado', adRew:'Aqui entraria um anúncio com recompensa.', adInt:'Aqui entraria um anúncio de tela cheia.', closeIn:s=>'Fechar em '+s, close:'Fechar',
   goTravel:c=>`⭐ Feira concluída · viajar para ${c} ➜`, openMap:'Abrir o mapa', clients:(a,b)=>`${a}/${b} clientes`,
   cellAria:(n,l)=>`${n} nível ${l}`, emptyCell:'Espaço vazio',
-  nav:{help:'Ajuda',map:'Mapa',turma:'Turma',miss:'Missões',rec:'Receitas',up:'Melhorias',cfg:'Ajustes'},
+  nav:{shop:'Loja',help:'Ajuda',map:'Mapa',turma:'Turma',miss:'Missões',rec:'Receitas',up:'Melhorias',cfg:'Ajustes'},
   orderAria:(w,its)=>`Pedido de ${w}: ${its}`, itemLv:(n,l)=>`${n} nível ${l}`, recipeTag:'Receita', enc:'Encomenda',
   encAria:(n,L)=>`Encomenda: ${n} itens de nível ${L} ou mais`, levelPlus:L=>`nível ${L}+`,
   itemInfo:(line,l,mx)=>`${line} nível ${l}${mx?' (máximo)':''}`, deliver:'Entregar', sellB:v=>`Vender +${v}`, swap:'Trocar pedido',
@@ -454,9 +486,9 @@ const UI={
   bFull:'cheio', basketAria:n=>`Cesto de ${n}`, magAria:'Junta-tudo: funde todos os pares', magLbl:'junta', recAria:'Recarga: enche os cestos', recLbl:'recarga', adAria:'Assistir anúncio: mais cargas',
   play:c=>c?'Continuar':'Jogar', giftBtn:(d,co)=>`🎁 Presente do dia ${d}: +${co} moedas`, decoAria:'Decoração',
   homeLine:(l,s,p)=>`Nível ${l} · ⭐ ${s} feiras concluídas · ${'Volta '+p}`, ready:'pronto para viajar',
-  st:['Tempo de jogo','XP por minuto','Fusões','Itens colhidos','Pedidos atendidos','Feiras concluídas','Anúncios com recompensa','Anúncios de tela cheia'], waiting:'aguardando',
+  st:['Tempo de jogo','XP por minuto','Fusões','Itens colhidos','Pedidos atendidos','Feiras concluídas','Anúncios com recompensa','Anúncios de tela cheia','Compras simuladas'], waiting:'aguardando',
   mapAria:'Mapa do Brasil com a Rota das Feiras',
-  T:{help:'Como jogar',map:'Rota das Feiras',turma:'Turma da Feira',miss:'Missões',rec:'Caderno de Receitas',up:'Melhorias',cfg:'Ajustes'},
+  T:{shop:'Loja',help:'Como jogar',map:'Rota das Feiras',turma:'Turma da Feira',miss:'Missões',rec:'Caderno de Receitas',up:'Melhorias',cfg:'Ajustes'},
   mapNote:(p,s,b)=>`Volta ${p} pelo Brasil · ⭐ ${s} feiras concluídas${b?` · bônus de +${b}% em XP e moedas`:''}. A rota recomeça ao fim de cada volta, sempre com um bônus maior.`, mapGloss:'',
   goalN:g=>`meta: ${g} clientes`, served:(a,b)=>`${a}/${b} clientes atendidos`, travel:'Viajar',
   turmaNote:'Cada pedido atendido rende ❤️. A cada nível de amizade você ganha moedas, e a cada dois níveis um 🧲 Junta-tudo. A amizade não tem limite.',
@@ -479,6 +511,13 @@ const UI={
   pickFirst:'Escolha um item no tabuleiro primeiro.'
  },
  en:{
+  shopNote:'Purchases are simulated in this test: nothing is charged. In the published app, payment goes through your phone’s store, which converts prices to your currency.',
+  hPacks:'Bundles', hCoins:'Coins', hItems:'Items', bonusPct:p=>`+${p}% bonus`, savePct:p=>`Save ${p}%`, once:'One time only', bought:'Purchased',
+  recName:'Refill', magName:'Merge-all', recD:'Fills every basket instantly.', magD:'Merges every matching pair on the board at once.',
+  allUp:'+1 level on every basket upgrade', noAdsInc:'no full-screen ads', decoAll:'All decorations', decoAllD:n=>`The ${n} pieces you’re missing, all at once. Each adds +1% XP.`,
+  noAdsName:'Remove ads', noAdsD:'No full-screen ads and +25% on optional ad rewards.', hasIt:'You already have it',
+  iapT:'Confirm purchase', iapSim:'Simulated purchase: nothing will be charged.', iapConfirm:p=>`Buy for ${p}`, iapDone:n=>`Purchased: ${n}`,
+  buyRec:'🛒 Buy Refills in the Shop', toShop:'Short on coins? The Shop has coin kits and upgrades.', openShop:'🛒 Shop', shopAria:c=>`${c} coins. Open the Shop`,
   help:'Help', tripTitle:c=>`Heading to ${c}`, tripP:(a,b,km,v)=>`${a} → ${b} · ${km} km by ${v}`, bus:'bus', plane:'plane', skip:'Skip',
   tripDouble:v=>`▶ Double the trip reward (+${v} coins)`, tripDoubled:v=>`Trip reward doubled: +${v} coins`,
   emptyT:'Basket empty', emptyP:(n,p,nx)=>`Each basket gains 1 charge every ${p}, even while the game is closed. Next ${n} charge: ${nx}.`,
@@ -523,7 +562,7 @@ const UI={
   adTitle:'Simulated ad', adRew:'A rewarded ad would play here.', adInt:'A full-screen ad would play here.', closeIn:s=>'Close in '+s, close:'Close',
   goTravel:c=>`⭐ Market complete · travel to ${c} ➜`, openMap:'Open the map', clients:(a,b)=>`${a}/${b} customers`,
   cellAria:(n,l)=>`${n}, level ${l}`, emptyCell:'Empty space',
-  nav:{help:'Help',map:'Map',turma:'Friends',miss:'Missions',rec:'Recipes',up:'Upgrades',cfg:'Settings'},
+  nav:{shop:'Shop',help:'Help',map:'Map',turma:'Friends',miss:'Missions',rec:'Recipes',up:'Upgrades',cfg:'Settings'},
   orderAria:(w,its)=>`${w}’s order: ${its}`, itemLv:(n,l)=>`${n}, level ${l}`, recipeTag:'Recipe', enc:'Bulk order',
   encAria:(n,L)=>`Bulk order: ${n} items of level ${L} or higher`, levelPlus:L=>`level ${L}+`,
   itemInfo:(line,l,mx)=>`${line} level ${l}${mx?' (max)':''}`, deliver:'Deliver', sellB:v=>`Sell +${v}`, swap:'Swap order',
@@ -531,9 +570,9 @@ const UI={
   bFull:'full', basketAria:n=>`${n} basket`, magAria:'Merge-all: merges every pair', magLbl:'merge', recAria:'Refill: fills every basket', recLbl:'refill', adAria:'Watch an ad: more charges',
   play:c=>c?'Continue':'Play', giftBtn:(d,co)=>`🎁 Day ${d} gift: +${co} coins`, decoAria:'Decorations',
   homeLine:(l,s,p)=>`Level ${l} · ⭐ ${s} markets done · Lap ${p}`, ready:'ready to travel',
-  st:['Play time','XP per minute','Merges','Items picked','Orders filled','Markets completed','Rewarded ads','Full-screen ads'], waiting:'waiting',
+  st:['Play time','XP per minute','Merges','Items picked','Orders filled','Markets completed','Rewarded ads','Full-screen ads','Simulated purchases'], waiting:'waiting',
   mapAria:'Map of Brazil with the Market Trail',
-  T:{help:'How to play',map:'Market Trail',turma:'Market Friends',miss:'Missions',rec:'Recipe Book',up:'Upgrades',cfg:'Settings'},
+  T:{shop:'Shop',help:'How to play',map:'Market Trail',turma:'Market Friends',miss:'Missions',rec:'Recipe Book',up:'Upgrades',cfg:'Settings'},
   mapNote:(p,s,b)=>`Lap ${p} around Brazil · ⭐ ${s} markets done${b?` · +${b}% bonus on XP and coins`:''}. The trail starts over after each lap, always with a bigger bonus.`,
   mapGloss:'In Portuguese, a <i>feira</i> is an open-air street market and a <i>mercado</i> is a covered market hall. <i>Mercadão</i> means “big market”.',
   goalN:g=>`goal: ${g} customers`, served:(a,b)=>`${a}/${b} customers served`, travel:'Travel',
@@ -602,7 +641,7 @@ function newMission(s,slot){
 function fresh(coins){
   const now=Date.now(), s={v:2,level:1,xp:0,coins:coins||0,cols:6,rows:7,exp:0,board:Array(42).fill(null),baskets:{},orders:[],nextId:1,
     stop:0,served:0,goalSeen:false,day:today(),daily:{adCharge:0,adDouble:0,chest:0},streak:0,giftDay:'',
-    recipes:[],decor:[],friends:{},missions:[null,null,null],missTier:0,enc:{k:0,got:0},boost:{mag:2,rec:1},up:{far:0,cap:0,spd:0},swapAt:0,
+    recipes:[],decor:[],friends:{},missions:[null,null,null],missTier:0,enc:{k:0,got:0},boost:{mag:2,rec:1},up:{far:0,cap:0,spd:0},swapAt:0,iap:{n:0,usd:0,once:[]},
     stats:{merges:0,items:0,orders:0,rew:0,inter:0,playMs:0,xp:0,first:now,lastInter:0},opts:{sound:true,noAds:false,test:false,lang:LANG}};
   fillBoard(s); linesAt(0).forEach(k=>s.baskets[k]={c:0,t:now});
   for(let i=0;i<3;i++) s.missions[i]=newMission(s,i);
@@ -637,7 +676,10 @@ function tickBaskets(){
 }
 function refill(n){ for(const k of lines()){ const b=S.baskets[k]; b.c=n==null?Math.max(b.c,cap()):Math.min(cap()+10,b.c+n); } }
 function checkDay(){ if(S.day!==today()){ S.day=today(); S.daily={adCharge:0,adDouble:0,chest:0}; } }
-function toast(m){ const el=$('toast'); el.textContent=m; el.hidden=false; clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.hidden=true,2400); }
+function toast(m){ const el=$('toast'), inf=$('info'); el.textContent=m; el.hidden=false;
+  // No jogo, a mensagem aparece sobre a barra de informações, para não cobrir os pedidos nem o tabuleiro.
+  if(!homeOn&&!sheetName&&inf){ const r=inf.getBoundingClientRect(); el.style.top=(r.top+r.height/2)+'px'; el.style.transform='translate(-50%,-50%)'; } else { el.style.top=''; el.style.transform=''; }
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.hidden=true,2400); }
 function beep(f,d){ if(!S.opts.sound) return; try{ audio=audio||new (window.AudioContext||window.webkitAudioContext)(); const o=audio.createOscillator(),g=audio.createGain(), t0=audio.currentTime+(d||0);
   o.type='sine'; o.frequency.value=f; g.gain.setValueAtTime(.08,t0); g.gain.exponentialRampToValueAtTime(.001,t0+.25);
   o.connect(g); g.connect(audio.destination); o.start(t0); o.stop(t0+.26);}catch(e){} }
@@ -775,11 +817,11 @@ function swapOrder(id){
   const w=Math.ceil((S.swapAt-Date.now())/1000); if(w>0){ toast(t('swapWait',w)); return; }
   const k=S.orders.findIndex(o=>o.id===id); if(k<0) return; S.orders[k]=newOrder(); S.swapAt=Date.now()+20000; selOrder=null; render();
 }
-function expand(){
-  const e=EXPS[S.exp]; if(!e||S.level<e.lvl||S.coins<e.cost) return;
+function expand(paid){
+  const e=EXPS[S.exp]; if(!e||(!paid&&(S.level<e.lvl||S.coins<e.cost))) return;
   const nb=Array(e.cols*e.rows).fill(null);
   S.board.forEach((x,i)=>{ if(x) nb[Math.floor(i/S.cols)*e.cols+i%S.cols]=x; });
-  S.coins-=e.cost; S.board=nb; S.cols=e.cols; S.rows=e.rows; S.exp++; sel=null; render(); toast(t('expanded'));
+  if(!paid) S.coins-=e.cost; S.board=nb; S.cols=e.cols; S.rows=e.rows; S.exp++; sel=null; render(); toast(t('expanded'));
 }
 function travelAsk(){
   const nx=S.stop+1, f=feira(nx), ls=linesAt(nx), gone=lines().filter(k=>!ls.includes(k));
@@ -821,7 +863,39 @@ function basketEmpty(k){
   const b=S.baskets[k], nx=mmss(Math.max(0,Math.ceil((period()-(Date.now()-b.t))/1000))), ad=S.daily.adCharge<AD_MAX;
   modal(`<div class="big">🧺</div><h2>${t('emptyT')}</h2><p>${t('emptyP',lname(k),mmss(Math.round(period()/1000)),nx)}</p>
    ${ad?`<button class="btn" data-act="adcharge">${t('adFill',Math.round(AD_CHARGE*bonus()),S.daily.adCharge,AD_MAX)}</button>`:`<p class="note">${t('adLimit')}</p>`}
-   ${S.boost.rec>0?`<button class="btn${ad?' ghosty':''}" data-act="userec">${t('useRec',S.boost.rec)}</button>`:''}<button class="btn ghosty" data-act="mclose">${t('wait')}</button>`);
+   ${S.boost.rec>0?`<button class="btn${ad?' ghosty':''}" data-act="userec">${t('useRec',S.boost.rec)}</button>`:`<button class="btn ghosty" data-act="shop">${t('buyRec')}</button>`}<button class="btn ghosty" data-act="mclose">${t('wait')}</button>`);
+}
+const usd=v=>LANG==='en'?'$'+v.toFixed(2):'US$ '+v.toFixed(2).replace('.',',');
+const packText=p=>`${fmt(p.coins)} 🪙 · ${p.rec} ⚡ · ${p.mag} 🧲${p.up?' · '+t('allUp'):''}${p.noAds?' · '+t('noAdsInc'):''}`;
+function iapItem(key){
+  const [kind,id]=key.split('-');
+  if(kind==='coins'){ const c=SHOP.coins.find(x=>x[0]===id); return {n:t('coinsN',fmt(c[1])),usd:c[2],give(){ S.coins+=c[1]; }}; }
+  if(kind==='item'){ const c=SHOP.items.find(x=>x[0]===id); return {n:`${c[2]} × ${c[1]==='rec'?'⚡ '+t('recName'):'🧲 '+t('magName')}`,usd:c[3],give(){ S.boost[c[1]]+=c[2]; }}; }
+  if(kind==='pack'){ const p=SHOP.packs.find(x=>x.id===id); return {n:tx(p.n),usd:p.usd,give(){ S.coins+=p.coins; S.boost.rec+=p.rec; S.boost.mag+=p.mag;
+      if(p.up) for(const k in UPS) S.up[k]=Math.min(UPS[k].max,S.up[k]+p.up); if(p.noAds) S.opts.noAds=true; if(p.once) S.iap.once.push(p.id); }}; }
+  if(kind==='up') return {n:`${tx(UPS[id].n)} · ${t('lvN',S.up[id]+1)}`,usd:SHOP.up,give(){ if(S.up[id]<UPS[id].max) S.up[id]++; }};
+  if(kind==='exp'){ const e=EXPS[S.exp]; return e&&{n:t('expandTo',e.cols,e.rows),usd:SHOP.exp,give(){ expand(true); }}; }
+  if(kind==='deco') return {n:tx(DECOR[+id][1]),usd:decoUsd(DECOR[+id][2]),give(){ if(!S.decor.includes(+id)) S.decor.push(+id); }};
+  if(kind==='decoall') return {n:t('decoAll'),usd:SHOP.decoAll,give(){ DECOR.forEach((_,i)=>{ if(!S.decor.includes(i)) S.decor.push(i); }); }};
+  if(kind==='noads') return {n:t('noAdsName'),usd:SHOP.noAds,give(){ S.opts.noAds=true; }};
+}
+function iapAsk(key){ const it=iapItem(key); if(!it) return;
+  modal(`<div class="big">🛒</div><h2>${t('iapT')}</h2><p><b>${it.n}</b></p><p class="note">${t('iapSim')}</p><button class="btn" data-act="iapok:${key}">${t('iapConfirm',usd(it.usd))}</button><button class="btn ghosty" data-act="mclose">${t('cancel')}</button>`); }
+function iapBuy(key){ const it=iapItem(key); if(!it) return; closeModal(); it.give(); S.iap.n++; S.iap.usd=Math.round((S.iap.usd+it.usd)*100)/100; beep(880); beep(1100,.12); render(); toast(t('iapDone',it.n)); }
+function shopHtml(){
+  const buy=(key,v,dis)=>`<button class="btn buy" data-act="iap:${key}" ${dis?'disabled':''}><span>${usd(v)}</span></button>`;
+  const row=(ic,bd,name,desc,btn,tag)=>`<div class="row"><span class="thumb" aria-hidden="true">${ic}${bd?`<b>${bd}</b>`:''}</span><div><b>${name}</b>${tag?` <span class="tag">${tag}</span>`:''}<p>${desc}</p></div>${btn}</div>`;
+  const base=SHOP.coins[0][1]/SHOP.coins[0][2], miss=DECOR.map((_,i)=>i).filter(i=>!S.decor.includes(i)), e=EXPS[S.exp];
+  const val=(k,lv)=>k==='far'?t('farV',...farOdds(lv).map(x=>Math.round(x*100))):k==='cap'?t('capV',BASE_CAP+CAP_UP*lv):t('spdV',mmss(Math.round(periodAt(lv)/1000)));
+  return `<p class="note">${t('shopNote')}</p><h2>${t('hPacks')}</h2>`
+   +SHOP.packs.map(p=>{ const got=p.once&&S.iap.once.includes(p.id); return row('🎁','',tx(p.n),packText(p)+(p.once?' · '+t('once'):''),got?`<button class="btn" disabled>${t('bought')}</button>`:buy('pack-'+p.id,p.usd),t('savePct',Math.round((1-p.usd/packValue(p))*100))); }).join('')
+   +`<h2>${t('hCoins')}</h2>`+SHOP.coins.map(([id,n,v])=>{ const b=Math.round((n/v/base-1)*100); return row('🪙','',t('coinsN',fmt(n)),b>0?t('bonusPct',b):'&nbsp;',buy('coins-'+id,v)); }).join('')
+   +`<h2>${t('hItems')}</h2>`+SHOP.items.map(([id,k,n,v])=>row(k==='rec'?'⚡':'🧲','×'+n,`${n} × ${t(k==='rec'?'recName':'magName')}`,t(k==='rec'?'recD':'magD'),buy('item-'+id,v))).join('')
+   +row('🚫','',t('noAdsName'),t('noAdsD'),S.opts.noAds?`<button class="btn" disabled>${t('bought')}</button>`:buy('noads-0',SHOP.noAds))
+   +`<h2>${t('nav').up}</h2>`+Object.keys(UPS).map(k=>{ const u=UPS[k], lv=S.up[k]; return lv>=u.max?'':row(u.ic,u.bd,`${tx(u.n)} · ${t('lvN',lv+1)}`,`${tx(u.d)}<br><span class="nn">${t('nowNext',val(k,lv),val(k,lv+1))}</span>`,buy('up-'+k,SHOP.up)); }).join('')
+   +(e?row('🔲','+',t('expandTo',e.cols,e.rows),t('boardD'),buy('exp-0',SHOP.exp)):'')
+   +(miss.length?`<h2>${t('hDeco')}</h2>`+(miss.length>1?row('🎪','',t('decoAll'),t('decoAllD',miss.length),buy('decoall-0',SHOP.decoAll),t('savePct',Math.round((1-SHOP.decoAll/miss.reduce((a,i)=>a+decoUsd(DECOR[i][2]),0))*100))):'')
+     +miss.map(i=>row(DECOR[i][0],'',tx(DECOR[i][1]),'+1% XP',buy('deco-'+i,decoUsd(DECOR[i][2])))).join(''):'');
 }
 function claimGift(){
   if(S.giftDay===today()) return;
@@ -844,11 +918,14 @@ function render(){
   $('lvl').textContent=t('lvlShort',S.level);
   $('xpbar').style.width=Math.min(100,S.xp/need(S.level)*100)+'%';
   $('xptxt').textContent=`XP ${fmt(S.xp)} / ${fmt(need(S.level))}`;
-  $('coins').textContent='🪙 '+fmt(S.coins);
+  $('coins').innerHTML='🪙 '+fmt(S.coins)+'<b>+</b>'; $('coins').setAttribute('aria-label',t('shopAria',fmt(S.coins)));
   renderOrders();
   const f=feira(S.stop), g=goal(S.stop), done=S.served>=g;
-  $('stripbox').innerHTML=done?`<button class="strip go" style="width:100%" data-act="travelask"><span>${t('goTravel',feira(S.stop+1).c)}</span></button>`
-    :`<button class="strip" style="width:100%" data-act="nav:map" aria-label="${t('openMap')}"><span>${f.ic} ${f.n} · ${f.c}</span><div class="bar"><i style="width:${S.served/g*100}%"></i></div><span>${t('clients',S.served,g)}</span></button>`;
+  const curIt=sel!=null?S.board[sel]:null, EL=encLvl();
+  $('stripbox').className='striprow';
+  $('stripbox').innerHTML=(done?`<button class="strip go" data-act="travelask"><span>${t('goTravel',feira(S.stop+1).c)}</span></button>`
+    :`<button class="strip" data-act="nav:map" aria-label="${t('openMap')}"><span>${f.ic} ${f.n} · ${f.c}</span><div class="bar"><i style="width:${S.served/g*100}%"></i></div><span>${t('clients',S.served,g)}</span></button>`)
+    +`<button class="encb${curIt&&curIt.n>=EL?' want':''}" data-enc="1" aria-label="${t('encAria',ENC_N,EL)}">📦 ${S.enc.got}/${ENC_N} <small>${t('levelPlus',EL)}</small></button>`;
   $('board').innerHTML=S.board.map((x,i)=>x
     ?`<button class="cell has${sel===i?' sel':''}${popAt===i?' pop':''}" style="--lc:${lc(x.l)}" data-cell="${i}" aria-label="${t('cellAria',item(x.l,x.n)[1],x.n)}"><span class="em">${item(x.l,x.n)[0]}</span><span class="lv">${x.n}</span></button>`
     :`<button class="cell" data-cell="${i}" aria-label="${t('emptyCell')}"></button>`).join('');
@@ -863,11 +940,11 @@ function render(){
   save();
 }
 function renderOrders(){
-  const cur=sel!=null?S.board[sel]:null, have=new Set(S.board.filter(Boolean).map(x=>x.l+x.n)), now=Date.now(), L=encLvl();
+  const cur=sel!=null?S.board[sel]:null, have=new Set(S.board.filter(Boolean).map(x=>x.l+x.n)), now=Date.now();
   $('orders').innerHTML=S.orders.map(o=>{
     const c=CAST.find(x=>x.id===o.who), want=cur&&matches(o,cur), ready=o.items.some(x=>!x.done&&have.has(x.l+x.n)), rush=o.rush&&now<o.rush, s=rush?Math.ceil((o.rush-now)/1000):0;
-    return `<button class="order${want?' want':''}${ready?' ready':''}${rush?' rush':''}${selOrder===o.id?' osel':''}" data-order="${o.id}" aria-label="${t('orderAria',c.n,o.items.map(x=>t('itemLv',item(x.l,x.n)[1],x.n)).join(t('and')))}"><span class="who">${rush?`⏱️ ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`:c.f+' '+(o.rec!=null?t('recipeTag'):c.n)}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub>${x.n}</sub></span>`).join('')}</span></button>`;
-  }).join('')+`<button class="order${cur&&cur.n>=L?' want':''}" data-enc="1" aria-label="${t('encAria',ENC_N,L)}"><span class="who">${t('enc')}</span><span class="need"><span>📦<sub>${S.enc.got}/${ENC_N}</sub></span></span><span class="who">${t('levelPlus',L)}</span></button>`;
+    return `<button class="order${want?' want':''}${ready?' ready':''}${rush?' rush':''}${selOrder===o.id?' osel':''}" data-order="${o.id}" aria-label="${t('orderAria',c.n,o.items.map(x=>t('itemLv',item(x.l,x.n)[1],x.n)).join(t('and')))}"><span class="who"><i>${c.f}</i>${rush?`⏱️ ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`:o.rec!=null?t('recipeTag'):c.n}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span></button>`;
+  }).join('');
 }
 function renderInfo(){
   const el=$('info'), it=sel!=null?S.board[sel]:null, o=selOrder!=null&&S.orders.find(x=>x.id===selOrder);
@@ -898,7 +975,7 @@ function renderHome(){
    ${gift?`<button class="gift" data-act="gift">${t('giftBtn',d,20*d)}</button>`:''}
    <button class="where" data-act="nav:map"><span><b>${f.ic} ${f.n}</b> · ${f.c} (${f.uf})</span><div class="bar"><i style="width:${Math.min(100,S.served/g*100)}%"></i></div>
      <small>${t('homeLine',S.level,S.stop,lap(S.stop))} · ${S.served>=g?t('ready'):t('clients',S.served,g)}</small></button>
-   <div class="hnav">${[['map','🗺️',S.served>=g],['turma','🧑‍🤝‍🧑'],['miss','🎯',S.missions.some(m=>m.p>=m.goal)],['help','❓'],['cfg','⚙️']].map(([k,i,dt])=>`<button data-act="nav:${k}"><span>${i}</span>${N[k]}${dt?'<i class="dot"></i>':''}</button>`).join('')}</div>
+   <div class="hnav">${[['map','🗺️',S.served>=g],['turma','🧑‍🤝‍🧑'],['miss','🎯',S.missions.some(m=>m.p>=m.goal)],['shop','🛒'],['help','❓'],['cfg','⚙️']].map(([k,i,dt])=>`<button data-act="nav:${k}"><span>${i}</span>${N[k]}${dt?'<i class="dot"></i>':''}</button>`).join('')}</div>
    <div class="seg" role="group" aria-label="${t('lang')}"><button data-act="lang:pt" aria-pressed="${LANG==='pt'}">🇧🇷 Português</button><button data-act="lang:en" aria-pressed="${LANG==='en'}">🌎 English</button></div>`;
 }
 function tick(){
@@ -914,7 +991,7 @@ function tick(){
 }
 function statsHtml(){
   const m=S.stats.playMs/60000, s=Math.floor(S.stats.playMs/1000), L=t('st');
-  return [Math.floor(s/60)+' min '+(s%60)+' s',m>.2?(S.stats.xp/m).toLocaleString(LANG==='en'?'en-US':'pt-BR',{maximumFractionDigits:1}):t('waiting'),fmt(S.stats.merges),fmt(S.stats.items),fmt(S.stats.orders),S.stop,S.stats.rew,S.stats.inter].map((b,i)=>`<span>${L[i]}</span><span>${b}</span>`).join('');
+  return [Math.floor(s/60)+' min '+(s%60)+' s',m>.2?(S.stats.xp/m).toLocaleString(LANG==='en'?'en-US':'pt-BR',{maximumFractionDigits:1}):t('waiting'),fmt(S.stats.merges),fmt(S.stats.items),fmt(S.stats.orders),S.stop,S.stats.rew,S.stats.inter,`${S.iap.n} · ${usd(S.iap.usd)}`].map((b,i)=>`<span>${L[i]}</span><span>${b}</span>`).join('');
 }
 function mapSvg(o={}){
   const pts=FEIRAS.map(PF), cur=S.stop%FEIRAS.length, base=(lap(S.stop)-1)*FEIRAS.length;
@@ -958,11 +1035,13 @@ function renderSheet(){
     const e=EXPS[S.exp], buy=(act,c,dis)=>`<button class="btn buy" data-act="${act}" ${dis?'disabled':''}><span>${t('buy')}</span><small>🪙 ${fmt(c)}</small></button>`;
     const val=(k,lv)=>k==='far'?t('farV',...farOdds(lv).map(x=>Math.round(x*100))):k==='cap'?t('capV',BASE_CAP+CAP_UP*lv):t('spdV',mmss(Math.round(periodAt(lv)/1000)));
     const grid=(c,r,oc,or)=>{ const z=Math.min(44/c,44/r), q=(z*.8).toFixed(1); let g=''; for(let y=0;y<r;y++) for(let x=0;x<c;x++) g+=`<rect class="${x>=oc||y>=or?'gn':'gc'}" x="${(x*z+(44-c*z)/2).toFixed(1)}" y="${(y*z+(44-r*z)/2).toFixed(1)}" width="${q}" height="${q}" rx="1.5"/>`; return `<svg viewBox="0 0 44 44" aria-hidden="true">${g}</svg>`; };
-    h=`<p class="note">${t('upNote')}</p><h2>${t('hBaskets')}</h2>`+Object.keys(UPS).map(k=>{ const u=UPS[k], lv=S.up[k], c=upCost(k), mx=lv>=u.max;
+    h=`<p class="note">${t('upNote')}</p><div class="row"><div><p>${t('toShop')}</p></div><button class="btn sm" data-act="nav:shop">${t('openShop')}</button></div><h2>${t('hBaskets')}</h2>`+Object.keys(UPS).map(k=>{ const u=UPS[k], lv=S.up[k], c=upCost(k), mx=lv>=u.max;
         return `<div class="row"><span class="thumb" aria-hidden="true">${u.ic}${u.bd?`<b>${u.bd}</b>`:''}</span><div><b>${tx(u.n)}</b> · ${t('lvN',lv)}<p>${tx(u.d)}</p><p class="nn">${mx?t('nowMax',val(k,lv)):t('nowNext',val(k,lv),val(k,lv+1))}</p></div>${mx?'':buy('buyup:'+k,c,S.coins<c)}</div>`; }).join('')
      +`<h2>${t('hBoard')}</h2>`+(e?`<div class="row"><span class="thumb">${grid(e.cols,e.rows,S.cols,S.rows)}</span><div><b>${t('expandTo',e.cols,e.rows)}</b><p>${t('boardD')}${S.level<e.lvl?' '+t('opensAt',e.lvl):''}</p><p class="nn">${t('nowNext',t('boardV',S.cols,S.rows),t('boardV',e.cols,e.rows))}</p></div>${buy('buyexp',e.cost,S.level<e.lvl||S.coins<e.cost)}</div>`:`<p class="note">${t('boardMax')}</p>`)
      +`<h2>${t('hDeco')}</h2><p class="note">${t('decoD')} ${S.level<6?t('opensAt',6):''} ${t('bonusNow',S.decor.length)}</p>`
      +DECOR.map(([em,n,c],i)=>{ const has=S.decor.includes(i); return `<div class="row"><span class="thumb" aria-hidden="true">${em}</span><div><b>${tx(n)}</b><p>+1% XP</p></div>${has?`<button class="btn" disabled>${t('onStall')}</button>`:buy('buydeco:'+i,c,S.level<6||S.coins<c)}</div>`; }).join('');
+  } else if(sheetName==='shop'){
+    h=shopHtml();
   } else if(sheetName==='help'){
     h=`<p class="note">${t('helpNote')}</p><div class="help">`+t('HELP').map(([i,a,b])=>`<div class="row"><span class="thumb" aria-hidden="true">${i}</span><div><b>${a}</b><p>${b}</p></div></div>`).join('')+'</div>';
   } else {
@@ -990,6 +1069,9 @@ document.addEventListener('click',e=>{
     else if(k==='recharge') recharge();
     else if(k==='adcharge'){ if(S.daily.adCharge<AD_MAX) showAd('rew',()=>{ S.daily.adCharge++; const g=Math.round(AD_CHARGE*bonus()); refill(g); toast(t('adCharge',g)); }); else toast(t('adLimit')); }
     else if(k==='userec'){ closeModal(); recharge(); }
+    else if(k==='shop'){ $('toast').hidden=true; closeModal(); sheetName='shop'; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
+    else if(k==='iap') iapAsk(v);
+    else if(k==='iapok') iapBuy(v);
     else if(k==='tripskip') endTrip();
     else if(k==='tripdouble'){ const v=tripBonus; tripBonus=0; if(v) showAd('rew',()=>{ S.coins+=v; toast(t('tripDoubled',v)); }); }
     else if(k==='arrive'){ closeModal(); render(); maybeInter(); }
@@ -999,7 +1081,7 @@ document.addEventListener('click',e=>{
     else if(k==='sort') sortBoard();
     else if(k==='swap') swapOrder(+v);
     else if(k==='double'){ const o=offer; if(o&&S.daily.adDouble<DOUBLE_MAX){ offer=null; showAd('rew',()=>{ S.daily.adDouble++; const x=gain(o.xp*bonus(),Math.round(o.co*bonus())); toast(t('doubled',x)); }); } }
-    else if(k==='nav'){ sheetName=v; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
+    else if(k==='nav'){ $('toast').hidden=true; sheetName=v; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
     else if(k==='close'){ sheetName=null; $('sheet').hidden=true; render(); }
     else if(k==='claim'){ const m=S.missions[+v]; if(m&&m.p>=m.goal){ S.missions[+v]=newMission(S,+v); S.coins+=m.co; const x=gain(m.xp,0); beep(880); toast(t('missDone',m.co,x)); render(); } }
     else if(k==='chest'){ if(S.daily.chest<CHEST_MAX) showAd('rew',()=>{ S.daily.chest++; S.coins+=Math.round(80*bonus()); S.boost.mag++; }); }
@@ -1091,6 +1173,7 @@ function start(d){
   LANG=detectLang(); S=(d&&d.v===2&&Array.isArray(d.board))?d:load();
   let q=null; try{ q=new URLSearchParams(location.search).get('lang'); }catch(e){}
   if(q==='en'||q==='pt') S.opts.lang=q; LANG=S.opts.lang||LANG; S.opts.lang=LANG;
+  S.iap=S.iap||{n:0,usd:0,once:[]};
   applyLang(); render(); setInterval(tick,1000);
   let q2=null; try{ q2=new URLSearchParams(location.search).get('intro'); }catch(e){} if(q2!=='0') intro();
 }
