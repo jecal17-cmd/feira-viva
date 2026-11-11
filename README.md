@@ -12,6 +12,8 @@ Jogo mobile 2D de merge com tema de feiras e mercados brasileiros, planejado em 
 | `docs/design-de-jogo.md` | Documento de design completo das duas versões |
 | `docs/mockups/` | 7 telas de sugestão em SVG; abra `index.html` para ver todas |
 | `docs/arte/` | Lista de arte (mercados, itens, personagens) em Markdown e CSV, com prompts em inglês |
+| `versao-a-rota-das-feiras/` | Protótipo de teste da Versão A (Ver-o-Peso, 6 fases e chefe) em HTML5 |
+| `app-android-rota/` | App Android da Versão A (Capacitor), sem monetização; o APK é gerado na aba Actions |
 | `app-android/` | App Android da Versão B (Capacitor) com anúncios de teste do AdMob; o APK é gerado na aba Actions |
 | `versao-b-quitanda-zen/` | Protótipo jogável da Versão B em HTML5, em português e inglês |
 
@@ -22,6 +24,18 @@ Abra `versao-b-quitanda-zen/index.html` no navegador, de preferência no celular
 O jogo abre no idioma do navegador. Para escolher, use os botões na tela inicial, em **Ajustes**, ou o endereço com `?lang=en` ou `?lang=pt`.
 
 Para publicar online com GitHub Pages: **Settings → Pages → Deploy from a branch → `main` / root**. O jogo fica em `https://<usuario>.github.io/<repositorio>/versao-b-quitanda-zen/`.
+
+## Versão A · protótipo de teste
+
+Abra `versao-a-rota-das-feiras/index.html` (ou, com o GitHub Pages ligado, `https://<usuario>.github.io/<repositorio>/versao-a-rota-das-feiras/`). Segue o marco "Versão A mínima" do documento de design:
+
+- **Ver-o-Peso** com 6 fases e o chefe **Maré cheia**; turnos limitados (cada toque num cesto gasta 1 turno; juntar e entregar são de graça) e 1 a 3 ⭐ conforme os turnos que sobram.
+- **Linhas** Açaí, Peixe e Jambu/Tucupi, com 5 níveis; fusão tripla só por escolha do jogador.
+- **Obstáculos:** caixote e mofo; **ferramentas:** Martelo e Caldeirão (máximo de 2 por fase), compradas com moedas do jogo.
+- **Diário de Viagem** com 7 cartões ("Saiba mais" opcional) e **Selo de Domínio** Força do Açaí (+3 turnos).
+- **Mapa do Brasil** com os 12 mercados; só o Ver-o-Peso está aberto neste teste.
+- **Painel do teste** em Ajustes: tentativas, vitórias, derrotas e taxa de derrota por fase. **Modo teste** libera todas as fases.
+- Sem anúncios e sem compras. Textos dos cartões a validar com pesquisa e revisão local.
 
 ## Estado atual
 

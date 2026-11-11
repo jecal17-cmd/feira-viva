@@ -135,6 +135,26 @@ Moedas são grátis (fases, pedidos, baús de estrelas). Gemas vêm de compras e
 
 Retenção D1/D7/D30, conversão em pagantes, ARPPU, taxa de derrota por fase. Heurística minha: fases com derrota acima de 60% ou abaixo de 10% pedem ajuste.
 
+### 3.9 Protótipo de teste (v0.1)
+
+Implementado em `versao-a-rota-das-feiras/`, seguindo o marco 2 (seção 7), com estas decisões e números iniciais:
+
+| Fase | Objetivos | Turnos | Obstáculos |
+|---|---|---|---|
+| 1 · Bom dia, Ver-o-Peso | entregar 4 pedidos | 14 | — |
+| 2 · Caixotes no caminho | criar Açaí batido (nível 4) + limpar 3 obstáculos | 15 | 4 caixotes |
+| 3 · Chegou o jambu | entregar 6 pedidos | 17 | 3 caixotes |
+| 4 · Cuidado com o mofo | limpar 4 obstáculos + entregar 4 pedidos | 16 | 2 caixotes, 2 mofos |
+| 5 · Pirarucu de casaca | criar Pirarucu de casaca (nível 5) | 21 | 2 caixotes, 2 mofos |
+| 6 · Hora do almoço | entregar 6 pedidos + limpar 3 obstáculos | 25 | 2 caixotes, 3 mofos |
+| Chefe · Maré cheia | entregar 6 pedidos | 24 | 2 caixotes, 1 mofo, maré |
+
+- **Item mofado** não junta e não pode ser entregue; uma fusão ao lado limpa. Uma fusão ao lado de um caixote ou de um foco de mofo o remove.
+- **Maré cheia:** a cada 4 turnos, a fileira de baixo fica alagada por 2 turnos (itens presos e sem colheita ali).
+- **Selo de Domínio:** os itens de nível 5 vão para um espaço próprio (🏅); 3 de cada linha + chefe vencido dão o Selo Força do Açaí.
+- **Sem vidas** neste teste (as 15 primeiras fases não gastariam vida de qualquer forma), sem gemas e sem anúncios. Moedas vêm das vitórias e compram ferramentas.
+- **Balanceamento inicial** feito com um robô que joga cada fase 300 vezes: vence quase sempre as fases 1 a 5 e cerca de 55% a 65% das fases 6 e chefe. Os números devem ser ajustados com o painel de teste (taxa de derrota por fase) e jogadores reais.
+
 ## 4. Versão B — Quitanda Zen (passatempo, foco em anúncios)
 
 ### 4.1 Loop

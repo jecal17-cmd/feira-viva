@@ -1,27 +1,39 @@
-# Compila o app Android (APK de teste, com anúncios de teste do AdMob) e o deixa para download na aba Actions.
-name: App Android (APK de teste)
+# Compila os apps Android de teste e os deixa para download na aba Actions:
+# - Versão B (Quitanda), com anúncios de teste do AdMob
+# - Versão A (Rota das Feiras), sem monetização
+name: Apps Android (APKs de teste)
 
 on:
   push:
     paths:
+      - 'versao-a-rota-das-feiras/**'
       - 'versao-b-quitanda-zen/**'
       - 'app-android/**'
+      - 'app-android-rota/**'
       - '.github/workflows/android.yml'
   workflow_dispatch:
 
 jobs:
   apk:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - dir: app-android
+            artifact: quitanda-apk-teste
+          - dir: app-android-rota
+            artifact: rota-das-feiras-apk-teste
     defaults:
       run:
-        working-directory: app-android
+        working-directory: ${{ matrix.dir }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-          cache-dependency-path: app-android/package-lock.json
+          cache-dependency-path: ${{ matrix.dir }}/package-lock.json
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -31,11 +43,11 @@ jobs:
       - name: Copiar o jogo para o app
         run: npm run sync
       - name: Compilar o APK
-        working-directory: app-android/android
+        working-directory: ${{ matrix.dir }}/android
         run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon
       - name: Guardar o APK
         uses: actions/upload-artifact@v4
         with:
-          name: quitanda-apk-teste
-          path: app-android/android/app/build/outputs/apk/debug/app-debug.apk
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.dir }}/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error

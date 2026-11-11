@@ -6,11 +6,11 @@ Empacota o jogo da Versão B (`versao-b-quitanda-zen/index.html`) como app Andro
 
 A cada mudança no jogo ou nesta pasta, o GitHub compila o APK sozinho:
 
-1. Abra a aba **Actions** do repositório e entre na execução mais recente de **App Android (APK de teste)**.
+1. Abra a aba **Actions** do repositório e entre na execução mais recente de **Apps Android (APKs de teste)**.
 2. No fim da página, em **Artifacts**, baixe **quitanda-apk-teste** (vem num .zip).
 3. Copie o `app-debug.apk` para o celular Android e abra. O Android vai pedir para permitir a instalação de apps de fonte desconhecida.
 
-Também dá para compilar na hora: **Actions → App Android (APK de teste) → Run workflow**.
+Também dá para compilar na hora: **Actions → Apps Android (APKs de teste) → Run workflow**.
 
 ## Anúncios
 
