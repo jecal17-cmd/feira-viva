@@ -1,0 +1,6 @@
+{
+  "appId": "com.feiraviva.rota",
+  "appName": "Rota das Feiras",
+  "webDir": "www",
+  "android": { "backgroundColor": "#E2F0EE" }
+}

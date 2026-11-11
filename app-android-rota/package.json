@@ -1,0 +1,17 @@
+{
+  "name": "rota-das-feiras-android",
+  "private": true,
+  "version": "0.1.0",
+  "description": "App Android da Versão A (Rota das Feiras) empacotado com Capacitor, para testes",
+  "scripts": {
+    "copy-web": "node scripts/copy-web.js",
+    "sync": "npm run copy-web && npx cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/core": "^8.6.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.6.0"
+  }
+}

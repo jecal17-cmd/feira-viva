@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box;height:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Rota das Feiras</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@600;800&display=swap">
+<style>
+/* Versão A · Rota das Feiras (protótipo de teste). Telas: inicial, mapa, mercado, fase; folhas (Diário, Selos, Ajustes) e cartões modais. */
+:root{
+  --bg:#E2F0EE; --panel:#F6FBFA; --cell:#FFFFFF; --hole:#C7E0DC; --ink:#0E3F44; --muted:#4D7276; --accent:#0F7A73; --on-accent:#FFFFFF;
+  --gold:#B87A00; --star:#F2B33D; --line:#B1D4CF; --warn:#B4472E; --scrim:rgba(8,32,34,.84); --lvl:#5B2A86;
+  --crate:#C99A63; --crate2:#8A5A33; --mold:#7FA65A; --water:#4F9FD0;
+  --r0:#9FD5B4; --r1:#F4C98E; --r2:#E6DA86; --r3:#A9C8EC; --r4:#C9B5E6;
+  --introbg:#FFF6D9; --introedge:transparent;
+  --display:"Baloo 2","Trebuchet MS",system-ui,sans-serif; --text:"Nunito","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0E2224; --panel:#16312F; --cell:#21423F; --hole:#132B2A; --ink:#E1F2EF; --muted:#97B9B4; --accent:#3FC2B4; --on-accent:#06201D;
+  --gold:#F0C04A; --star:#F5C451; --line:#2C5250; --warn:#F08A6E; --scrim:rgba(3,12,12,.88); --lvl:#A87BD6;
+  --crate:#8C6A44; --crate2:#5E4127; --mold:#5E8443; --water:#2F6F98;
+  --r0:#2F6A4E; --r1:#7A5A2E; --r2:#6A6230; --r3:#2F5579; --r4:#584575; --introbg:#1C1A12; --introedge:#6B6350; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0E2224; --panel:#16312F; --cell:#21423F; --hole:#132B2A; --ink:#E1F2EF; --muted:#97B9B4; --accent:#3FC2B4; --on-accent:#06201D;
+  --gold:#F0C04A; --star:#F5C451; --line:#2C5250; --warn:#F08A6E; --scrim:rgba(3,12,12,.88); --lvl:#A87BD6;
+  --crate:#8C6A44; --crate2:#5E4127; --mold:#5E8443; --water:#2F6F98;
+  --r0:#2F6A4E; --r1:#7A5A2E; --r2:#6A6230; --r3:#2F5579; --r4:#584575; --introbg:#1C1A12; --introedge:#6B6350; color-scheme:dark }
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--text);font-weight:600;font-size:14px;overflow:hidden}
+*{box-sizing:border-box}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+button:disabled{opacity:.45;cursor:default}
+h1,h2{font-family:var(--display);font-weight:800;margin:0;text-wrap:balance}
+h1{font-size:26px;line-height:1.1} h2{font-size:18px}
+.main{height:100%;max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:8px;padding-block:10px;
+  padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px));overflow:auto}
+.main.game{overflow:hidden;gap:6px;padding-block:8px}
+.bar{height:10px;border-radius:5px;background:var(--hole);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:5px}
+.btn{background:var(--accent);color:var(--on-accent);font-weight:800;border-radius:99px;padding:9px 16px;white-space:nowrap}
+.btn.ghosty{background:none;color:var(--ink);box-shadow:inset 0 0 0 2px var(--line)}
+.btn.sm{padding:6px 11px;font-size:13px}
+.btn.big{font-family:var(--display);font-size:24px;padding:12px;box-shadow:0 5px 0 color-mix(in srgb,var(--accent) 60%,#000)}
+.icon{background:var(--panel);border-radius:12px;width:38px;height:38px;font-size:18px;flex:0 0 auto}
+.head{display:flex;align-items:center;gap:8px}
+.head .t{flex:1;min-width:0}
+.head .t b{display:block;font-family:var(--display);font-size:18px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.head .t small{color:var(--muted);font-size:12px}
+.pill{background:var(--panel);border-radius:99px;padding:6px 10px;font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
+.row{background:var(--panel);border-radius:14px;padding:12px;display:flex;align-items:center;gap:10px;text-align:left;width:100%}
+.row>div{flex:1;min-width:0}
+.row p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.row b{font-weight:800}
+.row.lock{opacity:.6}
+.row.cur{box-shadow:inset 0 0 0 2px var(--star)}
+.row .face{font-size:30px;line-height:1;flex:0 0 auto;width:44px;text-align:center}
+.note{color:var(--muted);font-size:13px;margin:0;max-width:60ch}
+.stars{color:var(--star);letter-spacing:1px;white-space:nowrap}
+.stars .off{color:var(--hole)}
+/* inicial */
+.homein{margin:auto;max-width:420px;width:100%;display:flex;flex-direction:column;gap:12px;text-align:center}
+.logo{font-family:var(--display);font-weight:800;line-height:.95}
+.logo b{display:block;font-size:46px;color:var(--accent)}
+.logo small{display:block;font-family:var(--text);font-size:12px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:6px}
+.hero{background:var(--panel);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.hero .big{font-size:40px;letter-spacing:6px}
+.hgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.hgrid button{background:var(--panel);border-radius:14px;padding:10px 4px;font-weight:800;font-size:12.5px;position:relative}
+.hgrid span{display:block;font-size:22px}
+.dot{position:absolute;top:6px;right:10px;width:10px;height:10px;border-radius:50%;background:var(--warn)}
+/* mapa */
+.map{background:var(--panel);border-radius:20px;padding:8px}
+.map svg{display:block;width:100%;height:auto;max-height:50vh}
+.uf{stroke:var(--panel);stroke-width:1.6;stroke-linejoin:round}
+.r0{fill:var(--r0)} .r1{fill:var(--r1)} .r2{fill:var(--r2)} .r3{fill:var(--r3)} .r4{fill:var(--r4)}
+.uflab{font:800 13px var(--text);fill:var(--ink);opacity:.45;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.uflab.s{font-size:9px}
+.route{fill:none;stroke:var(--ink);opacity:.3;stroke-width:2.5;stroke-dasharray:3 7;stroke-linecap:round}
+.node{cursor:pointer}
+.node circle{fill:var(--panel);stroke:var(--muted);stroke-width:2}
+.node text{text-anchor:middle;dominant-baseline:central;font-size:20px}
+.node.open circle{stroke:var(--star);stroke-width:4}
+.node.lock{opacity:.55}
+.node .ring{fill:none;stroke:var(--star);stroke-width:3;transform-box:fill-box;transform-origin:center;animation:ring 1.6s ease-out infinite}
+@keyframes ring{from{transform:scale(1);opacity:.9}to{transform:scale(1.9);opacity:0}}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;font-size:12px;color:var(--muted);padding:6px 0 2px}
+.legend span{display:flex;align-items:center;gap:5px}
+.legend i{width:12px;height:12px;border-radius:4px;display:inline-block}
+/* fase */
+.turns{background:var(--accent);color:var(--on-accent);border-radius:14px;padding:4px 12px;text-align:center;line-height:1;flex:0 0 auto}
+.turns b{display:block;font-family:var(--display);font-size:26px;font-variant-numeric:tabular-nums}
+.turns small{font-size:11px;font-weight:800}
+.turns.low{background:var(--warn)}
+.goals{display:flex;gap:6px;flex-wrap:wrap}
+.goal{flex:1 1 0;min-width:120px;background:var(--panel);border-radius:12px;padding:5px 8px;font-size:12.5px;display:flex;align-items:center;gap:6px}
+.goal.ok{box-shadow:inset 0 0 0 2px var(--accent)}
+.goal .e{font-size:18px}
+.goal div{flex:1;min-width:0}
+.goal .bar{height:6px;margin-top:3px}
+.sub{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.sub .tide{color:var(--water);font-weight:800}
+.orders{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.order{min-width:0;background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:5px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:58px}
+.order.ready{border-color:var(--accent);background:var(--cell)}
+.order.want{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+.order .who{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.need{display:flex;gap:3px;font-size:19px;line-height:1.15}
+.need sub{font-size:10px;font-weight:800;color:var(--ink);vertical-align:baseline}
+.need .ok{opacity:.3}
+.order.seal{border-style:dashed}
+.wrap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+.board{display:grid;gap:4px;touch-action:none;user-select:none;-webkit-user-select:none;position:relative}
+.cell{width:var(--cs);height:var(--cs);border-radius:22%;background:var(--hole);position:relative;display:grid;place-items:center;overflow:hidden}
+.cell.has{background:var(--cell);box-shadow:0 3px 0 var(--lc,var(--line))}
+.cell.sel{outline:3px solid var(--accent);outline-offset:1px;overflow:visible}
+.cell.drag{opacity:.3}
+.cell.trail{outline:3px solid var(--gold);outline-offset:1px;transform:scale(1.08);overflow:visible}
+.cell.hint{animation:hint .9s ease-in-out infinite}
+@keyframes hint{50%{transform:scale(1.1)}}
+.cell .em{font-size:calc(var(--cs)*.54);line-height:1}
+.cell .lv{position:absolute;right:4%;bottom:4%;min-width:calc(var(--cs)*.34);height:calc(var(--cs)*.34);border-radius:99px;background:var(--lvl);color:#fff;font-size:calc(var(--cs)*.22);font-weight:800;display:grid;place-items:center}
+.cell.crate{background:repeating-linear-gradient(90deg,var(--crate) 0 22%,var(--crate2) 22% 26%);box-shadow:inset 0 0 0 3px var(--crate2)}
+.cell.mold{background:radial-gradient(circle at 30% 30%,var(--mold) 0 18%,transparent 19%),radial-gradient(circle at 70% 60%,var(--mold) 0 22%,transparent 23%),radial-gradient(circle at 35% 75%,var(--mold) 0 14%,transparent 15%),var(--hole)}
+.cell.moldy{background:color-mix(in srgb,var(--mold) 35%,var(--cell))}
+.cell.moldy::after{content:"🦠";position:absolute;left:4%;top:2%;font-size:calc(var(--cs)*.26)}
+.cell.moldy .em{filter:grayscale(.7) opacity(.7)}
+.cell.flood::before{content:"";position:absolute;inset:0;background:color-mix(in srgb,var(--water) 55%,transparent);z-index:1;pointer-events:none}
+.cell.flood::after{content:"🌊";position:absolute;left:4%;top:2%;font-size:calc(var(--cs)*.26);z-index:2}
+.cell.armed{cursor:crosshair}
+.cell.pop{animation:pop .28s ease-out}
+@keyframes pop{0%{transform:scale(.5)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.ghost{position:fixed;z-index:15;pointer-events:none;font-size:40px;line-height:1;transform:translate(-50%,-70%)}
+.info{min-height:42px;background:var(--panel);border-radius:14px;padding:5px 10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.info p{margin:0;flex:1;min-width:0;font-size:12.5px;line-height:1.25}
+.info.armed{box-shadow:inset 0 0 0 2px var(--gold)}
+.dock{display:flex;gap:5px}
+.basket{flex:1 1 0;min-width:0;background:var(--panel);border:2px solid var(--line);border-bottom:4px solid var(--lc,var(--line));border-radius:14px;padding:4px 2px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.basket:active{transform:translateY(2px)}
+.basket .em{font-size:22px;line-height:1.15}
+.basket b{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.basket small{font-size:10px;color:var(--muted)}
+.basket.tool{flex:.8 1 0}
+.basket.tool.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+@media (prefers-reduced-motion: reduce){.cell.pop,.cell.hint,.node .ring{animation:none!important}}
+/* folhas, cartões, diário */
+.sheet{position:fixed;inset:0;z-index:20;background:var(--bg);overflow:auto;padding-block:calc(14px + env(safe-area-inset-top,0px)) calc(24px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sheet>div{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.sheet header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.over{position:fixed;inset:0;z-index:30;background:var(--scrim);display:grid;place-items:center;padding:20px}
+.card{background:var(--panel);border-radius:20px;padding:20px;max-width:360px;width:100%;display:flex;flex-direction:column;gap:12px;text-align:center;max-height:90vh;overflow:auto}
+.card p{margin:0}
+.card .big{font-size:48px;line-height:1}
+.card .bigstars{font-size:40px;letter-spacing:6px}
+.card .bigstars span{display:inline-block;animation:starin .4s cubic-bezier(.3,1.6,.5,1) both}
+.card .bigstars span:nth-child(2){animation-delay:.25s} .card .bigstars span:nth-child(3){animation-delay:.5s}
+@keyframes starin{from{transform:scale(0) rotate(-40deg)}}
+.card ul{margin:0;padding-left:18px;text-align:left}
+.card .btn{white-space:normal}
+.card .more{text-align:left;background:var(--bg);border-radius:12px;padding:10px 12px;font-size:13.5px;line-height:1.4}
+.card .place{color:var(--muted);font-size:13px}
+.dgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.dcard{background:var(--panel);border-radius:16px;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;min-height:120px;justify-content:center}
+.dcard .em{font-size:40px;line-height:1}
+.dcard small{color:var(--muted);font-size:12px}
+.dcard.lock .em{filter:brightness(0) opacity(.25)}
+.chk{display:flex;gap:8px;align-items:center;text-align:left;background:var(--bg);border-radius:12px;padding:10px}
+.chk input{width:20px;height:20px;accent-color:var(--accent)}
+table.met{width:100%;border-collapse:collapse;background:var(--panel);border-radius:14px;overflow:hidden;font-variant-numeric:tabular-nums;font-size:13px}
+.met th,.met td{padding:7px 6px;text-align:right}
+.met th:first-child,.met td:first-child{text-align:left}
+.met thead{color:var(--muted)}
+.met tr+tr td{border-top:1px solid var(--line)}
+.met .alert{color:var(--warn);font-weight:800}
+.toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(64px + env(safe-area-inset-top,0px));z-index:35;background:var(--ink);color:var(--bg);border-radius:99px;padding:8px 16px;font-weight:800;max-width:calc(100% - 32px);text-align:center}
+.warn{color:var(--warn)}
+.intro{position:fixed;inset:0;z-index:40;background:var(--introbg);display:grid;place-items:center;cursor:pointer;transition:opacity .5s}
+.headc{stroke:var(--introedge);stroke-width:2}
+.intro.out{opacity:0;pointer-events:none}
+.introin{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.introin svg{width:min(70vw,300px);height:auto;overflow:visible}
+.intro g{transform-origin:0 0}
+.bdx{animation:bdx 1.9s cubic-bezier(.25,.55,.3,1) both}
+.bdy{animation:bdy 1.9s cubic-bezier(.45,0,.25,1) both}
+.btilt{animation:btilt 1.9s ease-in-out both}
+@keyframes bdx{from{transform:translateX(-150px)}}
+@keyframes bdy{from{transform:translateY(-120px);opacity:0}15%{opacity:1}}
+@keyframes btilt{0%{transform:rotate(-6deg)}70%{transform:rotate(-20deg)}100%{transform:none}}
+.flap{animation:flap 1.9s ease-in-out both}
+@keyframes flap{0%{transform:rotate(-12deg)}11%{transform:rotate(24deg)}23%{transform:rotate(-14deg)}36%{transform:rotate(22deg)}50%{transform:rotate(-12deg)}64%{transform:rotate(18deg)}80%{transform:rotate(-6deg)}100%{transform:rotate(12deg)}}
+.flap2{animation-name:flap2}
+@keyframes flap2{0%{transform:rotate(-8deg)}11%{transform:rotate(26deg)}23%{transform:rotate(-10deg)}36%{transform:rotate(24deg)}50%{transform:rotate(-8deg)}64%{transform:rotate(20deg)}80%{transform:rotate(-2deg)}100%{transform:rotate(14deg)}}
+.fold{animation:fold .7s 1.85s cubic-bezier(.4,0,.2,1) both}
+@keyframes fold{to{transform:rotate(58deg) scale(.3,.42);opacity:0}}
+.wingf{animation:wingf .5s 2.15s ease-out both}
+@keyframes wingf{from{opacity:0}}
+.tailg{animation:tailg .7s 1.85s ease-in-out both}
+@keyframes tailg{from{transform:scaleY(1.9) rotate(-8deg)}}
+.perch{animation:dip 1.1s 1.82s cubic-bezier(.3,0,.3,1) both}
+@keyframes dip{0%{transform:none}30%{transform:rotate(4.5deg)}62%{transform:rotate(-1.2deg)}100%{transform:none}}
+.bill{transition:transform .09s ease-out}
+.bill.open{transform:rotate(24deg)}
+.wm{font:800 clamp(44px,13vw,64px)/1 var(--display);color:var(--ink);letter-spacing:-1px;position:relative;margin-top:6px}
+.wm span{display:inline-block;opacity:0;transform:translateY(10px) scale(.9);transition:opacity .25s,transform .35s cubic-bezier(.3,1.5,.5,1)}
+.wm span.on{opacity:1;transform:none}
+.wm .y{color:#E0A800}
+.wm::after{content:"";position:absolute;left:4%;right:4%;bottom:-6px;height:7px;border-radius:7px;background:#F7C51E;transform-origin:left;transform:scaleX(0);transition:transform .5s ease-out}
+.wm.done::after{transform:scaleX(1)}
+.wsub{font:800 13px var(--text);letter-spacing:6px;text-transform:uppercase;color:var(--muted);margin-top:12px;opacity:0;transition:opacity .5s}
+.wsub.on{opacity:1}
+@media (prefers-reduced-motion: reduce){.intro g{animation-duration:.01s!important;animation-delay:0s!important}}
+
+</style>
+</head>
+<body>
+<div class="main" id="main"></div>
+<div class="sheet" id="sheet" hidden><div id="sheetin"></div></div>
+<div class="over" id="over" hidden><div class="card" id="card"></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<div class="intro" id="intro" data-act="intro" hidden><div class="introin">
+  <svg viewBox="0 0 240 200" role="img" aria-label="Bentevi">
+   <g transform="translate(112 198)"><g class="perch">
+    <path d="M0 0 Q14 -30 34 -48 T80 -106" stroke="#8B6B4A" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+    <path d="M48 -64 l11 5 M52 -68 l-9 -7 M60 -80 l12 3 l5 6 M66 -90 l-10 -5 M72 -97 l10 6 M80 -106 l7 -8 M80 -106 l-8 -6" stroke="#8B6B4A" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    <g fill="#A38561"><circle cx="60" cy="-58" r="2.2"/><circle cx="42" cy="-76" r="2"/><circle cx="78" cy="-70" r="2.2"/><circle cx="55" cy="-96" r="2"/><circle cx="83" cy="-90" r="2.2"/><circle cx="88" cy="-115" r="2"/><circle cx="71" cy="-113" r="2"/></g>
+    <g transform="translate(34 -48)"><g class="bdx"><g class="bdy"><g class="btilt">
+     <g transform="translate(-12 -44) rotate(24)"><g class="fold"><g class="flap flap2">
+      <path d="M0 0C-10-30-30-58-52-66L-46-56L-58-54L-50-45L-60-40L-50-33L-56-25L-40-20C-25-12-10-5 0 0Z" fill="#B8602C"/></g></g></g>
+     <g transform="translate(-33 -27)"><g class="tailg"><path d="M2 -5 L-30 -7 L-32 -2 L-29 3 L-31 8 L2 5 Z" fill="#B5532A"/><path d="M-4 -1 L-28 -1 M-4 2 L-28 4" stroke="#8E3F1F" stroke-width="1"/></g></g>
+     <path d="M-8 -20 L0 0 M-2 -21 L5 -1 M0 0 l5 1 M0 0 l-4 2 M5 -1 l5 0" stroke="#3A3A3A" stroke-width="2" stroke-linecap="round" fill="none"/>
+     <ellipse cx="-14" cy="-34" rx="23" ry="16" transform="rotate(-22 -14 -34)" fill="#F2CB25"/>
+     <path d="M-30 -22 Q-14 -14 4 -24 Q-10 -20 -30 -26Z" fill="#F8DE6A"/>
+     <circle class="headc" cx="9" cy="-52" r="12" fill="#1E1E1E"/>
+     <path d="M-2 -55 Q9 -66 21 -55 Q10 -60 -1 -51Z" fill="#fff"/>
+     <path d="M1 -46 Q11 -37 20 -48 Q11 -50 1 -46Z" fill="#fff"/>
+     <circle cx="14" cy="-53" r="2.6" fill="#fff"/><circle cx="14.5" cy="-53" r="1.5" fill="#111"/>
+     <path d="M19 -54 L36 -49 L19 -49 Z" fill="#2A2A2A"/>
+     <g transform="translate(19 -49)"><g class="bill" id="bill"><path d="M0 0 L15 .4 L0 3.4 Z" fill="#111"/></g></g>
+     <path class="wingf" d="M-1 -44 C-14 -53 -35 -45 -41 -27 C-28 -25 -12 -30 -1 -44Z" fill="#8A5A2E"/>
+     <path class="wingf" d="M-12 -41 Q-24 -40 -34 -31 M-8 -38 Q-20 -36 -29 -29" stroke="#B07A45" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+     <g transform="translate(-10 -43)"><g class="fold"><g class="flap">
+      <path d="M0 0C-10-30-30-58-52-66L-46-56L-58-54L-50-45L-60-40L-50-33L-56-25L-40-20C-25-12-10-5 0 0Z" fill="#E39A4E"/>
+      <path d="M-4 -6 L-46 -58 M-6 -5 L-52 -46 M-8 -4 L-52 -34 M-9 -3 L-46 -23" stroke="#B8602C" stroke-width="1.2" fill="none"/>
+      <path d="M0 0C-8-14-18-24-28-30C-26-20-20-10-12-4Z" fill="#8A6A3A"/></g></g></g>
+    </g></g></g></g>
+   </g></g></svg>
+  <div class="wm" id="wm"><span>Ben</span><span class="y">te</span><span>vi</span></div><div class="wsub" id="wsub">games</div>
+</div></div>
+
+<script>
+/* ===================== DADOS (balanceamento: tudo aqui em cima) ===================== */
+const MAX=5, COLS=6, ROWS=7, KEY='rota-das-feiras-v1', MAX_TOOLS=2, MOLD_EVERY=3, TIDE_EVERY=4, TIDE_LEN=2;
+// Linhas do Ver-o-Peso (documento de design, seção 3.2): [emoji provisório, nome]
+const LINES={
+ ac:{name:'Açaí',hue:285,it:[['🍇','Cacho de açaí'],['🫐','Fruto'],['🥣','Polpa'],['🥤','Açaí batido'],['🍧','Tigela de açaí com tapioca']]},
+ pe:{name:'Peixe',hue:200,it:[['🐟','Peixe pequeno'],['🐠','Peixe limpo'],['🍣','Filé'],['🍱','Peixe assado'],['🥘','Pirarucu de casaca']]},
+ jt:{name:'Jambu/Tucupi',hue:95,it:[['🌿','Folha de jambu'],['🥬','Maço de jambu'],['🍵','Caldo de tucupi'],['🍲','Tacacá'],['🦆','Pato no tucupi']]}
+};
+// Fases do Ver-o-Peso: 6 normais + chefe. goals: orders (entregar pedidos), make (criar item), clear (limpar obstáculos).
+const PHASES=[
+ {name:'Bom dia, Ver-o-Peso',turns:14,lines:['ac','pe'],items:6,lv:[2,3],two:0,crate:0,mold:0,goals:[{t:'orders',n:4}],tut:'basics'},
+ {name:'Caixotes no caminho',turns:15,lines:['ac','pe'],items:7,lv:[2,3],two:0,crate:4,mold:0,goals:[{t:'make',l:'ac',lv:4,n:1},{t:'clear',n:3}],tut:'crate'},
+ {name:'Chegou o jambu',turns:17,lines:['ac','pe','jt'],items:11,lv:[2,3],two:.2,crate:3,mold:0,goals:[{t:'orders',n:6}],tut:'tools'},
+ {name:'Cuidado com o mofo',turns:16,lines:['ac','pe','jt'],items:8,lv:[2,3],two:.2,crate:2,mold:2,goals:[{t:'clear',n:4},{t:'orders',n:4}],tut:'mold'},
+ {name:'Pirarucu de casaca',turns:21,lines:['ac','pe','jt'],items:12,lv:[2,3],two:.2,crate:2,mold:2,goals:[{t:'make',l:'pe',lv:5,n:1}],tut:'seal'},
+ {name:'Hora do almoço',turns:25,lines:['ac','pe','jt'],items:12,lv:[2,4],two:.25,crate:2,mold:3,goals:[{t:'orders',n:6},{t:'clear',n:3}]},
+ {name:'Chefe: Maré cheia',turns:24,lines:['ac','pe','jt'],items:12,lv:[2,4],two:.3,crate:2,mold:1,goals:[{t:'orders',n:6}],boss:'tide',tut:'tide'}
+];
+const TUT={
+ basics:['🧺','Como jogar','Toque num cesto para colher um item: <b>cada toque gasta 1 turno</b>. Juntar itens iguais e entregar pedidos <b>não gastam turno</b>. Cumpra o objetivo antes que os turnos acabem. Sobrando metade dos turnos, você ganha 3 ⭐.'],
+ crate:['📦','Caixotes','Caixotes bloqueiam casas do tabuleiro. Faça uma fusão numa casa <b>ao lado</b> de um caixote para abri-lo.'],
+ tools:['🔨','Ferramentas','<b>🔨 Martelo</b> remove um item ou obstáculo. <b>🫕 Caldeirão</b> sobe 1 nível de um item (até o nível 4). Use no máximo 2 por fase. Elas não gastam turno.'],
+ mold:['🦠','Mofo','A cada 3 turnos, um item ao lado do mofo fica <b>mofado</b>: não junta e ninguém compra. Uma fusão ao lado do item mofado limpa o item; uma fusão ao lado do mofo acaba com ele.'],
+ seal:['🏅','Selo de Domínio','Itens de nível 5 podem ir para o espaço <b>🏅 Selo</b>, ao lado dos pedidos. Entregue 3 de cada linha e vença o chefe para ganhar o Selo <b>Força do Açaí</b>: +3 turnos em toda fase.'],
+ tide:['🌊','Chefe: Maré cheia','A cada 4 turnos a maré sobe na <b>fileira de baixo</b>. Itens ali ficam presos por 2 turnos: não andam, não juntam e não são entregues.']
+};
+// Diário de Viagem: um cartão por fase. Textos a validar com pesquisa e revisão local antes de publicar.
+const CARDS=[
+ {em:'🛶',t:'Ver-o-Peso',p:'Belém (PA)',f:'Um dos mercados mais antigos do Brasil, à beira da baía do Guajará. Peixes, frutas, ervas e muita conversa.',m:'O nome vem do posto da época colonial onde as mercadorias eram pesadas para a cobrança de impostos: era preciso “ver o peso”. Hoje o complexo reúne a feira livre, a doca onde chegam os barcos e o Mercado de Ferro, cujas torres são um dos cartões-postais de Belém.'},
+ {em:'🍇',t:'Açaí',p:'Ver-o-Peso, Belém (PA)',f:'Fruto de uma palmeira amazônica, o açaí é base da alimentação em boa parte do Norte.',m:'No Pará, ele costuma ser servido como acompanhamento salgado, junto de peixe e farinha, e não apenas como sobremesa gelada, como ficou conhecido fora da região. Os barcos chegam ao Ver-o-Peso de madrugada, carregados de açaí recém-colhido.'},
+ {em:'🌿',t:'Jambu',p:'Ver-o-Peso, Belém (PA)',f:'Erva amazônica que deixa a boca formigando e levemente dormente.',m:'A sensação vem do espilantol, substância presente nas folhas e nas flores. O jambu vai no tacacá e no pato no tucupi, e em Belém aparece até em cachaças e sorvetes.'},
+ {em:'🍵',t:'Tucupi',p:'Ver-o-Peso, Belém (PA)',f:'Caldo amarelo extraído da mandioca-brava, base de vários pratos paraenses.',m:'A mandioca é ralada e espremida; o líquido descansa e depois é fervido por horas, o que elimina substâncias tóxicas da raiz. O resultado é um caldo ácido e perfumado.'},
+ {em:'🐟',t:'Pirarucu',p:'Rios da Amazônia',f:'Um dos maiores peixes de água doce do mundo: pode passar dos 2 metros.',m:'Respira ar e precisa subir à superfície a cada poucos minutos. Salgado e seco, ganhou o apelido de “bacalhau da Amazônia”. Hoje a pesca é controlada, e o manejo feito por comunidades ajudou a recuperar o peixe em várias regiões.'},
+ {em:'🍲',t:'Tacacá',p:'Esquinas de Belém (PA)',f:'Servido quente na cuia, no fim da tarde, pelas tacacazeiras de Belém.',m:'Leva tucupi, goma de mandioca, jambu e camarão seco. É tomado direto da cuia, mesmo nos dias mais quentes, e as tacacazeiras são figuras queridas da cidade.'},
+ {em:'🦆',t:'Pato no tucupi',p:'Círio de Nazaré, Belém (PA)',f:'O prato que não pode faltar no almoço do Círio de Nazaré.',m:'O Círio, em outubro, é uma das maiores procissões religiosas do mundo e reúne multidões em Belém. No almoço do Círio, as famílias servem o pato cozido no tucupi com jambu, preparado com dias de antecedência.'}
+];
+// Selos de Domínio (seção 3.5). Neste teste só o do Ver-o-Peso pode ser conquistado.
+const SELOS=[['🍇','Força do Açaí','+3 turnos em toda fase'],['🥤','Guaraná','a cada 10 fusões, +1 turno'],['🌴','Dendê','a 1ª fusão de cada fase sobe +1 nível extra'],['🥩','Carne de Sol','despensa com 2 vagas fora do tabuleiro'],['🍹','Cajuína','ignora o 1º obstáculo de cada fase'],['🍜','Sobá','pedidos ganham +50% de prazo'],['🥪','Mortadela','25% de chance de item nível 2 grátis ao entregar'],['🧀','Queijo Minas','1 Caldeirão grátis por fase'],['🪗','Forró','3 fusões seguidas sem colher devolvem 1 turno'],['🧉','Chimarrão','obstáculos congelados por 2 turnos no início'],['🦪','Pérola','5% de chance de a fusão sair +1 nível'],['🌰','Pinhão','pedidos exigem 1 item a menos (mínimo 1)']];
+const MARKETS=[
+ {n:'Ver-o-Peso',c:'Belém',uf:'PA',reg:'Norte',ic:'🛶',lon:-48.5,lat:-1.45},{n:'Mercado Adolpho Lisboa',c:'Manaus',uf:'AM',reg:'Norte',ic:'🌳',lon:-60,lat:-3.1},
+ {n:'Feira de São Joaquim',c:'Salvador',uf:'BA',reg:'Nordeste',ic:'🥁',lon:-38.5,lat:-13},{n:'Mercado de São José',c:'Recife',uf:'PE',reg:'Nordeste',ic:'🎭',lon:-34.9,lat:-8.05},
+ {n:'Mercado Central',c:'Fortaleza',uf:'CE',reg:'Nordeste',ic:'⛵',lon:-38.5,lat:-3.7},{n:'Feira Central',c:'Campo Grande',uf:'MS',reg:'Centro-Oeste',ic:'🐆',lon:-54.6,lat:-20.45},
+ {n:'Mercadão',c:'São Paulo',uf:'SP',reg:'Sudeste',ic:'🏙️',lon:-46.6,lat:-23.55},{n:'Mercado Central',c:'Belo Horizonte',uf:'MG',reg:'Sudeste',ic:'⛰️',lon:-43.9,lat:-19.9},
+ {n:'Feira de São Cristóvão',c:'Rio de Janeiro',uf:'RJ',reg:'Sudeste',ic:'🪗',lon:-43.2,lat:-22.9},{n:'Mercado Público',c:'Porto Alegre',uf:'RS',reg:'Sul',ic:'🧉',lon:-51.2,lat:-30},
+ {n:'Mercado Público',c:'Florianópolis',uf:'SC',reg:'Sul',ic:'🏝️',lon:-48.55,lat:-27.6},{n:'Mercado Municipal',c:'Curitiba',uf:'PR',reg:'Sul',ic:'🌲',lon:-49.3,lat:-25.4}];
+const FACES=[['👵','Dona Nazaré'],['🧔','Seu Raimundo'],['👩‍🦱','Iara'],['🧑‍🌾','Seu Chico'],['👨‍🌾','Seu Zé'],['👧','Bia'],['🧑‍🍳','Cida'],['👴','Seu Benedito']];
+const TOOLS={hammer:['🔨','Martelo','remove um item ou obstáculo',120],pot:['🫕','Caldeirão','sobe 1 nível de um item (até o nível 4)',150]};
+const UFMAP={"ac":"M31 238L29 238L29 235L26 230L13 229L16 224L17 222L8 212L6 207L4 206L5 203L0 200L1 197L5 196L4 193L21 200L57 209L84 223L115 237L108 242L105 243L100 246L99 249L93 249L90 253L82 256L82 254L72 253L64 252L58 255L55 253L53 254L53 231L55 229L43 238Z","al":"M562 231L559 229L559 227L563 225L566 220L567 221L570 221L574 225L578 227L588 226L593 220L598 221L602 220L606 221L604 226L587 246L587 245L579 240L578 238L569 234Z","ap":"M345 100L339 100L336 96L334 88L331 85L329 85L328 82L326 76L326 71L322 68L321 63L318 60L314 60L308 55L301 55L301 47L300 44L302 44L302 46L311 49L316 45L320 47L323 46L324 48L330 48L335 43L338 33L347 20L351 18L352 21L351 14L355 18L357 22L358 22L359 34L364 49L368 54L372 54L376 56L377 62L373 63L376 63L376 64L368 72L363 79L360 80L354 86L352 90L348 94L348 98L345 100ZM369 53L367 50L369 49L370 52L369 53ZM371 71L371 70L372 69L375 68L374 70L371 71ZM375 68L374 67L376 66L375 68ZM367 49L367 48L369 48L367 49Z","am":"M166 48L168 49L170 48L171 51L174 51L177 52L175 57L178 61L181 70L179 71L180 74L179 78L179 83L182 87L183 91L182 93L180 93L180 94L187 100L190 104L194 104L195 93L200 90L204 91L207 95L209 95L214 93L213 89L218 79L236 79L237 87L239 89L238 92L243 95L244 98L255 107L264 110L270 116L271 117L274 116L275 119L246 183L243 186L244 190L247 192L248 196L247 198L247 201L244 204L245 208L243 218L242 218L194 219L192 217L189 220L186 219L185 216L183 216L182 212L179 211L176 208L174 207L164 207L162 209L160 210L161 211L158 212L157 213L158 215L154 218L155 222L151 221L147 223L144 222L142 223L142 226L140 229L138 229L137 226L131 229L129 231L126 229L119 229L119 230L117 232L112 235L84 223L57 209L21 200L4 193L4 189L10 184L13 184L14 181L12 177L17 170L18 162L24 159L26 156L33 152L45 150L48 150L51 146L54 147L58 146L60 149L63 149L64 148L72 103L72 98L69 94L69 90L62 85L62 73L66 73L71 71L74 72L76 72L76 69L74 66L65 66L65 56L70 54L73 55L92 55L90 53L91 51L95 55L103 49L104 49L108 57L108 64L112 63L121 71L123 71L129 67L132 67L133 68L132 71L133 72L136 68L138 68L139 64L144 62L146 63L150 59L152 59L155 58L156 52L166 49Z","ba":"M528 366L528 362L523 359L523 356L522 356L523 348L527 347L527 343L532 339L533 336L532 334L528 331L516 328L513 330L510 330L510 326L503 319L499 320L482 312L477 314L471 313L470 311L472 307L465 305L460 307L455 311L449 313L447 316L444 316L441 320L438 320L436 321L437 318L437 315L439 313L438 310L439 308L435 304L434 301L433 296L434 292L436 291L434 289L436 285L434 282L435 277L432 276L432 275L432 271L436 268L433 266L436 263L431 262L428 259L431 253L434 252L433 250L440 245L441 243L443 243L448 250L452 252L456 252L457 250L462 247L466 248L469 245L473 239L473 235L471 229L474 228L478 228L479 229L482 228L486 231L492 230L495 227L499 226L502 226L504 225L504 222L508 221L510 218L517 220L518 225L520 226L519 229L521 230L526 228L527 224L532 223L533 220L541 215L544 218L550 219L552 222L553 220L554 220L554 222L557 224L559 229L562 230L562 234L566 240L565 245L566 248L562 250L559 249L558 252L562 257L563 260L567 263L571 263L567 271L557 285L554 286L554 281L552 281L551 279L550 283L549 283L549 280L548 282L549 283L551 284L547 292L546 292L545 294L546 294L547 297L546 299L547 303L545 304L546 304L547 303L547 300L548 300L545 312L549 332L543 353L544 361L542 364L539 365L536 371L528 366ZM550 288L550 286L552 284L553 285L550 288ZM548 294L546 292L548 292L548 294Z","ce":"M574 157L567 161L560 174L558 177L555 176L553 180L553 181L554 182L552 186L553 187L551 191L552 194L554 196L551 201L549 202L547 204L545 204L541 200L537 197L523 197L522 194L525 188L524 187L520 186L519 183L516 167L515 166L517 163L515 158L516 151L509 135L512 127L524 125L531 126L554 140L568 153L574 156Z","df":"M417 334L402 334L402 331L403 325L415 325L417 327L416 333Z","es":"M502 412L502 404L504 402L510 402L513 393L516 390L516 385L514 381L512 380L517 379L516 377L515 376L515 373L513 371L516 368L519 368L517 365L524 364L527 365L536 371L535 377L536 387L534 393L531 395L527 403L526 403L525 404L527 404L525 409L521 413L519 413L516 420L504 417L504 412Z","go":"M417 334L416 333L417 327L415 325L403 325L402 331L402 334L417 334L417 337L415 342L418 344L419 349L414 355L413 357L417 359L416 363L417 367L407 374L402 371L394 372L392 371L385 376L381 375L378 376L375 376L370 377L366 384L364 384L362 387L361 390L358 387L346 383L336 378L330 377L332 373L327 372L326 361L325 358L325 354L328 350L328 348L334 342L337 335L340 332L346 330L348 325L349 320L353 317L355 318L358 316L360 310L360 305L362 302L361 297L366 290L368 281L371 277L369 283L378 285L385 288L387 282L390 278L392 282L394 288L395 288L396 286L404 286L403 288L410 290L411 287L414 290L418 287L424 286L434 282L436 285L434 289L436 291L434 292L433 297L435 304L439 307L438 310L438 313L436 316L433 316L429 313L428 314L428 319L424 318L423 321L424 322L423 326L424 331L418 334Z","ma":"M459 129L456 132L456 133L462 128L463 121L464 121L468 120L466 124L463 125L464 126L466 125L465 127L470 122L477 121L477 119L485 120L492 124L496 126L500 126L500 125L502 125L502 126L503 128L500 132L496 136L492 136L484 148L486 152L485 156L486 159L487 164L483 169L482 172L483 176L487 180L485 186L484 187L478 188L473 186L468 187L463 193L458 196L448 200L445 202L443 210L438 221L441 229L438 243L435 241L432 241L430 236L427 234L429 230L425 228L424 224L420 223L423 219L424 214L430 213L430 206L428 205L422 207L415 199L414 199L414 195L410 194L414 191L416 180L414 168L409 166L408 164L404 164L401 162L398 163L394 165L409 153L413 153L416 148L417 145L420 143L423 135L427 130L428 126L427 125L431 121L431 117L433 116L434 112L434 111L432 109L434 108L435 102L438 99L439 102L441 102L441 100L442 103L443 103L443 102L446 102L446 103L445 105L446 106L448 103L447 109L449 108L449 107L450 105L454 105L455 104L454 107L456 107L458 110L460 111L461 114L458 118L462 115L463 118L459 122L458 129L459 129ZM459 130L460 126L461 124L461 128L459 130ZM453 104L453 102L455 102L453 104ZM457 108L458 106L458 108L457 108ZM442 103L443 100L442 103Z","mt":"M207 296L213 292L215 286L218 284L221 279L221 271L219 268L218 268L217 264L220 260L219 256L213 255L212 254L195 254L196 245L194 240L196 232L194 227L196 221L194 219L242 218L243 218L245 208L244 204L247 201L247 198L248 196L252 201L255 211L256 218L264 223L265 226L268 226L269 229L308 232L371 236L366 249L363 261L365 263L364 266L365 268L365 279L366 282L367 284L366 286L366 290L361 297L362 302L360 305L360 310L356 317L353 317L349 320L348 325L346 330L340 332L337 335L333 344L328 348L325 358L327 366L316 366L313 365L314 361L316 360L318 354L316 354L311 360L306 361L304 358L302 358L299 360L294 361L289 358L288 356L279 353L274 355L270 355L264 362L258 364L254 361L254 359L252 357L250 358L244 354L243 344L245 342L245 338L243 339L216 338L215 325L210 319L215 319L214 311L211 304L213 301L211 298L208 297Z","ms":"M359 400L359 403L355 404L350 409L350 413L346 418L346 421L343 425L343 427L338 434L328 440L326 444L319 447L317 454L313 456L311 465L309 467L303 462L298 465L294 466L290 465L287 446L287 443L286 442L285 439L284 437L278 437L275 433L274 433L271 436L268 437L250 434L251 424L252 421L253 415L252 411L251 410L251 411L248 402L252 398L248 395L254 383L255 383L254 381L258 369L254 363L254 362L258 364L264 362L270 355L274 355L279 353L288 356L289 358L294 361L299 360L302 358L304 358L306 361L311 360L316 354L318 354L316 360L314 361L313 365L316 366L327 366L328 372L332 373L330 377L336 378L346 383L358 387L361 390L359 394L360 397Z","mg":"M528 366L524 364L517 365L519 368L516 368L513 371L515 373L515 376L516 377L517 379L512 380L514 381L516 385L516 390L513 393L510 402L504 402L502 404L502 412L498 415L498 415L494 425L495 427L483 433L479 432L477 433L472 433L465 436L462 436L452 440L447 443L442 443L443 442L442 442L442 445L439 447L432 447L430 443L431 443L431 441L427 439L427 429L429 423L426 421L422 422L418 414L420 409L417 406L418 402L415 398L412 399L408 399L408 401L405 401L402 399L401 401L393 401L392 406L391 405L390 401L387 404L386 399L382 397L377 398L370 397L367 395L359 400L360 390L362 390L362 387L363 385L366 384L370 377L375 376L378 376L381 375L385 376L392 371L394 372L402 371L407 374L417 367L416 363L417 359L413 357L414 355L419 349L418 344L415 342L417 337L417 334L424 331L423 326L424 322L423 321L424 318L428 319L428 314L429 313L433 316L436 316L437 315L437 318L436 321L439 319L441 320L444 316L447 316L449 313L464 305L472 307L470 311L471 313L477 314L482 312L499 320L503 319L510 326L510 329L518 328L528 331L532 334L533 336L532 339L527 343L527 347L524 348L522 352L521 356L523 356L523 359L528 362L527 365Z","pa":"M371 236L274 230L271 228L269 229L268 226L265 226L264 223L256 218L255 211L252 201L247 196L247 192L244 190L243 186L246 183L275 119L274 116L271 117L269 116L264 110L255 107L249 102L244 98L243 95L238 92L239 89L237 87L235 62L237 64L239 62L242 62L243 61L242 60L245 58L250 59L250 57L254 56L257 56L260 52L264 51L268 53L274 52L282 54L283 50L279 47L282 43L286 45L297 43L299 44L301 45L301 55L308 55L314 60L318 60L321 63L322 68L326 71L326 76L328 82L329 85L331 85L334 88L336 96L339 100L345 100L345 103L344 104L340 103L333 107L339 106L340 107L340 108L340 108L355 101L359 98L359 97L362 97L362 103L365 110L362 112L357 110L354 108L351 114L352 117L353 118L352 114L354 110L357 111L359 114L358 116L359 120L362 121L359 118L360 114L360 113L362 114L364 117L362 113L364 110L368 111L368 112L375 110L377 112L381 111L385 109L386 109L383 117L383 122L388 112L391 111L395 105L397 105L399 108L400 105L403 105L399 105L399 102L401 103L402 99L401 97L405 93L407 94L410 92L410 94L413 92L416 95L415 91L417 91L421 94L422 93L422 96L424 93L425 95L428 95L428 98L434 97L433 100L435 99L436 101L435 102L434 108L432 109L434 111L433 115L431 117L431 121L427 125L428 126L427 130L423 135L420 143L417 145L416 148L413 153L409 153L394 165L400 166L404 169L403 171L401 171L403 174L402 177L399 178L399 181L396 184L396 186L387 190L388 195L385 199L388 203L386 213L382 219L379 221L374 227L371 236ZM392 105L388 107L383 107L380 110L379 108L378 110L374 109L369 111L366 110L362 103L363 100L366 99L364 99L362 97L363 92L364 91L366 93L364 92L364 90L365 86L370 84L380 86L388 84L400 86L400 88L398 96L396 97L392 105ZM345 105L344 105L346 100L349 99L350 94L353 91L356 90L357 93L355 98L352 101L345 105ZM374 82L369 82L369 79L379 77L381 78L376 83L375 83L374 82ZM379 82L382 81L384 82L385 83L380 85L377 84L379 82ZM362 87L359 86L360 84L364 82L366 83L362 87ZM371 77L370 74L374 72L375 74L371 77ZM357 97L358 93L362 91L362 93L357 97ZM368 79L367 79L369 73L370 77L368 79ZM353 90L356 85L358 84L357 87L353 90ZM367 83L365 80L366 79L368 80L368 82L367 83ZM362 113L359 113L357 110L361 112L362 113ZM341 108L341 105L343 104L345 106L341 108ZM353 101L356 95L356 100L353 101ZM360 91L361 88L363 88L362 90L360 91ZM391 110L390 109L392 107L391 110ZM358 91L357 88L359 87L360 88L359 88L358 91ZM360 96L359 98L357 99L360 96ZM337 106L337 105L341 103L341 104L337 106ZM401 101L399 100L400 99L401 99L401 101ZM363 82L360 83L362 81L363 82ZM358 91L358 89L361 88L360 90L358 91ZM360 95L361 93L362 93L362 95L360 95ZM388 111L390 109L390 110L388 111ZM362 88L361 87L363 86L363 87L362 88ZM429 98L430 96L430 98L429 98Z","pb":"M611 199L608 197L605 197L599 202L585 205L583 207L583 208L578 211L576 209L576 206L572 206L575 203L575 200L578 198L577 197L574 195L570 197L563 203L558 204L557 202L553 203L551 200L554 196L552 194L551 191L553 187L552 186L554 181L560 183L565 180L566 178L574 176L575 177L570 184L570 186L573 186L574 188L577 187L581 187L582 191L585 189L585 185L586 185L586 181L587 180L589 180L590 182L594 183L610 183L611 190L611 193L612 191L612 194L612 199Z","pr":"M397 500L389 500L383 504L376 500L370 501L366 500L362 504L358 504L356 505L355 508L356 511L353 512L352 510L344 510L341 508L331 506L326 506L323 504L318 505L315 499L314 494L311 491L305 494L303 493L303 490L306 485L305 483L309 472L307 468L311 465L313 456L317 454L319 447L329 442L340 442L342 441L350 443L355 443L361 446L362 447L372 448L375 447L381 453L380 457L382 461L382 463L387 472L386 475L386 477L397 477L399 479L397 483L398 484L400 481L403 481L403 486L405 487L405 488L403 491L403 489L404 488L400 488L399 491L395 490L395 491L400 493L398 496L394 498L397 498L397 499Z","pe":"M559 227L557 223L554 221L554 220L553 220L552 222L550 219L544 218L541 215L533 220L532 223L529 224L527 223L526 228L521 230L519 229L520 226L518 225L517 220L514 218L510 218L518 212L522 208L523 204L521 202L520 198L537 197L541 200L545 204L547 204L549 202L551 201L554 203L557 202L558 204L563 203L570 197L574 195L577 197L578 198L575 200L575 203L572 206L576 206L576 209L578 211L583 208L583 207L585 205L599 202L605 197L608 197L612 200L612 201L611 204L612 206L607 221L602 220L598 221L593 220L588 226L578 227L574 225L570 221L567 221L566 220L563 225L560 226Z","pi":"M506 127L510 128L512 129L509 135L516 151L515 158L517 163L515 166L516 167L517 175L520 186L524 187L525 188L522 194L523 197L520 198L521 202L523 204L522 208L518 212L510 218L508 221L504 222L504 224L502 226L499 226L495 227L492 230L489 231L485 230L485 229L482 228L479 229L476 227L471 229L473 235L473 238L469 245L465 248L462 247L460 248L456 252L452 252L448 250L443 243L438 243L441 229L438 221L444 210L446 202L448 200L458 196L463 193L468 187L473 186L478 188L484 187L485 186L487 180L483 176L482 172L483 169L487 164L486 159L485 156L486 152L484 148L492 136L496 135L502 129L502 125L505 127Z","rj":"M469 451L469 449L475 449L472 448L468 448L466 450L463 447L458 451L458 453L461 454L460 455L457 455L455 452L456 449L460 447L464 446L466 444L465 442L459 442L456 439L456 438L462 436L465 436L472 433L476 433L479 432L483 433L496 427L494 425L498 415L498 415L502 412L504 412L505 417L516 420L515 425L516 432L504 438L500 442L499 447L483 448L482 447L484 444L483 443L480 445L482 447L481 449L469 451ZM464 453L463 452L465 450L467 452L464 453Z","rn":"M610 183L594 183L590 182L589 180L587 180L586 181L586 185L585 185L585 189L582 191L581 187L577 187L574 188L573 186L570 186L570 184L575 177L575 176L566 178L565 180L560 183L555 181L553 181L554 177L558 177L560 174L567 161L574 157L575 159L580 159L583 161L594 161L602 162L606 169L609 182Z","rs":"M322 639L320 637L320 628L327 620L319 615L318 610L314 606L308 603L305 601L303 597L300 596L293 593L290 588L288 586L284 590L281 590L281 585L269 572L265 572L262 576L257 575L256 574L261 570L261 567L265 565L270 559L272 555L275 554L277 549L280 546L283 541L286 542L286 540L285 539L290 536L292 533L297 532L300 527L302 527L308 525L312 521L315 520L319 521L322 519L324 520L331 521L333 522L340 522L344 524L345 526L349 526L358 532L365 542L379 543L380 545L376 547L375 553L372 556L372 558L374 559L374 557L376 556L380 558L374 567L370 579L364 589L358 596L352 602L346 605L343 610L343 606L342 603L346 604L349 602L353 598L355 597L357 594L357 590L360 591L360 587L364 584L364 579L366 579L367 575L365 574L364 576L361 576L360 578L358 575L357 575L355 571L354 573L356 578L355 581L355 585L354 582L352 587L352 589L349 592L344 594L343 601L340 602L341 606L340 608L342 610L340 611L338 616L334 627L324 637Z","ro":"M188 291L186 288L182 288L177 285L176 286L172 283L171 280L167 281L162 277L160 277L158 278L151 277L149 275L148 273L145 272L144 270L141 269L140 266L139 265L138 266L138 263L136 262L135 258L136 254L134 245L136 241L136 235L135 233L134 233L132 235L124 234L115 237L112 235L117 232L119 230L119 229L126 229L129 231L131 229L137 226L138 229L140 229L142 226L142 223L144 222L147 223L151 221L155 222L154 218L158 215L157 213L158 212L161 211L160 210L162 209L164 207L174 207L176 208L179 211L182 212L183 216L185 216L186 219L189 220L190 218L193 218L196 221L194 227L196 232L194 240L196 245L195 254L212 254L213 255L219 256L220 260L217 264L218 268L219 268L221 271L221 277L218 283L215 286L213 292L207 296L203 293L191 294L190 293Z","rr":"M235 62L236 79L218 79L213 89L214 93L209 95L207 95L204 91L200 90L195 93L194 104L190 104L187 100L180 94L180 93L182 93L183 91L182 87L179 83L179 78L180 74L179 71L181 70L178 61L175 57L177 52L174 51L171 51L170 48L167 48L166 45L156 44L157 40L153 33L153 26L147 21L144 17L145 16L147 18L154 18L156 22L162 21L164 22L165 21L167 21L174 27L176 25L176 20L178 19L181 17L185 19L190 18L191 16L195 16L195 14L198 12L203 12L205 9L208 8L210 5L209 2L207 1L214 1L216 0L217 1L219 4L218 9L217 12L224 14L223 17L226 22L221 27L222 30L219 35L219 40L221 45L223 47L223 53L225 54L224 55L227 56L231 61Z","sc":"M380 558L376 556L374 557L374 559L372 558L372 556L375 553L376 547L380 545L379 543L365 542L358 532L349 526L345 526L344 524L340 522L333 522L331 521L324 520L322 519L319 521L315 520L317 515L317 506L318 505L323 504L326 506L331 506L341 508L344 510L352 510L353 512L356 510L355 507L356 505L358 504L362 504L366 500L370 501L376 500L383 504L389 500L397 500L397 503L396 504L394 501L394 505L397 508L395 512L397 519L398 519L398 521L396 521L396 529L397 532L396 539L394 543L393 541L393 543L394 544L393 546L384 552L380 558ZM397 532L398 525L400 524L400 528L397 532ZM397 507L395 505L398 503L399 504L397 507Z","sp":"M405 488L405 487L403 486L403 481L400 481L398 484L397 484L398 480L399 479L397 477L386 477L386 475L387 472L382 463L382 461L380 457L381 453L375 447L372 448L362 447L361 446L355 443L350 443L342 441L340 442L329 442L326 444L328 440L338 434L343 427L343 425L346 421L346 418L350 413L350 409L355 404L359 403L360 399L364 397L366 396L368 395L370 397L377 398L382 397L386 399L387 404L390 401L391 405L392 406L393 401L401 401L402 399L405 401L408 401L408 399L412 399L415 398L418 402L417 406L420 408L420 409L418 414L422 422L426 421L429 423L427 429L426 437L427 439L431 441L431 443L430 443L432 447L441 446L442 442L443 442L443 443L447 443L456 439L459 442L465 442L466 444L463 446L457 448L455 452L457 455L454 455L452 457L447 459L447 463L439 462L436 463L433 466L431 463L431 466L423 470L418 475L406 483L405 484L408 484L408 485L405 488ZM449 465L446 464L448 461L449 462L449 465Z","se":"M570 262L567 263L563 260L562 257L558 252L559 249L562 250L566 248L565 245L566 239L562 234L562 231L578 238L579 240L587 245L587 246L580 250L578 253L576 250L575 250L576 251L577 251L577 253L575 255L574 254L575 255L575 257L572 261L573 257L572 257L571 261Z","to":"M434 282L424 286L418 287L414 290L411 287L410 290L403 288L404 286L396 286L395 288L394 288L392 282L390 278L387 282L385 288L378 285L369 283L371 277L367 283L365 279L365 268L364 266L365 263L363 261L366 249L374 227L379 221L382 219L387 207L388 203L385 199L388 195L387 190L396 186L396 184L399 181L399 178L402 177L403 174L402 171L404 171L404 169L400 166L395 165L400 162L404 164L408 164L409 166L414 168L416 179L414 191L410 194L414 195L415 199L415 199L422 207L428 205L430 206L430 213L424 214L423 219L420 223L424 224L425 228L429 230L428 234L430 236L432 241L441 243L440 245L433 250L434 252L431 253L428 259L431 262L436 263L433 266L436 268L432 272L432 276L435 278L434 281Z"};
+const UFLAB={"ac":[71,236,17],"al":[586,235,8],"ap":[346,63,22],"am":[139,145,66],"ba":[502,272,43],"ce":[540,159,23],"df":[408,330,4],"es":[525,383,9],"go":[375,345,30],"ma":[446,164,31],"mt":[289,291,60],"ms":[302,403,38],"mg":[467,362,47],"pa":[320,167,59],"pb":[594,193,10],"pr":[343,475,33],"pe":[534,208,10],"pi":[487,209,20],"rj":[505,427,9],"rn":[595,172,10],"rs":[318,562,37],"ro":[165,250,28],"rr":[203,63,23],"sc":[374,521,19],"sp":[397,432,26],"se":[573,244,7],"to":[400,246,30]};
+const REGS=['Norte','Nordeste','Centro-Oeste','Sudeste','Sul'], REGUF={ac:0,am:0,ap:0,pa:0,ro:0,rr:0,to:0,al:1,ba:1,ce:1,ma:1,pb:1,pe:1,pi:1,rn:1,se:1,df:2,go:2,mt:2,ms:2,es:3,mg:3,rj:3,sp:3,pr:4,rs:4,sc:4};
+
+/* ===================== ESTADO ===================== */
+const $=id=>document.getElementById(id), fmt=n=>Math.round(n).toLocaleString('pt-BR');
+const pick=a=>a[Math.floor(Math.random()*a.length)], rint=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const item=(l,n)=>LINES[l].it[n-1];
+const lc=l=>`hsl(${LINES[l].hue} 55% 46%)`;
+const isAdj=(x,y)=>{ const d=Math.abs(x-y); return d===COLS||(d===1&&Math.floor(x/COLS)===Math.floor(y/COLS)); };
+const nbrs=i=>[i-COLS,i+COLS,i%COLS?i-1:-1,i%COLS<COLS-1?i+1:-1].filter(k=>k>=0&&k<COLS*ROWS);
+let S, P=null, screen='home', sel=null, drag=null, noClick=false, popAt=-1, audio=null, toastTimer=null, quiet=false, lastAct=Date.now(), sheetName=null;
+
+function fresh(){ return {v:1,coins:100,best:{},cards:[],tools:{hammer:3,pot:3},selos:[],sealOn:true,selo5:{ac:0,pe:0,jt:0},seen:{},diaryDone:false,
+  stats:{ph:{}},opts:{sound:true,test:false}}; }
+function load(){ try{ const d=JSON.parse(localStorage.getItem(KEY)); if(d&&d.v===1) return d; }catch(e){} return fresh(); }
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
+const starsOf=i=>S.best[i]||0, totalStars=()=>Object.values(S.best).reduce((a,b)=>a+b,0);
+const unlocked=i=>S.opts.test||i===0||starsOf(i-1)>0;
+const phStat=i=>S.stats.ph[i]||(S.stats.ph[i]={tries:0,wins:0,losses:0,stuck:0,left:0});
+function toast(m){ if(quiet) return; const el=$('toast'); el.textContent=m; el.hidden=false; clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.hidden=true,2400); }
+function beep(f,d){ if(quiet||!S.opts.sound) return; try{ audio=audio||new (window.AudioContext||window.webkitAudioContext)(); const o=audio.createOscillator(),g=audio.createGain(), t0=audio.currentTime+(d||0);
+  o.type='sine'; o.frequency.value=f; g.gain.setValueAtTime(.08,t0); g.gain.exponentialRampToValueAtTime(.001,t0+.25); o.connect(g); g.connect(audio.destination); o.start(t0); o.stop(t0+.26);}catch(e){} }
+function modal(html){ if(quiet) return; $('card').innerHTML=html; $('over').hidden=false; const b=$('card').querySelector('button:not(:disabled)'); if(b)b.focus(); }
+function closeModal(){ $('over').hidden=true; }
+
+/* ===================== FASE ===================== */
+function newOrder(){
+  const c=P.cfg, f=pick(FACES), o={id:P.nextId++,face:f[0],who:f[1],items:[]}, k=Math.random()<c.two?2:1;
+  for(let j=0;j<k;j++) o.items.push({l:pick(c.lines),n:rint(c.lv[0],c.lv[1]),done:false});
+  return o;
+}
+function startPhase(i){
+  const c=PHASES[i], b=Array(COLS*ROWS).fill(null), free=()=>{ const e=[]; b.forEach((x,k)=>{ if(!x) e.push(k); }); return e; };
+  for(let k=0;k<c.crate;k++) b[pick(free())]={o:'crate'};
+  for(let k=0;k<c.mold;k++){ const e=free().filter(x=>x<COLS*(ROWS-1)); b[pick(e)]={o:'mold'}; }
+  for(let k=0;k<c.items;k++) b[pick(free())]={l:pick(c.lines),n:Math.random()<.65?1:2};
+  const seal=S.selos.includes(0)&&S.sealOn;
+  P={i,cfg:c,board:b,turns:c.turns+(seal?3:0),seal,used:0,goals:c.goals.map(g=>({...g,p:0})),orders:[],nextId:1,tide:0,toolsUsed:0,armed:null,over:null};
+  while(P.orders.length<3) P.orders.push(newOrder());
+  phStat(i).tries++; save(); sel=null; screen='game';
+  if(!quiet&&c.tut&&!S.seen[c.tut]){ S.seen[c.tut]=1; const T=TUT[c.tut]; render(); modal(`<div class="big">${T[0]}</div><h2>${T[1]}</h2><p>${T[2]}</p><button class="btn" data-act="mclose">Entendi</button>`); return; }
+  render();
+}
+const flooded=i=>P.tide>0&&i>=COLS*(ROWS-1);
+const isItem=x=>x&&x.l;
+const free=i=>!P.board[i]&&!flooded(i);
+const canMerge=(a,b)=>isItem(a)&&isItem(b)&&a!==b&&a.l===b.l&&a.n===b.n&&a.n<MAX&&!a.m&&!b.m;
+const goalDone=g=>g.p>=g.n;
+function progress(t,extra){ for(const g of P.goals) if(g.t===t&&(!extra||extra(g))) g.p++; }
+function merge(from,to,via){
+  if(P.over||from===to||flooded(from)||flooded(to)) return false;
+  const a=P.board[from], b=P.board[to]; if(!canMerge(a,b)) return false;
+  let n=a.n+1;
+  if(via!=null&&via>=0&&via!==from&&via!==to&&a.n+2<=MAX&&isAdj(via,to)&&!flooded(via)&&canMerge(a,P.board[via])){ P.board[via]=null; n=a.n+2; }
+  P.board[from]=null; P.board[to]={l:a.l,n};
+  for(const k of nbrs(to)){ const x=P.board[k]; if(!x) continue;
+    if(x.o){ P.board[k]=null; progress('clear'); beep(330); }
+    else if(x.m){ x.m=false; } }
+  progress('make',g=>g.l===a.l&&n>=g.lv);
+  popAt=to; beep(n-a.n>1?780:620); checkEnd(); return true;
+}
+function spawn(l){
+  if(P.over) return; const e=[]; P.board.forEach((x,i)=>{ if(free(i)) e.push(i); });
+  if(!e.length){ toast('Sem espaço: junte, entregue ou use uma ferramenta.'); return; }
+  P.used++; const i=pick(e); P.board[i]={l,n:1}; popAt=i; beep(520);
+  if(P.used%MOLD_EVERY===0){ const c=[]; P.board.forEach((x,k)=>{ if(x&&x.o==='mold') for(const j of nbrs(k)){ const y=P.board[j]; if(isItem(y)&&!y.m&&!c.includes(j)) c.push(j); } });
+    if(c.length){ P.board[pick(c)].m=true; toast('Um item ficou mofado 🦠'); } }
+  if(P.cfg.boss==='tide'){ if(P.tide>0) P.tide--; else if(P.used%TIDE_EVERY===0){ P.tide=TIDE_LEN; toast('A maré subiu! 🌊'); } }
+  sel=null; checkEnd();
+}
+const matches=(o,it)=>o.items.find(x=>!x.done&&x.l===it.l&&x.n===it.n);
+function deliver(i,id){
+  if(P.over) return; const it=P.board[i]; if(!isItem(it)) return;
+  if(flooded(i)){ toast('A maré está prendendo esse item.'); return; }
+  if(it.m){ toast('Ninguém compra item mofado. Faça uma fusão ao lado para limpar.'); return; }
+  const o=id!=null?P.orders.find(x=>x.id===id):P.orders.find(x=>matches(x,it)), nd=o&&matches(o,it);
+  if(!nd){ toast('Esse cliente não pediu esse item.'); return; }
+  nd.done=true; P.board[i]=null; sel=null; beep(700);
+  if(o.items.every(x=>x.done)){ progress('orders'); P.orders[P.orders.indexOf(o)]=newOrder(); beep(940,.1); }
+  checkEnd();
+}
+function deliverSeal(i){
+  if(P.over) return; const it=P.board[i]; if(!isItem(it)) return;
+  if(it.n<MAX||it.m||flooded(i)){ toast('O espaço do Selo aceita só itens de nível 5, sem mofo.'); return; }
+  P.board[i]=null; sel=null; S.selo5[it.l]=(S.selo5[it.l]||0)+1; beep(880); toast(checkSeal()?'🏅 Selo de Domínio conquistado: Força do Açaí!':`🏅 ${item(it.l,5)[1]} entregue ao Selo`); checkEnd();
+}
+const sealReady=()=>Object.keys(LINES).every(k=>(S.selo5[k]||0)>=3);
+function checkSeal(){
+  if(S.selos.includes(0)||!sealReady()||!starsOf(6)) return false;
+  S.selos.push(0); save(); return true;
+}
+function useTool(k,i){
+  const x=P.board[i]; if(P.over||!x) return false;
+  if(P.toolsUsed>=MAX_TOOLS||!(S.tools[k]>0)){ toast('Sem ferramentas disponíveis nesta fase.'); P.armed=null; return false; }
+  if(k==='hammer'){ if(x.o) progress('clear'); P.board[i]=null; }
+  else { if(!isItem(x)||x.n>4||flooded(i)){ toast('O Caldeirão funciona em itens até o nível 4.'); return false; } x.n++; progress('make',g=>g.l===x.l&&x.n>=g.lv); popAt=i; }
+  S.tools[k]--; P.toolsUsed++; P.armed=null; beep(700); checkEnd(); return true;
+}
+function hasMove(){
+  const b=P.board; if(b.some((x,i)=>free(i))) return true;
+  for(let i=0;i<b.length;i++){ const x=b[i]; if(!isItem(x)||flooded(i)) continue;
+    if(!x.m&&P.orders.some(o=>matches(o,x))) return true;
+    if(x.n===MAX&&!x.m) return true;
+    for(let j=i+1;j<b.length;j++) if(!flooded(j)&&canMerge(x,b[j])) return true; }
+  return P.toolsUsed<MAX_TOOLS&&(S.tools.hammer>0||S.tools.pot>0);
+}
+function checkEnd(){
+  if(P.over) return;
+  if(P.goals.every(goalDone)) return win();
+  if(P.used>=P.turns) return lose('turns');
+  if(!hasMove()) return lose('stuck');
+}
+function win(){
+  P.over='win'; const i=P.i, left=P.turns-P.used, st=left/P.turns>=.5?3:left/P.turns>=.25?2:1, first=!starsOf(i), prev=starsOf(i);
+  const co=first?30+10*st:10, h=phStat(i); h.wins++; h.left+=left;
+  S.best[i]=Math.max(prev,st); S.coins+=co;
+  let gift=''; if(st===3&&prev<3){ const k=pick(Object.keys(TOOLS)); S.tools[k]++; gift=`<p>Prêmio por 3 ⭐: +1 ${TOOLS[k][0]} ${TOOLS[k][1]}</p>`; }
+  const newCard=!S.cards.includes(i); if(newCard) S.cards.push(i);
+  const seal=checkSeal(); save();
+  if(quiet) return; beep(660); beep(880,.15); beep(1100,.3);
+  modal(`<div class="bigstars">${[1,2,3].map(k=>`<span${k>st?' class="off" style="opacity:.25"':''}>⭐</span>`).join('')}</div><h1>Fase concluída!</h1>
+   <p>${left} ${left===1?'turno sobrando':'turnos sobrando'} · +${co} 🪙</p>${gift}
+   ${seal?`<p><b>🏅 Selo de Domínio conquistado: Força do Açaí!</b><br>+3 turnos em toda fase. Ele fica na sua Mochila de Selos.</p>`:''}
+   ${i<PHASES.length-1?`<button class="btn" data-act="phase:${i+1}">Próxima fase</button>`:''}<button class="btn ghosty" data-act="go:market">Voltar ao mercado</button>
+   ${newCard?`<button class="btn ghosty sm" data-act="card:${i}">📖 Novo cartão no Diário</button>`:''}`);
+}
+function lose(why){
+  P.over='lose'; const h=phStat(P.i); h.losses++; if(why==='stuck') h.stuck++; save();
+  if(quiet) return; beep(300); beep(240,.15);
+  modal(`<div class="big">${why==='stuck'?'🧱':'⏳'}</div><h1>${why==='stuck'?'O tabuleiro travou':'Os turnos acabaram'}</h1>
+   <ul>${P.goals.map(g=>`<li>${goalText(g)}: ${Math.min(g.p,g.n)}/${g.n}</li>`).join('')}</ul>
+   <p class="note">Dica: guarde os turnos para colher só o que os clientes pedem e junte três de uma vez quando puder.</p>
+   ${S.opts.test&&why==='turns'?'<button class="btn ghosty" data-act="plus5">+5 turnos (modo teste)</button>':''}
+   <button class="btn" data-act="phase:${P.i}">Tentar de novo</button><button class="btn ghosty" data-act="go:market">Voltar ao mercado</button>`);
+}
+function goalText(g){ return g.t==='orders'?'Entregar pedidos':g.t==='clear'?'Limpar obstáculos':`Criar ${item(g.l,g.lv)[1]}`; }
+function goalIcon(g){ return g.t==='orders'?'🧺':g.t==='clear'?'🧹':item(g.l,g.lv)[0]; }
+
+/* ===================== DESENHO ===================== */
+function render(){
+  if(quiet) return;
+  const m=$('main'); m.className='main'+(screen==='game'?' game':'');
+  if(screen==='home') m.innerHTML=homeHtml();
+  else if(screen==='map') m.innerHTML=mapHtml();
+  else if(screen==='market') m.innerHTML=marketHtml();
+  else { m.innerHTML=gameHtml(); fit(); }
+  if(sheetName) renderSheet();
+  save();
+}
+function homeHtml(){
+  const ts=totalStars(), nc=S.cards.length;
+  return `<div class="homein"><div class="logo"><b>Rota das<br>Feiras</b><small>Feira Viva · versão de teste</small></div>
+   <div class="hero"><div class="big" aria-hidden="true">🛶🍇🐟🌿</div><b>Viaje pelos mercados do Brasil</b><p class="note" style="margin:0 auto">Puzzle de fusão com turnos contados. Comece pelo Ver-o-Peso, em Belém.</p>
+   <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap"><span class="pill">⭐ ${ts}</span><span class="pill">🪙 ${fmt(S.coins)}</span><span class="pill">📖 ${nc}/${CARDS.length}</span></div></div>
+   <button class="btn big" data-act="go:map">▶ Jogar</button>
+   <div class="hgrid"><button data-act="sheet:diary"><span>📖</span>Diário</button><button data-act="sheet:selos"><span>🏅</span>Selos</button><button data-act="sheet:cfg"><span>⚙️</span>Ajustes</button></div></div>`;
+}
+const PXY=(lon,lat)=>{ const mer=a=>Math.log(Math.tan(Math.PI/4+a*Math.PI/360)), K=638.5/(mer(5.27)-mer(-33.75)); return [.3+(lon+73.99)*612/39.2,.3+(mer(5.27)-mer(lat))*K]; };
+function mapSvg(){
+  const pts=MARKETS.map(f=>PXY(f.lon,f.lat));
+  const ufs=Object.entries(UFMAP).map(([k,d])=>`<path class="uf r${REGUF[k]}" d="${d}"><title>${k.toUpperCase()} · ${REGS[REGUF[k]]}</title></path>`).join('');
+  const labs=Object.entries(UFLAB).filter(([k])=>k!=='df').map(([k,[x,y,r]])=>`<text class="uflab${r<15?' s':''}" x="${x}" y="${y}">${k.toUpperCase()}</text>`).join('');
+  const nodes=pts.map((p,i)=>`<g class="node ${i===0?'open':'lock'}" ${i===0?'data-act="go:market" role="button" aria-label="Abrir o Ver-o-Peso"':''} transform="translate(${p[0].toFixed(1)} ${p[1].toFixed(1)})"><title>${MARKETS[i].n}, ${MARKETS[i].c}${i?' (em breve)':''}</title>${i===0?'<circle class="ring" r="18"/>':''}<circle r="18"/><text>${i===0?MARKETS[i].ic:'🔒'}</text></g>`).join('');
+  return `<svg viewBox="-8 -8 647 655" role="img" aria-label="Mapa do Brasil com os mercados da Rota das Feiras">${ufs}${labs}<polyline class="route" points="${pts.map(p=>p.join(',')).join(' ')}"/>${nodes}</svg>`;
+}
+function mapHtml(){
+  return `<div class="head"><button class="icon" data-act="go:home" aria-label="Voltar">◀</button><div class="t"><b>Rota das Feiras</b><small>⭐ ${totalStars()} estrelas · 🪙 ${fmt(S.coins)}</small></div></div>
+   <div class="map">${mapSvg()}<div class="legend">${REGS.map((r,i)=>`<span><i style="background:var(--r${i})"></i>${r}</span>`).join('')}</div></div>
+   <button class="row cur" data-act="go:market"><span class="face">🛶</span><div><b>Ver-o-Peso</b> · Belém (PA)<p>${totalStars()}/21 ⭐ · 7 fases com chefe</p></div><span class="btn sm">Jogar</span></button>
+   ${MARKETS.slice(1).map(f=>`<div class="row lock"><span class="face">${f.ic}</span><div><b>${f.n}</b> · ${f.c} (${f.uf})<p>Em breve. Neste teste só o Ver-o-Peso está aberto.</p></div></div>`).join('')}
+   <p class="note">No jogo completo, sair do Norte vai pedir 30 ⭐ e cada mercado abre ao vencer o chefe do anterior.</p>`;
+}
+function marketHtml(){
+  const seal=S.selos.includes(0);
+  return `<div class="head"><button class="icon" data-act="go:map" aria-label="Voltar ao mapa">◀</button><div class="t"><b>🛶 Ver-o-Peso</b><small>Belém (PA) · ${totalStars()}/21 ⭐</small></div><span class="pill">🪙 ${fmt(S.coins)}</span></div>
+   ${PHASES.map((c,i)=>{ const st=starsOf(i), ok=unlocked(i);
+     return `<button class="row${ok&&!st?' cur':''}${ok?'':' lock'}" data-act="${ok?'start:'+i:'locked'}"><span class="face">${ok?(c.boss?'🌊':i+1):'🔒'}</span><div><b>${c.boss?c.name:`Fase ${i+1} · ${c.name}`}</b><p>${c.goals.map(goalText).join(' + ')} · ${c.turns} turnos</p></div><span class="stars">${[1,2,3].map(k=>`<span class="${k>st?'off':''}">★</span>`).join('')}</span></button>`; }).join('')}
+   <div class="row"><span class="face">${seal?'🏅':'🍇'}</span><div><b>Selo de Domínio: Força do Açaí</b><p>${seal?'Conquistado: +3 turnos em toda fase.':`Entregue 3 itens de nível 5 de cada linha no espaço 🏅 e vença o chefe. ${Object.keys(LINES).map(k=>`${item(k,5)[0]} ${Math.min(3,S.selo5[k]||0)}/3`).join(' · ')} · chefe ${starsOf(6)?'✓':'—'}`}</p></div></div>
+   <h2>Ferramentas</h2>
+   ${Object.entries(TOOLS).map(([k,[em,n,d,c]])=>`<div class="row"><span class="face">${em}</span><div><b>${n}</b> · você tem ${S.tools[k]}<p>${d}. Máximo de 2 ferramentas por fase.</p></div><button class="btn sm" data-act="buy:${k}" ${S.coins<c?'disabled':''}>🪙 ${c}</button></div>`).join('')}`;
+}
+function gameHtml(){
+  const left=P.turns-P.used, c=P.cfg, cur=sel!=null?P.board[sel]:null, have=new Set(P.board.filter(x=>isItem(x)&&!x.m).map(x=>x.l+x.n)), need3=Math.ceil(P.turns*.5);
+  const tide=c.boss==='tide'?(P.tide>0?`<span class="tide">🌊 Maré alta: ${P.tide} ${P.tide>1?'turnos':'turno'}</span>`:`<span class="tide">🌊 Maré sobe em ${TIDE_EVERY-P.used%TIDE_EVERY} ${TIDE_EVERY-P.used%TIDE_EVERY>1?'turnos':'turno'}</span>`):'';
+  const info=P.armed?`<p>${TOOLS[P.armed][0]} Toque numa casa para usar o <b>${TOOLS[P.armed][1]}</b>.</p><button class="btn sm ghosty" data-act="disarm">Cancelar</button>`
+    :cur?`<p><b>${item(cur.l,cur.n)[0]} ${item(cur.l,cur.n)[1]}</b> · ${LINES[cur.l].name} nível ${cur.n}${cur.m?' · <span class="warn">mofado</span>':''}${flooded(sel)?' · preso pela maré':''}</p>`
+    :`<p>Cesto = 1 turno. Juntar e entregar são de graça. Arraste por cima de um igual e solte em outro ao lado para juntar 3.</p>`;
+  return `<div class="head"><button class="icon" data-act="pause" aria-label="Pausar">⏸</button><div class="t"><b>${c.boss?c.name:`Fase ${P.i+1} · ${c.name}`}</b><small>Ver-o-Peso${P.seal?' · 🏅 +3 turnos':''}</small></div>
+    <div class="turns${left<=3?' low':''}"><b>${left}</b><small>${left===1?'turno':'turnos'}</small></div></div>
+   <div class="goals">${P.goals.map(g=>`<div class="goal${goalDone(g)?' ok':''}"><span class="e">${goalDone(g)?'✅':goalIcon(g)}</span><div>${goalText(g)} ${Math.min(g.p,g.n)}/${g.n}<div class="bar"><i style="width:${Math.min(100,g.p/g.n*100)}%"></i></div></div></div>`).join('')}</div>
+   <div class="sub"><span>3 ⭐ se sobrarem ${need3} turnos · 2 ⭐ com ${Math.ceil(P.turns*.25)}</span>${tide}</div>
+   <div class="orders">${P.orders.map(o=>{ const want=cur&&!cur.m&&matches(o,cur), ready=o.items.some(x=>!x.done&&have.has(x.l+x.n));
+      return `<button class="order${want?' want':''}${ready?' ready':''}" data-order="${o.id}" aria-label="Pedido de ${o.who}: ${o.items.map(x=>item(x.l,x.n)[1]+' nível '+x.n).join(' e ')}"><span class="who">${o.face} ${o.who}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub>${x.n}</sub></span>`).join('')}</span></button>`; }).join('')}
+    <button class="order seal${cur&&cur.n===MAX&&!cur.m?' want':''}" data-seal="1" aria-label="Espaço do Selo: itens de nível 5"><span class="who">🏅 Selo</span><span class="need" style="font-size:12px">${Object.keys(LINES).map(k=>`${item(k,5)[0]}${Math.min(3,S.selo5[k]||0)}`).join(' ')}</span><span class="who">nível 5</span></button></div>
+   <div class="wrap" id="wrap"><div class="board" id="board">${P.board.map((x,i)=>{
+      const fl=flooded(i)?' flood':'', ar=P.armed?' armed':'';
+      if(!x) return `<button class="cell${fl}${ar}" data-cell="${i}" aria-label="Casa vazia"></button>`;
+      if(x.o==='crate') return `<button class="cell crate${ar}" data-cell="${i}" aria-label="Caixote"></button>`;
+      if(x.o==='mold') return `<button class="cell mold${ar}" data-cell="${i}" aria-label="Mofo"></button>`;
+      return `<button class="cell has${x.m?' moldy':''}${fl}${ar}${sel===i?' sel':''}${popAt===i?' pop':''}" style="--lc:${lc(x.l)}" data-cell="${i}" aria-label="${item(x.l,x.n)[1]} nível ${x.n}${x.m?', mofado':''}"><span class="em">${item(x.l,x.n)[0]}</span><span class="lv">${x.n}</span></button>`; }).join('')}</div></div>
+   <div class="info${P.armed?' armed':''}">${info}</div>
+   <div class="dock">${c.lines.map(l=>`<button class="basket" style="--lc:${lc(l)}" data-act="spawn:${l}" aria-label="Cesto de ${LINES[l].name}: gasta 1 turno"><span class="em">${LINES[l].it[0][0]}</span><b>${LINES[l].name}</b><small>−1 turno</small></button>`).join('')}
+    ${Object.entries(TOOLS).map(([k,[em,n]])=>`<button class="basket tool${P.armed===k?' on':''}" data-act="tool:${k}" aria-label="${n}: você tem ${S.tools[k]}" ${S.tools[k]>0&&P.toolsUsed<MAX_TOOLS?'':'disabled'}><span class="em">${em}</span><b>${S.tools[k]}</b><small>${P.toolsUsed}/${MAX_TOOLS}</small></button>`).join('')}</div>`;
+}
+function fit(){
+  const w=$('wrap').clientWidth,h=$('wrap').clientHeight,g=4, cs=Math.floor(Math.min((w-g*(COLS-1))/COLS,(h-g*(ROWS-1))/ROWS));
+  $('board').style.setProperty('--cs',Math.max(24,Math.min(cs,64))+'px'); $('board').style.gridTemplateColumns=`repeat(${COLS},var(--cs))`; popAt=-1;
+}
+function renderSheet(){
+  let h='', T='';
+  if(sheetName==='diary'){ T='Diário de Viagem';
+    h=`<p class="note">Cada fase vencida revela um cartão sobre o lugar ou o produto. ${S.cards.length}/${CARDS.length} cartões${S.diaryDone?' · coleção completa!':' · complete o Ver-o-Peso e ganhe 150 🪙'}.</p><h2>🛶 Ver-o-Peso</h2><div class="dgrid">`
+     +CARDS.map((c,i)=>S.cards.includes(i)?`<button class="dcard" data-act="card:${i}"><span class="em">${c.em}</span><b>${c.t}</b><small>${c.p}</small></button>`
+       :`<div class="dcard lock"><span class="em">${c.em}</span><b>?</b><small>Vença a fase ${i+1}</small></div>`).join('')+'</div>';
+  } else if(sheetName==='selos'){ T='Mochila de Selos';
+    h=`<p class="note">Selos são conquistados jogando, nunca vendidos. Antes de cada fase você escolhe quais levar. Neste teste a mochila tem 1 vaga e só o Selo do Ver-o-Peso pode ser conquistado.</p>`
+     +(S.selos.includes(0)?`<label class="chk"><input type="checkbox" data-act="sealon" ${S.sealOn?'checked':''}><span><b>Levar Força do Açaí</b> nas fases (+3 turnos)</span></label>`:'')
+     +SELOS.map(([em,n,d],i)=>`<div class="row${S.selos.includes(i)?' cur':' lock'}"><span class="face">${S.selos.includes(i)?em:'🔒'}</span><div><b>${n}</b> · ${MARKETS[i].n}<p>${d}</p></div></div>`).join('');
+  } else { T='Ajustes';
+    const rows=PHASES.map((c,i)=>{ const h=phStat(i), done=h.wins+h.losses, rate=done?Math.round(h.losses/done*100):null, al=rate!=null&&done>=3&&(rate>60||rate<10);
+      return `<tr><td>${i+1}${c.boss?' 🌊':''}</td><td>${h.tries}</td><td>${h.wins}</td><td>${h.losses}${h.stuck?` (${h.stuck}🧱)`:''}</td><td class="${al?'alert':''}">${rate==null?'—':rate+'%'}</td><td>${h.wins?(h.left/h.wins).toFixed(1):'—'}</td><td>${starsOf(i)||'—'}</td></tr>`; }).join('');
+    const tg=(k,t,d)=>`<div class="row"><div><b>${t}</b><p>${d}</p></div><button class="btn${S.opts[k]?'':' ghosty'}" data-act="opt:${k}" aria-pressed="${S.opts[k]}">${S.opts[k]?'Ligado':'Desligado'}</button></div>`;
+    h=tg('sound','Som','Toques ao colher, juntar e entregar.')+tg('test','Modo teste','Libera todas as fases e oferece +5 turnos ao perder por falta de turnos.')
+     +`<h2>Painel do teste</h2><p class="note">Por fase: tentativas, vitórias, derrotas (🧱 = tabuleiro travado), taxa de derrota, média de turnos sobrando nas vitórias e melhor resultado. Pela heurística do documento de design, taxa de derrota acima de 60% ou abaixo de 10% pede ajuste (em vermelho, a partir de 3 partidas).</p>
+      <table class="met"><thead><tr><th>Fase</th><th>Tent.</th><th>Vit.</th><th>Der.</th><th>Taxa</th><th>Sobra</th><th>⭐</th></tr></thead><tbody>${rows}</tbody></table>
+      <p class="note">O progresso fica salvo só neste navegador. Mapa do Brasil: @svg-maps/brazil, licença CC BY 4.0.</p>
+      <div class="row"><div><b>Recomeçar do zero</b><p class="warn">Apaga todo o progresso e o painel.</p></div><button class="btn ghosty" data-act="reset">Recomeçar</button></div>`;
+  }
+  $('sheetin').innerHTML=`<header><h1>${T}</h1><button class="btn ghosty" data-act="sheetclose">Fechar</button></header>${h}`;
+}
+function showCard(i,more){
+  const c=CARDS[i];
+  modal(`<div class="big">${c.em}</div><h2>${c.t}</h2><p class="place">📍 ${c.p}</p><p>${c.f}</p>${more?`<div class="more">${c.m}</div>`:`<button class="btn ghosty sm" data-act="cardmore:${i}">Saiba mais</button>`}<button class="btn" data-act="mclose">Fechar</button>`);
+  if(!S.diaryDone&&S.cards.length===CARDS.length){ S.diaryDone=true; S.coins+=150; save(); toast('Coleção do Ver-o-Peso completa: +150 🪙'); }
+}
+
+/* ===================== ENTRADA ===================== */
+document.addEventListener('click',e=>{
+  lastAct=Date.now();
+  const a=e.target.closest('[data-act]');
+  if(a){ const [k,v]=a.dataset.act.split(':');
+    if(k==='intro'){ introTap(); return; }
+    if(k==='go'){ closeModal(); sheetName=null; $('sheet').hidden=true; screen=v; P=v==='game'?P:null; render(); $('main').scrollTop=0; }
+    else if(k==='start'){ const i=+v, c=PHASES[i];
+      modal(`<div class="big">${c.boss?'🌊':'🛶'}</div><h2>${c.boss?c.name:`Fase ${i+1} · ${c.name}`}</h2><ul>${c.goals.map(g=>`<li>${goalIcon(g)} ${goalText(g)}: ${g.n}</li>`).join('')}<li>⏳ ${c.turns} turnos</li>${c.crate?`<li>📦 ${c.crate} caixotes</li>`:''}${c.mold?`<li>🦠 ${c.mold} ${c.mold>1?'focos':'foco'} de mofo</li>`:''}</ul>
+       ${S.selos.includes(0)?`<label class="chk"><input type="checkbox" data-act="sealon" ${S.sealOn?'checked':''}><span>🏅 Levar <b>Força do Açaí</b> (+3 turnos)</span></label>`:''}
+       <button class="btn" data-act="phase:${i}">Jogar</button><button class="btn ghosty" data-act="mclose">Voltar</button>`); }
+    else if(k==='phase'){ closeModal(); startPhase(+v); }
+    else if(k==='locked') toast('Vença a fase anterior para abrir esta.');
+    else if(k==='spawn'){ if(!P.armed) { spawn(v); render(); } }
+    else if(k==='tool'){ P.armed=P.armed===v?null:v; sel=null; render(); }
+    else if(k==='disarm'){ P.armed=null; render(); }
+    else if(k==='pause') modal(`<div class="big">⏸</div><h2>Pausa</h2><button class="btn" data-act="mclose">Continuar</button><button class="btn ghosty" data-act="phase:${P.i}">Recomeçar a fase</button><button class="btn ghosty" data-act="quit">Sair para o mercado</button>`);
+    else if(k==='quit'){ if(P&&!P.over){ phStat(P.i).losses++; } closeModal(); screen='market'; P=null; render(); }
+    else if(k==='plus5'){ closeModal(); P.turns+=5; P.over=null; phStat(P.i).losses--; render(); }
+    else if(k==='buy'){ const c=TOOLS[v][3]; if(S.coins>=c){ S.coins-=c; S.tools[v]++; beep(820); render(); } }
+    else if(k==='card'){ showCard(+v,false); }
+    else if(k==='cardmore'){ showCard(+v,true); }
+    else if(k==='sealon'){ S.sealOn=a.checked; save(); return; }
+    else if(k==='sheet'){ sheetName=v; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
+    else if(k==='sheetclose'){ sheetName=null; $('sheet').hidden=true; render(); }
+    else if(k==='opt'){ S.opts[v]=!S.opts[v]; render(); }
+    else if(k==='reset') modal('<h2>Recomeçar do zero?</h2><p>Todo o progresso e o painel de teste serão apagados.</p><button class="btn" data-act="resetyes">Apagar e recomeçar</button><button class="btn ghosty" data-act="mclose">Cancelar</button>');
+    else if(k==='resetyes'){ S=fresh(); closeModal(); sheetName=null; $('sheet').hidden=true; screen='home'; P=null; render(); }
+    else if(k==='mclose'){ closeModal(); render(); }
+    return;
+  }
+  if(noClick||screen!=='game'||!P||P.over) return;
+  const o=e.target.closest('[data-order]');
+  if(o){ const id=+o.dataset.order, ord=P.orders.find(x=>x.id===id); if(!ord) return;
+    if(sel!=null){ deliver(sel,id); render(); return; }
+    const i=P.board.findIndex((x,k)=>isItem(x)&&!x.m&&!flooded(k)&&matches(ord,x));
+    if(i>=0) deliver(i,id); else toast('Você ainda não tem o que esse cliente pediu.'); render(); return; }
+  if(e.target.closest('[data-seal]')){ if(sel!=null) deliverSeal(sel); else toast('Entregue aqui itens de nível 5 para conquistar o Selo de Domínio.'); render(); return; }
+  const c=e.target.closest('[data-cell]'); if(!c) return;
+  const i=+c.dataset.cell, x=P.board[i];
+  if(P.armed){ useTool(P.armed,i); render(); return; }
+  if(sel!=null&&sel!==i){ const s0=P.board[sel];
+    if(free(i)&&!flooded(sel)){ P.board[i]=s0; P.board[sel]=null; sel=null; render(); return; }
+    if(canMerge(s0,x)&&merge(sel,i)){ sel=null; render(); return; }
+  }
+  sel=(sel===i||!isItem(x))?null:i; render();
+});
+document.addEventListener('pointerdown',e=>{ lastAct=Date.now(); const c=e.target.closest('#board [data-cell]'); if(!c||!P||P.over||P.armed) return; const i=+c.dataset.cell;
+  if(!isItem(P.board[i])||flooded(i)) return; drag={i,x:e.clientX,y:e.clientY,on:false,id:e.pointerId,g:null,cur:-1,prev:-1}; });
+window.addEventListener('pointermove',e=>{
+  if(!drag||e.pointerId!==drag.id) return;
+  if(!drag.on&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>8){ drag.on=true; const it=P.board[drag.i]; drag.g=document.createElement('div'); drag.g.className='ghost'; drag.g.textContent=item(it.l,it.n)[0]; document.body.appendChild(drag.g);
+    const c=$('board').querySelector(`[data-cell="${drag.i}"]`); if(c)c.classList.add('drag'); }
+  if(drag.on){ drag.g.style.left=e.clientX+'px'; drag.g.style.top=e.clientY+'px';
+    // Guarda o último item igual por onde o dedo passou; ele só entra na fusão (tripla) se for vizinho do destino.
+    const el=document.elementFromPoint(e.clientX,e.clientY), c=el&&el.closest('#board [data-cell]'), k=c?+c.dataset.cell:-1;
+    if(k>=0&&k!==drag.cur){ const it=P.board[drag.i], same=j=>j>=0&&j!==drag.i&&!flooded(j)&&canMerge(it,P.board[j]);
+      drag.prev=same(k)&&same(drag.cur)?drag.cur:same(k)&&same(drag.prev)&&isAdj(k,drag.prev)?drag.prev:-1; drag.cur=k;
+      $('board').querySelectorAll('.trail').forEach(x=>x.classList.remove('trail'));
+      if(drag.prev>=0&&it.n+2<=MAX&&isAdj(k,drag.prev)) [k,drag.prev].forEach(j=>$('board').querySelector(`[data-cell="${j}"]`).classList.add('trail')); } }
+});
+function endDrag(e,cancel){
+  if(!drag||e.pointerId!==drag.id) return; const d=drag; drag=null; if(!d.on) return;
+  d.g.remove(); noClick=true; setTimeout(()=>noClick=false,60); lastAct=Date.now();
+  const el=cancel?null:document.elementFromPoint(e.clientX,e.clientY);
+  const c=el&&el.closest('#board [data-cell]'), o=el&&el.closest('[data-order]'), sl=el&&el.closest('[data-seal]');
+  if(c){ const to=+c.dataset.cell; if(free(to)){ P.board[to]=P.board[d.i]; P.board[d.i]=null; } else merge(d.i,to,d.prev); }
+  else if(o) deliver(d.i,+o.dataset.order); else if(sl) deliverSeal(d.i);
+  sel=null; render();
+}
+window.addEventListener('pointerup',e=>endDrag(e,false));
+window.addEventListener('pointercancel',e=>endDrag(e,true));
+window.addEventListener('resize',()=>{ if(screen==='game'&&$('board')) fit(); });
+setInterval(()=>{ // dica: destaca um par depois de alguns segundos parado
+  if(screen!=='game'||!P||P.over||P.armed||drag||!$('over').hidden||Date.now()-lastAct<7000) return;
+  const seen={}; for(let i=0;i<P.board.length;i++){ const x=P.board[i]; if(!isItem(x)||x.m||x.n>=MAX||flooded(i)) continue; const k=x.l+x.n;
+    if(seen[k]!=null){ [i,seen[k]].forEach(j=>{ const c=$('board').querySelector(`[data-cell="${j}"]`); if(c) c.classList.add('hint'); }); return; } seen[k]=i; }
+},1000);
+
+/* Vinheta de abertura da Bentevi: o bem-te-vi desce, pousa no galho e canta o próprio nome, sem pausa. */
+let introState=null;
+const CALL=[[0,.3,[2050,2500,2150]],[.46,.24,[1850,2100,1850]],[.9,.75,[2250,3050,2950,2600,2050]]];   // início, duração e contorno (Hz) de bem · te · vi
+function birdCall(){
+  try{ audio=audio||new (window.AudioContext||window.webkitAudioContext)(); const c=audio, t0=c.currentTime+.04;
+    const out=c.createGain(); out.gain.value=.3; out.connect(c.destination);
+    CALL.forEach(([at,d,fr],n)=>{ const g=c.createGain(), t=t0+at; g.connect(out);
+      g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(1,t+.035); g.gain.setValueAtTime(1,t+d*.6); g.gain.exponentialRampToValueAtTime(.001,t+d);
+      [[1,.8],[2,.16],[3,.05]].forEach(([h,v])=>{ const o=c.createOscillator(), og=c.createGain(); o.type='sine'; og.gain.value=v;
+        o.frequency.setValueCurveAtTime(new Float32Array(fr.map(f=>f*h)),t,d);
+        if(n===2){ const lf=c.createOscillator(), lg=c.createGain(); lf.frequency.value=26; lg.gain.value=22*h; lf.connect(lg); lg.connect(o.frequency); lf.start(t); lf.stop(t+d); }
+        o.connect(og); og.connect(g); o.start(t); o.stop(t+d+.02); }); });
+  }catch(e){}
+}
+function sing(){
+  if(!introState) return; const sp=[...$('wm').querySelectorAll('span')], bill=$('bill');
+  CALL.forEach(([at,d],i)=>{ introState.tms.push(setTimeout(()=>{ sp[i].classList.add('on'); bill.classList.add('open'); },at*1000), setTimeout(()=>bill.classList.remove('open'),(at+d*.8)*1000)); });
+  introState.tms.push(setTimeout(()=>{ $('wm').classList.add('done'); $('wsub').classList.add('on'); },1750), setTimeout(endIntro,3300));
+  if(!S.opts.sound) return;
+  if(audio&&audio.state==='running') birdCall();
+  else { const late=()=>{ if(introState){ try{ audio.resume().then(birdCall); }catch(e){} } }; window.addEventListener('pointerdown',late,{once:true,capture:true}); }   // navegador bloqueou o som: canta no primeiro toque
+}
+function endIntro(){
+  if(!introState) return; introState.tms.forEach(clearTimeout); introState=null;
+  $('intro').classList.add('out'); setTimeout(()=>{ $('intro').hidden=true; },520);
+}
+function intro(){
+  $('intro').hidden=false; introState={t0:Date.now(),tms:[]};
+  if(S.opts.sound){ try{ audio=audio||new (window.AudioContext||window.webkitAudioContext)(); audio.resume&&audio.resume(); }catch(e){} }
+  introState.tms.push(setTimeout(sing,matchMedia('(prefers-reduced-motion: reduce)').matches?300:2050));   // pousou, cantou
+}
+function introTap(){ endIntro(); }
+
+function start(){
+  S=load(); S.opts=S.opts||{sound:true,test:false}; render();
+  let q=null; try{ q=new URLSearchParams(location.search).get('intro'); }catch(e){} if(q!=='0') intro();
+}
+start();
+</script>
+</body>
+</html>
