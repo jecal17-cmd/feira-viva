@@ -292,6 +292,23 @@ A pedido, a Versão B passou a ter compras com dinheiro real além dos anúncios
 - **Pedidos em destaque:** cartões maiores, com o rosto do cliente, e o nível de cada item pedido na cor da banca. A encomenda foi para a faixa do mercado.
 - **A observar:** melhorias e decorações pagas encurtam a progressão; vigiar se quem compra perde o motivo para continuar. Verificar as regras das lojas e a legislação (seção 3.7) antes de publicar.
 
+### 4.10 Revisão v0.5 (a partir da avaliação de usuário novo)
+
+Mudanças feitas com base em `docs/avaliacoes/avaliacao-quitanda-zen.docx`. Onde houver conflito com as seções anteriores, vale esta.
+
+- **Primeiro mercado mais leve:** os cestos começam cheios no primeiro mercado (vazios nos seguintes) e a recarga é de 20 s por carga, subindo 15 s por parada até os 90 s. Na simulação, a espera pelos cestos no primeiro mercado caiu para cerca de 10 minutos (mediana).
+- **Tutorial no tabuleiro:** no lugar da tela de ajuda aberta no primeiro jogo, o Seu Zé guia três passos (juntar, entregar, colher), destacando onde tocar. A tela completa continua no ❓.
+- **Vinheta:** inteira só na primeira abertura do dia; nas demais, 1,5 s. A tela avisa que um toque pula.
+- **Tela inicial:** os seis atalhos cabem numa linha no celular pequeno.
+- **Anúncios e loja só a partir do segundo mercado:** sem anúncio de tela cheia, sem "Dobrar" e sem convites para a loja no primeiro mercado; fica só o anúncio opcional de cargas.
+- **Loja:** vende só o que economiza tempo (kits, moedas, Recarga, Junta-tudo e remover anúncios). Melhorias, ampliações e decorações voltam a ser só por moedas do jogo. O Kit Feirante passou a ter 5.000 moedas, 12 ⚡ e 12 🧲 por US$ 6,99.
+- **Viagem:** itens de nível 5 ou mais valem o dobro ao serem vendidos na viagem.
+- **Pedidos:** só o primeiro nome do cliente no cartão; ao tocar num pedido, a barra mostra o nome de cada item pedido.
+- **Encomenda:** é explicada na primeira vez que o jogador cria um item que serve, e o botão pisca até o primeiro uso.
+- **Música:** melodia calma gerada pelo próprio jogo, com botão em Ajustes.
+- **Ferramentas de teste escondidas:** Modo teste, painel e "Remover anúncios (simulado)" aparecem após 5 toques no número da versão, em Ajustes.
+- **Não feito:** a arte no lugar dos emojis, que depende das imagens.
+
 ## 5. Localização e idiomas
 
 **Ordem de lançamento.** Português (BR) + inglês no início; espanhol em seguida (público latino-americano); outros idiomas (alemão, francês etc.) só depois que os dados mostrarem de onde vêm jogadores e receita. O inglês é quase obrigatório porque o dinheiro do gênero está concentrado em mercados ocidentais, em especial os EUA.
