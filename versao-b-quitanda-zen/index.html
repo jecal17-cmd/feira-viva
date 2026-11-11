@@ -68,6 +68,14 @@ button:disabled{opacity:.45;cursor:default}
 .strip .bar{flex:1;min-width:40px;height:8px}
 .strip.go{background:var(--sun);color:#3A2A00;font-weight:800;justify-content:center;animation:pulse 1.2s infinite}
 @keyframes pulse{50%{transform:scale(1.02)}}
+.coach{box-shadow:inset 0 0 0 2px var(--sun)}
+.coach .zs{font-size:24px;line-height:1}
+.tutglow{animation:tutglow 1s ease-in-out infinite;position:relative;z-index:1}
+@keyframes tutglow{50%{box-shadow:0 0 0 4px var(--sun);transform:scale(1.05)}}
+.encb.chama{animation:tutglow 1s ease-in-out infinite;border-color:var(--sun)}
+.pulahint{margin-top:18px;font-size:12px;color:var(--muted);opacity:.8}
+.intro.curta g{animation-duration:.01s!important;animation-delay:0s!important}
+.ver{color:var(--muted);font-size:12px;text-align:center;padding:8px;width:100%}
 .wrap{flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
 .board{display:grid;gap:4px;touch-action:none;user-select:none;-webkit-user-select:none}
 .cell{width:var(--cs);height:var(--cs);border-radius:22%;background:var(--hole);position:relative;display:grid;place-items:center}
@@ -83,7 +91,7 @@ button:disabled{opacity:.45;cursor:default}
 @keyframes pop{0%{transform:scale(.5)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
 .fx{position:fixed;z-index:16;pointer-events:none;font-family:var(--display);font-weight:800;font-size:15px;color:var(--gold);text-shadow:0 1px 0 var(--panel),0 -1px 0 var(--panel),1px 0 0 var(--panel),-1px 0 0 var(--panel);transform:translate(-50%,-50%);animation:fx .9s ease-out forwards;white-space:nowrap}
 @keyframes fx{to{transform:translate(-50%,-260%);opacity:0}}
-@media (prefers-reduced-motion: reduce){.cell.pop,.cell.hint,.strip.go,.floaty i,.node .ring{animation:none!important}.fx{animation-duration:.01s}}
+@media (prefers-reduced-motion: reduce){.cell.pop,.cell.hint,.tutglow,.encb.chama,.strip.go,.floaty i,.node .ring{animation:none!important}.fx{animation-duration:.01s}}
 .ghost{position:fixed;z-index:15;pointer-events:none;font-size:40px;line-height:1;transform:translate(-50%,-70%)}
 .info{min-height:42px;background:var(--panel);border-radius:14px;padding:5px 10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .info p{margin:0;flex:1;min-width:0;font-size:12.5px;line-height:1.25}
@@ -123,9 +131,9 @@ button:disabled{opacity:.45;cursor:default}
 .play:active{transform:translateY(3px);box-shadow:0 2px 0 color-mix(in srgb,var(--accent) 60%,#000)}
 .where{background:var(--panel);border-radius:14px;padding:10px 12px;text-align:left;display:flex;flex-direction:column;gap:6px}
 .where small{color:var(--muted)}
-.hnav{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.hnav button{background:var(--panel);border-radius:14px;padding:8px 2px;font-weight:800;font-size:11.5px;position:relative;min-width:0}
-.hnav span{display:block;font-size:22px}
+.hnav{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+.hnav button{background:var(--panel);border-radius:12px;padding:7px 1px;font-weight:800;font-size:10px;position:relative;min-width:0;overflow:hidden;white-space:nowrap}
+.hnav span{display:block;font-size:19px}
 .gift{background:var(--sun);color:#3A2A00;font-weight:800;border-radius:14px;padding:10px}
 .sheet{z-index:20;background:var(--bg);overflow:auto;padding-block:calc(14px + env(safe-area-inset-top,0px)) calc(24px + env(safe-area-inset-bottom,0px));
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -273,6 +281,7 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
     </g></g></g></g>
    </g></g></svg>
   <div class="wm" id="wm"><span>Ben</span><span class="y">te</span><span>vi</span></div><div class="wsub" id="wsub">games</div>
+  <div class="pulahint" id="pulahint"></div>
 </div></div>
 <div class="sheet" id="sheet" hidden><div id="sheetin"></div></div>
 <div class="trip" id="trip" hidden><div class="tripin"><h2 id="triph"></h2><div class="map" id="tripmap"></div><p id="tripp"></p><button class="btn ghosty" data-act="tripskip" id="tripskip"></button></div></div>
@@ -416,30 +425,33 @@ const UPS={far:{ic:'🧺',bd:'2',n:['Cestos fartos','Bountiful baskets'],d:['Cad
 const MTYPES={merges:[['Faça {n} fusões','Make {n} merges'],20],orders:[['Atenda {n} pedidos','Fill {n} orders'],5],spawn:[['Colha {n} itens dos cestos','Pick {n} items from baskets'],30],big:[['Crie {n} itens de nível 5 ou mais','Make {n} items of level 5+'],2],triple:[['Faça {n} fusões triplas','Make {n} triple merges'],3],sell:[['Venda {n} itens','Sell {n} items'],6]};
 // Loja: compras com dinheiro real (simuladas neste protótipo). Preços em US$; as lojas convertem para a moeda local.
 // UNIT é o valor de referência de cada coisa comprada avulsa; serve para calcular a economia dos pacotes.
-const UNIT={coins:.5/300,rec:.33,mag:.33,up:.99,noAds:2.99};
+const UNIT={coins:.5/300,rec:.33,mag:.33,noAds:2.99};
 const SHOP={
  coins:[['c1',300,.5],['c2',1000,1.49],['c3',2500,2.99],['c4',6000,5.99],['c5',12000,9.99]],
  items:[['r3','rec',3,.99],['m3','mag',3,.99],['r10','rec',10,2.49],['m10','mag',10,2.49]],
  packs:[{id:'p1',n:['Kit Boas-vindas','Welcome kit'],once:true,coins:500,rec:3,mag:3,usd:.99},
         {id:'p2',n:['Kit Viajante','Traveler kit'],coins:2000,rec:5,mag:5,usd:3.99},
-        {id:'p3',n:['Kit Feirante','Vendor kit'],coins:5000,rec:10,mag:10,up:1,usd:6.99},
+        {id:'p3',n:['Kit Feirante','Vendor kit'],coins:5000,rec:12,mag:12,usd:6.99},
         {id:'p4',n:['Kit Quitanda Lendária','Legendary Quitanda kit'],coins:8000,rec:15,mag:15,noAds:true,usd:9.99}],
  up:.99, exp:1.99, noAds:2.99, decoAll:7.99
 };
 const decoUsd=c=>c<=600?.5:c<=2500?.99:1.99;                       // preço de cada decoração, pela faixa do preço em moedas
-const packValue=p=>p.coins*UNIT.coins+p.rec*UNIT.rec+p.mag*UNIT.mag+(p.up?3*UNIT.up*p.up:0)+(p.noAds?UNIT.noAds:0);
+const packValue=p=>p.coins*UNIT.coins+p.rec*UNIT.rec+p.mag*UNIT.mag+(p.noAds?UNIT.noAds:0);
 const TIPS=[['Arraste um item por cima de dois iguais que estejam lado a lado: os três se juntam e sobem 2 níveis.','Drag an item across two matching neighbors: all three merge and jump 2 levels.'],['Toque num pedido com borda verde para entregar direto.','Tap a green-bordered order to deliver it right away.'],['Fusões em sequência rendem XP extra de combo.','Quick merges in a row earn bonus combo XP.'],['Pedido com ⏱️ paga em dobro se você for rápido.','⏱️ orders pay double if you’re quick.'],['Concluiu a feira? Viaje pelo mapa para conhecer gente nova.','Finished a market? Travel the map to meet new friends.'],['Sem espaço? Venda um item ou use Organizar.','Out of space? Sell an item or tap Sort.']];
 
 /* ===================== TEXTOS DA INTERFACE ===================== */
 const UI={
  pt:{
+  tut:['Junte dois itens iguais: arraste um até o outro (os dois que piscam).','Agora entregue: toque no pedido com borda verde.','Junte até formar o que um cliente pede; aí o pedido fica com borda verde.','Acabaram os iguais? Toque num cesto para colher mais itens.','Pronto, a banca é sua! O ❓ lá em cima explica o resto.'],
+  encTip:'Novidade: itens de nível alto podem ir para a 📦 Encomenda. Entregue 5 e ganhe um prêmio grande!', asks:'Pede', tapSkip:'toque para pular',
+  travelBonus:'itens de nível 5 ou mais valem o dobro', oMusic:['Música','Melodia calma de fundo.'], version:'Quitanda Zen · protótipo v0.5', devOn:'Ferramentas de teste visíveis.', devOff:'Ferramentas de teste escondidas.',
   shopNote:'Compras simuladas neste teste: nada é cobrado. No app publicado, o pagamento é feito pela loja do celular, que converte o preço para a sua moeda.',
   hPacks:'Pacotes', hCoins:'Moedas', hItems:'Itens', bonusPct:p=>`+${p}% de bônus`, savePct:p=>`Economia de ${p}%`, once:'Só 1 vez', bought:'Comprado',
   recName:'Recarga', magName:'Junta-tudo', recD:'Enche todos os cestos na hora.', magD:'Junta de uma vez todos os pares iguais do tabuleiro.',
   allUp:'+1 nível em cada melhoria de cesto', noAdsInc:'sem anúncios de tela cheia', decoAll:'Todas as decorações', decoAllD:n=>`As ${n} peças que faltam, de uma vez. Cada uma dá +1% de XP.`,
   noAdsName:'Remover anúncios', noAdsD:'Sem anúncios de tela cheia e +25% nos prêmios dos anúncios opcionais.', hasIt:'Você já tem',
   iapT:'Confirmar compra', iapSim:'Compra simulada: nada será cobrado.', iapConfirm:p=>`Comprar por ${p}`, iapDone:n=>`Compra feita: ${n}`,
-  buyRec:'🛒 Comprar Recargas na Loja', toShop:'Faltam moedas? Na Loja há kits de moedas e melhorias.', openShop:'🛒 Loja', shopAria:c=>`${c} moedas. Abrir a Loja`,
+  buyRec:'🛒 Comprar Recargas na Loja', toShop:'Faltam moedas? Na Loja há kits de moedas.', openShop:'🛒 Loja', shopAria:c=>`${c} moedas. Abrir a Loja`,
   help:'Ajuda', tripTitle:c=>`Rumo a ${c}`, tripP:(a,b,km,v)=>`${a} → ${b} · ${km} km de ${v}`, bus:'ônibus', plane:'avião', skip:'Pular',
   tripDouble:v=>`▶ Dobrar o prêmio da viagem (+${v} moedas)`, tripDoubled:v=>`Prêmio da viagem dobrado: +${v} moedas`,
   emptyT:'Cesto vazio', emptyP:(n,p,nx)=>`Cada cesto ganha 1 carga a cada ${p}, mesmo com o jogo fechado. Próxima carga de ${n}: ${nx}.`,
@@ -451,7 +463,7 @@ const UI={
   tapEnter:'Toque para entrar', adFail:'O anúncio não carregou. Tente de novo em instantes.', bonusNow:b=>`Bônus atual: +${b}%.`, uGiftMag:'Presente: 1 🧲 Junta-tudo', uGiftRec:'Presente: 1 ⚡ Recarga',
   credit:'Mapa do Brasil: @svg-maps/brazil, licença CC BY 4.0.',
   helpNote:'Tudo o que você precisa saber para tocar a sua banca.',
-  HELP:[['🧺','Cestos','Toque num cesto para colher um item novo. Cada cesto ganha 1 carga a cada 90 s, até encher, mesmo com o jogo fechado. Ao chegar num mercado novo, os cestos começam vazios.'],
+  HELP:[['🧺','Cestos','Toque num cesto para colher um item novo. Os cestos ganham cargas com o tempo, até encher, mesmo com o jogo fechado: 1 a cada 20 s no primeiro mercado, chegando a 90 s nos seguintes. No primeiro mercado eles começam cheios; nos outros, vazios.'],
    ['🔀','Juntar','Arraste um item até outro igual, ou toque em um e depois no outro. Os dois viram um item do nível seguinte.'],
    ['✨','Fusão tripla','Arraste um item passando por cima de um igual e solte em outro igual ao lado dele. Os três viram um item 2 níveis acima.'],
    ['🧑','Pedidos','Os clientes no alto pedem itens. Borda verde quer dizer que você já tem o item: toque para entregar. Cada entrega dá XP, moedas e amizade.'],
@@ -474,7 +486,7 @@ const UI={
   encMin:L=>`A encomenda só aceita itens de nível ${L} ou mais.`, encDone:(x,co)=>`Encomenda entregue: +${x} XP, +${co} moedas e ⚡`,
   encHint:(n,L)=>`A encomenda pede ${n} itens de nível ${L} ou mais. Escolha um item e toque aqui.`,
   swapWait:w=>`Você pode trocar outro pedido em ${w} s.`, expanded:'Tabuleiro ampliado',
-  lapN:n=>'Volta '+n, stalls:'Bancas', willSell:(ls,v)=>`Itens de ${ls} serão vendidos por ${v} moedas`, arrivesFull:'O tabuleiro chega cheio de novidades',
+  lapN:n=>'Volta '+n, stalls:'Bancas', willSell:(ls,v)=>`Itens de ${ls} serão vendidos por ${v} moedas (${UI.pt.travelBonus})`, arrivesFull:'O tabuleiro chega cheio de novidades',
   hitRoad:'Pegar a estrada', notYet:'Ainda não', welcome:c=>`Bem-vindo a ${c}`, newLap:(n,p)=>`Volta ${n} pelo Brasil: +${p}% de XP e moedas`,
   tripRew:v=>`+${v} moedas e 1 🧲 pela viagem.`, meet:'Quem você vai conhecer:', openStall:'Abrir a banca',
   gift:(d,co,x)=>`Dia ${d} seguido: +${co} moedas${x?' e 2 🧲 + 2 ⚡':''}`,
@@ -517,13 +529,16 @@ const UI={
   pickFirst:'Escolha um item no tabuleiro primeiro.'
  },
  en:{
+  tut:['Merge two matching items: drag one onto the other (the two that are blinking).','Now deliver: tap the green-bordered order.','Keep merging until you make what a customer wants; the order then turns green.','Out of matches? Tap a basket to pick more items.','All set, the stall is yours! The ❓ at the top explains the rest.'],
+  encTip:'New: high-level items can go to the 📦 Bulk order. Deliver 5 for a big reward!', asks:'Wants', tapSkip:'tap to skip',
+  travelBonus:'items of level 5 or higher are worth double', oMusic:['Music','A calm background tune.'], version:'Quitanda · prototype v0.5', devOn:'Test tools visible.', devOff:'Test tools hidden.',
   shopNote:'Purchases are simulated in this test: nothing is charged. In the published app, payment goes through your phone’s store, which converts prices to your currency.',
   hPacks:'Bundles', hCoins:'Coins', hItems:'Items', bonusPct:p=>`+${p}% bonus`, savePct:p=>`Save ${p}%`, once:'One time only', bought:'Purchased',
   recName:'Refill', magName:'Merge-all', recD:'Fills every basket instantly.', magD:'Merges every matching pair on the board at once.',
   allUp:'+1 level on every basket upgrade', noAdsInc:'no full-screen ads', decoAll:'All decorations', decoAllD:n=>`The ${n} pieces you’re missing, all at once. Each adds +1% XP.`,
   noAdsName:'Remove ads', noAdsD:'No full-screen ads and +25% on optional ad rewards.', hasIt:'You already have it',
   iapT:'Confirm purchase', iapSim:'Simulated purchase: nothing will be charged.', iapConfirm:p=>`Buy for ${p}`, iapDone:n=>`Purchased: ${n}`,
-  buyRec:'🛒 Buy Refills in the Shop', toShop:'Short on coins? The Shop has coin kits and upgrades.', openShop:'🛒 Shop', shopAria:c=>`${c} coins. Open the Shop`,
+  buyRec:'🛒 Buy Refills in the Shop', toShop:'Short on coins? The Shop has coin kits.', openShop:'🛒 Shop', shopAria:c=>`${c} coins. Open the Shop`,
   help:'Help', tripTitle:c=>`Heading to ${c}`, tripP:(a,b,km,v)=>`${a} → ${b} · ${km} km by ${v}`, bus:'bus', plane:'plane', skip:'Skip',
   tripDouble:v=>`▶ Double the trip reward (+${v} coins)`, tripDoubled:v=>`Trip reward doubled: +${v} coins`,
   emptyT:'Basket empty', emptyP:(n,p,nx)=>`Each basket gains 1 charge every ${p}, even while the game is closed. Next ${n} charge: ${nx}.`,
@@ -535,7 +550,7 @@ const UI={
   tapEnter:'Tap to enter', adFail:'The ad didn’t load. Please try again in a moment.', bonusNow:b=>`Current bonus: +${b}%.`, uGiftMag:'Gift: 1 🧲 Merge-all', uGiftRec:'Gift: 1 ⚡ Refill',
   credit:'Map of Brazil: @svg-maps/brazil, CC BY 4.0 license.',
   helpNote:'Everything you need to know to run your stall.',
-  HELP:[['🧺','Baskets','Tap a basket to pick a new item. Each basket gains 1 charge every 90 s until full, even while the game is closed. At a new market, baskets start empty.'],
+  HELP:[['🧺','Baskets','Tap a basket to pick a new item. Baskets gain charges over time until full, even while the game is closed: 1 every 20 s at the first market, slowing to 90 s later on. They start full at the first market and empty at the others.'],
    ['🔀','Merge','Drag an item onto a matching one, or tap one and then the other. They become one item of the next level.'],
    ['✨','Triple merge','Drag an item across a matching one and drop it on another match right next to it. All three become an item 2 levels up.'],
    ['🧑','Orders','Customers at the top ask for items. A green border means you already have it: tap to deliver. Each delivery earns XP, coins and friendship.'],
@@ -558,7 +573,7 @@ const UI={
   encMin:L=>`The bulk order only takes items of level ${L} or higher.`, encDone:(x,co)=>`Bulk order delivered: +${x} XP, +${co} coins and ⚡`,
   encHint:(n,L)=>`The bulk order needs ${n} items of level ${L} or higher. Pick an item, then tap here.`,
   swapWait:w=>`You can swap another order in ${w}s.`, expanded:'Board expanded',
-  lapN:n=>'Lap '+n, stalls:'Stalls', willSell:(ls,v)=>`${ls} items will be sold for ${v} coins`, arrivesFull:'Your board arrives full of new goods',
+  lapN:n=>'Lap '+n, stalls:'Stalls', willSell:(ls,v)=>`${ls} items will be sold for ${v} coins (${UI.en.travelBonus})`, arrivesFull:'Your board arrives full of new goods',
   hitRoad:'Hit the road', notYet:'Not yet', welcome:c=>`Welcome to ${c}`, newLap:(n,p)=>`Lap ${n} around Brazil: +${p}% XP and coins`,
   tripRew:v=>`+${v} coins and 1 🧲 for the trip.`, meet:'Who you’ll meet:', openStall:'Open the stall',
   gift:(d,co,x)=>`Day ${d} streak: +${co} coins${x?' and 2 🧲 + 2 ⚡':''}`,
@@ -616,9 +631,12 @@ const reg=f=>LANG==='en'?REG[f.reg]:f.reg;
 const linesAt=s=>feira(s).lines.slice(0,s===0?2:s===1?3:4);
 const lines=()=>linesAt(S.stop);
 const castAt=s=>CAST.filter(c=>c.at<0||c.at===s%FEIRAS.length);
+const curto=n=>{ const w=n.split(' '); return n.length>9&&w.length>1?w[w.length-1]:n; };   // no cartão do pedido cabe só o primeiro nome
 const lapBonus=()=>1+.1*(lap(S.stop)-1);
 const cap=()=>BASE_CAP+CAP_UP*S.up.cap;
-const periodAt=lv=>BASE_PERIOD*Math.pow(.92,lv);
+// Recarga por mercado: 20 s no primeiro, subindo 15 s por parada até os 90 s (BASE_PERIOD)
+const stopPeriod=()=>Math.min(BASE_PERIOD,20000+15000*S.stop);
+const periodAt=lv=>stopPeriod()*Math.pow(.92,lv);
 const period=()=>periodAt(S.up.spd)/(S.opts.test?10:1);
 const farOdds=lv=>{ const p3=Math.min(.2,.03*lv), p2=Math.min(.6,.1+.06*lv); return [p2-p3,p3]; };
 const mmss=sec=>sec<60?sec+' s':Math.floor(sec/60)+':'+String(sec%60).padStart(2,'0');
@@ -647,9 +665,9 @@ function newMission(s,slot){
 function fresh(coins){
   const now=Date.now(), s={v:2,level:1,xp:0,coins:coins||0,cols:6,rows:7,exp:0,board:Array(42).fill(null),baskets:{},orders:[],nextId:1,
     stop:0,served:0,goalSeen:false,day:today(),daily:{adCharge:0,adDouble:0,chest:0},streak:0,giftDay:'',
-    recipes:[],decor:[],friends:{},missions:[null,null,null],missTier:0,enc:{k:0,got:0},boost:{mag:2,rec:1},up:{far:0,cap:0,spd:0},swapAt:0,iap:{n:0,usd:0,once:[]},
+    tut:0,recipes:[],decor:[],friends:{},missions:[null,null,null],missTier:0,enc:{k:0,got:0},boost:{mag:2,rec:1},up:{far:0,cap:0,spd:0},swapAt:0,iap:{n:0,usd:0,once:[]},
     stats:{merges:0,items:0,orders:0,rew:0,inter:0,playMs:0,xp:0,first:now,lastInter:0},opts:{sound:true,noAds:false,test:false,lang:LANG}};
-  fillBoard(s); linesAt(0).forEach(k=>s.baskets[k]={c:0,t:now});
+  fillBoard(s); linesAt(0).forEach(k=>s.baskets[k]={c:BASE_CAP,t:now});   // no primeiro mercado os cestos começam cheios
   for(let i=0;i<3;i++) s.missions[i]=newMission(s,i);
   return s;
 }
@@ -689,6 +707,18 @@ function toast(m){ const el=$('toast'), inf=$('info'); el.textContent=m; el.hidd
 function beep(f,d){ if(!S.opts.sound) return; try{ audio=audio||new (window.AudioContext||window.webkitAudioContext)(); const o=audio.createOscillator(),g=audio.createGain(), t0=audio.currentTime+(d||0);
   o.type='sine'; o.frequency.value=f; g.gain.setValueAtTime(.08,t0); g.gain.exponentialRampToValueAtTime(.001,t0+.25);
   o.connect(g); g.connect(audio.destination); o.start(t0); o.stop(t0+.26);}catch(e){} }
+// Música de fundo: melodia calma em escala pentatônica, gerada na hora (sem arquivos). Liga em Ajustes.
+const Musica={ tm:null, i:2, n:0,
+  ligar(){ const on=S.opts.music!==false&&S.opts.sound; if(!on){ clearInterval(this.tm); this.tm=null; return; } if(this.tm) return;
+    try{ audio=audio||new (window.AudioContext||window.webkitAudioContext)(); audio.resume&&audio.resume(); }catch(e){ return; }
+    this.tm=setInterval(()=>this.nota(),720); },
+  nota(){ if(document.visibilityState!=='visible'||!audio||audio.state!=='running') return;
+    const E=[261.6,293.7,329.6,392,440,523.3,587.3,659.3]; this.n++;
+    if(this.n%8===7) return;                                   // respiro
+    this.i=Math.max(0,Math.min(E.length-1,this.i+[-2,-1,-1,0,1,1,2][Math.floor(Math.random()*7)]));
+    const toca=(f,v,d,tipo)=>{ const o=audio.createOscillator(), g=audio.createGain(), t0=audio.currentTime; o.type=tipo; o.frequency.value=f;
+      g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(v,t0+.06); g.gain.exponentialRampToValueAtTime(.0008,t0+d); o.connect(g); g.connect(audio.destination); o.start(t0); o.stop(t0+d+.05); };
+    toca(E[this.i],.022,1.5,'sine'); if(this.n%4===0) toca(E[[0,3,4,3][(this.n/4)%4]]/2,.02,2.6,'triangle'); } };
 function bump(k,n){ for(const m of S.missions) if(m.t===k) m.p+=n; }
 function fx(i,m){ fxQ.push([i,m]); }
 
@@ -711,6 +741,7 @@ function levelUp(ups){
   S.coins+=co; beep(660); beep(880,.12); beep(1100,.24);
   modal(`<div class="big">🎉</div><h1>${t('lvlTitle',S.level)}</h1><p>${t('lvlP',fmt(co))}</p>${news.length?'<ul>'+news.map(x=>`<li>${x}</li>`).join('')+'</ul>':''}<button class="btn" data-act="lvlok">${t('cont')}</button>`);
 }
+let verTaps=0;
 let fxHold=false;   // durante a animação do Junta-tudo, avisos (como o de nível novo) esperam a animação terminar
 function modal(html){ if(fxHold||!$('over').hidden){ modalQ.push(html); return; } $('card').innerHTML=html; $('over').hidden=false; const b=$('card').querySelector('button:not(:disabled)'); if(b)b.focus(); }
 function closeModal(){ $('over').hidden=true; clearInterval(adTimer); if(modalQ.length) modal(modalQ.shift()); }
@@ -748,7 +779,7 @@ function showAd(kind,cb){
 }
 function maybeInter(){
   const k=S.opts.test?.1:1, now=Date.now();
-  if(S.opts.noAds||now-S.stats.first<3e5*k||now-S.stats.lastInter<1.8e5*k||!$('over').hidden||trip) return;
+  if(S.stop<1||S.opts.noAds||now-S.stats.first<3e5*k||now-S.stats.lastInter<1.8e5*k||!$('over').hidden||trip) return;
   S.stats.lastInter=now; showAd('int');
 }
 const bonus=()=>S.opts.noAds?1.25:1;
@@ -758,12 +789,15 @@ function spawn(k){
   const empty=[]; S.board.forEach((x,i)=>{ if(!x)empty.push(i); });
   if(!empty.length){ toast(t('boardFull')); return; }
   if(b.c>=cap())b.t=Date.now(); b.c--; const f=S.up.far, r=Math.random(), n=r<Math.min(.2,.03*f)?3:r<Math.min(.6,.1+.06*f)?2:1;
+  tutMarca(4);
   const i=pick(empty); S.board[i]={l:k,n}; popAt=i; S.stats.items++; bump('spawn',1); beep(520); render();
 }
 function merge(from,to,quiet,via){
   const r=doMerge(S.board,S.cols,S.rows,from,to,via); if(!r) return false;
   const now=Date.now(); combo=now-lastMerge<3500?combo+1:1; lastMerge=now;
   S.stats.merges++; bump('merges',1); if(r.third>=0) bump('triple',1); if(r.n>=5) bump('big',1);
+  if(!S.encHint&&r.n>=encLvl()&&S.tut>=4){ S.encHint=1; setTimeout(()=>toast(t('encTip')),600); }
+  tutMarca(1);
   const x=gain(Math.ceil(r.n/2)+(r.third>=0?2:0)+Math.min(5,Math.floor(combo/4)),0);
   popAt=to; fx(to,`+${x} XP${combo>=3?' · combo ×'+combo:''}${r.third>=0?(LANG==='en'?' · triple!':' · tripla!'):''}`);
   if(!quiet) beep(r.third>=0?780:600+Math.min(combo,10)*20); return true;
@@ -796,8 +830,9 @@ function deliver(i,id){
   const it=S.board[i]; if(!it) return; const o=id?S.orders.find(x=>x.id===id):orderFor(it);
   const nd=o&&matches(o,it);
   if(!nd){ toast(t('notOrdered')); return; }
-  nd.done=true; S.board[i]=null; sel=null; selOrder=null; o.xp=(o.xp||0)+XPV[it.n]; o.co=(o.co||0)+COV[it.n]; gain(XPV[it.n],COV[it.n]); beep(700);
+  tutMarca(2); nd.done=true; S.board[i]=null; sel=null; selOrder=null; o.xp=(o.xp||0)+XPV[it.n]; o.co=(o.co||0)+COV[it.n]; gain(XPV[it.n],COV[it.n]); beep(700);
   if(o.items.every(x=>x.done)){
+    tutMarca(2);
     const c=CAST.find(x=>x.id===o.who); S.stats.orders++; S.served++; bump('orders',1); befriend(c); beep(940,.1);
     if(o.rush&&Date.now()<o.rush){ gain(o.xp,o.co); o.xp*=2; o.co*=2; toast(t('rushDone')); }
     if(o.rec!=null&&!S.recipes.includes(o.rec)){ S.recipes.push(o.rec); gain(30,30); toast(t('recipeFound',tx(RECIPES[o.rec].name))); }
@@ -812,7 +847,7 @@ function deliver(i,id){
 function deliverEnc(i){
   const it=S.board[i]; if(!it) return; const L=encLvl();
   if(it.n<L){ toast(t('encMin',L)); return; }
-  S.board[i]=null; sel=null; S.enc.got++; beep(700);
+  S.board[i]=null; sel=null; S.enc.got++; S.encHint=2; beep(700);
   if(S.enc.got>=ENC_N){ const xp=Math.round(XPV[L]*ENC_N*1.5), co=COV[L]*ENC_N*2; S.enc={k:S.enc.k+1,got:0}; S.boost.rec++; const x=gain(xp,co); toast(t('encDone',x,co)); }
   render();
 }
@@ -833,7 +868,7 @@ function expand(paid){
 }
 function travelAsk(){
   const nx=S.stop+1, f=feira(nx), ls=linesAt(nx), gone=lines().filter(k=>!ls.includes(k));
-  const val=S.board.reduce((a,x)=>a+(x&&gone.includes(x.l)?COV[x.n]:0),0);
+  const val=S.board.reduce((a,x)=>a+(x&&gone.includes(x.l)?COV[x.n]*(x.n>=5?2:1):0),0);
   modal(`<div class="big">${f.ic}</div><h1>${f.n}</h1><p>${f.c} (${f.uf}) · ${reg(f)}${lap(nx)>1?' · '+t('lapN',lap(nx)):''}</p><p class="note">${tx(f.txt)}</p>
    <ul><li>${t('stalls')}: ${ls.map(k=>LINES[k].it[0][0]+' '+lname(k)).join(', ')}</li>${gone.length?`<li>${t('willSell',gone.map(lname).join(t('and')),fmt(val))}</li>`:''}<li>${t('arrivesFull')}</li></ul>
    <button class="btn" data-act="travel">${t('hitRoad')}</button><button class="btn ghosty" data-act="mclose">${t('notYet')}</button>`);
@@ -842,7 +877,7 @@ function travel(){
   if(S.served<goal(S.stop)) return;
   const old=S.stop, oldLap=lap(old); S.stop++; S.served=0; S.goalSeen=false;
   const ls=lines(), now=Date.now(), f=feira(S.stop); let sold=0;
-  S.board=S.board.map(x=>{ if(x&&!ls.includes(x.l)){ sold+=COV[x.n]; return null; } return x; });
+  S.board=S.board.map(x=>{ if(x&&!ls.includes(x.l)){ sold+=COV[x.n]*(x.n>=5?2:1); return null; } return x; });
   S.baskets={}; ls.forEach(k=>S.baskets[k]={c:0,t:now}); S.orders=[]; fillBoard(S);
   const rew=Math.min(500,50+25*old); S.coins+=sold+rew; S.boost.mag++; sel=null; selOrder=null; offer=null; tripBonus=rew;
   sheetName=null; $('sheet').hidden=true; homeOn=false;
@@ -871,7 +906,7 @@ function basketEmpty(k){
   const b=S.baskets[k], nx=mmss(Math.max(0,Math.ceil((period()-(Date.now()-b.t))/1000))), ad=S.daily.adCharge<AD_MAX;
   modal(`<div class="big">🧺</div><h2>${t('emptyT')}</h2><p>${t('emptyP',lname(k),mmss(Math.round(period()/1000)),nx)}</p>
    ${ad?`<button class="btn" data-act="adcharge">${t('adFill',Math.round(AD_CHARGE*bonus()),S.daily.adCharge,AD_MAX)}</button>`:`<p class="note">${t('adLimit')}</p>`}
-   ${S.boost.rec>0?`<button class="btn${ad?' ghosty':''}" data-act="userec">${t('useRec',S.boost.rec)}</button>`:`<button class="btn ghosty" data-act="shop">${t('buyRec')}</button>`}<button class="btn ghosty" data-act="mclose">${t('wait')}</button>`);
+   ${S.boost.rec>0?`<button class="btn${ad?' ghosty':''}" data-act="userec">${t('useRec',S.boost.rec)}</button>`:S.stop>=1?`<button class="btn ghosty" data-act="shop">${t('buyRec')}</button>`:''}<button class="btn ghosty" data-act="mclose">${t('wait')}</button>`);
 }
 const usd=v=>LANG==='en'?'$'+v.toFixed(2):'US$ '+v.toFixed(2).replace('.',',');
 const packText=p=>`${fmt(p.coins)} 🪙 · ${p.rec} ⚡ · ${p.mag} 🧲${p.up?' · '+t('allUp'):''}${p.noAds?' · '+t('noAdsInc'):''}`;
@@ -899,11 +934,7 @@ function shopHtml(){
    +SHOP.packs.map(p=>{ const got=p.once&&S.iap.once.includes(p.id); return row('🎁','',tx(p.n),packText(p)+(p.once?' · '+t('once'):''),got?`<button class="btn" disabled>${t('bought')}</button>`:buy('pack-'+p.id,p.usd),t('savePct',Math.round((1-p.usd/packValue(p))*100))); }).join('')
    +`<h2>${t('hCoins')}</h2>`+SHOP.coins.map(([id,n,v])=>{ const b=Math.round((n/v/base-1)*100); return row('🪙','',t('coinsN',fmt(n)),b>0?t('bonusPct',b):'&nbsp;',buy('coins-'+id,v)); }).join('')
    +`<h2>${t('hItems')}</h2>`+SHOP.items.map(([id,k,n,v])=>row(k==='rec'?'⚡':'🧲','×'+n,`${n} × ${t(k==='rec'?'recName':'magName')}`,t(k==='rec'?'recD':'magD'),buy('item-'+id,v))).join('')
-   +row('🚫','',t('noAdsName'),t('noAdsD'),S.opts.noAds?`<button class="btn" disabled>${t('bought')}</button>`:buy('noads-0',SHOP.noAds))
-   +`<h2>${t('nav').up}</h2>`+Object.keys(UPS).map(k=>{ const u=UPS[k], lv=S.up[k]; return lv>=u.max?'':row(u.ic,u.bd,`${tx(u.n)} · ${t('lvN',lv+1)}`,`${tx(u.d)}<br><span class="nn">${t('nowNext',val(k,lv),val(k,lv+1))}</span>`,buy('up-'+k,SHOP.up)); }).join('')
-   +(e?row('🔲','+',t('expandTo',e.cols,e.rows),t('boardD'),buy('exp-0',SHOP.exp)):'')
-   +(miss.length?`<h2>${t('hDeco')}</h2>`+(miss.length>1?row('🎪','',t('decoAll'),t('decoAllD',miss.length),buy('decoall-0',SHOP.decoAll),t('savePct',Math.round((1-SHOP.decoAll/miss.reduce((a,i)=>a+decoUsd(DECOR[i][2]),0))*100))):'')
-     +miss.map(i=>row(DECOR[i][0],'',tx(DECOR[i][1]),'+1% XP',buy('deco-'+i,decoUsd(DECOR[i][2])))).join(''):'');
+   +row('🚫','',t('noAdsName'),t('noAdsD'),S.opts.noAds?`<button class="btn" disabled>${t('bought')}</button>`:buy('noads-0',SHOP.noAds));   // melhorias, ampliações e decorações não são vendidas: são conquistas com moedas do jogo
 }
 function claimGift(){
   if(S.giftDay===today()) return;
@@ -926,18 +957,18 @@ function render(){
   $('lvl').textContent=t('lvlShort',S.level);
   $('xpbar').style.width=Math.min(100,S.xp/need(S.level)*100)+'%';
   $('xptxt').textContent=`XP ${fmt(S.xp)} / ${fmt(need(S.level))}`;
-  $('coins').innerHTML='🪙 '+fmt(S.coins)+'<b>+</b>'; $('coins').setAttribute('aria-label',t('shopAria',fmt(S.coins)));
+  $('coins').innerHTML='🪙 '+fmt(S.coins)+(S.stop>=1?'<b>+</b>':''); $('coins').setAttribute('aria-label',t('shopAria',fmt(S.coins)));
   renderOrders();
   const f=feira(S.stop), g=goal(S.stop), done=S.served>=g;
   const curIt=sel!=null?S.board[sel]:null, EL=encLvl();
   $('stripbox').className='striprow';
   $('stripbox').innerHTML=(done?`<button class="strip go" data-act="travelask"><span>${t('goTravel',feira(S.stop+1).c)}</span></button>`
     :`<button class="strip" data-act="nav:map" aria-label="${t('openMap')}"><span>${f.ic} ${f.n} · ${f.c}</span><div class="bar"><i style="width:${S.served/g*100}%"></i></div><span>${t('clients',S.served,g)}</span></button>`)
-    +`<button class="encb${curIt&&curIt.n>=EL?' want':''}" data-enc="1" aria-label="${t('encAria',ENC_N,EL)}">📦 ${S.enc.got}/${ENC_N} <small>${t('levelPlus',EL)}</small></button>`;
+    +`<button class="encb${curIt&&curIt.n>=EL?' want':''}${S.encHint===1?' chama':''}" data-enc="1" aria-label="${t('encAria',ENC_N,EL)}">📦 ${S.enc.got}/${ENC_N} <small>${t('levelPlus',EL)}</small></button>`;
   $('board').innerHTML=S.board.map((x,i)=>x
     ?`<button class="cell has${sel===i?' sel':''}${popAt===i?' pop':''}" style="--lc:${lc(x.l)}" data-cell="${i}" aria-label="${t('cellAria',item(x.l,x.n)[1],x.n)}"><span class="em">${item(x.l,x.n)[0]}</span><span class="lv">${x.n}</span></button>`
     :`<button class="cell" data-cell="${i}" aria-label="${t('emptyCell')}"></button>`).join('');
-  popAt=-1; fit(); renderInfo(); renderBaskets();
+  popAt=-1; fit(); renderBaskets(); renderInfo();
   const mdot=S.missions.some(m=>m.p>=m.goal), N=t('nav');
   $('nav').innerHTML=[['map','🗺️',done],['turma','🧑‍🤝‍🧑'],['miss','🎯',mdot],['rec','📖'],['up','🛠️']].map(([k,i,d])=>`<button data-act="nav:${k}"><span>${i}</span>${N[k]}${d?'<i class="dot"></i>':''}</button>`).join('');
   for(const [i,m] of fxQ){ const c=$('board').querySelector(`[data-cell="${i}"]`); if(!c||homeOn) continue; const r=c.getBoundingClientRect(), d=document.createElement('div');
@@ -951,18 +982,34 @@ function renderOrders(){
   const cur=sel!=null?S.board[sel]:null, have=new Set(S.board.filter(Boolean).map(x=>x.l+x.n)), now=Date.now();
   $('orders').innerHTML=S.orders.map(o=>{
     const c=CAST.find(x=>x.id===o.who), want=cur&&matches(o,cur), ready=o.items.some(x=>!x.done&&have.has(x.l+x.n)), rush=o.rush&&now<o.rush, s=rush?Math.ceil((o.rush-now)/1000):0;
-    return `<button class="order${want?' want':''}${ready?' ready':''}${rush?' rush':''}${selOrder===o.id?' osel':''}" data-order="${o.id}" aria-label="${t('orderAria',c.n,o.items.map(x=>t('itemLv',item(x.l,x.n)[1],x.n)).join(t('and')))}"><span class="who"><i>${c.f}</i>${rush?`⏱️ ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`:o.rec!=null?t('recipeTag'):c.n}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span></button>`;
+    return `<button class="order${want?' want':''}${ready?' ready':''}${rush?' rush':''}${selOrder===o.id?' osel':''}" data-order="${o.id}" aria-label="${t('orderAria',c.n,o.items.map(x=>t('itemLv',item(x.l,x.n)[1],x.n)).join(t('and')))}"><span class="who"><i>${c.f}</i>${rush?`⏱️ ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`:o.rec!=null?t('recipeTag'):curto(c.n)}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span></button>`;
   }).join('');
 }
 function renderInfo(){
-  const el=$('info'), it=sel!=null?S.board[sel]:null, o=selOrder!=null&&S.orders.find(x=>x.id===selOrder);
+  const el=$('info'), it=sel!=null?S.board[sel]:null, o=selOrder!=null&&S.orders.find(x=>x.id===selOrder); let passo=0;
+  if(it||o||S.tut>=4) el.classList.remove('coach');
   if(it){ const d=item(it.l,it.n), gl=gloss(it.l,it.n);
     el.innerHTML=`<p><b>${d[0]} ${d[1]}</b> · ${t('itemInfo',lname(it.l),it.n,it.n>=MAX)}${gl?`<br><i>${gl}</i>`:''}</p>${orderFor(it)?`<button class="btn sm" data-act="deliver">${t('deliver')}</button>`:''}${it.n>=encLvl()?`<button class="btn sm" data-act="enc">${t('enc')}</button>`:''}<button class="btn sm ghosty" data-act="sell">${t('sellB',COV[it.n])}</button>`;
   } else if(o){ const c=CAST.find(x=>x.id===o.who), f=S.friends[c.id]||{h:0,lv:0};
-    el.innerHTML=`<p><b>${c.f} ${c.n}</b>, ${tx(c.role)} · ❤️ ${f.lv}<br>“${tx(c.q)}”</p><button class="btn sm ghosty" data-act="swap:${o.id}">${t('swap')}</button>`;
-  } else if(offer&&Date.now()<offer.until){
-    el.innerHTML=`<p>${t('thanks',offer.who.f+' '+offer.who.n,fmt(offer.xp),fmt(offer.co))}</p>${S.daily.adDouble<DOUBLE_MAX?`<button class="btn sm" data-act="double">${t('double')}</button>`:''}`;
-  } else { offer=null; el.innerHTML=`<p>${t('help')}</p><button class="btn sm ghosty" data-act="sort">${t('sort')}</button>`; }
+    el.innerHTML=`<p><b>${c.f} ${c.n}</b>, ${tx(c.role)} · ❤️ ${f.lv}<br>${t('asks')}: ${o.items.filter(x=>!x.done).map(x=>`<b>${item(x.l,x.n)[1]}</b> (${t('lvN',x.n)})`).join(' + ')}<br>“${tx(c.q)}”</p><button class="btn sm ghosty" data-act="swap:${o.id}">${t('swap')}</button>`;
+  } else if(S.tut<4&&(passo=tutPasso(),S.tut<4)){ el.classList.add('coach'); el.innerHTML=`<span class="zs">👨‍🌾</span><p>${t('tut')[passo]}</p>`; return; }
+  else if(offer&&Date.now()<offer.until){
+    el.innerHTML=`<p>${t('thanks',offer.who.f+' '+offer.who.n,fmt(offer.xp),fmt(offer.co))}</p>${S.stop>=1&&S.daily.adDouble<DOUBLE_MAX?`<button class="btn sm" data-act="double">${t('double')}</button>`:''}`;
+  }
+  else { offer=null; el.innerHTML=`<p>${t('help')}</p><button class="btn sm ghosty" data-act="sort">${t('sort')}</button>`; }
+  el.classList.remove('coach');
+}
+// Tutorial no próprio tabuleiro. S.tutF guarda o que o jogador já fez: 1 juntar · 2 entregar · 4 colher.
+// Feitos os três, aparece a mensagem final por alguns segundos e o tutorial acaba (S.tut = 4).
+function tutMarca(bit){ if(S.tut>=4) return; S.tutF=(S.tutF||0)|bit; if(S.tutF===7&&!S.tutFim) S.tutFim=Date.now(); }
+function tutPasso(){
+  const glow=q=>document.querySelectorAll(q).forEach(e=>e.classList.add('tutglow')), F=S.tutF||0, pr=findPair();
+  const par=()=>pr.slice(0,2).forEach(i=>glow(`#board [data-cell="${i}"]`)), cestos=()=>glow('[data-act^="basket:"]');
+  if(F===7){ if(Date.now()-S.tutFim>6000) S.tut=4; return 4; }
+  if(!(F&1)&&pr){ par(); return 0; }
+  if(!(F&2)){ if(document.querySelector('.order.ready')){ glow('.order.ready'); return 1; } if(pr){ par(); return 2; } cestos(); return 3; }
+  if(!(F&4)){ cestos(); return 3; }
+  if(pr){ par(); return 0; } cestos(); return 3;
 }
 function left(b){ if(b.c>=cap()) return t('bFull'); const s=Math.max(0,Math.ceil((period()-(Date.now()-b.t))/1000)); return mmss(s); }
 function renderBaskets(){
@@ -993,6 +1040,7 @@ function tick(){
   for(const k of lines()){ const b=S.baskets[k], c=$('bc-'+k), e=$('bt-'+k); if(c)c.textContent=b.c+'/'+cap(); if(e)e.textContent=left(b); }
   if(S.orders.some(o=>o.rush&&now<o.rush+1500)) renderOrders();
   if(offer&&now>=offer.until&&sel==null&&selOrder==null){ offer=null; renderInfo(); }
+  if(S.tut<4&&S.tutFim&&now-S.tutFim>6000&&sel==null&&selOrder==null) renderInfo();   // encerra o tutorial
   if(!homeOn&&!sheetName&&$('over').hidden&&!drag&&now-lastAct>7000){ const p=findPair(); if(p) p.slice(0,2).forEach(i=>{ const c=$('board').querySelector(`[data-cell="${i}"]`); if(c)c.classList.add('hint'); }); }
   if(sheetName==='cfg'&&$('stats')) $('stats').innerHTML=statsHtml();
   if(S.stats.playMs%10000===0) save();
@@ -1043,7 +1091,7 @@ function renderSheet(){
     const e=EXPS[S.exp], buy=(act,c,dis)=>`<button class="btn buy" data-act="${act}" ${dis?'disabled':''}><span>${t('buy')}</span><small>🪙 ${fmt(c)}</small></button>`;
     const val=(k,lv)=>k==='far'?t('farV',...farOdds(lv).map(x=>Math.round(x*100))):k==='cap'?t('capV',BASE_CAP+CAP_UP*lv):t('spdV',mmss(Math.round(periodAt(lv)/1000)));
     const grid=(c,r,oc,or)=>{ const z=Math.min(44/c,44/r), q=(z*.8).toFixed(1); let g=''; for(let y=0;y<r;y++) for(let x=0;x<c;x++) g+=`<rect class="${x>=oc||y>=or?'gn':'gc'}" x="${(x*z+(44-c*z)/2).toFixed(1)}" y="${(y*z+(44-r*z)/2).toFixed(1)}" width="${q}" height="${q}" rx="1.5"/>`; return `<svg viewBox="0 0 44 44" aria-hidden="true">${g}</svg>`; };
-    h=`<p class="note">${t('upNote')}</p><div class="row"><div><p>${t('toShop')}</p></div><button class="btn sm" data-act="nav:shop">${t('openShop')}</button></div><h2>${t('hBaskets')}</h2>`+Object.keys(UPS).map(k=>{ const u=UPS[k], lv=S.up[k], c=upCost(k), mx=lv>=u.max;
+    h=`<p class="note">${t('upNote')}</p>${S.stop>=1?`<div class="row"><div><p>${t('toShop')}</p></div><button class="btn sm" data-act="nav:shop">${t('openShop')}</button></div>`:''}<h2>${t('hBaskets')}</h2>`+Object.keys(UPS).map(k=>{ const u=UPS[k], lv=S.up[k], c=upCost(k), mx=lv>=u.max;
         return `<div class="row"><span class="thumb" aria-hidden="true">${u.ic}${u.bd?`<b>${u.bd}</b>`:''}</span><div><b>${tx(u.n)}</b> · ${t('lvN',lv)}<p>${tx(u.d)}</p><p class="nn">${mx?t('nowMax',val(k,lv)):t('nowNext',val(k,lv),val(k,lv+1))}</p></div>${mx?'':buy('buyup:'+k,c,S.coins<c)}</div>`; }).join('')
      +`<h2>${t('hBoard')}</h2>`+(e?`<div class="row"><span class="thumb">${grid(e.cols,e.rows,S.cols,S.rows)}</span><div><b>${t('expandTo',e.cols,e.rows)}</b><p>${t('boardD')}${S.level<e.lvl?' '+t('opensAt',e.lvl):''}</p><p class="nn">${t('nowNext',t('boardV',S.cols,S.rows),t('boardV',e.cols,e.rows))}</p></div>${buy('buyexp',e.cost,S.level<e.lvl||S.coins<e.cost)}</div>`:`<p class="note">${t('boardMax')}</p>`)
      +`<h2>${t('hDeco')}</h2><p class="note">${t('decoD')} ${S.level<6?t('opensAt',6):''} ${t('bonusNow',S.decor.length)}</p>`
@@ -1055,10 +1103,12 @@ function renderSheet(){
   } else {
     const tg=(k,[a,b])=>`<div class="row"><div><b>${a}</b><p>${b}</p></div><button class="btn${S.opts[k]?'':' ghosty'}" data-act="opt:${k}" aria-pressed="${S.opts[k]}">${S.opts[k]?t('on'):t('off')}</button></div>`;
     h=`<div class="row"><div><b>${t('lang')}</b><p>${t('langP')}</p></div><div class="seg"><button data-act="lang:pt" aria-pressed="${LANG==='pt'}">Português</button><button data-act="lang:en" aria-pressed="${LANG==='en'}">English</button></div></div>`
-     +tg('sound',t('oSound'))+tg('noAds',t('oNoAds'))+tg('test',t('oTest'))
-     +`<h2>${t('panel')}</h2><div class="stats" id="stats">${statsHtml()}</div><p class="note">${t('panelNote')} ${t('credit')}</p>`
+     +tg('sound',t('oSound'))+tg('music',t('oMusic'))
+     +(S.opts.dev?tg('noAds',t('oNoAds'))+tg('test',t('oTest'))+`<h2>${t('panel')}</h2><div class="stats" id="stats">${statsHtml()}</div><p class="note">${t('panelNote')}</p>`:'')
+     +`<p class="note">${t('credit')}</p>`
      +`<div class="row"><div><b>${t('reset')}</b><p class="warn">${t('resetP')}</p></div><button class="btn ghosty" data-act="reset">${t('resetB')}</button></div>`;
   }
+  if(sheetName==='cfg') h+=`<button class="ver" data-act="ver">${t('version')}</button>`;
   $('sheetin').innerHTML=`<header><h1>${T[sheetName]}</h1><button class="btn ghosty" data-act="close">${t('close')}</button></header>${h}`;
 }
 
@@ -1101,7 +1151,7 @@ document.addEventListener('click',e=>{
   if(a){ const [k,v]=a.dataset.act.split(':');
     if(k==='intro'){ introTap(); return; }
     if(k==='basket') spawn(v);
-    else if(k==='play'){ homeOn=false; render(); if(!S.seenHelp){ S.seenHelp=true; sheetName='help'; $('sheet').hidden=false; renderSheet(); } }
+    else if(k==='play'){ homeOn=false; Musica.ligar(); render(); }
     else if(k==='home'){ homeOn=true; tip=Math.floor(Math.random()*TIPS.length); sel=null; selOrder=null; render(); }
     else if(k==='lang') setLang(v);
     else if(k==='gift') claimGift();
@@ -1128,7 +1178,8 @@ document.addEventListener('click',e=>{
     else if(k==='buyexp') expand();
     else if(k==='buyup'){ const c=upCost(v); if(S.up[v]<UPS[v].max&&S.coins>=c){ S.coins-=c; S.up[v]++; beep(820); render(); } }
     else if(k==='buydeco'){ const i=+v; if(!S.decor.includes(i)&&S.level>=6&&S.coins>=DECOR[i][2]){ S.coins-=DECOR[i][2]; S.decor.push(i); beep(820); render(); } }
-    else if(k==='opt'){ S.opts[v]=!S.opts[v]; for(const x of lines()) S.baskets[x].t=Date.now(); render(); }
+    else if(k==='ver'){ verTaps=(verTaps||0)+1; if(verTaps>=5){ verTaps=0; S.opts.dev=!S.opts.dev; toast(t(S.opts.dev?'devOn':'devOff')); render(); } }
+    else if(k==='opt'){ S.opts[v]=!S.opts[v]; if(v==='music'||v==='sound') Musica.ligar(); for(const x of lines()) S.baskets[x].t=Date.now(); render(); }
     else if(k==='travelask'){ closeModal(); travelAsk(); }
     else if(k==='travel'){ closeModal(); travel(); }
     else if(k==='mclose'){ closeModal(); render(); }
@@ -1204,7 +1255,11 @@ function endIntro(){
   $('intro').classList.add('out'); setTimeout(()=>{ $('intro').hidden=true; },520);
 }
 function intro(){
-  $('intro').hidden=false; introState={t0:Date.now(),tms:[]};
+  const el=$('intro'), curta=S.introDay===today(); S.introDay=today(); save();
+  el.hidden=false; introState={t0:Date.now(),tms:[]}; $('pulahint').textContent=t('tapSkip');
+  if(curta){   // já viu hoje: só o pássaro pousado e o nome, por 1,5 s
+    el.classList.add('curta'); $('wm').querySelectorAll('span').forEach(x=>x.classList.add('on')); $('wm').classList.add('done'); $('wsub').classList.add('on');
+    introState.tms.push(setTimeout(endIntro,1500)); return; }
   if(S.opts.sound){ try{ audio=audio||new (window.AudioContext||window.webkitAudioContext)(); audio.resume&&audio.resume(); }catch(e){} }
   introState.tms.push(setTimeout(sing,matchMedia('(prefers-reduced-motion: reduce)').matches?300:2050));   // pousou, cantou
 }
@@ -1213,7 +1268,7 @@ function start(d){
   LANG=detectLang(); S=(d&&d.v===2&&Array.isArray(d.board))?d:load();
   let q=null; try{ q=new URLSearchParams(location.search).get('lang'); }catch(e){}
   if(q==='en'||q==='pt') S.opts.lang=q; LANG=S.opts.lang||LANG; S.opts.lang=LANG;
-  S.iap=S.iap||{n:0,usd:0,once:[]};
+  S.iap=S.iap||{n:0,usd:0,once:[]}; if(S.tut==null) S.tut=(S.stats.merges||S.stats.orders)?4:0; if(S.opts.music==null) S.opts.music=true;
   applyLang(); render(); setInterval(tick,1000);
   let q2=null; try{ q2=new URLSearchParams(location.search).get('intro'); }catch(e){} if(q2!=='0') intro();
 }
