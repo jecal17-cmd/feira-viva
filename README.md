@@ -34,6 +34,7 @@ Abra `versao-a-rota-das-feiras/index.html` (ou, com o GitHub Pages ligado, `http
 - **Obstáculos:** caixote e mofo; **ferramentas:** Martelo e Caldeirão (máximo de 2 por fase), compradas com moedas do jogo.
 - **Diário de Viagem** com 7 cartões ("Saiba mais" opcional) e **Selo de Domínio** Força do Açaí (+3 turnos).
 - **Mapa do Brasil** com os 12 mercados; só o Ver-o-Peso está aberto neste teste.
+- **Português e inglês:** abre no idioma do navegador; dá para trocar na tela inicial, em Ajustes ou com `?lang=en`. Nomes de mercados, cidades, personagens e pratos típicos ficam em português, com explicação curta em inglês.
 - **Painel do teste** em Ajustes: tentativas, vitórias, derrotas e taxa de derrota por fase. **Modo teste** libera todas as fases.
 - **Loja** com compras simuladas de US$ 0,50 a US$ 9,99 (kits, ferramentas, +3 Turnos e moedas); sem anúncios. Textos dos cartões a validar com pesquisa e revisão local.
 

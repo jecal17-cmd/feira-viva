@@ -194,6 +194,11 @@ table.met{width:100%;border-collapse:collapse;background:var(--panel);border-rad
 .met .alert{color:var(--warn);font-weight:800}
 .toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(64px + env(safe-area-inset-top,0px));z-index:35;background:var(--ink);color:var(--bg);border-radius:99px;padding:8px 16px;font-weight:800;max-width:calc(100% - 32px);text-align:center;pointer-events:none}
 .warn{color:var(--warn)}
+.seg{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.seg button{background:var(--panel);border-radius:99px;padding:7px 12px;font-weight:800;font-size:13px;box-shadow:inset 0 0 0 2px var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);box-shadow:none}
+.logo .say{font-family:var(--text);font-weight:600;font-size:13px;color:var(--muted);margin:8px 0 0;line-height:1.3}
+.info i{color:var(--muted);font-size:12px}
 .intro{position:fixed;inset:0;z-index:40;background:var(--introbg);display:grid;place-items:center;cursor:pointer;transition:opacity .5s}
 .headc{stroke:var(--introedge);stroke-width:2}
 .intro.out{opacity:0;pointer-events:none}
@@ -268,53 +273,101 @@ table.met{width:100%;border-collapse:collapse;background:var(--panel);border-rad
 </div></div>
 
 <script>
+/* ===================== IDIOMA ===================== */
+// Textos em pares [português, inglês]. tr('pt','en') escolhe pelo idioma atual; tx([pt,en]) faz o mesmo com dados.
+let LANG='pt';
+const tr=(pt,en)=>LANG==='en'?en:pt;
+const tx=a=>Array.isArray(a)?(LANG==='en'&&a[1]!=null?a[1]:a[0]):a;
+function detectLang(){
+  try{ const q=new URLSearchParams(location.search).get('lang'); if(q==='en'||q==='pt') return q; }catch(e){}
+  return /^pt/i.test(navigator.language||'pt')?'pt':'en';
+}
+function applyLang(){ document.documentElement.lang=LANG==='en'?'en':'pt-BR'; document.title=tr('Rota das Feiras','Rota das Feiras: Brazil’s Market Trail'); }
+
 /* ===================== DADOS (balanceamento: tudo aqui em cima) ===================== */
 const MAX=5, COLS=6, ROWS=7, KEY='rota-das-feiras-v1', MAX_TOOLS=2, MOLD_EVERY=3, TIDE_EVERY=4, TIDE_LEN=2;
-// Linhas do Ver-o-Peso (documento de design, seção 3.2): [emoji provisório, nome]
+// Linhas do Ver-o-Peso (documento de design, seção 3.2): [emoji provisório, nome pt, nome en]
 const LINES={
- ac:{name:'Açaí',hue:285,it:[['🍇','Cacho de açaí'],['🫐','Fruto'],['🥣','Polpa'],['🥤','Açaí batido'],['🍧','Tigela de açaí com tapioca']]},
- pe:{name:'Peixe',hue:200,it:[['🐟','Peixe pequeno'],['🐠','Peixe limpo'],['🍣','Filé'],['🍱','Peixe assado'],['🥘','Pirarucu de casaca']]},
- jt:{name:'Jambu/Tucupi',hue:95,it:[['🌿','Folha de jambu'],['🥬','Maço de jambu'],['🍵','Caldo de tucupi'],['🍲','Tacacá'],['🦆','Pato no tucupi']]}
+ ac:{name:['Açaí','Açaí'],hue:285,it:[['🍇','Cacho de açaí','Açaí bunch'],['🫐','Fruto','Açaí berries'],['🥣','Polpa','Açaí pulp'],['🥤','Açaí batido','Blended açaí'],['🍧','Tigela de açaí com tapioca','Açaí bowl with tapioca']]},
+ pe:{name:['Peixe','Fish'],hue:200,it:[['🐟','Peixe pequeno','Small fish'],['🐠','Peixe limpo','Cleaned fish'],['🍣','Filé','Fillet'],['🍱','Peixe assado','Roast fish'],['🥘','Pirarucu de casaca','Pirarucu de casaca']]},
+ jt:{name:['Jambu/Tucupi','Jambu/Tucupi'],hue:95,it:[['🌿','Folha de jambu','Jambu leaf'],['🥬','Maço de jambu','Jambu bunch'],['🍵','Caldo de tucupi','Tucupi broth'],['🍲','Tacacá','Tacacá'],['🦆','Pato no tucupi','Pato no tucupi']]}
 };
+// Explicações curtas (só em inglês) dos nomes mantidos em português. Chave: linha + nível.
+const GLOSS={ac1:'berries of an Amazonian palm',pe5:'layered dish of shredded salted pirarucu and farofa',jt1:'Amazonian herb that makes your mouth tingle',jt2:'Amazonian herb that makes your mouth tingle',
+ jt3:'tangy yellow broth made from wild cassava',jt4:'hot tucupi soup with jambu and dried shrimp',jt5:'duck simmered in tucupi with jambu'};
 // Fases do Ver-o-Peso: 6 normais + chefe. goals: orders (entregar pedidos), make (criar item), clear (limpar obstáculos).
 const PHASES=[
- {name:'Bom dia, Ver-o-Peso',turns:14,lines:['ac','pe'],items:6,lv:[2,3],two:0,crate:0,mold:0,goals:[{t:'orders',n:4}],tut:'basics'},
- {name:'Caixotes no caminho',turns:15,lines:['ac','pe'],items:7,lv:[2,3],two:0,crate:4,mold:0,goals:[{t:'make',l:'ac',lv:4,n:1},{t:'clear',n:3}],tut:'crate'},
- {name:'Chegou o jambu',turns:17,lines:['ac','pe','jt'],items:11,lv:[2,3],two:.2,crate:3,mold:0,goals:[{t:'orders',n:6}],tut:'tools'},
- {name:'Cuidado com o mofo',turns:16,lines:['ac','pe','jt'],items:8,lv:[2,3],two:.2,crate:2,mold:2,goals:[{t:'clear',n:4},{t:'orders',n:4}],tut:'mold'},
- {name:'Pirarucu de casaca',turns:21,lines:['ac','pe','jt'],items:12,lv:[2,3],two:.2,crate:2,mold:2,goals:[{t:'make',l:'pe',lv:5,n:1}],tut:'seal'},
- {name:'Hora do almoço',turns:25,lines:['ac','pe','jt'],items:12,lv:[2,4],two:.25,crate:2,mold:3,goals:[{t:'orders',n:6},{t:'clear',n:3}]},
- {name:'Chefe: Maré cheia',turns:24,lines:['ac','pe','jt'],items:12,lv:[2,4],two:.3,crate:2,mold:1,goals:[{t:'orders',n:6}],boss:'tide',tut:'tide'}
+ {name:['Bom dia, Ver-o-Peso','Good morning, Ver-o-Peso'],turns:14,lines:['ac','pe'],items:6,lv:[2,3],two:0,crate:0,mold:0,goals:[{t:'orders',n:4}],tut:'basics'},
+ {name:['Caixotes no caminho','Crates in the way'],turns:15,lines:['ac','pe'],items:7,lv:[2,3],two:0,crate:4,mold:0,goals:[{t:'make',l:'ac',lv:4,n:1},{t:'clear',n:3}],tut:'crate'},
+ {name:['Chegou o jambu','Here comes the jambu'],turns:17,lines:['ac','pe','jt'],items:11,lv:[2,3],two:.2,crate:3,mold:0,goals:[{t:'orders',n:6}],tut:'tools'},
+ {name:['Cuidado com o mofo','Watch out for mold'],turns:16,lines:['ac','pe','jt'],items:8,lv:[2,3],two:.2,crate:2,mold:2,goals:[{t:'clear',n:4},{t:'orders',n:4}],tut:'mold'},
+ {name:['Pirarucu de casaca','Pirarucu de casaca'],turns:21,lines:['ac','pe','jt'],items:12,lv:[2,3],two:.2,crate:2,mold:2,goals:[{t:'make',l:'pe',lv:5,n:1}],tut:'seal'},
+ {name:['Hora do almoço','Lunch rush'],turns:25,lines:['ac','pe','jt'],items:12,lv:[2,4],two:.25,crate:2,mold:3,goals:[{t:'orders',n:6},{t:'clear',n:3}]},
+ {name:['Chefe: Maré cheia','Boss: High tide'],turns:24,lines:['ac','pe','jt'],items:12,lv:[2,4],two:.3,crate:2,mold:1,goals:[{t:'orders',n:6}],boss:'tide',tut:'tide'}
 ];
 const TUT={
- basics:['🧺','Como jogar','Toque num cesto para colher um item: <b>cada toque gasta 1 turno</b>. Juntar itens iguais e entregar pedidos <b>não gastam turno</b>. Cumpra o objetivo antes que os turnos acabem. Sobrando metade dos turnos, você ganha 3 ⭐.'],
- crate:['📦','Caixotes','Caixotes bloqueiam casas do tabuleiro. Faça uma fusão numa casa <b>ao lado</b> de um caixote para abri-lo.'],
- tools:['🔨','Ferramentas','<b>🔨 Martelo</b> remove um item ou obstáculo. <b>🫕 Caldeirão</b> sobe 1 nível de um item (até o nível 4). Use no máximo 2 por fase. Elas não gastam turno.'],
- mold:['🦠','Mofo','A cada 3 turnos, um item ao lado do mofo fica <b>mofado</b>: não junta e ninguém compra. Uma fusão ao lado do item mofado limpa o item; uma fusão ao lado do mofo acaba com ele.'],
- seal:['🏅','Selo de Domínio','Itens de nível 5 podem ir para o espaço <b>🏅 Selo</b>, ao lado dos pedidos. Entregue 3 de cada linha e vença o chefe para ganhar o Selo <b>Força do Açaí</b>: +3 turnos em toda fase.'],
- tide:['🌊','Chefe: Maré cheia','A cada 4 turnos a maré sobe na <b>fileira de baixo</b>. Itens ali ficam presos por 2 turnos: não andam, não juntam e não são entregues.']
+ basics:['🧺',['Como jogar','How to play'],['Toque num cesto para colher um item: <b>cada toque gasta 1 turno</b>. Juntar itens iguais e entregar pedidos <b>não gastam turno</b>. Cumpra o objetivo antes que os turnos acabem. Sobrando metade dos turnos, você ganha 3 ⭐.',
+   'Tap a basket to pick an item: <b>each tap costs 1 turn</b>. Merging matching items and filling orders <b>are free</b>. Reach the goal before you run out of turns. Finish with half your turns left to earn 3 ⭐.']],
+ crate:['📦',['Caixotes','Crates'],['Caixotes bloqueiam casas do tabuleiro. Faça uma fusão numa casa <b>ao lado</b> de um caixote para abri-lo.','Crates block spaces on the board. Merge on a space <b>next to</b> a crate to open it.']],
+ tools:['🔨',['Ferramentas','Tools'],['<b>🔨 Martelo</b> remove um item ou obstáculo. <b>🫕 Caldeirão</b> sobe 1 nível de um item (até o nível 4). Use no máximo 2 por fase. Elas não gastam turno.',
+   'The <b>🔨 Hammer</b> removes an item or obstacle. The <b>🫕 Cauldron</b> raises an item by 1 level (up to level 4). Use up to 2 per level. They don’t cost turns.']],
+ mold:['🦠',['Mofo','Mold'],['A cada 3 turnos, um item ao lado do mofo fica <b>mofado</b>: não junta e ninguém compra. Uma fusão ao lado do item mofado limpa o item; uma fusão ao lado do mofo acaba com ele.',
+   'Every 3 turns, an item next to the mold becomes <b>moldy</b>: it can’t merge and nobody buys it. A merge next to a moldy item cleans it; a merge next to the mold gets rid of it.']],
+ seal:['🏅',['Selo de Domínio','Mastery Seal'],['Itens de nível 5 podem ir para o espaço <b>🏅 Selo</b>, ao lado dos pedidos. Entregue 3 de cada linha e vença o chefe para ganhar o Selo <b>Força do Açaí</b>: +3 turnos em toda fase.',
+   'Level 5 items can go to the <b>🏅 Seal</b> slot, next to the orders. Deliver 3 of each line and beat the boss to earn the <b>Açaí Power</b> Seal: +3 turns on every level.']],
+ tide:['🌊',['Chefe: Maré cheia','Boss: High tide'],['A cada 4 turnos a maré sobe na <b>fileira de baixo</b>. Itens ali ficam presos por 2 turnos: não andam, não juntam e não são entregues.',
+   'Every 4 turns the tide floods the <b>bottom row</b>. Items there are stuck for 2 turns: they can’t move, merge or be delivered.']]
 };
 // Diário de Viagem: um cartão por fase. Textos a validar com pesquisa e revisão local antes de publicar.
 const CARDS=[
- {em:'🛶',t:'Ver-o-Peso',p:'Belém (PA)',f:'Um dos mercados mais antigos do Brasil, à beira da baía do Guajará. Peixes, frutas, ervas e muita conversa.',m:'O nome vem do posto da época colonial onde as mercadorias eram pesadas para a cobrança de impostos: era preciso “ver o peso”. Hoje o complexo reúne a feira livre, a doca onde chegam os barcos e o Mercado de Ferro, cujas torres são um dos cartões-postais de Belém.'},
- {em:'🍇',t:'Açaí',p:'Ver-o-Peso, Belém (PA)',f:'Fruto de uma palmeira amazônica, o açaí é base da alimentação em boa parte do Norte.',m:'No Pará, ele costuma ser servido como acompanhamento salgado, junto de peixe e farinha, e não apenas como sobremesa gelada, como ficou conhecido fora da região. Os barcos chegam ao Ver-o-Peso de madrugada, carregados de açaí recém-colhido.'},
- {em:'🌿',t:'Jambu',p:'Ver-o-Peso, Belém (PA)',f:'Erva amazônica que deixa a boca formigando e levemente dormente.',m:'A sensação vem do espilantol, substância presente nas folhas e nas flores. O jambu vai no tacacá e no pato no tucupi, e em Belém aparece até em cachaças e sorvetes.'},
- {em:'🍵',t:'Tucupi',p:'Ver-o-Peso, Belém (PA)',f:'Caldo amarelo extraído da mandioca-brava, base de vários pratos paraenses.',m:'A mandioca é ralada e espremida; o líquido descansa e depois é fervido por horas, o que elimina substâncias tóxicas da raiz. O resultado é um caldo ácido e perfumado.'},
- {em:'🐟',t:'Pirarucu',p:'Rios da Amazônia',f:'Um dos maiores peixes de água doce do mundo: pode passar dos 2 metros.',m:'Respira ar e precisa subir à superfície a cada poucos minutos. Salgado e seco, ganhou o apelido de “bacalhau da Amazônia”. Hoje a pesca é controlada, e o manejo feito por comunidades ajudou a recuperar o peixe em várias regiões.'},
- {em:'🍲',t:'Tacacá',p:'Esquinas de Belém (PA)',f:'Servido quente na cuia, no fim da tarde, pelas tacacazeiras de Belém.',m:'Leva tucupi, goma de mandioca, jambu e camarão seco. É tomado direto da cuia, mesmo nos dias mais quentes, e as tacacazeiras são figuras queridas da cidade.'},
- {em:'🦆',t:'Pato no tucupi',p:'Círio de Nazaré, Belém (PA)',f:'O prato que não pode faltar no almoço do Círio de Nazaré.',m:'O Círio, em outubro, é uma das maiores procissões religiosas do mundo e reúne multidões em Belém. No almoço do Círio, as famílias servem o pato cozido no tucupi com jambu, preparado com dias de antecedência.'}
+ {em:'🛶',t:['Ver-o-Peso','Ver-o-Peso'],p:['Belém (PA)','Belém, Pará'],
+  f:['Um dos mercados mais antigos do Brasil, à beira da baía do Guajará. Peixes, frutas, ervas e muita conversa.','One of Brazil’s oldest markets, on the shore of Guajará Bay. Fish, fruit, herbs and plenty of chatter.'],
+  m:['O nome vem do posto da época colonial onde as mercadorias eram pesadas para a cobrança de impostos: era preciso “ver o peso”. Hoje o complexo reúne a feira livre, a doca onde chegam os barcos e o Mercado de Ferro, cujas torres são um dos cartões-postais de Belém.',
+   'The name comes from a colonial-era post where goods were weighed for taxes: you had to “ver o peso”, check the weight. Today it brings together the open-air market, the dock where the boats arrive and the Iron Market, whose turrets are one of Belém’s landmarks.']},
+ {em:'🍇',t:['Açaí','Açaí'],p:['Ver-o-Peso, Belém (PA)','Ver-o-Peso, Belém'],
+  f:['Fruto de uma palmeira amazônica, o açaí é base da alimentação em boa parte do Norte.','The fruit of an Amazonian palm, açaí is a staple food across much of northern Brazil.'],
+  m:['No Pará, ele costuma ser servido como acompanhamento salgado, junto de peixe e farinha, e não apenas como sobremesa gelada, como ficou conhecido fora da região. Os barcos chegam ao Ver-o-Peso de madrugada, carregados de açaí recém-colhido.',
+   'In Pará it is often eaten unsweetened, as a side with fish and cassava flour, not just as the frozen dessert known elsewhere. Boats loaded with freshly picked açaí reach Ver-o-Peso before dawn.']},
+ {em:'🌿',t:['Jambu','Jambu'],p:['Ver-o-Peso, Belém (PA)','Ver-o-Peso, Belém'],
+  f:['Erva amazônica que deixa a boca formigando e levemente dormente.','An Amazonian herb that makes your mouth tingle and go slightly numb.'],
+  m:['A sensação vem do espilantol, substância presente nas folhas e nas flores. O jambu vai no tacacá e no pato no tucupi, e em Belém aparece até em cachaças e sorvetes.',
+   'The feeling comes from spilanthol, found in its leaves and flowers. Jambu goes into tacacá and pato no tucupi, and in Belém it even shows up in cachaça and ice cream.']},
+ {em:'🍵',t:['Tucupi','Tucupi'],p:['Ver-o-Peso, Belém (PA)','Ver-o-Peso, Belém'],
+  f:['Caldo amarelo extraído da mandioca-brava, base de vários pratos paraenses.','A yellow broth extracted from wild cassava, the base of many dishes from Pará.'],
+  m:['A mandioca é ralada e espremida; o líquido descansa e depois é fervido por horas, o que elimina substâncias tóxicas da raiz. O resultado é um caldo ácido e perfumado.',
+   'The cassava is grated and squeezed; the liquid rests and is then boiled for hours, which removes the root’s toxic compounds. The result is a tangy, fragrant broth.']},
+ {em:'🐟',t:['Pirarucu','Pirarucu'],p:['Rios da Amazônia','Amazon rivers'],
+  f:['Um dos maiores peixes de água doce do mundo: pode passar dos 2 metros.','One of the world’s largest freshwater fish: it can grow longer than 2 meters.'],
+  m:['Respira ar e precisa subir à superfície a cada poucos minutos. Salgado e seco, ganhou o apelido de “bacalhau da Amazônia”. Hoje a pesca é controlada, e o manejo feito por comunidades ajudou a recuperar o peixe em várias regiões.',
+   'It breathes air and must surface every few minutes. Salted and dried, it earned the nickname “Amazon codfish”. Fishing is now regulated, and community management has helped the fish recover in many areas.']},
+ {em:'🍲',t:['Tacacá','Tacacá'],p:['Esquinas de Belém (PA)','Street corners of Belém'],
+  f:['Servido quente na cuia, no fim da tarde, pelas tacacazeiras de Belém.','Served hot in a gourd bowl in the late afternoon by Belém’s tacacazeiras.'],
+  m:['Leva tucupi, goma de mandioca, jambu e camarão seco. É tomado direto da cuia, mesmo nos dias mais quentes, e as tacacazeiras são figuras queridas da cidade.',
+   'It’s made with tucupi, cassava starch, jambu and dried shrimp. People sip it straight from the gourd, even on the hottest days, and the tacacazeiras who sell it are beloved local figures.']},
+ {em:'🦆',t:['Pato no tucupi','Pato no tucupi'],p:['Círio de Nazaré, Belém (PA)','Círio de Nazaré, Belém'],
+  f:['O prato que não pode faltar no almoço do Círio de Nazaré.','The dish no family skips at the Círio de Nazaré lunch.'],
+  m:['O Círio, em outubro, é uma das maiores procissões religiosas do mundo e reúne multidões em Belém. No almoço do Círio, as famílias servem o pato cozido no tucupi com jambu, preparado com dias de antecedência.',
+   'The Círio, held every October, is one of the largest religious processions in the world and fills Belém with crowds. For the Círio lunch, families serve duck cooked in tucupi with jambu, prepared days in advance.']}
 ];
 // Selos de Domínio (seção 3.5). Neste teste só o do Ver-o-Peso pode ser conquistado.
-const SELOS=[['🍇','Força do Açaí','+3 turnos em toda fase'],['🥤','Guaraná','a cada 10 fusões, +1 turno'],['🌴','Dendê','a 1ª fusão de cada fase sobe +1 nível extra'],['🥩','Carne de Sol','despensa com 2 vagas fora do tabuleiro'],['🍹','Cajuína','ignora o 1º obstáculo de cada fase'],['🍜','Sobá','pedidos ganham +50% de prazo'],['🥪','Mortadela','25% de chance de item nível 2 grátis ao entregar'],['🧀','Queijo Minas','1 Caldeirão grátis por fase'],['🪗','Forró','3 fusões seguidas sem colher devolvem 1 turno'],['🧉','Chimarrão','obstáculos congelados por 2 turnos no início'],['🦪','Pérola','5% de chance de a fusão sair +1 nível'],['🌰','Pinhão','pedidos exigem 1 item a menos (mínimo 1)']];
+const SELOS=[['🍇',['Força do Açaí','Açaí Power'],['+3 turnos em toda fase','+3 turns on every level']],['🥤',['Guaraná','Guaraná'],['a cada 10 fusões, +1 turno','+1 turn every 10 merges']],
+ ['🌴',['Dendê','Dendê'],['a 1ª fusão de cada fase sobe +1 nível extra','the first merge of each level jumps 1 extra level']],['🥩',['Carne de Sol','Carne de Sol'],['despensa com 2 vagas fora do tabuleiro','a pantry with 2 spaces off the board']],
+ ['🍹',['Cajuína','Cajuína'],['ignora o 1º obstáculo de cada fase','ignores the first obstacle of each level']],['🍜',['Sobá','Sobá'],['pedidos ganham +50% de prazo','orders get 50% more time']],
+ ['🥪',['Mortadela','Mortadella'],['25% de chance de item nível 2 grátis ao entregar','25% chance of a free level 2 item when delivering']],['🧀',['Queijo Minas','Queijo Minas'],['1 Caldeirão grátis por fase','1 free Cauldron per level']],
+ ['🪗',['Forró','Forró'],['3 fusões seguidas sem colher devolvem 1 turno','3 merges in a row without picking give back 1 turn']],['🧉',['Chimarrão','Chimarrão'],['obstáculos congelados por 2 turnos no início','obstacles frozen for the first 2 turns']],
+ ['🦪',['Pérola','Pearl'],['5% de chance de a fusão sair +1 nível','5% chance a merge goes up an extra level']],['🌰',['Pinhão','Pinhão'],['pedidos exigem 1 item a menos (mínimo 1)','orders need 1 item less (minimum 1)']]];
 const MARKETS=[
- {n:'Ver-o-Peso',c:'Belém',uf:'PA',reg:'Norte',ic:'🛶',lon:-48.5,lat:-1.45},{n:'Mercado Adolpho Lisboa',c:'Manaus',uf:'AM',reg:'Norte',ic:'🌳',lon:-60,lat:-3.1},
- {n:'Feira de São Joaquim',c:'Salvador',uf:'BA',reg:'Nordeste',ic:'🥁',lon:-38.5,lat:-13},{n:'Mercado de São José',c:'Recife',uf:'PE',reg:'Nordeste',ic:'🎭',lon:-34.9,lat:-8.05},
- {n:'Mercado Central',c:'Fortaleza',uf:'CE',reg:'Nordeste',ic:'⛵',lon:-38.5,lat:-3.7},{n:'Feira Central',c:'Campo Grande',uf:'MS',reg:'Centro-Oeste',ic:'🐆',lon:-54.6,lat:-20.45},
- {n:'Mercadão',c:'São Paulo',uf:'SP',reg:'Sudeste',ic:'🏙️',lon:-46.6,lat:-23.55},{n:'Mercado Central',c:'Belo Horizonte',uf:'MG',reg:'Sudeste',ic:'⛰️',lon:-43.9,lat:-19.9},
- {n:'Feira de São Cristóvão',c:'Rio de Janeiro',uf:'RJ',reg:'Sudeste',ic:'🪗',lon:-43.2,lat:-22.9},{n:'Mercado Público',c:'Porto Alegre',uf:'RS',reg:'Sul',ic:'🧉',lon:-51.2,lat:-30},
- {n:'Mercado Público',c:'Florianópolis',uf:'SC',reg:'Sul',ic:'🏝️',lon:-48.55,lat:-27.6},{n:'Mercado Municipal',c:'Curitiba',uf:'PR',reg:'Sul',ic:'🌲',lon:-49.3,lat:-25.4}];
+ {n:'Ver-o-Peso',c:'Belém',uf:'PA',reg:0,ic:'🛶',lon:-48.5,lat:-1.45},{n:'Mercado Adolpho Lisboa',c:'Manaus',uf:'AM',reg:0,ic:'🌳',lon:-60,lat:-3.1},
+ {n:'Feira de São Joaquim',c:'Salvador',uf:'BA',reg:1,ic:'🥁',lon:-38.5,lat:-13},{n:'Mercado de São José',c:'Recife',uf:'PE',reg:1,ic:'🎭',lon:-34.9,lat:-8.05},
+ {n:'Mercado Central',c:'Fortaleza',uf:'CE',reg:1,ic:'⛵',lon:-38.5,lat:-3.7},{n:'Feira Central',c:'Campo Grande',uf:'MS',reg:2,ic:'🐆',lon:-54.6,lat:-20.45},
+ {n:'Mercadão',c:'São Paulo',uf:'SP',reg:3,ic:'🏙️',lon:-46.6,lat:-23.55},{n:'Mercado Central',c:'Belo Horizonte',uf:'MG',reg:3,ic:'⛰️',lon:-43.9,lat:-19.9},
+ {n:'Feira de São Cristóvão',c:'Rio de Janeiro',uf:'RJ',reg:3,ic:'🪗',lon:-43.2,lat:-22.9},{n:'Mercado Público',c:'Porto Alegre',uf:'RS',reg:4,ic:'🧉',lon:-51.2,lat:-30},
+ {n:'Mercado Público',c:'Florianópolis',uf:'SC',reg:4,ic:'🏝️',lon:-48.55,lat:-27.6},{n:'Mercado Municipal',c:'Curitiba',uf:'PR',reg:4,ic:'🌲',lon:-49.3,lat:-25.4}];
+const REGN=[['Norte','North'],['Nordeste','Northeast'],['Centro-Oeste','Center-West'],['Sudeste','Southeast'],['Sul','South']];
 const FACES=[['👵','Dona Nazaré'],['🧔','Seu Raimundo'],['👩‍🦱','Iara'],['🧑‍🌾','Seu Chico'],['👨‍🌾','Seu Zé'],['👧','Bia'],['🧑‍🍳','Cida'],['👴','Seu Benedito']];
-const TOOLS={hammer:['🔨','Martelo','remove um item ou obstáculo',120],pot:['🫕','Caldeirão','sobe 1 nível de um item (até o nível 4)',150],turns:['⏳','+3 Turnos','dá 3 turnos extras na fase',0]};
+const TOOLS={hammer:['🔨',['Martelo','Hammer'],['remove um item ou obstáculo','removes an item or obstacle'],120],
+ pot:['🫕',['Caldeirão','Cauldron'],['sobe 1 nível de um item (até o nível 4)','raises an item by 1 level (up to level 4)'],150],
+ turns:['⏳',['+3 Turnos','+3 Turns'],['dá 3 turnos extras na fase','gives you 3 extra turns in a level'],0]};
 const MAX_CONT=2, ORDER_COIN=2;                       // continuações por fase ao ficar sem turnos; moedas por nível de item entregue
 // Loja: compras com dinheiro real (simuladas neste protótipo), de US$ 0,50 a US$ 9,99. Selos e cartões nunca são vendidos.
 // UNIT é o valor de referência de cada coisa comprada avulsa; serve para calcular a economia dos kits.
@@ -322,10 +375,10 @@ const UNIT={coins:.5/150,hammer:.33,pot:.33,turns:.5};
 const SHOP={
  coins:[['c1',150,.5],['c2',500,1.49],['c3',1200,2.99],['c4',2500,4.99],['c5',6000,9.99]],
  items:[['t1','turns',1,.5],['h3','hammer',3,.99],['p3','pot',3,.99],['t3','turns',3,1.29],['t10','turns',10,3.99]],
- packs:[{id:'k1',n:'Kit do Feirante',once:true,coins:300,hammer:2,pot:2,turns:2,usd:1.99},
-        {id:'k2',n:'Kit Maré Cheia',coins:0,hammer:2,pot:2,turns:4,usd:2.49},
-        {id:'k3',n:'Kit Mestre da Feira',coins:1500,hammer:5,pot:5,turns:5,usd:5.99},
-        {id:'k4',n:'Kit Banca Completa',coins:4000,hammer:10,pot:10,turns:10,usd:9.99}]
+ packs:[{id:'k1',n:['Kit do Feirante','Vendor Kit'],once:true,coins:300,hammer:2,pot:2,turns:2,usd:1.99},
+        {id:'k2',n:['Kit Maré Cheia','High Tide Kit'],coins:0,hammer:2,pot:2,turns:4,usd:2.49},
+        {id:'k3',n:['Kit Mestre da Feira','Market Master Kit'],coins:1500,hammer:5,pot:5,turns:5,usd:5.99},
+        {id:'k4',n:['Kit Banca Completa','Full Stall Kit'],coins:4000,hammer:10,pot:10,turns:10,usd:9.99}]
 };
 const packValue=p=>p.coins*UNIT.coins+p.hammer*UNIT.hammer+p.pot*UNIT.pot+p.turns*UNIT.turns;
 const UFMAP={"ac":"M31 238L29 238L29 235L26 230L13 229L16 224L17 222L8 212L6 207L4 206L5 203L0 200L1 197L5 196L4 193L21 200L57 209L84 223L115 237L108 242L105 243L100 246L99 249L93 249L90 253L82 256L82 254L72 253L64 252L58 255L55 253L53 254L53 231L55 229L43 238Z","al":"M562 231L559 229L559 227L563 225L566 220L567 221L570 221L574 225L578 227L588 226L593 220L598 221L602 220L606 221L604 226L587 246L587 245L579 240L578 238L569 234Z","ap":"M345 100L339 100L336 96L334 88L331 85L329 85L328 82L326 76L326 71L322 68L321 63L318 60L314 60L308 55L301 55L301 47L300 44L302 44L302 46L311 49L316 45L320 47L323 46L324 48L330 48L335 43L338 33L347 20L351 18L352 21L351 14L355 18L357 22L358 22L359 34L364 49L368 54L372 54L376 56L377 62L373 63L376 63L376 64L368 72L363 79L360 80L354 86L352 90L348 94L348 98L345 100ZM369 53L367 50L369 49L370 52L369 53ZM371 71L371 70L372 69L375 68L374 70L371 71ZM375 68L374 67L376 66L375 68ZM367 49L367 48L369 48L367 49Z","am":"M166 48L168 49L170 48L171 51L174 51L177 52L175 57L178 61L181 70L179 71L180 74L179 78L179 83L182 87L183 91L182 93L180 93L180 94L187 100L190 104L194 104L195 93L200 90L204 91L207 95L209 95L214 93L213 89L218 79L236 79L237 87L239 89L238 92L243 95L244 98L255 107L264 110L270 116L271 117L274 116L275 119L246 183L243 186L244 190L247 192L248 196L247 198L247 201L244 204L245 208L243 218L242 218L194 219L192 217L189 220L186 219L185 216L183 216L182 212L179 211L176 208L174 207L164 207L162 209L160 210L161 211L158 212L157 213L158 215L154 218L155 222L151 221L147 223L144 222L142 223L142 226L140 229L138 229L137 226L131 229L129 231L126 229L119 229L119 230L117 232L112 235L84 223L57 209L21 200L4 193L4 189L10 184L13 184L14 181L12 177L17 170L18 162L24 159L26 156L33 152L45 150L48 150L51 146L54 147L58 146L60 149L63 149L64 148L72 103L72 98L69 94L69 90L62 85L62 73L66 73L71 71L74 72L76 72L76 69L74 66L65 66L65 56L70 54L73 55L92 55L90 53L91 51L95 55L103 49L104 49L108 57L108 64L112 63L121 71L123 71L129 67L132 67L133 68L132 71L133 72L136 68L138 68L139 64L144 62L146 63L150 59L152 59L155 58L156 52L166 49Z","ba":"M528 366L528 362L523 359L523 356L522 356L523 348L527 347L527 343L532 339L533 336L532 334L528 331L516 328L513 330L510 330L510 326L503 319L499 320L482 312L477 314L471 313L470 311L472 307L465 305L460 307L455 311L449 313L447 316L444 316L441 320L438 320L436 321L437 318L437 315L439 313L438 310L439 308L435 304L434 301L433 296L434 292L436 291L434 289L436 285L434 282L435 277L432 276L432 275L432 271L436 268L433 266L436 263L431 262L428 259L431 253L434 252L433 250L440 245L441 243L443 243L448 250L452 252L456 252L457 250L462 247L466 248L469 245L473 239L473 235L471 229L474 228L478 228L479 229L482 228L486 231L492 230L495 227L499 226L502 226L504 225L504 222L508 221L510 218L517 220L518 225L520 226L519 229L521 230L526 228L527 224L532 223L533 220L541 215L544 218L550 219L552 222L553 220L554 220L554 222L557 224L559 229L562 230L562 234L566 240L565 245L566 248L562 250L559 249L558 252L562 257L563 260L567 263L571 263L567 271L557 285L554 286L554 281L552 281L551 279L550 283L549 283L549 280L548 282L549 283L551 284L547 292L546 292L545 294L546 294L547 297L546 299L547 303L545 304L546 304L547 303L547 300L548 300L545 312L549 332L543 353L544 361L542 364L539 365L536 371L528 366ZM550 288L550 286L552 284L553 285L550 288ZM548 294L546 292L548 292L548 294Z","ce":"M574 157L567 161L560 174L558 177L555 176L553 180L553 181L554 182L552 186L553 187L551 191L552 194L554 196L551 201L549 202L547 204L545 204L541 200L537 197L523 197L522 194L525 188L524 187L520 186L519 183L516 167L515 166L517 163L515 158L516 151L509 135L512 127L524 125L531 126L554 140L568 153L574 156Z","df":"M417 334L402 334L402 331L403 325L415 325L417 327L416 333Z","es":"M502 412L502 404L504 402L510 402L513 393L516 390L516 385L514 381L512 380L517 379L516 377L515 376L515 373L513 371L516 368L519 368L517 365L524 364L527 365L536 371L535 377L536 387L534 393L531 395L527 403L526 403L525 404L527 404L525 409L521 413L519 413L516 420L504 417L504 412Z","go":"M417 334L416 333L417 327L415 325L403 325L402 331L402 334L417 334L417 337L415 342L418 344L419 349L414 355L413 357L417 359L416 363L417 367L407 374L402 371L394 372L392 371L385 376L381 375L378 376L375 376L370 377L366 384L364 384L362 387L361 390L358 387L346 383L336 378L330 377L332 373L327 372L326 361L325 358L325 354L328 350L328 348L334 342L337 335L340 332L346 330L348 325L349 320L353 317L355 318L358 316L360 310L360 305L362 302L361 297L366 290L368 281L371 277L369 283L378 285L385 288L387 282L390 278L392 282L394 288L395 288L396 286L404 286L403 288L410 290L411 287L414 290L418 287L424 286L434 282L436 285L434 289L436 291L434 292L433 297L435 304L439 307L438 310L438 313L436 316L433 316L429 313L428 314L428 319L424 318L423 321L424 322L423 326L424 331L418 334Z","ma":"M459 129L456 132L456 133L462 128L463 121L464 121L468 120L466 124L463 125L464 126L466 125L465 127L470 122L477 121L477 119L485 120L492 124L496 126L500 126L500 125L502 125L502 126L503 128L500 132L496 136L492 136L484 148L486 152L485 156L486 159L487 164L483 169L482 172L483 176L487 180L485 186L484 187L478 188L473 186L468 187L463 193L458 196L448 200L445 202L443 210L438 221L441 229L438 243L435 241L432 241L430 236L427 234L429 230L425 228L424 224L420 223L423 219L424 214L430 213L430 206L428 205L422 207L415 199L414 199L414 195L410 194L414 191L416 180L414 168L409 166L408 164L404 164L401 162L398 163L394 165L409 153L413 153L416 148L417 145L420 143L423 135L427 130L428 126L427 125L431 121L431 117L433 116L434 112L434 111L432 109L434 108L435 102L438 99L439 102L441 102L441 100L442 103L443 103L443 102L446 102L446 103L445 105L446 106L448 103L447 109L449 108L449 107L450 105L454 105L455 104L454 107L456 107L458 110L460 111L461 114L458 118L462 115L463 118L459 122L458 129L459 129ZM459 130L460 126L461 124L461 128L459 130ZM453 104L453 102L455 102L453 104ZM457 108L458 106L458 108L457 108ZM442 103L443 100L442 103Z","mt":"M207 296L213 292L215 286L218 284L221 279L221 271L219 268L218 268L217 264L220 260L219 256L213 255L212 254L195 254L196 245L194 240L196 232L194 227L196 221L194 219L242 218L243 218L245 208L244 204L247 201L247 198L248 196L252 201L255 211L256 218L264 223L265 226L268 226L269 229L308 232L371 236L366 249L363 261L365 263L364 266L365 268L365 279L366 282L367 284L366 286L366 290L361 297L362 302L360 305L360 310L356 317L353 317L349 320L348 325L346 330L340 332L337 335L333 344L328 348L325 358L327 366L316 366L313 365L314 361L316 360L318 354L316 354L311 360L306 361L304 358L302 358L299 360L294 361L289 358L288 356L279 353L274 355L270 355L264 362L258 364L254 361L254 359L252 357L250 358L244 354L243 344L245 342L245 338L243 339L216 338L215 325L210 319L215 319L214 311L211 304L213 301L211 298L208 297Z","ms":"M359 400L359 403L355 404L350 409L350 413L346 418L346 421L343 425L343 427L338 434L328 440L326 444L319 447L317 454L313 456L311 465L309 467L303 462L298 465L294 466L290 465L287 446L287 443L286 442L285 439L284 437L278 437L275 433L274 433L271 436L268 437L250 434L251 424L252 421L253 415L252 411L251 410L251 411L248 402L252 398L248 395L254 383L255 383L254 381L258 369L254 363L254 362L258 364L264 362L270 355L274 355L279 353L288 356L289 358L294 361L299 360L302 358L304 358L306 361L311 360L316 354L318 354L316 360L314 361L313 365L316 366L327 366L328 372L332 373L330 377L336 378L346 383L358 387L361 390L359 394L360 397Z","mg":"M528 366L524 364L517 365L519 368L516 368L513 371L515 373L515 376L516 377L517 379L512 380L514 381L516 385L516 390L513 393L510 402L504 402L502 404L502 412L498 415L498 415L494 425L495 427L483 433L479 432L477 433L472 433L465 436L462 436L452 440L447 443L442 443L443 442L442 442L442 445L439 447L432 447L430 443L431 443L431 441L427 439L427 429L429 423L426 421L422 422L418 414L420 409L417 406L418 402L415 398L412 399L408 399L408 401L405 401L402 399L401 401L393 401L392 406L391 405L390 401L387 404L386 399L382 397L377 398L370 397L367 395L359 400L360 390L362 390L362 387L363 385L366 384L370 377L375 376L378 376L381 375L385 376L392 371L394 372L402 371L407 374L417 367L416 363L417 359L413 357L414 355L419 349L418 344L415 342L417 337L417 334L424 331L423 326L424 322L423 321L424 318L428 319L428 314L429 313L433 316L436 316L437 315L437 318L436 321L439 319L441 320L444 316L447 316L449 313L464 305L472 307L470 311L471 313L477 314L482 312L499 320L503 319L510 326L510 329L518 328L528 331L532 334L533 336L532 339L527 343L527 347L524 348L522 352L521 356L523 356L523 359L528 362L527 365Z","pa":"M371 236L274 230L271 228L269 229L268 226L265 226L264 223L256 218L255 211L252 201L247 196L247 192L244 190L243 186L246 183L275 119L274 116L271 117L269 116L264 110L255 107L249 102L244 98L243 95L238 92L239 89L237 87L235 62L237 64L239 62L242 62L243 61L242 60L245 58L250 59L250 57L254 56L257 56L260 52L264 51L268 53L274 52L282 54L283 50L279 47L282 43L286 45L297 43L299 44L301 45L301 55L308 55L314 60L318 60L321 63L322 68L326 71L326 76L328 82L329 85L331 85L334 88L336 96L339 100L345 100L345 103L344 104L340 103L333 107L339 106L340 107L340 108L340 108L355 101L359 98L359 97L362 97L362 103L365 110L362 112L357 110L354 108L351 114L352 117L353 118L352 114L354 110L357 111L359 114L358 116L359 120L362 121L359 118L360 114L360 113L362 114L364 117L362 113L364 110L368 111L368 112L375 110L377 112L381 111L385 109L386 109L383 117L383 122L388 112L391 111L395 105L397 105L399 108L400 105L403 105L399 105L399 102L401 103L402 99L401 97L405 93L407 94L410 92L410 94L413 92L416 95L415 91L417 91L421 94L422 93L422 96L424 93L425 95L428 95L428 98L434 97L433 100L435 99L436 101L435 102L434 108L432 109L434 111L433 115L431 117L431 121L427 125L428 126L427 130L423 135L420 143L417 145L416 148L413 153L409 153L394 165L400 166L404 169L403 171L401 171L403 174L402 177L399 178L399 181L396 184L396 186L387 190L388 195L385 199L388 203L386 213L382 219L379 221L374 227L371 236ZM392 105L388 107L383 107L380 110L379 108L378 110L374 109L369 111L366 110L362 103L363 100L366 99L364 99L362 97L363 92L364 91L366 93L364 92L364 90L365 86L370 84L380 86L388 84L400 86L400 88L398 96L396 97L392 105ZM345 105L344 105L346 100L349 99L350 94L353 91L356 90L357 93L355 98L352 101L345 105ZM374 82L369 82L369 79L379 77L381 78L376 83L375 83L374 82ZM379 82L382 81L384 82L385 83L380 85L377 84L379 82ZM362 87L359 86L360 84L364 82L366 83L362 87ZM371 77L370 74L374 72L375 74L371 77ZM357 97L358 93L362 91L362 93L357 97ZM368 79L367 79L369 73L370 77L368 79ZM353 90L356 85L358 84L357 87L353 90ZM367 83L365 80L366 79L368 80L368 82L367 83ZM362 113L359 113L357 110L361 112L362 113ZM341 108L341 105L343 104L345 106L341 108ZM353 101L356 95L356 100L353 101ZM360 91L361 88L363 88L362 90L360 91ZM391 110L390 109L392 107L391 110ZM358 91L357 88L359 87L360 88L359 88L358 91ZM360 96L359 98L357 99L360 96ZM337 106L337 105L341 103L341 104L337 106ZM401 101L399 100L400 99L401 99L401 101ZM363 82L360 83L362 81L363 82ZM358 91L358 89L361 88L360 90L358 91ZM360 95L361 93L362 93L362 95L360 95ZM388 111L390 109L390 110L388 111ZM362 88L361 87L363 86L363 87L362 88ZM429 98L430 96L430 98L429 98Z","pb":"M611 199L608 197L605 197L599 202L585 205L583 207L583 208L578 211L576 209L576 206L572 206L575 203L575 200L578 198L577 197L574 195L570 197L563 203L558 204L557 202L553 203L551 200L554 196L552 194L551 191L553 187L552 186L554 181L560 183L565 180L566 178L574 176L575 177L570 184L570 186L573 186L574 188L577 187L581 187L582 191L585 189L585 185L586 185L586 181L587 180L589 180L590 182L594 183L610 183L611 190L611 193L612 191L612 194L612 199Z","pr":"M397 500L389 500L383 504L376 500L370 501L366 500L362 504L358 504L356 505L355 508L356 511L353 512L352 510L344 510L341 508L331 506L326 506L323 504L318 505L315 499L314 494L311 491L305 494L303 493L303 490L306 485L305 483L309 472L307 468L311 465L313 456L317 454L319 447L329 442L340 442L342 441L350 443L355 443L361 446L362 447L372 448L375 447L381 453L380 457L382 461L382 463L387 472L386 475L386 477L397 477L399 479L397 483L398 484L400 481L403 481L403 486L405 487L405 488L403 491L403 489L404 488L400 488L399 491L395 490L395 491L400 493L398 496L394 498L397 498L397 499Z","pe":"M559 227L557 223L554 221L554 220L553 220L552 222L550 219L544 218L541 215L533 220L532 223L529 224L527 223L526 228L521 230L519 229L520 226L518 225L517 220L514 218L510 218L518 212L522 208L523 204L521 202L520 198L537 197L541 200L545 204L547 204L549 202L551 201L554 203L557 202L558 204L563 203L570 197L574 195L577 197L578 198L575 200L575 203L572 206L576 206L576 209L578 211L583 208L583 207L585 205L599 202L605 197L608 197L612 200L612 201L611 204L612 206L607 221L602 220L598 221L593 220L588 226L578 227L574 225L570 221L567 221L566 220L563 225L560 226Z","pi":"M506 127L510 128L512 129L509 135L516 151L515 158L517 163L515 166L516 167L517 175L520 186L524 187L525 188L522 194L523 197L520 198L521 202L523 204L522 208L518 212L510 218L508 221L504 222L504 224L502 226L499 226L495 227L492 230L489 231L485 230L485 229L482 228L479 229L476 227L471 229L473 235L473 238L469 245L465 248L462 247L460 248L456 252L452 252L448 250L443 243L438 243L441 229L438 221L444 210L446 202L448 200L458 196L463 193L468 187L473 186L478 188L484 187L485 186L487 180L483 176L482 172L483 169L487 164L486 159L485 156L486 152L484 148L492 136L496 135L502 129L502 125L505 127Z","rj":"M469 451L469 449L475 449L472 448L468 448L466 450L463 447L458 451L458 453L461 454L460 455L457 455L455 452L456 449L460 447L464 446L466 444L465 442L459 442L456 439L456 438L462 436L465 436L472 433L476 433L479 432L483 433L496 427L494 425L498 415L498 415L502 412L504 412L505 417L516 420L515 425L516 432L504 438L500 442L499 447L483 448L482 447L484 444L483 443L480 445L482 447L481 449L469 451ZM464 453L463 452L465 450L467 452L464 453Z","rn":"M610 183L594 183L590 182L589 180L587 180L586 181L586 185L585 185L585 189L582 191L581 187L577 187L574 188L573 186L570 186L570 184L575 177L575 176L566 178L565 180L560 183L555 181L553 181L554 177L558 177L560 174L567 161L574 157L575 159L580 159L583 161L594 161L602 162L606 169L609 182Z","rs":"M322 639L320 637L320 628L327 620L319 615L318 610L314 606L308 603L305 601L303 597L300 596L293 593L290 588L288 586L284 590L281 590L281 585L269 572L265 572L262 576L257 575L256 574L261 570L261 567L265 565L270 559L272 555L275 554L277 549L280 546L283 541L286 542L286 540L285 539L290 536L292 533L297 532L300 527L302 527L308 525L312 521L315 520L319 521L322 519L324 520L331 521L333 522L340 522L344 524L345 526L349 526L358 532L365 542L379 543L380 545L376 547L375 553L372 556L372 558L374 559L374 557L376 556L380 558L374 567L370 579L364 589L358 596L352 602L346 605L343 610L343 606L342 603L346 604L349 602L353 598L355 597L357 594L357 590L360 591L360 587L364 584L364 579L366 579L367 575L365 574L364 576L361 576L360 578L358 575L357 575L355 571L354 573L356 578L355 581L355 585L354 582L352 587L352 589L349 592L344 594L343 601L340 602L341 606L340 608L342 610L340 611L338 616L334 627L324 637Z","ro":"M188 291L186 288L182 288L177 285L176 286L172 283L171 280L167 281L162 277L160 277L158 278L151 277L149 275L148 273L145 272L144 270L141 269L140 266L139 265L138 266L138 263L136 262L135 258L136 254L134 245L136 241L136 235L135 233L134 233L132 235L124 234L115 237L112 235L117 232L119 230L119 229L126 229L129 231L131 229L137 226L138 229L140 229L142 226L142 223L144 222L147 223L151 221L155 222L154 218L158 215L157 213L158 212L161 211L160 210L162 209L164 207L174 207L176 208L179 211L182 212L183 216L185 216L186 219L189 220L190 218L193 218L196 221L194 227L196 232L194 240L196 245L195 254L212 254L213 255L219 256L220 260L217 264L218 268L219 268L221 271L221 277L218 283L215 286L213 292L207 296L203 293L191 294L190 293Z","rr":"M235 62L236 79L218 79L213 89L214 93L209 95L207 95L204 91L200 90L195 93L194 104L190 104L187 100L180 94L180 93L182 93L183 91L182 87L179 83L179 78L180 74L179 71L181 70L178 61L175 57L177 52L174 51L171 51L170 48L167 48L166 45L156 44L157 40L153 33L153 26L147 21L144 17L145 16L147 18L154 18L156 22L162 21L164 22L165 21L167 21L174 27L176 25L176 20L178 19L181 17L185 19L190 18L191 16L195 16L195 14L198 12L203 12L205 9L208 8L210 5L209 2L207 1L214 1L216 0L217 1L219 4L218 9L217 12L224 14L223 17L226 22L221 27L222 30L219 35L219 40L221 45L223 47L223 53L225 54L224 55L227 56L231 61Z","sc":"M380 558L376 556L374 557L374 559L372 558L372 556L375 553L376 547L380 545L379 543L365 542L358 532L349 526L345 526L344 524L340 522L333 522L331 521L324 520L322 519L319 521L315 520L317 515L317 506L318 505L323 504L326 506L331 506L341 508L344 510L352 510L353 512L356 510L355 507L356 505L358 504L362 504L366 500L370 501L376 500L383 504L389 500L397 500L397 503L396 504L394 501L394 505L397 508L395 512L397 519L398 519L398 521L396 521L396 529L397 532L396 539L394 543L393 541L393 543L394 544L393 546L384 552L380 558ZM397 532L398 525L400 524L400 528L397 532ZM397 507L395 505L398 503L399 504L397 507Z","sp":"M405 488L405 487L403 486L403 481L400 481L398 484L397 484L398 480L399 479L397 477L386 477L386 475L387 472L382 463L382 461L380 457L381 453L375 447L372 448L362 447L361 446L355 443L350 443L342 441L340 442L329 442L326 444L328 440L338 434L343 427L343 425L346 421L346 418L350 413L350 409L355 404L359 403L360 399L364 397L366 396L368 395L370 397L377 398L382 397L386 399L387 404L390 401L391 405L392 406L393 401L401 401L402 399L405 401L408 401L408 399L412 399L415 398L418 402L417 406L420 408L420 409L418 414L422 422L426 421L429 423L427 429L426 437L427 439L431 441L431 443L430 443L432 447L441 446L442 442L443 442L443 443L447 443L456 439L459 442L465 442L466 444L463 446L457 448L455 452L457 455L454 455L452 457L447 459L447 463L439 462L436 463L433 466L431 463L431 466L423 470L418 475L406 483L405 484L408 484L408 485L405 488ZM449 465L446 464L448 461L449 462L449 465Z","se":"M570 262L567 263L563 260L562 257L558 252L559 249L562 250L566 248L565 245L566 239L562 234L562 231L578 238L579 240L587 245L587 246L580 250L578 253L576 250L575 250L576 251L577 251L577 253L575 255L574 254L575 255L575 257L572 261L573 257L572 257L571 261Z","to":"M434 282L424 286L418 287L414 290L411 287L410 290L403 288L404 286L396 286L395 288L394 288L392 282L390 278L387 282L385 288L378 285L369 283L371 277L367 283L365 279L365 268L364 266L365 263L363 261L366 249L374 227L379 221L382 219L387 207L388 203L385 199L388 195L387 190L396 186L396 184L399 181L399 178L402 177L403 174L402 171L404 171L404 169L400 166L395 165L400 162L404 164L408 164L409 166L414 168L416 179L414 191L410 194L414 195L415 199L415 199L422 207L428 205L430 206L430 213L424 214L423 219L420 223L424 224L425 228L429 230L428 234L430 236L432 241L441 243L440 245L433 250L434 252L431 253L428 259L431 262L436 263L433 266L436 268L432 272L432 276L435 278L434 281Z"};
@@ -333,16 +386,21 @@ const UFLAB={"ac":[71,236,17],"al":[586,235,8],"ap":[346,63,22],"am":[139,145,66
 const REGS=['Norte','Nordeste','Centro-Oeste','Sudeste','Sul'], REGUF={ac:0,am:0,ap:0,pa:0,ro:0,rr:0,to:0,al:1,ba:1,ce:1,ma:1,pb:1,pe:1,pi:1,rn:1,se:1,df:2,go:2,mt:2,ms:2,es:3,mg:3,rj:3,sp:3,pr:4,rs:4,sc:4};
 
 /* ===================== ESTADO ===================== */
-const $=id=>document.getElementById(id), fmt=n=>Math.round(n).toLocaleString('pt-BR');
+const $=id=>document.getElementById(id), fmt=n=>Math.round(n).toLocaleString(LANG==='en'?'en-US':'pt-BR');
 const pick=a=>a[Math.floor(Math.random()*a.length)], rint=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
-const item=(l,n)=>LINES[l].it[n-1];
+const item=(l,n)=>{ const x=LINES[l].it[n-1]; return [x[0],LANG==='en'?x[2]:x[1]]; };
+const lname=l=>tx(LINES[l].name);
+const gloss=(l,n)=>LANG==='en'?GLOSS[l+n]:null;
 const lc=l=>`hsl(${LINES[l].hue} 55% 46%)`;
+const pname=i=>tx(PHASES[i].name), ptitle=i=>PHASES[i].boss?pname(i):tr(`Fase ${i+1} · `,`Level ${i+1} · `)+pname(i);
+const tname=k=>tx(TOOLS[k][1]), tdesc=k=>tx(TOOLS[k][2]), cap=s=>s[0].toUpperCase()+s.slice(1);
+const turnsW=n=>n===1?tr('turno','turn'):tr('turnos','turns');
 const isAdj=(x,y)=>{ const d=Math.abs(x-y); return d===COLS||(d===1&&Math.floor(x/COLS)===Math.floor(y/COLS)); };
 const nbrs=i=>[i-COLS,i+COLS,i%COLS?i-1:-1,i%COLS<COLS-1?i+1:-1].filter(k=>k>=0&&k<COLS*ROWS);
 let S, P=null, screen='home', sel=null, drag=null, noClick=false, popAt=-1, audio=null, toastTimer=null, quiet=false, lastAct=Date.now(), sheetName=null;
 
 function fresh(){ return {v:1,coins:100,best:{},cards:[],tools:{hammer:3,pot:3,turns:1},iap:{n:0,usd:0,once:[]},selos:[],sealOn:true,selo5:{ac:0,pe:0,jt:0},seen:{},diaryDone:false,
-  stats:{ph:{}},opts:{sound:true,test:false}}; }
+  stats:{ph:{}},opts:{sound:true,test:false,lang:LANG}}; }
 function load(){ try{ const d=JSON.parse(localStorage.getItem(KEY)); if(d&&d.v===1) return d; }catch(e){} return fresh(); }
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
 const starsOf=i=>S.best[i]||0, totalStars=()=>Object.values(S.best).reduce((a,b)=>a+b,0);
@@ -356,6 +414,7 @@ function beep(f,d){ if(quiet||!S.opts.sound) return; try{ audio=audio||new (wind
   o.type='sine'; o.frequency.value=f; g.gain.setValueAtTime(.08,t0); g.gain.exponentialRampToValueAtTime(.001,t0+.25); o.connect(g); g.connect(audio.destination); o.start(t0); o.stop(t0+.26);}catch(e){} }
 function modal(html){ if(quiet) return; $('card').innerHTML=html; $('over').hidden=false; const b=$('card').querySelector('button:not(:disabled)'); if(b)b.focus(); }
 function closeModal(){ $('over').hidden=true; }
+function setLang(l){ LANG=l; S.opts.lang=l; applyLang(); render(); }
 
 /* ===================== FASE ===================== */
 function newOrder(){
@@ -372,7 +431,7 @@ function startPhase(i){
   P={i,cfg:c,board:b,turns:c.turns+(seal?3:0),seal,used:0,goals:c.goals.map(g=>({...g,p:0})),orders:[],nextId:1,tide:0,toolsUsed:0,cont:0,earned:0,armed:null,over:null};
   while(P.orders.length<3) P.orders.push(newOrder());
   phStat(i).tries++; save(); sel=null; screen='game';
-  if(!quiet&&c.tut&&!S.seen[c.tut]){ S.seen[c.tut]=1; const T=TUT[c.tut]; render(); modal(`<div class="big">${T[0]}</div><h2>${T[1]}</h2><p>${T[2]}</p><button class="btn" data-act="mclose">Entendi</button>`); return; }
+  if(!quiet&&c.tut&&!S.seen[c.tut]){ S.seen[c.tut]=1; const T=TUT[c.tut]; render(); modal(`<div class="big">${T[0]}</div><h2>${tx(T[1])}</h2><p>${tx(T[2])}</p><button class="btn" data-act="mclose">${tr('Entendi','Got it')}</button>`); return; }
   render();
 }
 const flooded=i=>P.tide>0&&i>=COLS*(ROWS-1);
@@ -395,28 +454,29 @@ function merge(from,to,via){
 }
 function spawn(l){
   if(P.over) return; const e=[]; P.board.forEach((x,i)=>{ if(free(i)) e.push(i); });
-  if(!e.length){ toast('Sem espaço: junte, entregue ou use uma ferramenta.'); return; }
+  if(!e.length){ toast(tr('Sem espaço: junte, entregue ou use uma ferramenta.','No space: merge, deliver or use a tool.')); return; }
   P.used++; const i=pick(e); P.board[i]={l,n:1}; popAt=i; beep(520);
   if(P.used%MOLD_EVERY===0){ const c=[]; P.board.forEach((x,k)=>{ if(x&&x.o==='mold') for(const j of nbrs(k)){ const y=P.board[j]; if(isItem(y)&&!y.m&&!c.includes(j)) c.push(j); } });
-    if(c.length){ P.board[pick(c)].m=true; toast('Um item ficou mofado 🦠'); } }
-  if(P.cfg.boss==='tide'){ if(P.tide>0) P.tide--; else if(P.used%TIDE_EVERY===0){ P.tide=TIDE_LEN; toast('A maré subiu! 🌊'); } }
+    if(c.length){ P.board[pick(c)].m=true; toast(tr('Um item ficou mofado 🦠','An item got moldy 🦠')); } }
+  if(P.cfg.boss==='tide'){ if(P.tide>0) P.tide--; else if(P.used%TIDE_EVERY===0){ P.tide=TIDE_LEN; toast(tr('A maré subiu! 🌊','The tide is in! 🌊')); } }
   sel=null; checkEnd();
 }
 const matches=(o,it)=>o.items.find(x=>!x.done&&x.l===it.l&&x.n===it.n);
 function deliver(i,id){
   if(P.over) return; const it=P.board[i]; if(!isItem(it)) return;
-  if(flooded(i)){ toast('A maré está prendendo esse item.'); return; }
-  if(it.m){ toast('Ninguém compra item mofado. Faça uma fusão ao lado para limpar.'); return; }
+  if(flooded(i)){ toast(tr('A maré está prendendo esse item.','The tide is holding that item.')); return; }
+  if(it.m){ toast(tr('Ninguém compra item mofado. Faça uma fusão ao lado para limpar.','Nobody buys moldy items. Merge next to it to clean it.')); return; }
   const o=id!=null?P.orders.find(x=>x.id===id):P.orders.find(x=>matches(x,it)), nd=o&&matches(o,it);
-  if(!nd){ toast('Esse cliente não pediu esse item.'); return; }
+  if(!nd){ toast(tr('Esse cliente não pediu esse item.','This customer didn’t order that.')); return; }
   nd.done=true; P.board[i]=null; sel=null; beep(700);
   if(o.items.every(x=>x.done)){ progress('orders'); const co=o.items.reduce((a,x)=>a+ORDER_COIN*x.n,0); S.coins+=co; P.earned+=co; P.orders[P.orders.indexOf(o)]=newOrder(); beep(940,.1); toast(`${o.face} ${o.who}: +${co} 🪙`); }
   checkEnd();
 }
 function deliverSeal(i){
   if(P.over) return; const it=P.board[i]; if(!isItem(it)) return;
-  if(it.n<MAX||it.m||flooded(i)){ toast('O espaço do Selo aceita só itens de nível 5, sem mofo.'); return; }
-  P.board[i]=null; sel=null; S.selo5[it.l]=(S.selo5[it.l]||0)+1; beep(880); toast(checkSeal()?'🏅 Selo de Domínio conquistado: Força do Açaí!':`🏅 ${item(it.l,5)[1]} entregue ao Selo`); checkEnd();
+  if(it.n<MAX||it.m||flooded(i)){ toast(tr('O espaço do Selo aceita só itens de nível 5, sem mofo.','The Seal slot only takes level 5 items without mold.')); return; }
+  P.board[i]=null; sel=null; S.selo5[it.l]=(S.selo5[it.l]||0)+1; beep(880);
+  toast(checkSeal()?tr('🏅 Selo de Domínio conquistado: Força do Açaí!','🏅 Mastery Seal earned: Açaí Power!'):tr(`🏅 ${item(it.l,5)[1]} entregue ao Selo`,`🏅 ${item(it.l,5)[1]} delivered to the Seal`)); checkEnd();
 }
 const sealReady=()=>Object.keys(LINES).every(k=>(S.selo5[k]||0)>=3);
 function checkSeal(){
@@ -425,10 +485,10 @@ function checkSeal(){
 }
 function useTool(k,i){
   const x=P.board[i]; if(P.over||!x) return false;
-  if(P.toolsUsed>=MAX_TOOLS||!(S.tools[k]>0)){ toast('Sem ferramentas disponíveis nesta fase.'); P.armed=null; return false; }
+  if(P.toolsUsed>=MAX_TOOLS||!(S.tools[k]>0)){ toast(tr('Sem ferramentas disponíveis nesta fase.','No tools left for this level.')); P.armed=null; return false; }
   if(k==='turns') return false;
   if(k==='hammer'){ if(x.o) progress('clear'); P.board[i]=null; }
-  else { if(!isItem(x)||x.n>4||flooded(i)){ toast('O Caldeirão funciona em itens até o nível 4.'); return false; } x.n++; progress('make',g=>g.l===x.l&&x.n>=g.lv); popAt=i; }
+  else { if(!isItem(x)||x.n>4||flooded(i)){ toast(tr('O Caldeirão funciona em itens até o nível 4.','The Cauldron works on items up to level 4.')); return false; } x.n++; progress('make',g=>g.l===x.l&&x.n>=g.lv); popAt=i; }
   S.tools[k]--; P.toolsUsed++; P.armed=null; beep(700); checkEnd(); return true;
 }
 function hasMove(){
@@ -449,15 +509,15 @@ function win(){
   P.over='win'; const i=P.i, left=P.turns-P.used, st=left/P.turns>=.5?3:left/P.turns>=.25?2:1, first=!starsOf(i), prev=starsOf(i);
   const co=first?30+10*st:10, h=phStat(i); h.wins++; h.left+=left;
   S.best[i]=Math.max(prev,st); S.coins+=co;
-  let gift=''; if(st===3&&prev<3){ const k=pick(['hammer','pot']); S.tools[k]++; gift=`<p>Prêmio por 3 ⭐: +1 ${TOOLS[k][0]} ${TOOLS[k][1]}</p>`; }
+  let gift=''; if(st===3&&prev<3){ const k=pick(['hammer','pot']); S.tools[k]++; gift=`<p>${tr('Prêmio por 3 ⭐','3 ⭐ reward')}: +1 ${TOOLS[k][0]} ${tname(k)}</p>`; }
   const newCard=!S.cards.includes(i); if(newCard) S.cards.push(i);
   const seal=checkSeal(); save();
   if(quiet) return; beep(660); beep(880,.15); beep(1100,.3);
-  modal(`<div class="bigstars">${[1,2,3].map(k=>`<span${k>st?' class="off" style="opacity:.25"':''}>⭐</span>`).join('')}</div><h1>Fase concluída!</h1>
-   <p>${left} ${left===1?'turno sobrando':'turnos sobrando'} · +${co} 🪙${P.earned?` · pedidos: +${P.earned} 🪙`:''}</p>${gift}
-   ${seal?`<p><b>🏅 Selo de Domínio conquistado: Força do Açaí!</b><br>+3 turnos em toda fase. Ele fica na sua Mochila de Selos.</p>`:''}
-   ${i<PHASES.length-1?`<button class="btn" data-act="phase:${i+1}">Próxima fase</button>`:''}<button class="btn ghosty" data-act="go:market">Voltar ao mercado</button>
-   ${newCard?`<button class="btn ghosty sm" data-act="card:${i}">📖 Novo cartão no Diário</button>`:''}`);
+  modal(`<div class="bigstars">${[1,2,3].map(k=>`<span${k>st?' class="off" style="opacity:.25"':''}>⭐</span>`).join('')}</div><h1>${tr('Fase concluída!','Level complete!')}</h1>
+   <p>${left} ${tr(left===1?'turno sobrando':'turnos sobrando',left===1?'turn left':'turns left')} · +${co} 🪙${P.earned?` · ${tr('pedidos','orders')}: +${P.earned} 🪙`:''}</p>${gift}
+   ${seal?`<p><b>${tr('🏅 Selo de Domínio conquistado: Força do Açaí!','🏅 Mastery Seal earned: Açaí Power!')}</b><br>${tr('+3 turnos em toda fase. Ele fica na sua Mochila de Selos.','+3 turns on every level. It goes into your Seal Bag.')}</p>`:''}
+   ${i<PHASES.length-1?`<button class="btn" data-act="phase:${i+1}">${tr('Próxima fase','Next level')}</button>`:''}<button class="btn ghosty" data-act="go:market">${tr('Voltar ao mercado','Back to the market')}</button>
+   ${newCard?`<button class="btn ghosty sm" data-act="card:${i}">${tr('📖 Novo cartão no Diário','📖 New Travel Journal card')}</button>`:''}`);
 }
 function lose(why){
   P.over='lose'; P.why=why; const h=phStat(P.i); h.losses++; if(why==='stuck') h.stuck++; save();
@@ -465,39 +525,40 @@ function lose(why){
 }
 function loseModal(){
   const why=P.why, can=why==='turns'&&P.cont<MAX_CONT;
-  modal(`<div class="big">${why==='stuck'?'🧱':'⏳'}</div><h1>${why==='stuck'?'O tabuleiro travou':'Os turnos acabaram'}</h1>
+  modal(`<div class="big">${why==='stuck'?'🧱':'⏳'}</div><h1>${why==='stuck'?tr('O tabuleiro travou','The board is stuck'):tr('Os turnos acabaram','Out of turns')}</h1>
    <ul>${P.goals.map(g=>`<li>${goalDone(g)?'✅':'🎯'} ${goalFull(g)}: ${Math.min(g.p,g.n)}/${g.n}</li>`).join('')}</ul>
-   ${can&&S.tools.turns>0?`<button class="btn" data-act="cont">⏳ Usar +3 Turnos e continuar (você tem ${S.tools.turns})</button>`:''}
-   ${can&&!(S.tools.turns>0)?`<button class="btn" data-act="shop">🛒 Continuar com +3 Turnos (Loja)</button>`:''}
-   ${S.opts.test&&why==='turns'?'<button class="btn ghosty" data-act="plus5">+5 turnos (modo teste)</button>':''}
-   <button class="btn${can?' ghosty':''}" data-act="phase:${P.i}">Tentar de novo</button><button class="btn ghosty" data-act="go:market">Voltar ao mercado</button>
-   <p class="note">Dica: gaste turnos só com o que falta para o objetivo 🎯 e junte três de uma vez quando puder.</p>`);
+   ${can&&S.tools.turns>0?`<button class="btn" data-act="cont">${tr(`⏳ Usar +3 Turnos e continuar (você tem ${S.tools.turns})`,`⏳ Use +3 Turns and keep going (you have ${S.tools.turns})`)}</button>`:''}
+   ${can&&!(S.tools.turns>0)?`<button class="btn" data-act="shop">${tr('🛒 Continuar com +3 Turnos (Loja)','🛒 Keep going with +3 Turns (Shop)')}</button>`:''}
+   ${S.opts.test&&why==='turns'?`<button class="btn ghosty" data-act="plus5">${tr('+5 turnos (modo teste)','+5 turns (test mode)')}</button>`:''}
+   <button class="btn${can?' ghosty':''}" data-act="phase:${P.i}">${tr('Tentar de novo','Try again')}</button><button class="btn ghosty" data-act="go:market">${tr('Voltar ao mercado','Back to the market')}</button>
+   <p class="note">${tr('Dica: gaste turnos só com o que falta para o objetivo 🎯 e junte três de uma vez quando puder.','Tip: spend turns only on what the goal 🎯 still needs, and merge three at once when you can.')}</p>`);
 }
-const goalFull=g=>g.t==='orders'?`Entregar ${g.n} pedidos`:g.t==='clear'?`Limpar ${g.n} obstáculos`:`Criar ${item(g.l,g.lv)[1]} (nível ${g.lv})`;
+const goalFull=g=>g.t==='orders'?tr(`Entregar ${g.n} pedidos`,`Fill ${g.n} orders`):g.t==='clear'?tr(`Limpar ${g.n} obstáculos`,`Clear ${g.n} obstacles`):tr(`Criar ${item(g.l,g.lv)[1]} (nível ${g.lv})`,`Make ${item(g.l,g.lv)[1]} (level ${g.lv})`);
+function goalText(g){ return g.t==='orders'?tr('Entregar pedidos','Fill orders'):g.t==='clear'?tr('Limpar obstáculos','Clear obstacles'):tr('Criar ','Make ')+item(g.l,g.lv)[1]; }
+function goalIcon(g){ return g.t==='orders'?'🧺':g.t==='clear'?'🧹':item(g.l,g.lv)[0]; }
 /* ---------- Loja (compras simuladas) ---------- */
-const usd=v=>'US$ '+v.toFixed(2).replace('.',',');
+const usd=v=>LANG==='en'?'$'+v.toFixed(2):'US$ '+v.toFixed(2).replace('.',',');
+const coinsW=n=>fmt(n)+tr(' moedas',' coins');
 const packText=p=>[p.coins?fmt(p.coins)+' 🪙':'',...['hammer','pot','turns'].map(k=>p[k]?`${p[k]} ${TOOLS[k][0]}`:'')].filter(Boolean).join(' · ');
 function iapItem(key){
   const [kind,id]=key.split('-');
-  if(kind==='coins'){ const c=SHOP.coins.find(x=>x[0]===id); return {n:fmt(c[1])+' moedas',usd:c[2],give(){ S.coins+=c[1]; }}; }
-  if(kind==='item'){ const c=SHOP.items.find(x=>x[0]===id); return {n:`${c[2]} × ${TOOLS[c[1]][0]} ${TOOLS[c[1]][1]}`,usd:c[3],give(){ S.tools[c[1]]=(S.tools[c[1]]||0)+c[2]; }}; }
-  const p=SHOP.packs.find(x=>x.id===id); return {n:p.n,usd:p.usd,give(){ S.coins+=p.coins; for(const k of ['hammer','pot','turns']) S.tools[k]=(S.tools[k]||0)+p[k]; if(p.once) S.iap.once.push(p.id); }};
+  if(kind==='coins'){ const c=SHOP.coins.find(x=>x[0]===id); return {n:coinsW(c[1]),usd:c[2],give(){ S.coins+=c[1]; }}; }
+  if(kind==='item'){ const c=SHOP.items.find(x=>x[0]===id); return {n:`${c[2]} × ${TOOLS[c[1]][0]} ${tname(c[1])}`,usd:c[3],give(){ S.tools[c[1]]=(S.tools[c[1]]||0)+c[2]; }}; }
+  const p=SHOP.packs.find(x=>x.id===id); return {n:tx(p.n),usd:p.usd,give(){ S.coins+=p.coins; for(const k of ['hammer','pot','turns']) S.tools[k]=(S.tools[k]||0)+p[k]; if(p.once) S.iap.once.push(p.id); }};
 }
 function iapAsk(key){ const it=iapItem(key);
-  modal(`<div class="big">🛒</div><h2>Confirmar compra</h2><p><b>${it.n}</b></p><p class="note">Compra simulada: nada será cobrado.</p><button class="btn" data-act="iapok:${key}">Comprar por ${usd(it.usd)}</button><button class="btn ghosty" data-act="iapno">Cancelar</button>`); }
-function iapBuy(key){ const it=iapItem(key); closeModal(); it.give(); S.iap.n++; S.iap.usd=Math.round((S.iap.usd+it.usd)*100)/100; beep(880); beep(1100,.12); save(); renderSheet(); toast('Compra feita: '+it.n); }
+  modal(`<div class="big">🛒</div><h2>${tr('Confirmar compra','Confirm purchase')}</h2><p><b>${it.n}</b></p><p class="note">${tr('Compra simulada: nada será cobrado.','Simulated purchase: nothing will be charged.')}</p><button class="btn" data-act="iapok:${key}">${tr('Comprar por ','Buy for ')+usd(it.usd)}</button><button class="btn ghosty" data-act="iapno">${tr('Cancelar','Cancel')}</button>`); }
+function iapBuy(key){ const it=iapItem(key); closeModal(); it.give(); S.iap.n++; S.iap.usd=Math.round((S.iap.usd+it.usd)*100)/100; beep(880); beep(1100,.12); save(); renderSheet(); toast(tr('Compra feita: ','Purchased: ')+it.n); }
 function shopHtml(){
-  const buy=(key,v)=>`<button class="btn sm" data-act="iap:${key}">${usd(v)}</button>`;
+  const buy=(key,v)=>`<button class="btn sm" data-act="iap:${key}">${usd(v)}</button>`, save_=p=>tr(`Economia de ${p}%`,`Save ${p}%`);
   const row=(ic,bd,name,desc,btn,tag)=>`<div class="row"><span class="thumb" aria-hidden="true">${ic}${bd?`<b>${bd}</b>`:''}</span><div><b>${name}</b>${tag?` <span class="tag">${tag}</span>`:''}<p>${desc}</p></div>${btn}</div>`;
   const base=SHOP.coins[0][1]/SHOP.coins[0][2];
-  return `<p class="note">Compras simuladas neste teste: nada é cobrado. No app publicado, o pagamento é feito pela loja do celular, que converte o preço para a sua moeda. Selos de Domínio e cartões do Diário nunca são vendidos.</p>
-   <p class="note">Você tem: 🪙 ${fmt(S.coins)} · ${Object.keys(TOOLS).map(k=>`${TOOLS[k][0]} ${S.tools[k]||0}`).join(' · ')}</p><h2>Kits</h2>`
-   +SHOP.packs.map(p=>{ const got=p.once&&S.iap.once.includes(p.id); return row('🎁','',p.n,packText(p)+(p.once?' · só 1 vez':''),got?'<button class="btn sm" disabled>Comprado</button>':buy('pack-'+p.id,p.usd),`Economia de ${Math.round((1-p.usd/packValue(p))*100)}%`); }).join('')
-   +'<h2>Ferramentas</h2>'+SHOP.items.map(([id,k,n,v])=>{ const sv=Math.round((1-v/(n*UNIT[k]))*100); return row(TOOLS[k][0],'×'+n,`${n} × ${TOOLS[k][1]}`,TOOLS[k][2][0].toUpperCase()+TOOLS[k][2].slice(1)+'.',buy('item-'+id,v),sv>=5?`Economia de ${sv}%`:''); }).join('')
-   +'<h2>Moedas</h2><p class="note">Moedas compram Martelo e Caldeirão no mercado.</p>'+SHOP.coins.map(([id,n,v])=>{ const b=Math.round((n/v/base-1)*100); return row('🪙','',fmt(n)+' moedas',b>0?`+${b}% de bônus`:'&nbsp;',buy('coins-'+id,v)); }).join('');
+  return `<p class="note">${tr('Compras simuladas neste teste: nada é cobrado. No app publicado, o pagamento é feito pela loja do celular, que converte o preço para a sua moeda. Selos de Domínio e cartões do Diário nunca são vendidos.','Purchases are simulated in this test: nothing is charged. In the published app, payment goes through your phone’s store, which converts prices to your currency. Mastery Seals and Journal cards are never sold.')}</p>
+   <p class="note">${tr('Você tem','You have')}: 🪙 ${fmt(S.coins)} · ${Object.keys(TOOLS).map(k=>`${TOOLS[k][0]} ${S.tools[k]||0}`).join(' · ')}</p><h2>${tr('Kits','Bundles')}</h2>`
+   +SHOP.packs.map(p=>{ const got=p.once&&S.iap.once.includes(p.id); return row('🎁','',tx(p.n),packText(p)+(p.once?tr(' · só 1 vez',' · one time only'):''),got?`<button class="btn sm" disabled>${tr('Comprado','Purchased')}</button>`:buy('pack-'+p.id,p.usd),save_(Math.round((1-p.usd/packValue(p))*100))); }).join('')
+   +`<h2>${tr('Ferramentas','Tools')}</h2>`+SHOP.items.map(([id,k,n,v])=>{ const sv=Math.round((1-v/(n*UNIT[k]))*100); return row(TOOLS[k][0],'×'+n,`${n} × ${tname(k)}`,cap(tdesc(k))+'.',buy('item-'+id,v),sv>=5?save_(sv):''); }).join('')
+   +`<h2>${tr('Moedas','Coins')}</h2><p class="note">${tr('Moedas compram Martelo e Caldeirão no mercado.','Coins buy Hammers and Cauldrons at the market.')}</p>`+SHOP.coins.map(([id,n,v])=>{ const b=Math.round((n/v/base-1)*100); return row('🪙','',coinsW(n),b>0?tr(`+${b}% de bônus`,`+${b}% bonus`):'&nbsp;',buy('coins-'+id,v)); }).join('');
 }
-function goalText(g){ return g.t==='orders'?'Entregar pedidos':g.t==='clear'?'Limpar obstáculos':`Criar ${item(g.l,g.lv)[1]}`; }
-function goalIcon(g){ return g.t==='orders'?'🧺':g.t==='clear'?'🧹':item(g.l,g.lv)[0]; }
 
 /* ===================== DESENHO ===================== */
 function render(){
@@ -510,65 +571,70 @@ function render(){
   if(sheetName) renderSheet();
   save();
 }
+const langSeg=()=>`<div class="seg" role="group" aria-label="${tr('Idioma','Language')}"><button data-act="lang:pt" aria-pressed="${LANG==='pt'}">🇧🇷 Português</button><button data-act="lang:en" aria-pressed="${LANG==='en'}">🌎 English</button></div>`;
 function homeHtml(){
   const ts=totalStars(), nc=S.cards.length;
-  return `<div class="homein"><div class="logo"><b>Rota das<br>Feiras</b><small>Feira Viva · versão de teste</small></div>
-   <div class="hero"><div class="big" aria-hidden="true">🛶🍇🐟🌿</div><b>Viaje pelos mercados do Brasil</b><p class="note" style="margin:0 auto">Puzzle de fusão com turnos contados. Comece pelo Ver-o-Peso, em Belém.</p>
+  return `<div class="homein"><div class="logo"><b>Rota das<br>Feiras</b><small>${tr('Feira Viva · versão de teste','Brazil’s market trail · test build')}</small>${LANG==='en'?'<p class="say"><i>rota das feiras</i> (HO-tah dahs FAY-rahs): the trail of street markets</p>':''}</div>
+   <div class="hero"><div class="big" aria-hidden="true">🛶🍇🐟🌿</div><b>${tr('Viaje pelos mercados do Brasil','Travel through Brazil’s markets')}</b><p class="note" style="margin:0 auto">${tr('Puzzle de fusão com turnos contados. Comece pelo Ver-o-Peso, em Belém.','A merge puzzle with limited turns. Start at Ver-o-Peso, in Belém.')}</p>
    <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap"><span class="pill">⭐ ${ts}</span><span class="pill">🪙 ${fmt(S.coins)}</span><span class="pill">📖 ${nc}/${CARDS.length}</span></div></div>
-   <button class="btn big" data-act="go:map">▶ Jogar</button>
-   <div class="hgrid"><button data-act="sheet:diary"><span>📖</span>Diário</button><button data-act="sheet:selos"><span>🏅</span>Selos</button><button data-act="sheet:shop"><span>🛒</span>Loja</button><button data-act="sheet:cfg"><span>⚙️</span>Ajustes</button></div></div>`;
+   <button class="btn big" data-act="go:map">▶ ${tr('Jogar','Play')}</button>
+   <div class="hgrid"><button data-act="sheet:diary"><span>📖</span>${tr('Diário','Journal')}</button><button data-act="sheet:selos"><span>🏅</span>${tr('Selos','Seals')}</button><button data-act="sheet:shop"><span>🛒</span>${tr('Loja','Shop')}</button><button data-act="sheet:cfg"><span>⚙️</span>${tr('Ajustes','Settings')}</button></div>
+   ${langSeg()}</div>`;
 }
 const PXY=(lon,lat)=>{ const mer=a=>Math.log(Math.tan(Math.PI/4+a*Math.PI/360)), K=638.5/(mer(5.27)-mer(-33.75)); return [.3+(lon+73.99)*612/39.2,.3+(mer(5.27)-mer(lat))*K]; };
 function mapSvg(){
   const pts=MARKETS.map(f=>PXY(f.lon,f.lat));
-  const ufs=Object.entries(UFMAP).map(([k,d])=>`<path class="uf r${REGUF[k]}" d="${d}"><title>${k.toUpperCase()} · ${REGS[REGUF[k]]}</title></path>`).join('');
+  const ufs=Object.entries(UFMAP).map(([k,d])=>`<path class="uf r${REGUF[k]}" d="${d}"><title>${k.toUpperCase()} · ${tx(REGN[REGUF[k]])}</title></path>`).join('');
   const labs=Object.entries(UFLAB).filter(([k])=>k!=='df').map(([k,[x,y,r]])=>`<text class="uflab${r<15?' s':''}" x="${x}" y="${y}">${k.toUpperCase()}</text>`).join('');
-  const nodes=pts.map((p,i)=>`<g class="node ${i===0?'open':'lock'}" ${i===0?'data-act="go:market" role="button" aria-label="Abrir o Ver-o-Peso"':''} transform="translate(${p[0].toFixed(1)} ${p[1].toFixed(1)})"><title>${MARKETS[i].n}, ${MARKETS[i].c}${i?' (em breve)':''}</title>${i===0?'<circle class="ring" r="18"/>':''}<circle r="18"/><text>${i===0?MARKETS[i].ic:'🔒'}</text></g>`).join('');
-  return `<svg viewBox="-8 -8 647 655" role="img" aria-label="Mapa do Brasil com os mercados da Rota das Feiras">${ufs}${labs}<polyline class="route" points="${pts.map(p=>p.join(',')).join(' ')}"/>${nodes}</svg>`;
+  const nodes=pts.map((p,i)=>`<g class="node ${i===0?'open':'lock'}" ${i===0?`data-act="go:market" role="button" aria-label="${tr('Abrir o Ver-o-Peso','Open Ver-o-Peso')}"`:''} transform="translate(${p[0].toFixed(1)} ${p[1].toFixed(1)})"><title>${MARKETS[i].n}, ${MARKETS[i].c}${i?tr(' (em breve)',' (coming soon)'):''}</title>${i===0?'<circle class="ring" r="18"/>':''}<circle r="18"/><text>${i===0?MARKETS[i].ic:'🔒'}</text></g>`).join('');
+  return `<svg viewBox="-8 -8 647 655" role="img" aria-label="${tr('Mapa do Brasil com os mercados da Rota das Feiras','Map of Brazil with the markets on the trail')}">${ufs}${labs}<polyline class="route" points="${pts.map(p=>p.join(',')).join(' ')}"/>${nodes}</svg>`;
 }
 function mapHtml(){
-  return `<div class="head"><button class="icon" data-act="go:home" aria-label="Voltar">◀</button><div class="t"><b>Rota das Feiras</b><small>⭐ ${totalStars()} estrelas · 🪙 ${fmt(S.coins)}</small></div></div>
-   <div class="map">${mapSvg()}<div class="legend">${REGS.map((r,i)=>`<span><i style="background:var(--r${i})"></i>${r}</span>`).join('')}</div></div>
-   <button class="row cur" data-act="go:market"><span class="face">🛶</span><div><b>Ver-o-Peso</b> · Belém (PA)<p>${totalStars()}/21 ⭐ · 7 fases com chefe</p></div><span class="btn sm">Jogar</span></button>
-   ${MARKETS.slice(1).map(f=>`<div class="row lock"><span class="face">${f.ic}</span><div><b>${f.n}</b> · ${f.c} (${f.uf})<p>Em breve. Neste teste só o Ver-o-Peso está aberto.</p></div></div>`).join('')}
-   <p class="note">No jogo completo, sair do Norte vai pedir 30 ⭐ e cada mercado abre ao vencer o chefe do anterior.</p>`;
+  return `<div class="head"><button class="icon" data-act="go:home" aria-label="${tr('Voltar','Back')}">◀</button><div class="t"><b>Rota das Feiras</b><small>⭐ ${totalStars()} ${tr('estrelas','stars')} · 🪙 ${fmt(S.coins)}</small></div></div>
+   ${LANG==='en'?'<p class="note">In Portuguese, a <i>feira</i> is an open-air street market and a <i>mercado</i> is a covered market hall. <i>Mercadão</i> means “big market”.</p>':''}
+   <div class="map">${mapSvg()}<div class="legend">${REGN.map((r,i)=>`<span><i style="background:var(--r${i})"></i>${tx(r)}</span>`).join('')}</div></div>
+   <button class="row cur" data-act="go:market"><span class="face">🛶</span><div><b>Ver-o-Peso</b> · Belém (PA)<p>${totalStars()}/21 ⭐ · ${tr('7 fases com chefe','7 levels with a boss')}</p></div><span class="btn sm">${tr('Jogar','Play')}</span></button>
+   ${MARKETS.slice(1).map(f=>`<div class="row lock"><span class="face">${f.ic}</span><div><b>${f.n}</b> · ${f.c} (${f.uf})<p>${tr('Em breve. Neste teste só o Ver-o-Peso está aberto.','Coming soon. Only Ver-o-Peso is open in this test.')}</p></div></div>`).join('')}
+   <p class="note">${tr('No jogo completo, sair do Norte vai pedir 30 ⭐ e cada mercado abre ao vencer o chefe do anterior.','In the full game, leaving the North will take 30 ⭐ and each market opens when you beat the previous boss.')}</p>`;
 }
 function marketHtml(){
   const seal=S.selos.includes(0), next=PHASES.findIndex((c,i)=>unlocked(i)&&!starsOf(i));
-  return `<div class="head"><button class="icon" data-act="go:map" aria-label="Voltar ao mapa">◀</button><div class="t"><b>🛶 Ver-o-Peso</b><small>Belém (PA) · ${totalStars()}/21 ⭐</small></div><button class="pill" data-act="sheet:shop" aria-label="${fmt(S.coins)} moedas. Abrir a Loja">🪙 ${fmt(S.coins)} ＋</button></div>
+  return `<div class="head"><button class="icon" data-act="go:map" aria-label="${tr('Voltar ao mapa','Back to the map')}">◀</button><div class="t"><b>🛶 Ver-o-Peso</b><small>Belém (PA) · ${totalStars()}/21 ⭐</small></div><button class="pill" data-act="sheet:shop" aria-label="${tr(`${fmt(S.coins)} moedas. Abrir a Loja`,`${fmt(S.coins)} coins. Open the Shop`)}">🪙 ${fmt(S.coins)} ＋</button></div>
    ${PHASES.map((c,i)=>{ const st=starsOf(i), ok=unlocked(i);
-     return `<button class="row${i===next?' cur':''}${ok?'':' lock'}" data-act="${ok?'start:'+i:'locked'}"><span class="face">${ok?(c.boss?'🌊':i+1):'🔒'}</span><div><b>${c.boss?c.name:`Fase ${i+1} · ${c.name}`}</b>${i===next?' <span class="tag">próxima</span>':''}<p>${ok?`<b>🎯 ${c.goals.map(goalFull).join(' + ')}</b> · ${c.turns} turnos`:`Abre ao vencer a fase ${i}`}</p></div><span class="stars">${[1,2,3].map(k=>`<span class="${k>st?'off':''}">★</span>`).join('')}</span></button>`; }).join('')}
-   <div class="row"><span class="face">${seal?'🏅':'🍇'}</span><div><b>Selo de Domínio: Força do Açaí</b><p>${seal?'Conquistado: +3 turnos em toda fase.':`Entregue 3 itens de nível 5 de cada linha no espaço 🏅 e vença o chefe. ${Object.keys(LINES).map(k=>`${item(k,5)[0]} ${Math.min(3,S.selo5[k]||0)}/3`).join(' · ')} · chefe ${starsOf(6)?'✓':'—'}`}</p></div></div>
-   <h2>Ferramentas</h2>
-   ${Object.entries(TOOLS).map(([k,[em,n,d,c]])=>`<div class="row"><span class="face">${em}</span><div><b>${n}</b> · você tem ${S.tools[k]||0}<p>${d[0].toUpperCase()+d.slice(1)}. ${c?'Máximo de 2 ferramentas por fase.':'Só na Loja.'}</p></div>${c?`<button class="btn sm" data-act="buy:${k}" ${S.coins<c?'disabled':''}>🪙 ${c}</button>`:'<button class="btn sm" data-act="sheet:shop">🛒 Loja</button>'}</div>`).join('')}`;
+     return `<button class="row${i===next?' cur':''}${ok?'':' lock'}" data-act="${ok?'start:'+i:'locked'}"><span class="face">${ok?(c.boss?'🌊':i+1):'🔒'}</span><div><b>${ptitle(i)}</b>${i===next?` <span class="tag">${tr('próxima','next')}</span>`:''}<p>${ok?`<b>🎯 ${c.goals.map(goalFull).join(' + ')}</b> · ${c.turns} ${turnsW(c.turns)}`:tr(`Abre ao vencer a fase ${i}`,`Opens when you beat level ${i}`)}</p></div><span class="stars">${[1,2,3].map(k=>`<span class="${k>st?'off':''}">★</span>`).join('')}</span></button>`; }).join('')}
+   <div class="row"><span class="face">${seal?'🏅':'🍇'}</span><div><b>${tr('Selo de Domínio: Força do Açaí','Mastery Seal: Açaí Power')}</b><p>${seal?tr('Conquistado: +3 turnos em toda fase.','Earned: +3 turns on every level.'):`${tr('Entregue 3 itens de nível 5 de cada linha no espaço 🏅 e vença o chefe.','Deliver 3 level 5 items of each line to the 🏅 slot and beat the boss.')} ${Object.keys(LINES).map(k=>`${item(k,5)[0]} ${Math.min(3,S.selo5[k]||0)}/3`).join(' · ')} · ${tr('chefe','boss')} ${starsOf(6)?'✓':'—'}`}</p></div></div>
+   <h2>${tr('Ferramentas','Tools')}</h2>
+   ${Object.entries(TOOLS).map(([k,[em,,,c]])=>`<div class="row"><span class="face">${em}</span><div><b>${tname(k)}</b> · ${tr('você tem','you have')} ${S.tools[k]||0}<p>${cap(tdesc(k))}. ${c?tr('Máximo de 2 ferramentas por fase.','Up to 2 tools per level.'):tr('Só na Loja.','Shop only.')}</p></div>${c?`<button class="btn sm" data-act="buy:${k}" ${S.coins<c?'disabled':''}>🪙 ${c}</button>`:`<button class="btn sm" data-act="sheet:shop">🛒 ${tr('Loja','Shop')}</button>`}</div>`).join('')}`;
 }
 function gameHtml(){
   const left=P.turns-P.used, c=P.cfg, cur=sel!=null?P.board[sel]:null, have=new Set(P.board.filter(x=>isItem(x)&&!x.m).map(x=>x.l+x.n)), need3=Math.ceil(P.turns*.5);
   // O que falta para vencer ganha destaque: pedidos, obstáculos ou a linha do item a criar.
   const ordKey=P.goals.some(g=>g.t==='orders'&&!goalDone(g)), clrKey=P.goals.some(g=>g.t==='clear'&&!goalDone(g)), mk=P.goals.find(g=>g.t==='make'&&!goalDone(g));
-  const tide=c.boss==='tide'?(P.tide>0?`<span class="tide">🌊 Maré alta: ${P.tide} ${P.tide>1?'turnos':'turno'}</span>`:`<span class="tide">🌊 Maré sobe em ${TIDE_EVERY-P.used%TIDE_EVERY} ${TIDE_EVERY-P.used%TIDE_EVERY>1?'turnos':'turno'}</span>`):'';
-  const info=P.armed?`<p>${TOOLS[P.armed][0]} Toque numa casa para usar o <b>${TOOLS[P.armed][1]}</b>.</p><button class="btn sm ghosty" data-act="disarm">Cancelar</button>`
-    :cur?`<p><b>${item(cur.l,cur.n)[0]} ${item(cur.l,cur.n)[1]}</b> · ${LINES[cur.l].name} nível ${cur.n}${cur.m?' · <span class="warn">mofado</span>':''}${flooded(sel)?' · preso pela maré':''}</p>`
-    :`<p>Cada cesto gasta 1 turno. Juntar e entregar são de graça.</p>`;
+  const tl=TIDE_EVERY-P.used%TIDE_EVERY;
+  const tide=c.boss==='tide'?(P.tide>0?`<span class="tide">🌊 ${tr('Maré alta','High tide')}: ${P.tide} ${turnsW(P.tide)}</span>`:`<span class="tide">🌊 ${tr(`Maré sobe em ${tl}`,`Tide rises in ${tl}`)} ${turnsW(tl)}</span>`):'';
+  const gl=cur&&gloss(cur.l,cur.n);
+  const info=P.armed?`<p>${TOOLS[P.armed][0]} ${tr(`Toque numa casa para usar o <b>${tname(P.armed)}</b>.`,`Tap a space to use the <b>${tname(P.armed)}</b>.`)}</p><button class="btn sm ghosty" data-act="disarm">${tr('Cancelar','Cancel')}</button>`
+    :cur?`<p><b>${item(cur.l,cur.n)[0]} ${item(cur.l,cur.n)[1]}</b> · ${lname(cur.l)} ${tr('nível','level')} ${cur.n}${cur.m?` · <span class="warn">${tr('mofado','moldy')}</span>`:''}${flooded(sel)?tr(' · preso pela maré',' · held by the tide'):''}${gl?`<br><i>${gl}</i>`:''}</p>`
+    :`<p>${tr('Cada cesto gasta 1 turno. Juntar e entregar são de graça.','Each basket tap costs 1 turn. Merging and delivering are free.')}</p>`;
   const gIcon=g=>goalDone(g)?'✅':g.t==='make'?`<span class="need"><span>${item(g.l,g.lv)[0]}<sub style="--lc:${lc(g.l)}">${g.lv}</sub></span></span>`:goalIcon(g);
-  return `<div class="head"><button class="icon" data-act="pause" aria-label="Pausar">⏸</button><div class="t"><b>${c.boss?c.name:`Fase ${P.i+1} · ${c.name}`}</b><small>Ver-o-Peso${P.seal?' · 🏅 +3 turnos':''}</small></div>
-    <div class="turns${left<=3?' low':''}"><b>${left}</b><small>${left===1?'turno':'turnos'}</small></div></div>
-   <div class="win"><h3>🎯 Para vencer a fase</h3>
+  return `<div class="head"><button class="icon" data-act="pause" aria-label="${tr('Pausar','Pause')}">⏸</button><div class="t"><b>${ptitle(P.i)}</b><small>Ver-o-Peso${P.seal?tr(' · 🏅 +3 turnos',' · 🏅 +3 turns'):''}</small></div>
+    <div class="turns${left<=3?' low':''}"><b>${left}</b><small>${turnsW(left)}</small></div></div>
+   <div class="win"><h3>${tr('🎯 Para vencer a fase','🎯 To win this level')}</h3>
     <div class="goals">${P.goals.map(g=>`<div class="goal${goalDone(g)?' ok':''}"><span class="e">${gIcon(g)}</span><div>${goalText(g)}<div class="bar"><i style="width:${Math.min(100,g.p/g.n*100)}%"></i></div></div><span class="cnt">${Math.min(g.p,g.n)}/${g.n}</span></div>`).join('')}</div>
-    <div class="sub"><span>3 ⭐ se sobrarem ${need3} turnos · 2 ⭐ com ${Math.ceil(P.turns*.25)}</span>${tide}</div></div>
-   <div class="olab${ordKey?' key':''}">${ordKey?'🎯 Pedidos: contam para vencer':'Pedidos extras: não contam para vencer, mas rendem moedas'}</div>
+    <div class="sub"><span>${tr(`3 ⭐ se sobrarem ${need3} turnos · 2 ⭐ com ${Math.ceil(P.turns*.25)}`,`3 ⭐ with ${need3} turns left · 2 ⭐ with ${Math.ceil(P.turns*.25)}`)}</span>${tide}</div></div>
+   <div class="olab${ordKey?' key':''}">${ordKey?tr('🎯 Pedidos: contam para vencer','🎯 Orders: these count toward winning'):tr('Pedidos extras: não contam para vencer, mas rendem moedas','Extra orders: they don’t count toward winning, but they pay coins')}</div>
    <div class="orders ${ordKey?'key':'extra'}">${P.orders.map(o=>{ const want=cur&&!cur.m&&matches(o,cur), ready=o.items.some(x=>!x.done&&have.has(x.l+x.n));
-      return `<button class="order${want?' want':''}${ready?' ready':''}" data-order="${o.id}" aria-label="Pedido de ${o.who}: ${o.items.map(x=>item(x.l,x.n)[1]+' nível '+x.n).join(' e ')}"><span class="who">${o.face} ${o.who}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span></button>`; }).join('')}
-    <button class="order seal${cur&&cur.n===MAX&&!cur.m?' want':''}" data-seal="1" aria-label="Espaço do Selo: itens de nível 5"><span class="who">🏅 Selo</span><span style="font-size:12px;line-height:1.5">${Object.keys(LINES).map(k=>`${item(k,5)[0]}${Math.min(3,S.selo5[k]||0)}`).join(' ')}</span><span class="who">nível 5</span></button></div>
+      return `<button class="order${want?' want':''}${ready?' ready':''}" data-order="${o.id}" aria-label="${tr(`Pedido de ${o.who}`,`${o.who}’s order`)}: ${o.items.map(x=>item(x.l,x.n)[1]+tr(' nível ',', level ')+x.n).join(tr(' e ',' and '))}"><span class="who">${o.face} ${o.who}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span></button>`; }).join('')}
+    <button class="order seal${cur&&cur.n===MAX&&!cur.m?' want':''}" data-seal="1" aria-label="${tr('Espaço do Selo: itens de nível 5','Seal slot: level 5 items')}"><span class="who">🏅 ${tr('Selo','Seal')}</span><span style="font-size:12px;line-height:1.5">${Object.keys(LINES).map(k=>`${item(k,5)[0]}${Math.min(3,S.selo5[k]||0)}`).join(' ')}</span><span class="who">${tr('nível 5','level 5')}</span></button></div>
    <div class="wrap" id="wrap"><div class="board" id="board">${P.board.map((x,i)=>{
       const fl=flooded(i)?' flood':'', ar=P.armed?' armed':'', ky=clrKey?' key':'';
-      if(!x) return `<button class="cell${fl}${ar}" data-cell="${i}" aria-label="Casa vazia"></button>`;
-      if(x.o==='crate') return `<button class="cell crate${ar}${ky}" data-cell="${i}" aria-label="Caixote"></button>`;
-      if(x.o==='mold') return `<button class="cell mold${ar}${ky}" data-cell="${i}" aria-label="Mofo"></button>`;
-      return `<button class="cell has${x.m?' moldy':''}${fl}${ar}${sel===i?' sel':''}${popAt===i?' pop':''}" style="--lc:${lc(x.l)}" data-cell="${i}" aria-label="${item(x.l,x.n)[1]} nível ${x.n}${x.m?', mofado':''}"><span class="em">${item(x.l,x.n)[0]}</span><span class="lv">${x.n}</span></button>`; }).join('')}</div></div>
+      if(!x) return `<button class="cell${fl}${ar}" data-cell="${i}" aria-label="${tr('Casa vazia','Empty space')}"></button>`;
+      if(x.o==='crate') return `<button class="cell crate${ar}${ky}" data-cell="${i}" aria-label="${tr('Caixote','Crate')}"></button>`;
+      if(x.o==='mold') return `<button class="cell mold${ar}${ky}" data-cell="${i}" aria-label="${tr('Mofo','Mold')}"></button>`;
+      return `<button class="cell has${x.m?' moldy':''}${fl}${ar}${sel===i?' sel':''}${popAt===i?' pop':''}" style="--lc:${lc(x.l)}" data-cell="${i}" aria-label="${item(x.l,x.n)[1]}${tr(' nível ',', level ')}${x.n}${x.m?tr(', mofado',', moldy'):''}"><span class="em">${item(x.l,x.n)[0]}</span><span class="lv">${x.n}</span></button>`; }).join('')}</div></div>
    <div class="info${P.armed?' armed':''}">${info}</div>
-   <div class="dock">${c.lines.map(l=>`<button class="basket" style="--lc:${lc(l)}" data-act="spawn:${l}" aria-label="Cesto de ${LINES[l].name}: gasta 1 turno${mk&&mk.l===l?'. Linha do objetivo':''}">${mk&&mk.l===l?'<i class="tgt">🎯</i>':''}<span class="em">${LINES[l].it[0][0]}</span><b>${LINES[l].name}</b><small>−1 turno</small></button>`).join('')}
-    ${Object.entries(TOOLS).map(([k,[em,n]])=>`<button class="basket tool${P.armed===k?' on':''}" data-act="tool:${k}" aria-label="${n}: você tem ${S.tools[k]||0}" ${S.tools[k]>0&&P.toolsUsed<MAX_TOOLS?'':'disabled'}><span class="em">${em}</span><b>${S.tools[k]||0}</b><small>${P.toolsUsed}/${MAX_TOOLS}</small></button>`).join('')}</div>`;
+   <div class="dock">${c.lines.map(l=>`<button class="basket" style="--lc:${lc(l)}" data-act="spawn:${l}" aria-label="${tr(`Cesto de ${lname(l)}: gasta 1 turno`,`${lname(l)} basket: costs 1 turn`)}${mk&&mk.l===l?tr('. Linha do objetivo','. Goal line'):''}">${mk&&mk.l===l?'<i class="tgt">🎯</i>':''}<span class="em">${LINES[l].it[0][0]}</span><b>${lname(l)}</b><small>${tr('−1 turno','−1 turn')}</small></button>`).join('')}
+    ${Object.entries(TOOLS).map(([k,[em]])=>`<button class="basket tool${P.armed===k?' on':''}" data-act="tool:${k}" aria-label="${tname(k)}: ${tr('você tem','you have')} ${S.tools[k]||0}" ${S.tools[k]>0&&P.toolsUsed<MAX_TOOLS?'':'disabled'}><span class="em">${em}</span><b>${S.tools[k]||0}</b><small>${P.toolsUsed}/${MAX_TOOLS}</small></button>`).join('')}</div>`;
 }
 function fit(){
   const w=$('wrap').clientWidth,h=$('wrap').clientHeight,g=4, cs=Math.floor(Math.min((w-g*(COLS-1))/COLS,(h-g*(ROWS-1))/ROWS));
@@ -576,32 +642,34 @@ function fit(){
 }
 function renderSheet(){
   let h='', T='';
-  if(sheetName==='shop'){ T='Loja'; h=shopHtml(); }
-  else if(sheetName==='diary'){ T='Diário de Viagem';
-    h=`<p class="note">Cada fase vencida revela um cartão sobre o lugar ou o produto. ${S.cards.length}/${CARDS.length} cartões${S.diaryDone?' · coleção completa!':' · complete o Ver-o-Peso e ganhe 150 🪙'}.</p><h2>🛶 Ver-o-Peso</h2><div class="dgrid">`
-     +CARDS.map((c,i)=>S.cards.includes(i)?`<button class="dcard" data-act="card:${i}"><span class="em">${c.em}</span><b>${c.t}</b><small>${c.p}</small></button>`
-       :`<div class="dcard lock"><span class="em">${c.em}</span><b>?</b><small>Vença a fase ${i+1}</small></div>`).join('')+'</div>';
-  } else if(sheetName==='selos'){ T='Mochila de Selos';
-    h=`<p class="note">Selos são conquistados jogando, nunca vendidos. Antes de cada fase você escolhe quais levar. Neste teste a mochila tem 1 vaga e só o Selo do Ver-o-Peso pode ser conquistado.</p>`
-     +(S.selos.includes(0)?`<label class="chk"><input type="checkbox" data-act="sealon" ${S.sealOn?'checked':''}><span><b>Levar Força do Açaí</b> nas fases (+3 turnos)</span></label>`:'')
-     +SELOS.map(([em,n,d],i)=>`<div class="row${S.selos.includes(i)?' cur':' lock'}"><span class="face">${S.selos.includes(i)?em:'🔒'}</span><div><b>${n}</b> · ${MARKETS[i].n}<p>${d}</p></div></div>`).join('');
-  } else { T='Ajustes';
+  if(sheetName==='shop'){ T=tr('Loja','Shop'); h=shopHtml(); }
+  else if(sheetName==='diary'){ T=tr('Diário de Viagem','Travel Journal');
+    h=`<p class="note">${tr('Cada fase vencida revela um cartão sobre o lugar ou o produto.','Each level you beat reveals a card about the place or the food.')} ${S.cards.length}/${CARDS.length} ${tr('cartões','cards')}${S.diaryDone?tr(' · coleção completa!',' · collection complete!'):tr(' · complete o Ver-o-Peso e ganhe 150 🪙',' · complete Ver-o-Peso to earn 150 🪙')}.</p><h2>🛶 Ver-o-Peso</h2><div class="dgrid">`
+     +CARDS.map((c,i)=>S.cards.includes(i)?`<button class="dcard" data-act="card:${i}"><span class="em">${c.em}</span><b>${tx(c.t)}</b><small>${tx(c.p)}</small></button>`
+       :`<div class="dcard lock"><span class="em">${c.em}</span><b>?</b><small>${tr(`Vença a fase ${i+1}`,`Beat level ${i+1}`)}</small></div>`).join('')+'</div>';
+  } else if(sheetName==='selos'){ T=tr('Mochila de Selos','Seal Bag');
+    h=`<p class="note">${tr('Selos são conquistados jogando, nunca vendidos. Antes de cada fase você escolhe quais levar. Neste teste a mochila tem 1 vaga e só o Selo do Ver-o-Peso pode ser conquistado.','Seals are earned by playing, never sold. Before each level you choose which ones to bring. In this test the bag has 1 slot and only the Ver-o-Peso Seal can be earned.')}</p>`
+     +(S.selos.includes(0)?`<label class="chk"><input type="checkbox" data-act="sealon" ${S.sealOn?'checked':''}><span>${tr('<b>Levar Força do Açaí</b> nas fases (+3 turnos)','<b>Bring Açaí Power</b> to your levels (+3 turns)')}</span></label>`:'')
+     +SELOS.map(([em,n,d],i)=>`<div class="row${S.selos.includes(i)?' cur':' lock'}"><span class="face">${S.selos.includes(i)?em:'🔒'}</span><div><b>${tx(n)}</b> · ${MARKETS[i].n}<p>${tx(d)}</p></div></div>`).join('');
+  } else { T=tr('Ajustes','Settings');
     const rows=PHASES.map((c,i)=>{ const h=phStat(i), done=h.wins+h.losses, rate=done?Math.round(h.losses/done*100):null, al=rate!=null&&done>=3&&(rate>60||rate<10);
       return `<tr><td>${i+1}${c.boss?' 🌊':''}</td><td>${h.tries}</td><td>${h.wins}</td><td>${h.losses}${h.stuck?` (${h.stuck}🧱)`:''}</td><td class="${al?'alert':''}">${rate==null?'—':rate+'%'}</td><td>${h.wins?(h.left/h.wins).toFixed(1):'—'}</td><td>${starsOf(i)||'—'}</td></tr>`; }).join('');
-    const tg=(k,t,d)=>`<div class="row"><div><b>${t}</b><p>${d}</p></div><button class="btn${S.opts[k]?'':' ghosty'}" data-act="opt:${k}" aria-pressed="${S.opts[k]}">${S.opts[k]?'Ligado':'Desligado'}</button></div>`;
-    h=tg('sound','Som','Toques ao colher, juntar e entregar.')+tg('test','Modo teste','Libera todas as fases e oferece +5 turnos ao perder por falta de turnos.')
-     +`<h2>Painel do teste</h2><p class="note">Por fase: tentativas, vitórias, derrotas (🧱 = tabuleiro travado), taxa de derrota, média de turnos sobrando nas vitórias e melhor resultado. Pela heurística do documento de design, taxa de derrota acima de 60% ou abaixo de 10% pede ajuste (em vermelho, a partir de 3 partidas).</p>
-      <table class="met"><thead><tr><th>Fase</th><th>Tent.</th><th>Vit.</th><th>Der.</th><th>Taxa</th><th>Sobra</th><th>⭐</th></tr></thead><tbody>${rows}</tbody></table>
-      <p class="note">Compras simuladas: ${S.iap.n} · ${usd(S.iap.usd)}.</p>
-      <p class="note">O progresso fica salvo só neste navegador. Mapa do Brasil: @svg-maps/brazil, licença CC BY 4.0.</p>
-      <div class="row"><div><b>Recomeçar do zero</b><p class="warn">Apaga todo o progresso e o painel.</p></div><button class="btn ghosty" data-act="reset">Recomeçar</button></div>`;
+    const tg=(k,t,d)=>`<div class="row"><div><b>${t}</b><p>${d}</p></div><button class="btn${S.opts[k]?'':' ghosty'}" data-act="opt:${k}" aria-pressed="${S.opts[k]}">${S.opts[k]?tr('Ligado','On'):tr('Desligado','Off')}</button></div>`;
+    h=`<div class="row"><div><b>${tr('Idioma','Language')}</b><p>${tr('O jogo também está em inglês.','O jogo também está em português.')}</p></div>${langSeg()}</div>`
+     +tg('sound',tr('Som','Sound'),tr('Toques ao colher, juntar e entregar.','Chimes when you pick, merge and deliver.'))
+     +tg('test',tr('Modo teste','Test mode'),tr('Libera todas as fases e oferece +5 turnos ao perder por falta de turnos.','Unlocks every level and offers +5 turns when you run out of turns.'))
+     +`<h2>${tr('Painel do teste','Test panel')}</h2><p class="note">${tr('Por fase: tentativas, vitórias, derrotas (🧱 = tabuleiro travado), taxa de derrota, média de turnos sobrando nas vitórias e melhor resultado. Pela heurística do documento de design, taxa de derrota acima de 60% ou abaixo de 10% pede ajuste (em vermelho, a partir de 3 partidas).','Per level: attempts, wins, losses (🧱 = board stuck), loss rate, average turns left on wins and best result. Following the design document’s rule of thumb, a loss rate above 60% or below 10% needs tuning (shown in red after 3 games).')}</p>
+      <table class="met"><thead><tr><th>${tr('Fase','Level')}</th><th>${tr('Tent.','Tries')}</th><th>${tr('Vit.','Wins')}</th><th>${tr('Der.','Losses')}</th><th>${tr('Taxa','Rate')}</th><th>${tr('Sobra','Left')}</th><th>⭐</th></tr></thead><tbody>${rows}</tbody></table>
+      <p class="note">${tr('Compras simuladas','Simulated purchases')}: ${S.iap.n} · ${usd(S.iap.usd)}.</p>
+      <p class="note">${tr('O progresso fica salvo só neste navegador. Mapa do Brasil: @svg-maps/brazil, licença CC BY 4.0.','Progress is saved only in this browser. Map of Brazil: @svg-maps/brazil, CC BY 4.0 license.')}</p>
+      <div class="row"><div><b>${tr('Recomeçar do zero','Start over')}</b><p class="warn">${tr('Apaga todo o progresso e o painel.','Erases all progress and the test panel.')}</p></div><button class="btn ghosty" data-act="reset">${tr('Recomeçar','Start over')}</button></div>`;
   }
-  $('sheetin').innerHTML=`<header><h1>${T}</h1><button class="btn ghosty" data-act="sheetclose">Fechar</button></header>${h}`;
+  $('sheetin').innerHTML=`<header><h1>${T}</h1><button class="btn ghosty" data-act="sheetclose">${tr('Fechar','Close')}</button></header>${h}`;
 }
 function showCard(i,more){
   const c=CARDS[i];
-  modal(`<div class="big">${c.em}</div><h2>${c.t}</h2><p class="place">📍 ${c.p}</p><p>${c.f}</p>${more?`<div class="more">${c.m}</div>`:`<button class="btn ghosty sm" data-act="cardmore:${i}">Saiba mais</button>`}<button class="btn" data-act="mclose">Fechar</button>`);
-  if(!S.diaryDone&&S.cards.length===CARDS.length){ S.diaryDone=true; S.coins+=150; save(); toast('Coleção do Ver-o-Peso completa: +150 🪙'); }
+  modal(`<div class="big">${c.em}</div><h2>${tx(c.t)}</h2><p class="place">📍 ${tx(c.p)}</p><p>${tx(c.f)}</p>${more?`<div class="more">${tx(c.m)}</div>`:`<button class="btn ghosty sm" data-act="cardmore:${i}">${tr('Saiba mais','Learn more')}</button>`}<button class="btn" data-act="mclose">${tr('Fechar','Close')}</button>`);
+  if(!S.diaryDone&&S.cards.length===CARDS.length){ S.diaryDone=true; S.coins+=150; save(); toast(tr('Coleção do Ver-o-Peso completa: +150 🪙','Ver-o-Peso collection complete: +150 🪙')); }
 }
 
 /* ===================== ENTRADA ===================== */
@@ -611,23 +679,24 @@ document.addEventListener('click',e=>{
   if(a){ const [k,v]=a.dataset.act.split(':');
     if(k==='intro'){ introTap(); return; }
     if(k==='go'){ closeModal(); sheetName=null; $('sheet').hidden=true; screen=v; P=v==='game'?P:null; render(); $('main').scrollTop=0; }
+    else if(k==='lang') setLang(v);
     else if(k==='start'){ const i=+v, c=PHASES[i];
-      modal(`<div class="big">${c.boss?'🌊':'🛶'}</div><h2>${c.boss?c.name:`Fase ${i+1} · ${c.name}`}</h2><ul>${c.goals.map(g=>`<li>${goalIcon(g)} ${goalText(g)}: ${g.n}</li>`).join('')}<li>⏳ ${c.turns} turnos</li>${c.crate?`<li>📦 ${c.crate} caixotes</li>`:''}${c.mold?`<li>🦠 ${c.mold} ${c.mold>1?'focos':'foco'} de mofo</li>`:''}</ul>
-       ${S.selos.includes(0)?`<label class="chk"><input type="checkbox" data-act="sealon" ${S.sealOn?'checked':''}><span>🏅 Levar <b>Força do Açaí</b> (+3 turnos)</span></label>`:''}
-       <button class="btn" data-act="phase:${i}">Jogar</button><button class="btn ghosty" data-act="mclose">Voltar</button>`); }
+      modal(`<div class="big">${c.boss?'🌊':'🛶'}</div><h2>${ptitle(i)}</h2><ul>${c.goals.map(g=>`<li>${goalIcon(g)} ${goalFull(g)}</li>`).join('')}<li>⏳ ${c.turns} ${turnsW(c.turns)}</li>${c.crate?`<li>📦 ${c.crate} ${tr('caixotes','crates')}</li>`:''}${c.mold?`<li>🦠 ${c.mold} ${c.mold>1?tr('focos de mofo','mold patches'):tr('foco de mofo','mold patch')}</li>`:''}</ul>
+       ${S.selos.includes(0)?`<label class="chk"><input type="checkbox" data-act="sealon" ${S.sealOn?'checked':''}><span>${tr('🏅 Levar <b>Força do Açaí</b> (+3 turnos)','🏅 Bring <b>Açaí Power</b> (+3 turns)')}</span></label>`:''}
+       <button class="btn" data-act="phase:${i}">${tr('Jogar','Play')}</button><button class="btn ghosty" data-act="mclose">${tr('Voltar','Back')}</button>`); }
     else if(k==='phase'){ closeModal(); startPhase(+v); }
-    else if(k==='locked') toast('Vença a fase anterior para abrir esta.');
+    else if(k==='locked') toast(tr('Vença a fase anterior para abrir esta.','Beat the previous level to open this one.'));
     else if(k==='spawn'){ if(!P.armed) { spawn(v); render(); } }
     else if(k==='tool'){
-      if(v==='turns'){ if(S.tools.turns>0&&P.toolsUsed<MAX_TOOLS&&!P.over){ S.tools.turns--; P.toolsUsed++; P.turns+=3; beep(820); render(); toast('⏳ +3 turnos'); } }
+      if(v==='turns'){ if(S.tools.turns>0&&P.toolsUsed<MAX_TOOLS&&!P.over){ S.tools.turns--; P.toolsUsed++; P.turns+=3; beep(820); render(); toast(tr('⏳ +3 turnos','⏳ +3 turns')); } }
       else { P.armed=P.armed===v?null:v; sel=null; render(); } }
-    else if(k==='cont'){ if(S.tools.turns>0&&P.cont<MAX_CONT){ closeModal(); S.tools.turns--; P.cont++; P.turns+=3; P.over=null; phStat(P.i).losses--; render(); toast('⏳ +3 turnos: continue!'); } }
+    else if(k==='cont'){ if(S.tools.turns>0&&P.cont<MAX_CONT){ closeModal(); S.tools.turns--; P.cont++; P.turns+=3; P.over=null; phStat(P.i).losses--; render(); toast(tr('⏳ +3 turnos: continue!','⏳ +3 turns: keep going!')); } }
     else if(k==='shop'){ $('toast').hidden=true; closeModal(); sheetName='shop'; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
     else if(k==='iap') iapAsk(v);
     else if(k==='iapok') iapBuy(v);
     else if(k==='iapno') closeModal();
     else if(k==='disarm'){ P.armed=null; render(); }
-    else if(k==='pause') modal(`<div class="big">⏸</div><h2>Pausa</h2><button class="btn" data-act="mclose">Continuar</button><button class="btn ghosty" data-act="phase:${P.i}">Recomeçar a fase</button><button class="btn ghosty" data-act="quit">Sair para o mercado</button>`);
+    else if(k==='pause') modal(`<div class="big">⏸</div><h2>${tr('Pausa','Paused')}</h2><button class="btn" data-act="mclose">${tr('Continuar','Resume')}</button><button class="btn ghosty" data-act="phase:${P.i}">${tr('Recomeçar a fase','Restart the level')}</button><button class="btn ghosty" data-act="quit">${tr('Sair para o mercado','Quit to the market')}</button>`);
     else if(k==='quit'){ if(P&&!P.over){ phStat(P.i).losses++; } closeModal(); screen='market'; P=null; render(); }
     else if(k==='plus5'){ closeModal(); P.turns+=5; P.over=null; phStat(P.i).losses--; render(); }
     else if(k==='buy'){ const c=TOOLS[v][3]; if(S.coins>=c){ S.coins-=c; S.tools[v]++; beep(820); render(); } }
@@ -637,7 +706,7 @@ document.addEventListener('click',e=>{
     else if(k==='sheet'){ $('toast').hidden=true; sheetName=v; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
     else if(k==='sheetclose'){ sheetName=null; $('sheet').hidden=true; render(); if(screen==='game'&&P&&P.over==='lose') loseModal(); }
     else if(k==='opt'){ S.opts[v]=!S.opts[v]; render(); }
-    else if(k==='reset') modal('<h2>Recomeçar do zero?</h2><p>Todo o progresso e o painel de teste serão apagados.</p><button class="btn" data-act="resetyes">Apagar e recomeçar</button><button class="btn ghosty" data-act="mclose">Cancelar</button>');
+    else if(k==='reset') modal(`<h2>${tr('Recomeçar do zero?','Start over?')}</h2><p>${tr('Todo o progresso e o painel de teste serão apagados.','All progress and the test panel will be erased.')}</p><button class="btn" data-act="resetyes">${tr('Apagar e recomeçar','Erase and start over')}</button><button class="btn ghosty" data-act="mclose">${tr('Cancelar','Cancel')}</button>`);
     else if(k==='resetyes'){ S=fresh(); closeModal(); sheetName=null; $('sheet').hidden=true; screen='home'; P=null; render(); }
     else if(k==='mclose'){ closeModal(); render(); }
     return;
@@ -647,8 +716,8 @@ document.addEventListener('click',e=>{
   if(o){ const id=+o.dataset.order, ord=P.orders.find(x=>x.id===id); if(!ord) return;
     if(sel!=null){ deliver(sel,id); render(); return; }
     const i=P.board.findIndex((x,k)=>isItem(x)&&!x.m&&!flooded(k)&&matches(ord,x));
-    if(i>=0) deliver(i,id); else toast('Você ainda não tem o que esse cliente pediu.'); render(); return; }
-  if(e.target.closest('[data-seal]')){ if(sel!=null) deliverSeal(sel); else toast('Entregue aqui itens de nível 5 para conquistar o Selo de Domínio.'); render(); return; }
+    if(i>=0) deliver(i,id); else toast(tr('Você ainda não tem o que esse cliente pediu.','You don’t have what this customer wants yet.')); render(); return; }
+  if(e.target.closest('[data-seal]')){ if(sel!=null) deliverSeal(sel); else toast(tr('Entregue aqui itens de nível 5 para conquistar o Selo de Domínio.','Deliver level 5 items here to earn the Mastery Seal.')); render(); return; }
   const c=e.target.closest('[data-cell]'); if(!c) return;
   const i=+c.dataset.cell, x=P.board[i];
   if(P.armed){ useTool(P.armed,i); render(); return; }
@@ -724,7 +793,9 @@ function intro(){
 function introTap(){ endIntro(); }
 
 function start(){
-  S=load(); S.opts=S.opts||{sound:true,test:false}; S.iap=S.iap||{n:0,usd:0,once:[]}; S.tools.turns=S.tools.turns||0; render();
+  LANG=detectLang(); S=load(); S.opts=S.opts||{sound:true,test:false}; S.iap=S.iap||{n:0,usd:0,once:[]}; S.tools.turns=S.tools.turns||0;
+  let ql=null; try{ ql=new URLSearchParams(location.search).get('lang'); }catch(e){}
+  if(ql==='en'||ql==='pt') S.opts.lang=ql; LANG=S.opts.lang||LANG; S.opts.lang=LANG; applyLang(); render();
   let q=null; try{ q=new URLSearchParams(location.search).get('intro'); }catch(e){} if(q!=='0') intro();
 }
 start();
