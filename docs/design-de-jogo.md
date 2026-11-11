@@ -155,6 +155,8 @@ Implementado em `versao-a-rota-das-feiras/`, seguindo o marco 2 (seção 7), com
 - **Sem vidas** neste teste (as 15 primeiras fases não gastariam vida de qualquer forma), sem gemas e sem anúncios. Moedas vêm das vitórias e compram ferramentas.
 - **Balanceamento inicial** feito com um robô que joga cada fase 300 vezes: vence quase sempre as fases 1 a 5 e cerca de 55% a 65% das fases 6 e chefe. Os números devem ser ajustados com o painel de teste (taxa de derrota por fase) e jogadores reais.
 
+**Versão em inglês (protótipo):** mesmo arquivo, com o idioma do navegador ou `?lang=en`. Ficam em português os nomes do jogo, dos mercados, das cidades, dos clientes e dos pratos típicos (tacacá, pato no tucupi, pirarucu de casaca), com explicação curta ao tocar no item; "Selo de Domínio" vira *Mastery Seal* e "Força do Açaí" vira *Açaí Power*. Os textos do Diário também foram traduzidos e precisam de revisão por falante nativo, além da checagem de fatos.
+
 ### 3.10 Loja do protótipo (compras simuladas)
 
 A pedido, o protótipo ganhou uma loja com preços de US$ 0,50 a US$ 9,99. As compras são simuladas (nada é cobrado); no app publicado passariam pela cobrança da loja do celular. Selos de Domínio e cartões do Diário continuam fora da loja, e não há caixas aleatórias pagas.
