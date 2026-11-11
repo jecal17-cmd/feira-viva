@@ -1,6 +1,6 @@
 # App Android da Versão A (Rota das Feiras)
 
-Empacota o protótipo de teste da Versão A (`versao-a-rota-das-feiras/index.html`) como app Android com Capacitor. Sem anúncios e sem compras, como pede o marco "Versão A mínima" do documento de design.
+Empacota o protótipo de teste da Versão A (`versao-a-rota-das-feiras/index.html`) como app Android com Capacitor. Sem anúncios; a loja do jogo tem compras simuladas (nada é cobrado).
 
 ## Baixar o APK pronto
 

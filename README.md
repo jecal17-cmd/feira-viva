@@ -35,7 +35,7 @@ Abra `versao-a-rota-das-feiras/index.html` (ou, com o GitHub Pages ligado, `http
 - **Diário de Viagem** com 7 cartões ("Saiba mais" opcional) e **Selo de Domínio** Força do Açaí (+3 turnos).
 - **Mapa do Brasil** com os 12 mercados; só o Ver-o-Peso está aberto neste teste.
 - **Painel do teste** em Ajustes: tentativas, vitórias, derrotas e taxa de derrota por fase. **Modo teste** libera todas as fases.
-- Sem anúncios e sem compras. Textos dos cartões a validar com pesquisa e revisão local.
+- **Loja** com compras simuladas de US$ 0,50 a US$ 9,99 (kits, ferramentas, +3 Turnos e moedas); sem anúncios. Textos dos cartões a validar com pesquisa e revisão local.
 
 ## Estado atual
 
@@ -48,6 +48,7 @@ Protótipo da Versão B (revisão v0.4, sem fim e em dois idiomas):
 - **13 linhas de itens com 8 níveis**, quase todos brasileiros; fusão tripla só por escolha do jogador.
 - **Cestos lentos:** 10 cargas, 1 a cada 90 s, vazios a cada mercado novo; anúncios simulados dão cargas, dobram prêmios e abrem o baú.
 - **Melhorias** com imagem e o efeito de agora e depois; tela **Como jogar** com cada elemento explicado.
+- **Loja** com compras simuladas de US$ 0,50 a US$ 9,99: kits, moedas, Recarga e Junta-tudo, melhorias, decorações e remover anúncios.
 - **Versão em inglês** com o nome internacional *Quitanda: Merge Across Brazil*.
 - O progresso fica salvo apenas no navegador de quem joga. Em **Ajustes** há métricas de teste e um modo que acelera os cestos.
 
