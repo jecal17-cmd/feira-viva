@@ -1,0 +1,6 @@
+{
+  "appId": "com.feiraviva.quitanda",
+  "appName": "Quitanda",
+  "webDir": "www",
+  "android": { "backgroundColor": "#DCEFE4" }
+}

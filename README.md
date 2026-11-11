@@ -12,6 +12,7 @@ Jogo mobile 2D de merge com tema de feiras e mercados brasileiros, planejado em 
 | `docs/design-de-jogo.md` | Documento de design completo das duas versões |
 | `docs/mockups/` | 7 telas de sugestão em SVG; abra `index.html` para ver todas |
 | `docs/arte/` | Lista de arte (mercados, itens, personagens) em Markdown e CSV, com prompts em inglês |
+| `app-android/` | App Android da Versão B (Capacitor) com anúncios de teste do AdMob; o APK é gerado na aba Actions |
 | `versao-b-quitanda-zen/` | Protótipo jogável da Versão B em HTML5, em português e inglês |
 
 ## Como jogar o protótipo
@@ -37,6 +38,8 @@ Protótipo da Versão B (revisão v0.4, sem fim e em dois idiomas):
 - O progresso fica salvo apenas no navegador de quem joga. Em **Ajustes** há métricas de teste e um modo que acelera os cestos.
 
 Os números de balanceamento ficam no bloco `DADOS`, no topo do script, e ainda não foram testados com jogadores.
+
+**Vinheta Bentevi:** ao abrir, o jogo mostra a vinheta da desenvolvedora: o bem-te-vi pousa no galho e canta o próprio nome, com o canto sintetizado no próprio jogo (amostra em `docs/arte/bentevi-canto.wav`). Se o navegador bloquear o som, a vinheta pede um toque. Para pular nos testes, use `?intro=0`.
 
 **Créditos:** contornos dos estados do pacote [@svg-maps/brazil](https://www.npmjs.com/package/@svg-maps/brazil), licença [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), simplificados para o jogo.
 
