@@ -173,27 +173,40 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
 .card .big{font-size:48px;line-height:1}
 .card ul{margin:0;padding-left:18px;text-align:left}
 .adbox{border:2px dashed var(--line);border-radius:14px;padding:24px 12px;color:var(--muted)}
-.intro{position:fixed;inset:0;z-index:40;background:var(--introbg);display:grid;place-items:center;cursor:pointer;transition:opacity .45s}
-.headc{stroke:var(--introedge);stroke-width:2}
+.intro{position:fixed;inset:0;z-index:40;background:var(--introbg);display:grid;place-items:center;cursor:pointer;transition:opacity .5s}
 .intro.out{opacity:0;pointer-events:none}
-.introin{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
-.introin svg{width:min(56vw,240px);height:auto;overflow:visible}
-.bird{transform-origin:70px 100px;animation:land .8s cubic-bezier(.3,1.4,.5,1) both}
-@keyframes land{from{transform:translate(-60px,-90px) rotate(-18deg) scale(.6);opacity:0}to{transform:none;opacity:1}}
-.bill-lo{transform-origin:107px 43px;transition:transform .08s}
-.sing .bill-lo{animation:chirp .6s steps(1) 1}
-@keyframes chirp{0%,30%,55%{transform:rotate(18deg)}20%,45%,100%{transform:none}}
-.bubble{position:absolute;left:62%;top:-6%;background:#fff;color:#1E1E1E;border-radius:16px;padding:6px 12px;font:800 18px var(--display);white-space:nowrap;box-shadow:0 2px 0 rgba(0,0,0,.12);opacity:0;transform:scale(.6);transition:all .2s}
-.bubble.on{opacity:1;transform:none}
-.bubble span{opacity:0;transition:opacity .1s}.bubble span.on{opacity:1}
-.wm{font:800 clamp(44px,13vw,64px)/1 var(--display);color:var(--ink);letter-spacing:-1px;animation:rise .6s .55s ease-out both;position:relative}
-.wm i{font-style:normal;color:#E0A800}
-.wm::after{content:"";position:absolute;left:4%;right:4%;bottom:-6px;height:7px;border-radius:7px;background:#F7C51E;transform-origin:left;animation:swoosh .5s 1s ease-out both}
-@keyframes swoosh{from{transform:scaleX(0)}}
-.wsub{font:800 13px var(--text);letter-spacing:6px;text-transform:uppercase;color:var(--muted);margin-top:12px;animation:rise .6s .8s ease-out both}
-@keyframes rise{from{transform:translateY(12px);opacity:0}}
-.tapme{margin-top:22px;font-weight:800;color:var(--muted);animation:pulse 1.2s infinite}
-@media (prefers-reduced-motion: reduce){.bird,.wm,.wm::after,.wsub,.tapme,.sing .bill-lo{animation:none!important}}
+.introin{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.introin svg{width:min(70vw,300px);height:auto;overflow:visible}
+.intro g{transform-origin:0 0}
+.bdx{animation:bdx 1.9s cubic-bezier(.25,.55,.3,1) both}
+.bdy{animation:bdy 1.9s cubic-bezier(.45,0,.25,1) both}
+.btilt{animation:btilt 1.9s ease-in-out both}
+@keyframes bdx{from{transform:translateX(-150px)}}
+@keyframes bdy{from{transform:translateY(-120px);opacity:0}15%{opacity:1}}
+@keyframes btilt{0%{transform:rotate(-6deg)}70%{transform:rotate(-20deg)}100%{transform:none}}
+.flap{animation:flap 1.9s ease-in-out both}
+@keyframes flap{0%{transform:rotate(-12deg)}11%{transform:rotate(24deg)}23%{transform:rotate(-14deg)}36%{transform:rotate(22deg)}50%{transform:rotate(-12deg)}64%{transform:rotate(18deg)}80%{transform:rotate(-6deg)}100%{transform:rotate(12deg)}}
+.flap2{animation-name:flap2}
+@keyframes flap2{0%{transform:rotate(-8deg)}11%{transform:rotate(26deg)}23%{transform:rotate(-10deg)}36%{transform:rotate(24deg)}50%{transform:rotate(-8deg)}64%{transform:rotate(20deg)}80%{transform:rotate(-2deg)}100%{transform:rotate(14deg)}}
+.fold{animation:fold .7s 1.85s cubic-bezier(.4,0,.2,1) both}
+@keyframes fold{to{transform:rotate(58deg) scale(.3,.42);opacity:0}}
+.wingf{animation:wingf .5s 2.15s ease-out both}
+@keyframes wingf{from{opacity:0}}
+.tailg{animation:tailg .7s 1.85s ease-in-out both}
+@keyframes tailg{from{transform:scaleY(1.9) rotate(-8deg)}}
+.perch{animation:dip 1.1s 1.82s cubic-bezier(.3,0,.3,1) both}
+@keyframes dip{0%{transform:none}30%{transform:rotate(4.5deg)}62%{transform:rotate(-1.2deg)}100%{transform:none}}
+.bill{transition:transform .09s ease-out}
+.bill.open{transform:rotate(24deg)}
+.wm{font:800 clamp(44px,13vw,64px)/1 var(--display);color:var(--ink);letter-spacing:-1px;position:relative;margin-top:6px}
+.wm span{display:inline-block;opacity:0;transform:translateY(10px) scale(.9);transition:opacity .25s,transform .35s cubic-bezier(.3,1.5,.5,1)}
+.wm span.on{opacity:1;transform:none}
+.wm .y{color:#E0A800}
+.wm::after{content:"";position:absolute;left:4%;right:4%;bottom:-6px;height:7px;border-radius:7px;background:#F7C51E;transform-origin:left;transform:scaleX(0);transition:transform .5s ease-out}
+.wm.done::after{transform:scaleX(1)}
+.wsub{font:800 13px var(--text);letter-spacing:6px;text-transform:uppercase;color:var(--muted);margin-top:12px;opacity:0;transition:opacity .5s}
+.wsub.on{opacity:1}
+@media (prefers-reduced-motion: reduce){.intro g{animation-duration:.01s!important;animation-delay:0s!important}}
 .toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(58px + env(safe-area-inset-top,0px));z-index:35;background:var(--ink);color:var(--bg);border-radius:99px;padding:8px 16px;font-weight:800;max-width:calc(100% - 32px);text-align:center}
 .warn{color:var(--warn)}
 .logo .say{font-family:var(--text);font-weight:600;font-size:13px;color:var(--muted);margin:8px 0 0;line-height:1.3}
@@ -215,25 +228,33 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
 </div>
 <div class="home" id="home"><div class="homein" id="homein"></div></div>
 <div class="intro" id="intro" data-act="intro" hidden><div class="introin">
-  <div style="position:relative"><svg viewBox="0 0 140 112" role="img" aria-label="Bentevi">
-    <g class="bird" id="bird">
-      <path d="M8 100 Q70 92 134 100" stroke="#7A4E2A" stroke-width="6" stroke-linecap="round" fill="none"/>
-      <path d="M112 99 q8 -14 22 -12 q-6 13 -22 12z" fill="#3E9B5F"/>
-      <path d="M34 70 L8 90 L20 94 L44 79 Z" fill="#6E4524"/>
-      <ellipse cx="64" cy="67" rx="34" ry="25" fill="#F7C51E"/>
-      <path d="M34 60 Q52 45 78 55 Q72 77 42 81 Q30 74 34 60Z" fill="#8A5A2E"/>
-      <path d="M44 64 Q56 60 68 64 M42 71 Q54 68 64 71" stroke="#B07A45" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-      <path d="M58 90 l-3 9 M72 90 l1 9" stroke="#3A3A3A" stroke-width="3" stroke-linecap="round"/>
-      <circle class="headc" cx="92" cy="41" r="20" fill="#1E1E1E"/>
-      <path d="M84 53 Q96 63 108 50 Q101 47 92 47Z" fill="#FFFFFF"/>
-      <path d="M73 36 Q91 22 110 34 Q92 29 74 41Z" fill="#FFFFFF"/>
-      <circle cx="98" cy="40" r="3.6" fill="#FFFFFF"/><circle cx="98.7" cy="40" r="2.1" fill="#111"/>
-      <path d="M107 38 L128 42 L107 43 Z" fill="#2A2A2A"/>
-      <path class="bill-lo" d="M107 43 L126 43 L107 47 Z" fill="#111"/>
-    </g></svg>
-    <div class="bubble" id="bubble" aria-hidden="true"><span>bem</span>-<span>te</span>-<span>vi!</span></div></div>
-  <div class="wm">Ben<i>te</i>vi</div><div class="wsub">games</div>
-  <div class="tapme" id="tapme" hidden></div>
+  <svg viewBox="0 0 240 200" role="img" aria-label="Bentevi">
+   <g transform="translate(112 198)"><g class="perch">
+    <path d="M0 0 Q14 -30 34 -48 T80 -106" stroke="#8B6B4A" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+    <path d="M48 -64 l11 5 M52 -68 l-9 -7 M60 -80 l12 3 l5 6 M66 -90 l-10 -5 M72 -97 l10 6 M80 -106 l7 -8 M80 -106 l-8 -6" stroke="#8B6B4A" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+    <g fill="#A38561"><circle cx="60" cy="-58" r="2.2"/><circle cx="42" cy="-76" r="2"/><circle cx="78" cy="-70" r="2.2"/><circle cx="55" cy="-96" r="2"/><circle cx="83" cy="-90" r="2.2"/><circle cx="88" cy="-115" r="2"/><circle cx="71" cy="-113" r="2"/></g>
+    <g transform="translate(34 -48)"><g class="bdx"><g class="bdy"><g class="btilt">
+     <g transform="translate(-12 -44) rotate(24)"><g class="fold"><g class="flap flap2">
+      <path d="M0 0C-10-30-30-58-52-66L-46-56L-58-54L-50-45L-60-40L-50-33L-56-25L-40-20C-25-12-10-5 0 0Z" fill="#B8602C"/></g></g></g>
+     <g transform="translate(-33 -27)"><g class="tailg"><path d="M2 -5 L-30 -7 L-32 -2 L-29 3 L-31 8 L2 5 Z" fill="#B5532A"/><path d="M-4 -1 L-28 -1 M-4 2 L-28 4" stroke="#8E3F1F" stroke-width="1"/></g></g>
+     <path d="M-8 -20 L0 0 M-2 -21 L5 -1 M0 0 l5 1 M0 0 l-4 2 M5 -1 l5 0" stroke="#3A3A3A" stroke-width="2" stroke-linecap="round" fill="none"/>
+     <ellipse cx="-14" cy="-34" rx="23" ry="16" transform="rotate(-22 -14 -34)" fill="#F2CB25"/>
+     <path d="M-30 -22 Q-14 -14 4 -24 Q-10 -20 -30 -26Z" fill="#F8DE6A"/>
+     <circle class="headc" cx="9" cy="-52" r="12" fill="#1E1E1E"/>
+     <path d="M-2 -55 Q9 -66 21 -55 Q10 -60 -1 -51Z" fill="#fff"/>
+     <path d="M1 -46 Q11 -37 20 -48 Q11 -50 1 -46Z" fill="#fff"/>
+     <circle cx="14" cy="-53" r="2.6" fill="#fff"/><circle cx="14.5" cy="-53" r="1.5" fill="#111"/>
+     <path d="M19 -54 L36 -49 L19 -49 Z" fill="#2A2A2A"/>
+     <g transform="translate(19 -49)"><g class="bill" id="bill"><path d="M0 0 L15 .4 L0 3.4 Z" fill="#111"/></g></g>
+     <path class="wingf" d="M-1 -44 C-14 -53 -35 -45 -41 -27 C-28 -25 -12 -30 -1 -44Z" fill="#8A5A2E"/>
+     <path class="wingf" d="M-12 -41 Q-24 -40 -34 -31 M-8 -38 Q-20 -36 -29 -29" stroke="#B07A45" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+     <g transform="translate(-10 -43)"><g class="fold"><g class="flap">
+      <path d="M0 0C-10-30-30-58-52-66L-46-56L-58-54L-50-45L-60-40L-50-33L-56-25L-40-20C-25-12-10-5 0 0Z" fill="#E39A4E"/>
+      <path d="M-4 -6 L-46 -58 M-6 -5 L-52 -46 M-8 -4 L-52 -34 M-9 -3 L-46 -23" stroke="#B8602C" stroke-width="1.2" fill="none"/>
+      <path d="M0 0C-8-14-18-24-28-30C-26-20-20-10-12-4Z" fill="#8A6A3A"/></g></g></g>
+    </g></g></g></g>
+   </g></g></svg>
+  <div class="wm" id="wm"><span>Ben</span><span class="y">te</span><span>vi</span></div><div class="wsub" id="wsub">games</div>
 </div></div>
 <div class="sheet" id="sheet" hidden><div id="sheetin"></div></div>
 <div class="trip" id="trip" hidden><div class="tripin"><h2 id="triph"></h2><div class="map" id="tripmap"></div><p id="tripp"></p><button class="btn ghosty" data-act="tripskip" id="tripskip"></button></div></div>
@@ -1033,45 +1054,38 @@ window.addEventListener('pointerup',e=>endDrag(e,false));
 window.addEventListener('pointercancel',e=>endDrag(e,true));
 new ResizeObserver(()=>{ if(S) fit(); }).observe($('wrap'));
 
-/* Vinheta de abertura da Bentevi: o pássaro pousa e canta o próprio nome ("bem-te-vi!"). */
+/* Vinheta de abertura da Bentevi: o bem-te-vi desce, pousa no galho e canta o próprio nome, sem pausa. */
 let introState=null;
+const CALL=[[0,.3,[2050,2500,2150]],[.46,.24,[1850,2100,1850]],[.9,.75,[2250,3050,2950,2600,2050]]];   // início, duração e contorno (Hz) de bem · te · vi
 function birdCall(){
-  try{ audio=audio||new (window.AudioContext||window.webkitAudioContext)(); const c=audio, t=c.currentTime+.05;
-    const out=c.createGain(); out.gain.value=.22; out.connect(c.destination);
-    [[2250,2450,.11,0],[2650,2850,.09,.18],[3350,2450,.34,.34]].forEach(([f0,f1,d,at])=>{
-      const o=c.createOscillator(), bp=c.createBiquadFilter(), g=c.createGain(), am=c.createOscillator(), amg=c.createGain();
-      o.type='sawtooth'; o.frequency.setValueAtTime(f0,t+at); o.frequency.linearRampToValueAtTime(f1,t+at+d);
-      bp.type='bandpass'; bp.Q.value=5; bp.frequency.setValueAtTime(f0,t+at); bp.frequency.linearRampToValueAtTime(f1,t+at+d);
-      am.frequency.value=95; amg.gain.value=.35; am.connect(amg); amg.connect(g.gain);   // aspereza do canto
-      g.gain.setValueAtTime(0,t+at); g.gain.linearRampToValueAtTime(.9,t+at+.015); g.gain.setValueAtTime(.9,t+at+d*.7); g.gain.linearRampToValueAtTime(0,t+at+d);
-      o.connect(bp); bp.connect(g); g.connect(out); o.start(t+at); am.start(t+at); o.stop(t+at+d+.02); am.stop(t+at+d+.02); });
+  try{ audio=audio||new (window.AudioContext||window.webkitAudioContext)(); const c=audio, t0=c.currentTime+.04;
+    const out=c.createGain(); out.gain.value=.3; out.connect(c.destination);
+    CALL.forEach(([at,d,fr],n)=>{ const g=c.createGain(), t=t0+at; g.connect(out);
+      g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(1,t+.035); g.gain.setValueAtTime(1,t+d*.6); g.gain.exponentialRampToValueAtTime(.001,t+d);
+      [[1,.8],[2,.16],[3,.05]].forEach(([h,v])=>{ const o=c.createOscillator(), og=c.createGain(); o.type='sine'; og.gain.value=v;
+        o.frequency.setValueCurveAtTime(new Float32Array(fr.map(f=>f*h)),t,d);
+        if(n===2){ const lf=c.createOscillator(), lg=c.createGain(); lf.frequency.value=26; lg.gain.value=22*h; lf.connect(lg); lg.connect(o.frequency); lf.start(t); lf.stop(t+d); }
+        o.connect(og); og.connect(g); o.start(t); o.stop(t+d+.02); }); });
   }catch(e){}
 }
-function sing(withSound){
-  const sp=[...$('bubble').querySelectorAll('span')]; $('bubble').classList.add('on'); $('intro').classList.add('sing');
-  [0,180,340].forEach((ms,i)=>setTimeout(()=>sp[i].classList.add('on'),ms));
-  if(withSound) birdCall();
+function sing(){
+  if(!introState) return; const sp=[...$('wm').querySelectorAll('span')], bill=$('bill');
+  CALL.forEach(([at,d],i)=>{ introState.tms.push(setTimeout(()=>{ sp[i].classList.add('on'); bill.classList.add('open'); },at*1000), setTimeout(()=>bill.classList.remove('open'),(at+d*.8)*1000)); });
+  introState.tms.push(setTimeout(()=>{ $('wm').classList.add('done'); $('wsub').classList.add('on'); },1750), setTimeout(endIntro,3300));
+  if(!S.opts.sound) return;
+  if(audio&&audio.state==='running') birdCall();
+  else { const late=()=>{ if(introState){ try{ audio.resume().then(birdCall); }catch(e){} } }; window.addEventListener('pointerdown',late,{once:true,capture:true}); }   // navegador bloqueou o som: canta no primeiro toque
 }
 function endIntro(){
-  if(!introState) return; clearTimeout(introState.tm); introState=null;
-  $('intro').classList.add('out'); setTimeout(()=>{ $('intro').hidden=true; },460);
+  if(!introState) return; introState.tms.forEach(clearTimeout); introState=null;
+  $('intro').classList.add('out'); setTimeout(()=>{ $('intro').hidden=true; },520);
 }
 function intro(){
-  const el=$('intro'); el.hidden=false; introState={phase:'anim'};
-  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, landed=reduce?150:1100;
-  let ok=false; if(S.opts.sound){ try{ audio=audio||new (window.AudioContext||window.webkitAudioContext)(); audio.resume&&audio.resume(); }catch(e){} }
-  introState.tm=setTimeout(()=>{
-    if(!introState) return; ok=S.opts.sound&&audio&&audio.state==='running';
-    if(!S.opts.sound||ok){ sing(ok); introState.phase='done'; introState.tm=setTimeout(endIntro,1900); }
-    else { introState.phase='tap'; $('tapme').textContent=t('tapEnter'); $('tapme').hidden=false; }   // navegador bloqueou o som: pede um toque
-  },landed);
+  $('intro').hidden=false; introState={t0:Date.now(),tms:[]};
+  if(S.opts.sound){ try{ audio=audio||new (window.AudioContext||window.webkitAudioContext)(); audio.resume&&audio.resume(); }catch(e){} }
+  introState.tms.push(setTimeout(sing,matchMedia('(prefers-reduced-motion: reduce)').matches?300:2050));   // pousou, cantou
 }
-function introTap(){
-  if(!introState) return;
-  if(introState.phase==='tap'){ introState.phase='done'; $('tapme').hidden=true;
-    try{ audio.resume().then(()=>sing(true)); }catch(e){ sing(false); } introState.tm=setTimeout(endIntro,1500); }
-  else endIntro();
-}
+function introTap(){ endIntro(); }
 function start(d){
   LANG=detectLang(); S=(d&&d.v===2&&Array.isArray(d.board))?d:load();
   let q=null; try{ q=new URLSearchParams(location.search).get('lang'); }catch(e){}
