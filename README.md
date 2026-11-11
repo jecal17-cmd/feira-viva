@@ -39,6 +39,8 @@ Protótipo da Versão B (revisão v0.4, sem fim e em dois idiomas):
 
 Os números de balanceamento ficam no bloco `DADOS`, no topo do script, e ainda não foram testados com jogadores.
 
+**Vinheta Bentevi:** ao abrir, o jogo mostra a vinheta da desenvolvedora: o bem-te-vi pousa no galho e canta o próprio nome, com o canto sintetizado no próprio jogo (amostra em `docs/arte/bentevi-canto.wav`). Se o navegador bloquear o som, a vinheta pede um toque. Para pular nos testes, use `?intro=0`.
+
 **Créditos:** contornos dos estados do pacote [@svg-maps/brazil](https://www.npmjs.com/package/@svg-maps/brazil), licença [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), simplificados para o jogo.
 
 ## Próximos passos

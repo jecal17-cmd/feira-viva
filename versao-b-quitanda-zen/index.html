@@ -10,6 +10,7 @@
 <style>
 /* Telas: inicial (home), jogo (app), folhas (mapa, turma, missões, receitas, melhorias, ajustes) e cartões modais. */
 :root{
+  --introbg:#FFF6D9; --introedge:transparent;
   --r0:#9FD5B4; --r1:#F4C98E; --r2:#E6DA86; --r3:#A9C8EC; --r4:#C9B5E6;
   --bg:#DCEFE4; --panel:#F6FBF8; --cell:#FFFFFF; --hole:#C6E2D3; --ink:#1D4A3F; --muted:#557A6E;
   --accent:#2A8F63; --on-accent:#FFFFFF; --gold:#B87A00; --line:#B5D6C5; --scrim:rgba(16,40,33,.82); --warn:#B4472E;
@@ -20,12 +21,12 @@
   --bg:#11231E; --panel:#1A332C; --cell:#27473D; --hole:#172E28; --ink:#E3F2EB; --muted:#9BBBAF;
   --accent:#4CC38A; --on-accent:#0B1F18; --gold:#F0C04A; --line:#2F5347; --scrim:rgba(5,14,11,.86); --warn:#F08A6E;
   --sun:#F0C04A; --land:#21443A; --stripe:#D9604A; color-scheme:dark;
-  --r0:#2F6A4E; --r1:#7A5A2E; --r2:#6A6230; --r3:#2F5579; --r4:#584575 } }
+  --r0:#2F6A4E; --r1:#7A5A2E; --r2:#6A6230; --r3:#2F5579; --r4:#584575; --introbg:#1C1A12; --introedge:#6B6350 } }
 :root[data-theme="dark"]{
   --bg:#11231E; --panel:#1A332C; --cell:#27473D; --hole:#172E28; --ink:#E3F2EB; --muted:#9BBBAF;
   --accent:#4CC38A; --on-accent:#0B1F18; --gold:#F0C04A; --line:#2F5347; --scrim:rgba(5,14,11,.86); --warn:#F08A6E;
   --sun:#F0C04A; --land:#21443A; --stripe:#D9604A; color-scheme:dark;
-  --r0:#2F6A4E; --r1:#7A5A2E; --r2:#6A6230; --r3:#2F5579; --r4:#584575 }
+  --r0:#2F6A4E; --r1:#7A5A2E; --r2:#6A6230; --r3:#2F5579; --r4:#584575; --introbg:#1C1A12; --introedge:#6B6350 }
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--text);font-weight:600;font-size:14px;overflow:hidden}
 *{box-sizing:border-box}
@@ -172,6 +173,27 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
 .card .big{font-size:48px;line-height:1}
 .card ul{margin:0;padding-left:18px;text-align:left}
 .adbox{border:2px dashed var(--line);border-radius:14px;padding:24px 12px;color:var(--muted)}
+.intro{position:fixed;inset:0;z-index:40;background:var(--introbg);display:grid;place-items:center;cursor:pointer;transition:opacity .45s}
+.headc{stroke:var(--introedge);stroke-width:2}
+.intro.out{opacity:0;pointer-events:none}
+.introin{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.introin svg{width:min(56vw,240px);height:auto;overflow:visible}
+.bird{transform-origin:70px 100px;animation:land .8s cubic-bezier(.3,1.4,.5,1) both}
+@keyframes land{from{transform:translate(-60px,-90px) rotate(-18deg) scale(.6);opacity:0}to{transform:none;opacity:1}}
+.bill-lo{transform-origin:107px 43px;transition:transform .08s}
+.sing .bill-lo{animation:chirp .6s steps(1) 1}
+@keyframes chirp{0%,30%,55%{transform:rotate(18deg)}20%,45%,100%{transform:none}}
+.bubble{position:absolute;left:62%;top:-6%;background:#fff;color:#1E1E1E;border-radius:16px;padding:6px 12px;font:800 18px var(--display);white-space:nowrap;box-shadow:0 2px 0 rgba(0,0,0,.12);opacity:0;transform:scale(.6);transition:all .2s}
+.bubble.on{opacity:1;transform:none}
+.bubble span{opacity:0;transition:opacity .1s}.bubble span.on{opacity:1}
+.wm{font:800 clamp(44px,13vw,64px)/1 var(--display);color:var(--ink);letter-spacing:-1px;animation:rise .6s .55s ease-out both;position:relative}
+.wm i{font-style:normal;color:#E0A800}
+.wm::after{content:"";position:absolute;left:4%;right:4%;bottom:-6px;height:7px;border-radius:7px;background:#F7C51E;transform-origin:left;animation:swoosh .5s 1s ease-out both}
+@keyframes swoosh{from{transform:scaleX(0)}}
+.wsub{font:800 13px var(--text);letter-spacing:6px;text-transform:uppercase;color:var(--muted);margin-top:12px;animation:rise .6s .8s ease-out both}
+@keyframes rise{from{transform:translateY(12px);opacity:0}}
+.tapme{margin-top:22px;font-weight:800;color:var(--muted);animation:pulse 1.2s infinite}
+@media (prefers-reduced-motion: reduce){.bird,.wm,.wm::after,.wsub,.tapme,.sing .bill-lo{animation:none!important}}
 .toast{position:fixed;left:50%;transform:translateX(-50%);top:calc(58px + env(safe-area-inset-top,0px));z-index:35;background:var(--ink);color:var(--bg);border-radius:99px;padding:8px 16px;font-weight:800;max-width:calc(100% - 32px);text-align:center}
 .warn{color:var(--warn)}
 .logo .say{font-family:var(--text);font-weight:600;font-size:13px;color:var(--muted);margin:8px 0 0;line-height:1.3}
@@ -192,6 +214,27 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
   <div class="nav" id="nav"></div>
 </div>
 <div class="home" id="home"><div class="homein" id="homein"></div></div>
+<div class="intro" id="intro" data-act="intro" hidden><div class="introin">
+  <div style="position:relative"><svg viewBox="0 0 140 112" role="img" aria-label="Bentevi">
+    <g class="bird" id="bird">
+      <path d="M8 100 Q70 92 134 100" stroke="#7A4E2A" stroke-width="6" stroke-linecap="round" fill="none"/>
+      <path d="M112 99 q8 -14 22 -12 q-6 13 -22 12z" fill="#3E9B5F"/>
+      <path d="M34 70 L8 90 L20 94 L44 79 Z" fill="#6E4524"/>
+      <ellipse cx="64" cy="67" rx="34" ry="25" fill="#F7C51E"/>
+      <path d="M34 60 Q52 45 78 55 Q72 77 42 81 Q30 74 34 60Z" fill="#8A5A2E"/>
+      <path d="M44 64 Q56 60 68 64 M42 71 Q54 68 64 71" stroke="#B07A45" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M58 90 l-3 9 M72 90 l1 9" stroke="#3A3A3A" stroke-width="3" stroke-linecap="round"/>
+      <circle class="headc" cx="92" cy="41" r="20" fill="#1E1E1E"/>
+      <path d="M84 53 Q96 63 108 50 Q101 47 92 47Z" fill="#FFFFFF"/>
+      <path d="M73 36 Q91 22 110 34 Q92 29 74 41Z" fill="#FFFFFF"/>
+      <circle cx="98" cy="40" r="3.6" fill="#FFFFFF"/><circle cx="98.7" cy="40" r="2.1" fill="#111"/>
+      <path d="M107 38 L128 42 L107 43 Z" fill="#2A2A2A"/>
+      <path class="bill-lo" d="M107 43 L126 43 L107 47 Z" fill="#111"/>
+    </g></svg>
+    <div class="bubble" id="bubble" aria-hidden="true"><span>bem</span>-<span>te</span>-<span>vi!</span></div></div>
+  <div class="wm">Ben<i>te</i>vi</div><div class="wsub">games</div>
+  <div class="tapme" id="tapme" hidden></div>
+</div></div>
 <div class="sheet" id="sheet" hidden><div id="sheetin"></div></div>
 <div class="trip" id="trip" hidden><div class="tripin"><h2 id="triph"></h2><div class="map" id="tripmap"></div><p id="tripp"></p><button class="btn ghosty" data-act="tripskip" id="tripskip"></button></div></div>
 <div class="over" id="over" hidden><div class="card" id="card"></div></div>
@@ -345,7 +388,7 @@ const UI={
   farV:(a,b)=>`${a}% nível 2 · ${b}% nível 3`, capV:n=>`${n} cargas`, spdV:x=>`1 carga a cada ${x}`,
   boardV:(c,r)=>`${c}×${r} (${c*r} casas)`, boardD:'Mais casas no tabuleiro para guardar e juntar itens.', opensAt:l=>`Abre no nível ${l}.`,
   decoD:'Enfeita sua banca na tela inicial e dá +1% de XP em tudo, para sempre.', upNote:'Moedas vêm de pedidos, vendas, missões e viagens. Toque em Comprar para usar.',
-  adFail:'O anúncio não carregou. Tente de novo em instantes.', bonusNow:b=>`Bônus atual: +${b}%.`, uGiftMag:'Presente: 1 🧲 Junta-tudo', uGiftRec:'Presente: 1 ⚡ Recarga',
+  tapEnter:'Toque para entrar', adFail:'O anúncio não carregou. Tente de novo em instantes.', bonusNow:b=>`Bônus atual: +${b}%.`, uGiftMag:'Presente: 1 🧲 Junta-tudo', uGiftRec:'Presente: 1 ⚡ Recarga',
   credit:'Mapa do Brasil: @svg-maps/brazil, licença CC BY 4.0.',
   helpNote:'Tudo o que você precisa saber para tocar a sua banca.',
   HELP:[['🧺','Cestos','Toque num cesto para colher um item novo. Cada cesto ganha 1 carga a cada 90 s, até encher, mesmo com o jogo fechado. Ao chegar num mercado novo, os cestos começam vazios.'],
@@ -422,7 +465,7 @@ const UI={
   farV:(a,b)=>`${a}% level 2 · ${b}% level 3`, capV:n=>`${n} charges`, spdV:x=>`1 charge every ${x}`,
   boardV:(c,r)=>`${c}×${r} (${c*r} spaces)`, boardD:'More spaces on the board to store and merge items.', opensAt:l=>`Opens at level ${l}.`,
   decoD:'Decorates your stall on the home screen and adds +1% XP to everything, forever.', upNote:'Coins come from orders, sales, missions and trips. Tap Buy to spend them.',
-  adFail:'The ad didn’t load. Please try again in a moment.', bonusNow:b=>`Current bonus: +${b}%.`, uGiftMag:'Gift: 1 🧲 Merge-all', uGiftRec:'Gift: 1 ⚡ Refill',
+  tapEnter:'Tap to enter', adFail:'The ad didn’t load. Please try again in a moment.', bonusNow:b=>`Current bonus: +${b}%.`, uGiftMag:'Gift: 1 🧲 Merge-all', uGiftRec:'Gift: 1 ⚡ Refill',
   credit:'Map of Brazil: @svg-maps/brazil, CC BY 4.0 license.',
   helpNote:'Everything you need to know to run your stall.',
   HELP:[['🧺','Baskets','Tap a basket to pick a new item. Each basket gains 1 charge every 90 s until full, even while the game is closed. At a new market, baskets start empty.'],
@@ -915,6 +958,7 @@ document.addEventListener('click',e=>{
   lastAct=Date.now();
   const a=e.target.closest('[data-act]');
   if(a){ const [k,v]=a.dataset.act.split(':');
+    if(k==='intro'){ introTap(); return; }
     if(k==='basket') spawn(v);
     else if(k==='play'){ homeOn=false; render(); if(!S.seenHelp){ S.seenHelp=true; sheetName='help'; $('sheet').hidden=false; renderSheet(); } }
     else if(k==='home'){ homeOn=true; tip=Math.floor(Math.random()*TIPS.length); sel=null; selOrder=null; render(); }
@@ -989,11 +1033,51 @@ window.addEventListener('pointerup',e=>endDrag(e,false));
 window.addEventListener('pointercancel',e=>endDrag(e,true));
 new ResizeObserver(()=>{ if(S) fit(); }).observe($('wrap'));
 
+/* Vinheta de abertura da Bentevi: o pássaro pousa e canta o próprio nome ("bem-te-vi!"). */
+let introState=null;
+function birdCall(){
+  try{ audio=audio||new (window.AudioContext||window.webkitAudioContext)(); const c=audio, t=c.currentTime+.05;
+    const out=c.createGain(); out.gain.value=.22; out.connect(c.destination);
+    [[2250,2450,.11,0],[2650,2850,.09,.18],[3350,2450,.34,.34]].forEach(([f0,f1,d,at])=>{
+      const o=c.createOscillator(), bp=c.createBiquadFilter(), g=c.createGain(), am=c.createOscillator(), amg=c.createGain();
+      o.type='sawtooth'; o.frequency.setValueAtTime(f0,t+at); o.frequency.linearRampToValueAtTime(f1,t+at+d);
+      bp.type='bandpass'; bp.Q.value=5; bp.frequency.setValueAtTime(f0,t+at); bp.frequency.linearRampToValueAtTime(f1,t+at+d);
+      am.frequency.value=95; amg.gain.value=.35; am.connect(amg); amg.connect(g.gain);   // aspereza do canto
+      g.gain.setValueAtTime(0,t+at); g.gain.linearRampToValueAtTime(.9,t+at+.015); g.gain.setValueAtTime(.9,t+at+d*.7); g.gain.linearRampToValueAtTime(0,t+at+d);
+      o.connect(bp); bp.connect(g); g.connect(out); o.start(t+at); am.start(t+at); o.stop(t+at+d+.02); am.stop(t+at+d+.02); });
+  }catch(e){}
+}
+function sing(withSound){
+  const sp=[...$('bubble').querySelectorAll('span')]; $('bubble').classList.add('on'); $('intro').classList.add('sing');
+  [0,180,340].forEach((ms,i)=>setTimeout(()=>sp[i].classList.add('on'),ms));
+  if(withSound) birdCall();
+}
+function endIntro(){
+  if(!introState) return; clearTimeout(introState.tm); introState=null;
+  $('intro').classList.add('out'); setTimeout(()=>{ $('intro').hidden=true; },460);
+}
+function intro(){
+  const el=$('intro'); el.hidden=false; introState={phase:'anim'};
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches, landed=reduce?150:1100;
+  let ok=false; if(S.opts.sound){ try{ audio=audio||new (window.AudioContext||window.webkitAudioContext)(); audio.resume&&audio.resume(); }catch(e){} }
+  introState.tm=setTimeout(()=>{
+    if(!introState) return; ok=S.opts.sound&&audio&&audio.state==='running';
+    if(!S.opts.sound||ok){ sing(ok); introState.phase='done'; introState.tm=setTimeout(endIntro,1900); }
+    else { introState.phase='tap'; $('tapme').textContent=t('tapEnter'); $('tapme').hidden=false; }   // navegador bloqueou o som: pede um toque
+  },landed);
+}
+function introTap(){
+  if(!introState) return;
+  if(introState.phase==='tap'){ introState.phase='done'; $('tapme').hidden=true;
+    try{ audio.resume().then(()=>sing(true)); }catch(e){ sing(false); } introState.tm=setTimeout(endIntro,1500); }
+  else endIntro();
+}
 function start(d){
   LANG=detectLang(); S=(d&&d.v===2&&Array.isArray(d.board))?d:load();
   let q=null; try{ q=new URLSearchParams(location.search).get('lang'); }catch(e){}
   if(q==='en'||q==='pt') S.opts.lang=q; LANG=S.opts.lang||LANG; S.opts.lang=LANG;
   applyLang(); render(); setInterval(tick,1000);
+  let q2=null; try{ q2=new URLSearchParams(location.search).get('intro'); }catch(e){} if(q2!=='0') intro();
 }
 window.claude?.hot?.snapshot?.(()=>S);
 window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
