@@ -11,6 +11,7 @@ Jogo mobile 2D de merge com tema de feiras e mercados brasileiros, planejado em 
 |---|---|
 | `docs/design-de-jogo.md` | Documento de design completo das duas versões |
 | `docs/mockups/` | 7 telas de sugestão em SVG; abra `index.html` para ver todas |
+| `docs/arte/icones/` | Ícones dos apps (SVG e PNG 512 px para a loja) e o script que gera todos os tamanhos do Android e as telas de abertura |
 | `docs/arte/` | Lista de arte (mercados, itens, personagens) em Markdown e CSV, com prompts em inglês |
 | `versao-a-rota-das-feiras/` | Protótipo de teste da Versão A (Ver-o-Peso, 6 fases e chefe) em HTML5 |
 | `app-android-rota/` | App Android da Versão A (Capacitor), sem monetização; o APK é gerado na aba Actions |
