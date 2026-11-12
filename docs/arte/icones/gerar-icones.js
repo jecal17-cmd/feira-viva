@@ -1,3 +1,5 @@
+// ANTIGO: ícones desenhados em SVG (v0.4). Desde a v0.5 os ícones vêm das artes quitanda-arte.png e rota-arte.png,
+// geradas com gerar_icones_arte.py (veja CONTEXTO.md). Rodar este script sobrescreve os ícones novos.
 // Gera os ícones e as telas de abertura dos apps Android a partir dos desenhos em SVG abaixo.
 // Uso (na raiz do repositório): node docs/arte/icones/gerar-icones.js   (precisa do Playwright)
 const { chromium } = require('playwright');
