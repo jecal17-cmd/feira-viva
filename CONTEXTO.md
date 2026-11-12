@@ -28,6 +28,9 @@ A desenvolvedora se chama **Bentevi** (Bentevi Games): a vinheta de abertura da 
 | `docs/arte/` | Lista de arte (104 itens, 12 mercados, 28 personagens), ícones e o canto do bem-te-vi |
 | `docs/arte/icones/` | Artes dos ícones (`quitanda-arte.png`, `rota-arte.png`), ícones 512 px da loja e o gerador `gerar_icones_arte.py` |
 | `docs/mockups/` | Telas de sugestão em SVG do início do projeto |
+| `docs/loja-play/quitanda-zen/` | Página da Play Store da Quitanda: textos pt-BR e en-US, capturas, gráfico de destaque, ícone, respostas da Play Console e passo a passo (`LEIAME.md`) |
+| `versao-b-quitanda-zen/privacidade.html` | Política de privacidade da Quitanda (pt e en), publicada pelo GitHub Pages |
+| `.github/workflows/quitanda-aab.yml` | Gera o AAB assinado da Quitanda para a Play Store (só manual: **Actions → Quitanda · AAB para a Play Store → Run workflow**) |
 
 ## Como rodar e testar
 
@@ -77,10 +80,10 @@ O antigo `docs/arte/icones/gerar-icones.js` (ícones desenhados em SVG) sobrescr
 ## Pendências e riscos
 
 1. **Arte dos itens:** os itens ainda são emojis provisórios, alguns pouco fiéis (caju aparece como maçã). A lista de arte e os prompts estão em `docs/arte/`.
-2. **Antes de publicar a Quitanda:**
-   - Trocar os IDs de teste do AdMob pelos reais (`strings.xml` e a constante `ADMOB` no jogo, com `test:false`).
-   - Integrar cobrança real (Google Play Billing).
-   - Gerar AAB assinado e preencher política de privacidade, classificação etária e segurança de dados.
+2. **Publicação da Quitanda** (passo a passo em `docs/loja-play/quitanda-zen/LEIAME.md`):
+   - Feito: build de publicação (`PUBLICACAO=1` no `copy-web.js`: sem Loja paga e sem ferramentas de teste), workflow do AAB, política de privacidade, textos, capturas e respostas da Play Console.
+   - Falta: criar a chave de upload e os segredos `QUITANDA_*`; criar os blocos do AdMob e as variáveis `ADMOB_*`; pôr o e-mail de contato na política; teste fechado de 14 dias.
+   - Depois: integrar Google Play Billing e religar a Loja (`PUB.loja`).
 3. **Rota das Feiras:**
    - Só 7 fases.
    - Casas do tabuleiro pequenas no celular (26 a 29 px): é o principal ponto do relatório de avaliação ainda não resolvido.
