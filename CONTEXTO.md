@@ -26,7 +26,7 @@ A desenvolvedora se chama **Bentevi** (Bentevi Games): a vinheta de abertura da 
 | `docs/design-de-jogo.md` | Documento de design das duas versões, com as revisões numeradas (seções 3.9, 3.10, 4.8 a 4.10) |
 | `docs/avaliacoes/` | Relatórios de avaliação como usuário novo (um .docx por jogo, inclusive o Ler Brincando) |
 | `docs/arte/` | Lista de arte (104 itens, 12 mercados, 28 personagens), ícones e o canto do bem-te-vi |
-| `docs/arte/icones/` | Artes dos ícones (`quitanda-arte.png`, `rota-arte.png`, `ler-brincando/arte-icone.png`), ícones 512 px da loja e o gerador `gerar_icones_arte.py` |
+| `docs/arte/icones/` | Artes dos ícones (`quitanda-arte.png`, `rota-arte.png`), ícones 512 px da loja e o gerador `gerar_icones_arte.py` |
 | `docs/mockups/` | Telas de sugestão em SVG do início do projeto |
 
 ## Como rodar e testar
@@ -48,7 +48,7 @@ python docs/arte/icones/gerar_icones_arte.py docs/arte/icones/quitanda-arte.png 
 python docs/arte/icones/gerar_icones_arte.py docs/arte/icones/rota-arte.png app-android-rota/android/app/src/main/res --cor '#139C8C' --web versao-a-rota-das-feiras/icone-192.png --loja docs/arte/icones/rota-512.png
 ```
 
-No Ler Brincando, a arte nova (coruja) e os ícones já gerados estão em `docs/arte/icones/ler-brincando/` (pasta `res/` para copiar em `android/app/src/main/res`, `icone-192.png`, `icone-512.png` e `loja-512.png`); copie também o `gerar_icones_arte.py` novo para `ferramentas/`. Comando lá: `python ferramentas/gerar_icones_arte.py icones/arte-icone.png android/app/src/main/res --cor '#7FD6F5' --web icones/icone-192.png icones/icone-512.png --loja loja/icone-512.png`.
+No Ler Brincando, a arte e o mesmo gerador ficam no próprio repositório (`icones/arte-icone.png` e `ferramentas/gerar_icones_arte.py`). Comando lá: `python ferramentas/gerar_icones_arte.py icones/arte-icone.png android/app/src/main/res --cor '#7FD6F5' --web icones/icone-192.png icones/icone-512.png --loja loja/icone-512.png`.
 
 O antigo `docs/arte/icones/gerar-icones.js` (ícones desenhados em SVG) sobrescreve os novos; não rodar.
 
