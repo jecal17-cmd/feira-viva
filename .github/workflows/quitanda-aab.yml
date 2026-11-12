@@ -78,7 +78,10 @@ jobs:
       - name: Conferir a assinatura
         if: env.TEM_CHAVE == 'true'
         working-directory: app-android/android
-        run: jarsigner -verify app/build/outputs/bundle/release/app-release.aab | tail -1
+        run: |
+          saida=$(jarsigner -verify app/build/outputs/bundle/release/app-release.aab)
+          echo "$saida" | grep -q "jar verified" || { echo "$saida"; echo "::error::O AAB não está assinado."; exit 1; }
+          echo "Assinatura conferida: jar verified"
       - name: Dar nome ao arquivo
         working-directory: app-android/android
         run: |
