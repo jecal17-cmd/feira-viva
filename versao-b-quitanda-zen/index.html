@@ -97,6 +97,7 @@ button:disabled{opacity:.45;cursor:default}
 .info{min-height:42px;background:var(--panel);border-radius:14px;padding:5px 10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .info p{margin:0;flex:1;min-width:0;font-size:12.5px;line-height:1.25}
 .btn{background:var(--accent);color:var(--on-accent);font-weight:800;border-radius:99px;padding:8px 14px;white-space:nowrap}
+a.btn{text-decoration:none;display:inline-block;text-align:center}
 .btn.ghosty{background:none;color:var(--ink);box-shadow:inset 0 0 0 2px var(--line)}
 .btn.sm{padding:6px 10px;font-size:13px}
 .baskets{display:flex;gap:4px}
@@ -424,6 +425,10 @@ const UPS={far:{ic:'🧺',bd:'2',n:['Cestos fartos','Bountiful baskets'],d:['Cad
            cap:{ic:'🧺',bd:'+',n:['Cestos maiores','Bigger baskets'],d:['Cada cesto guarda mais cargas, então acumula mais enquanto você está fora.','Each basket holds more charges, so more pile up while you’re away.'],base:60,k:1.6,max:10},
            spd:{ic:'⏱️',bd:'',n:['Recarga rápida','Quick refill'],d:['As cargas dos cestos chegam mais rápido.','Basket charges arrive faster.'],base:100,k:1.8,max:8}};
 const MTYPES={merges:[['Faça {n} fusões','Make {n} merges'],20],orders:[['Atenda {n} pedidos','Fill {n} orders'],5],spawn:[['Colha {n} itens dos cestos','Pick {n} items from baskets'],30],big:[['Crie {n} itens de nível 5 ou mais','Make {n} items of level 5+'],2],triple:[['Faça {n} fusões triplas','Make {n} triple merges'],3],sell:[['Venda {n} itens','Sell {n} items'],6]};
+/* Versão publicada (app da Play Store). O script app-android/scripts/copy-web.js troca esta linha quando gera o AAB:
+   loja: mostra a Loja com dinheiro real (simulada enquanto não houver Google Play Billing);
+   dev: ferramentas de teste (5 toques na versão, em Ajustes); ver: texto da versão; priv: endereço da política de privacidade. */
+const PUB={loja:true,dev:true,ver:'',priv:'https://jecal17-cmd.github.io/feira-viva/versao-b-quitanda-zen/privacidade.html'};
 // Loja: compras com dinheiro real (simuladas neste protótipo). Preços em US$; as lojas convertem para a moeda local.
 // UNIT é o valor de referência de cada coisa comprada avulsa; serve para calcular a economia dos pacotes.
 const UNIT={coins:.5/300,rec:.33,mag:.33,noAds:2.99};
@@ -445,7 +450,7 @@ const UI={
  pt:{
   tut:['Junte dois itens iguais: arraste um até o outro (os dois que piscam).','Agora entregue: toque no pedido com borda verde.','Junte até formar o que um cliente pede; aí o pedido fica com borda verde.','Acabaram os iguais? Toque num cesto para colher mais itens.','Pronto, a banca é sua! O ❓ lá em cima explica o resto.'],
   encTip:'Novidade: itens de nível alto podem ir para a 📦 Encomenda. Entregue 5 e ganhe um prêmio grande!', asks:'Pede', tapSkip:'toque para pular',
-  travelBonus:'itens de nível 5 ou mais valem o dobro', oMusic:['Música','Melodia calma de fundo.'], version:'Quitanda Zen · protótipo v0.5', devOn:'Ferramentas de teste visíveis.', devOff:'Ferramentas de teste escondidas.',
+  travelBonus:'itens de nível 5 ou mais valem o dobro', oMusic:['Música','Melodia calma de fundo.'], version:'Quitanda Zen · '+(PUB.ver||'protótipo v0.5'), devOn:'Ferramentas de teste visíveis.', devOff:'Ferramentas de teste escondidas.',
   shopNote:'Compras simuladas neste teste: nada é cobrado. No app publicado, o pagamento é feito pela loja do celular, que converte o preço para a sua moeda.',
   hPacks:'Pacotes', hCoins:'Moedas', hItems:'Itens', bonusPct:p=>`+${p}% de bônus`, savePct:p=>`Economia de ${p}%`, once:'Só 1 vez', bought:'Comprado',
   recName:'Recarga', magName:'Junta-tudo', recD:'Enche todos os cestos na hora.', magD:'Junta de uma vez todos os pares iguais do tabuleiro.',
@@ -521,7 +526,7 @@ const UI={
   hBaskets:'Cestos', lvN:n=>`nível ${n}`, maxP:' (máximo)', costP:c=>` Custa ${c} moedas.`, upgrade:'Melhorar',
   hBoard:'Tabuleiro', expandTo:(c,r)=>`Ampliar para ${c}×${r}`, boardNow:(c,r,co,l)=>`Hoje: ${c}×${r} · custa ${co} moedas${l?' · abre no nível '+l:''}`, buy:'Comprar', boardMax:'Tabuleiro no tamanho máximo.',
   hDeco:'Decoração', decoNote:(lk,b)=>`${lk?'Abre no nível 6. ':''}Cada peça aparece na sua banca da tela inicial e dá +1% de XP. Bônus atual: +${b}%.`, onStall:'Na banca',
-  on:'Ligado', off:'Desligado', oSound:['Som','Toques suaves ao colher, juntar e entregar.'],
+  on:'Ligado', off:'Desligado', oSound:['Som','Toques suaves ao colher, juntar e entregar.'], priv:['Política de privacidade','O que o jogo guarda e como funcionam os anúncios.'], privB:'Abrir', adPriv:['Privacidade dos anúncios','Revise a sua escolha sobre anúncios personalizados.'], adPrivB:'Revisar', coinsAria:c=>`${c} moedas. Abrir Melhorias`,
   oNoAds:['Remover anúncios (simulado)','Simula a compra única: sem anúncios de tela cheia e +25% nas recompensas.'],
   oTest:['Modo teste','Só para testadores: cestos recarregam 10 vezes mais rápido e os intervalos de anúncio encurtam.'],
   lang:'Idioma', langP:'O jogo também está em inglês.', panel:'Painel do teste', panelNote:'Os anúncios são simulados. O progresso fica salvo só neste navegador.',
@@ -532,7 +537,7 @@ const UI={
  en:{
   tut:['Merge two matching items: drag one onto the other (the two that are blinking).','Now deliver: tap the green-bordered order.','Keep merging until you make what a customer wants; the order then turns green.','Out of matches? Tap a basket to pick more items.','All set, the stall is yours! The ❓ at the top explains the rest.'],
   encTip:'New: high-level items can go to the 📦 Bulk order. Deliver 5 for a big reward!', asks:'Wants', tapSkip:'tap to skip',
-  travelBonus:'items of level 5 or higher are worth double', oMusic:['Music','A calm background tune.'], version:'Quitanda · prototype v0.5', devOn:'Test tools visible.', devOff:'Test tools hidden.',
+  travelBonus:'items of level 5 or higher are worth double', oMusic:['Music','A calm background tune.'], version:'Quitanda · '+(PUB.ver||'prototype v0.5'), devOn:'Test tools visible.', devOff:'Test tools hidden.',
   shopNote:'Purchases are simulated in this test: nothing is charged. In the published app, payment goes through your phone’s store, which converts prices to your currency.',
   hPacks:'Bundles', hCoins:'Coins', hItems:'Items', bonusPct:p=>`+${p}% bonus`, savePct:p=>`Save ${p}%`, once:'One time only', bought:'Purchased',
   recName:'Refill', magName:'Merge-all', recD:'Fills every basket instantly.', magD:'Merges every matching pair on the board at once.',
@@ -609,7 +614,7 @@ const UI={
   hBaskets:'Baskets', lvN:n=>`level ${n}`, maxP:' (max)', costP:c=>` Costs ${c} coins.`, upgrade:'Upgrade',
   hBoard:'Board', expandTo:(c,r)=>`Expand to ${c}×${r}`, boardNow:(c,r,co,l)=>`Now: ${c}×${r} · costs ${co} coins${l?' · opens at level '+l:''}`, buy:'Buy', boardMax:'Your board is at full size.',
   hDeco:'Decorations', decoNote:(lk,b)=>`${lk?'Opens at level 6. ':''}Each piece shows up on your stall on the home screen and adds +1% XP. Current bonus: +${b}%.`, onStall:'On display',
-  on:'On', off:'Off', oSound:['Sound','Soft chimes when you pick, merge and deliver.'],
+  on:'On', off:'Off', oSound:['Sound','Soft chimes when you pick, merge and deliver.'], priv:['Privacy policy','What the game stores and how ads work.'], privB:'Open', adPriv:['Ad privacy','Review your choice about personalized ads.'], adPrivB:'Review', coinsAria:c=>`${c} coins. Open Upgrades`,
   oNoAds:['Remove ads (simulated)','Simulates the one-time purchase: no full-screen ads and +25% rewards.'],
   oTest:['Test mode','Testers only: baskets refill 10 times faster and ad intervals are shorter.'],
   lang:'Language', langP:'O jogo também está em português.', panel:'Test panel', panelNote:'Ads are simulated. Progress is saved only in this browser.',
@@ -751,8 +756,10 @@ function closeModal(){ $('over').hidden=true; clearInterval(adTimer); if(modalQ.
 const ADMOB={test:true,rew:'ca-app-pub-3940256099942544/5224354917',int:'ca-app-pub-3940256099942544/1033173712'};
 const AdNet=(()=>{
   const C=window.Capacitor, P=C&&C.isNativePlatform&&C.isNativePlatform()&&C.Plugins&&C.Plugins.AdMob; if(!P) return null;
+  let privReq=false;
   const ready=P.initialize({initializeForTesting:ADMOB.test})
-    .then(()=>P.requestConsentInfo().then(i=>i&&i.isConsentFormAvailable&&i.status==='REQUIRED'?P.showConsentForm():null).catch(()=>{}))
+    .then(()=>P.requestConsentInfo().then(i=>{ privReq=!!(i&&i.privacyOptionsRequirementStatus==='REQUIRED'); return i&&i.isConsentFormAvailable&&i.status==='REQUIRED'?P.showConsentForm():null; }).catch(()=>{}))
+    .then(()=>{ if(sheetName==='cfg') renderSheet(); })
     .catch(()=>{});
   let busy=false;
   async function show(kind){
@@ -767,7 +774,7 @@ const AdNet=(()=>{
     }catch(e){ return false; }
     finally{ busy=false; hs.forEach(h=>h&&h.remove&&h.remove()); }
   }
-  return {show};
+  return {show, privReq:()=>privReq, privacy:()=>P.showPrivacyOptionsForm().catch(()=>{})};
 })();
 function showAd(kind,cb){
   if(kind==='rew')S.stats.rew++; else S.stats.inter++;
@@ -907,7 +914,7 @@ function basketEmpty(k){
   const b=S.baskets[k], nx=mmss(Math.max(0,Math.ceil((period()-(Date.now()-b.t))/1000))), ad=S.daily.adCharge<AD_MAX;
   modal(`<div class="big">🧺</div><h2>${t('emptyT')}</h2><p>${t('emptyP',lname(k),mmss(Math.round(period()/1000)),nx)}</p>
    ${ad?`<button class="btn" data-act="adcharge">${t('adFill',Math.round(AD_CHARGE*bonus()),S.daily.adCharge,AD_MAX)}</button>`:`<p class="note">${t('adLimit')}</p>`}
-   ${S.boost.rec>0?`<button class="btn${ad?' ghosty':''}" data-act="userec">${t('useRec',S.boost.rec)}</button>`:S.stop>=1?`<button class="btn ghosty" data-act="shop">${t('buyRec')}</button>`:''}<button class="btn ghosty" data-act="mclose">${t('wait')}</button>`);
+   ${S.boost.rec>0?`<button class="btn${ad?' ghosty':''}" data-act="userec">${t('useRec',S.boost.rec)}</button>`:S.stop>=1&&PUB.loja?`<button class="btn ghosty" data-act="shop">${t('buyRec')}</button>`:''}<button class="btn ghosty" data-act="mclose">${t('wait')}</button>`);
 }
 const usd=v=>LANG==='en'?'$'+v.toFixed(2):'US$ '+v.toFixed(2).replace('.',',');
 const packText=p=>`${fmt(p.coins)} 🪙 · ${p.rec} ⚡ · ${p.mag} 🧲${p.up?' · '+t('allUp'):''}${p.noAds?' · '+t('noAdsInc'):''}`;
@@ -958,7 +965,7 @@ function render(){
   $('lvl').textContent=t('lvlShort',S.level);
   $('xpbar').style.width=Math.min(100,S.xp/need(S.level)*100)+'%';
   $('xptxt').textContent=`XP ${fmt(S.xp)} / ${fmt(need(S.level))}`;
-  $('coins').innerHTML='🪙 '+fmt(S.coins)+(S.stop>=1?'<b>+</b>':''); $('coins').setAttribute('aria-label',t('shopAria',fmt(S.coins)));
+  $('coins').innerHTML='🪙 '+fmt(S.coins)+(S.stop>=1&&PUB.loja?'<b>+</b>':''); $('coins').dataset.act=PUB.loja?'nav:shop':'nav:up'; $('coins').setAttribute('aria-label',t(PUB.loja?'shopAria':'coinsAria',fmt(S.coins)));
   renderOrders();
   const f=feira(S.stop), g=goal(S.stop), done=S.served>=g;
   const curIt=sel!=null?S.board[sel]:null, EL=encLvl();
@@ -1031,7 +1038,7 @@ function renderHome(){
    ${gift?`<button class="gift" data-act="gift">${t('giftBtn',d,20*d)}</button>`:''}
    <button class="where" data-act="nav:map"><span><b>${f.ic} ${f.n}</b> · ${f.c} (${f.uf})</span><div class="bar"><i style="width:${Math.min(100,S.served/g*100)}%"></i></div>
      <small>${t('homeLine',S.level,S.stop,lap(S.stop))} · ${S.served>=g?t('ready'):t('clients',S.served,g)}</small></button>
-   <div class="hnav">${[['map','🗺️',S.served>=g],['turma','🧑‍🤝‍🧑'],['miss','🎯',S.missions.some(m=>m.p>=m.goal)],['shop','🛒'],['help','❓'],['cfg','⚙️']].map(([k,i,dt])=>`<button data-act="nav:${k}"><span>${i}</span>${N[k]}${dt?'<i class="dot"></i>':''}</button>`).join('')}</div>
+   <div class="hnav">${[['map','🗺️',S.served>=g],['turma','🧑‍🤝‍🧑'],['miss','🎯',S.missions.some(m=>m.p>=m.goal)],...(PUB.loja?[['shop','🛒']]:[]),['help','❓'],['cfg','⚙️']].map(([k,i,dt])=>`<button data-act="nav:${k}"><span>${i}</span>${N[k]}${dt?'<i class="dot"></i>':''}</button>`).join('')}</div>
    <div class="seg" role="group" aria-label="${t('lang')}"><button data-act="lang:pt" aria-pressed="${LANG==='pt'}">🇧🇷 Português</button><button data-act="lang:en" aria-pressed="${LANG==='en'}">🌎 English</button></div>`;
 }
 function tick(){
@@ -1092,7 +1099,7 @@ function renderSheet(){
     const e=EXPS[S.exp], buy=(act,c,dis)=>`<button class="btn buy" data-act="${act}" ${dis?'disabled':''}><span>${t('buy')}</span><small>🪙 ${fmt(c)}</small></button>`;
     const val=(k,lv)=>k==='far'?t('farV',...farOdds(lv).map(x=>Math.round(x*100))):k==='cap'?t('capV',BASE_CAP+CAP_UP*lv):t('spdV',mmss(Math.round(periodAt(lv)/1000)));
     const grid=(c,r,oc,or)=>{ const z=Math.min(44/c,44/r), q=(z*.8).toFixed(1); let g=''; for(let y=0;y<r;y++) for(let x=0;x<c;x++) g+=`<rect class="${x>=oc||y>=or?'gn':'gc'}" x="${(x*z+(44-c*z)/2).toFixed(1)}" y="${(y*z+(44-r*z)/2).toFixed(1)}" width="${q}" height="${q}" rx="1.5"/>`; return `<svg viewBox="0 0 44 44" aria-hidden="true">${g}</svg>`; };
-    h=`<p class="note">${t('upNote')}</p>${S.stop>=1?`<div class="row"><div><p>${t('toShop')}</p></div><button class="btn sm" data-act="nav:shop">${t('openShop')}</button></div>`:''}<h2>${t('hBaskets')}</h2>`+Object.keys(UPS).map(k=>{ const u=UPS[k], lv=S.up[k], c=upCost(k), mx=lv>=u.max;
+    h=`<p class="note">${t('upNote')}</p>${S.stop>=1&&PUB.loja?`<div class="row"><div><p>${t('toShop')}</p></div><button class="btn sm" data-act="nav:shop">${t('openShop')}</button></div>`:''}<h2>${t('hBaskets')}</h2>`+Object.keys(UPS).map(k=>{ const u=UPS[k], lv=S.up[k], c=upCost(k), mx=lv>=u.max;
         return `<div class="row"><span class="thumb" aria-hidden="true">${u.ic}${u.bd?`<b>${u.bd}</b>`:''}</span><div><b>${tx(u.n)}</b> · ${t('lvN',lv)}<p>${tx(u.d)}</p><p class="nn">${mx?t('nowMax',val(k,lv)):t('nowNext',val(k,lv),val(k,lv+1))}</p></div>${mx?'':buy('buyup:'+k,c,S.coins<c)}</div>`; }).join('')
      +`<h2>${t('hBoard')}</h2>`+(e?`<div class="row"><span class="thumb">${grid(e.cols,e.rows,S.cols,S.rows)}</span><div><b>${t('expandTo',e.cols,e.rows)}</b><p>${t('boardD')}${S.level<e.lvl?' '+t('opensAt',e.lvl):''}</p><p class="nn">${t('nowNext',t('boardV',S.cols,S.rows),t('boardV',e.cols,e.rows))}</p></div>${buy('buyexp',e.cost,S.level<e.lvl||S.coins<e.cost)}</div>`:`<p class="note">${t('boardMax')}</p>`)
      +`<h2>${t('hDeco')}</h2><p class="note">${t('decoD')} ${S.level<6?t('opensAt',6):''} ${t('bonusNow',S.decor.length)}</p>`
@@ -1106,6 +1113,8 @@ function renderSheet(){
     h=`<div class="row"><div><b>${t('lang')}</b><p>${t('langP')}</p></div><div class="seg"><button data-act="lang:pt" aria-pressed="${LANG==='pt'}">Português</button><button data-act="lang:en" aria-pressed="${LANG==='en'}">English</button></div></div>`
      +tg('sound',t('oSound'))+tg('music',t('oMusic'))
      +(S.opts.dev?tg('noAds',t('oNoAds'))+tg('test',t('oTest'))+`<h2>${t('panel')}</h2><div class="stats" id="stats">${statsHtml()}</div><p class="note">${t('panelNote')}</p>`:'')
+     +`<div class="row"><div><b>${t('priv')[0]}</b><p>${t('priv')[1]}</p></div><a class="btn ghosty" href="${PUB.priv}" target="_blank" rel="noopener">${t('privB')}</a></div>`
+     +(AdNet&&AdNet.privReq()?`<div class="row"><div><b>${t('adPriv')[0]}</b><p>${t('adPriv')[1]}</p></div><button class="btn ghosty" data-act="adpriv">${t('adPrivB')}</button></div>`:'')
      +`<p class="note">${t('credit')}</p>`
      +`<div class="row"><div><b>${t('reset')}</b><p class="warn">${t('resetP')}</p></div><button class="btn ghosty" data-act="reset">${t('resetB')}</button></div>`;
   }
@@ -1160,9 +1169,11 @@ document.addEventListener('click',e=>{
     else if(k==='recharge') recharge();
     else if(k==='adcharge'){ if(S.daily.adCharge<AD_MAX) showAd('rew',()=>{ S.daily.adCharge++; const g=Math.round(AD_CHARGE*bonus()); refill(g); toast(t('adCharge',g)); setTimeout(()=>fxCharge('+'+g),80); }); else toast(t('adLimit')); }
     else if(k==='userec'){ closeModal(); recharge(); }
+    else if(k==='shop'&&!PUB.loja){ $('toast').hidden=true; closeModal(); sheetName='up'; $('sheet').hidden=false; renderSheet(); }
     else if(k==='shop'){ $('toast').hidden=true; closeModal(); sheetName='shop'; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
-    else if(k==='iap') iapAsk(v);
-    else if(k==='iapok') iapBuy(v);
+    else if(k==='iap'&&PUB.loja) iapAsk(v);
+    else if(k==='iapok'&&PUB.loja) iapBuy(v);
+    else if(k==='adpriv'){ if(AdNet) AdNet.privacy(); }
     else if(k==='tripskip') endTrip();
     else if(k==='tripdouble'){ const v=tripBonus; tripBonus=0; if(v) showAd('rew',()=>{ S.coins+=v; toast(t('tripDoubled',v)); }); }
     else if(k==='arrive'){ closeModal(); render(); maybeInter(); }
@@ -1172,14 +1183,14 @@ document.addEventListener('click',e=>{
     else if(k==='sort') sortBoard();
     else if(k==='swap') swapOrder(+v);
     else if(k==='double'){ const o=offer; if(o&&S.daily.adDouble<DOUBLE_MAX){ offer=null; showAd('rew',()=>{ S.daily.adDouble++; const x=gain(o.xp*bonus(),Math.round(o.co*bonus())); toast(t('doubled',x)); }); } }
-    else if(k==='nav'){ $('toast').hidden=true; sheetName=v; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
+    else if(k==='nav'){ $('toast').hidden=true; sheetName=v==='shop'&&!PUB.loja?'up':v; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
     else if(k==='close'){ sheetName=null; $('sheet').hidden=true; render(); }
     else if(k==='claim'){ const m=S.missions[+v]; if(m&&m.p>=m.goal){ S.missions[+v]=newMission(S,+v); S.coins+=m.co; const x=gain(m.xp,0); beep(880); toast(t('missDone',m.co,x)); render(); } }
     else if(k==='chest'){ if(S.daily.chest<CHEST_MAX) showAd('rew',()=>{ S.daily.chest++; S.coins+=Math.round(80*bonus()); S.boost.mag++; }); }
     else if(k==='buyexp') expand();
     else if(k==='buyup'){ const c=upCost(v); if(S.up[v]<UPS[v].max&&S.coins>=c){ S.coins-=c; S.up[v]++; beep(820); render(); } }
     else if(k==='buydeco'){ const i=+v; if(!S.decor.includes(i)&&S.level>=6&&S.coins>=DECOR[i][2]){ S.coins-=DECOR[i][2]; S.decor.push(i); beep(820); render(); } }
-    else if(k==='ver'){ verTaps=(verTaps||0)+1; if(verTaps>=5){ verTaps=0; S.opts.dev=!S.opts.dev; toast(t(S.opts.dev?'devOn':'devOff')); render(); } }
+    else if(k==='ver'&&PUB.dev){ verTaps=(verTaps||0)+1; if(verTaps>=5){ verTaps=0; S.opts.dev=!S.opts.dev; toast(t(S.opts.dev?'devOn':'devOff')); render(); } }
     else if(k==='opt'){ S.opts[v]=!S.opts[v]; if(v==='music'||v==='sound') Musica.ligar(); for(const x of lines()) S.baskets[x].t=Date.now(); render(); }
     else if(k==='travelask'){ closeModal(); travelAsk(); }
     else if(k==='travel'){ closeModal(); travel(); }
@@ -1270,6 +1281,7 @@ function start(d){
   let q=null; try{ q=new URLSearchParams(location.search).get('lang'); }catch(e){}
   if(q==='en'||q==='pt') S.opts.lang=q; LANG=S.opts.lang||LANG; S.opts.lang=LANG;
   S.iap=S.iap||{n:0,usd:0,once:[]}; if(S.tut==null) S.tut=(S.stats.merges||S.stats.orders)?4:0; if(S.opts.music==null) S.opts.music=true;
+  if(!PUB.dev){ S.opts.dev=false; S.opts.test=false; }
   applyLang(); render(); setInterval(tick,1000);
   let q2=null; try{ q2=new URLSearchParams(location.search).get('intro'); }catch(e){} if(q2!=='0') intro();
 }

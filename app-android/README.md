@@ -16,9 +16,7 @@ Também dá para compilar na hora: **Actions → Apps Android (APKs de teste) �
 
 - No app, os anúncios simulados viram anúncios reais do AdMob, com os **IDs de teste oficiais do Google**: aparecem com a marca "Test Ad" e não geram receita.
 - No navegador, o jogo continua com anúncios simulados.
-- **Antes de publicar**, troque os IDs de teste pelos seus, criados no AdMob:
-  - ID do app: `android/app/src/main/res/values/strings.xml` (`admob_app_id`);
-  - blocos de anúncio com recompensa e intersticial: constante `ADMOB` em `versao-b-quitanda-zen/index.html`, com `test:false`.
+- Na publicação, os IDs reais vêm das variáveis do repositório `ADMOB_APP_ID`, `ADMOB_REWARDED_ID` e `ADMOB_INTERSTITIAL_ID` (veja `docs/loja-play/quitanda-zen/LEIAME.md`). Não é preciso editar o código.
 - Nunca clique nos seus próprios anúncios reais: o AdMob pode suspender a conta.
 
 ## Compilar no computador
@@ -34,7 +32,8 @@ cd android && ./gradlew assembleDebug
 
 O APK sai em `android/app/build/outputs/apk/debug/app-debug.apk`.
 
-## Antes de publicar na Play Store
+## Publicar na Play Store
 
-- O identificador `com.feiraviva.quitanda` (em `capacitor.config.json` e `android/app/build.gradle`) não pode mudar depois da publicação.
-- Gerar uma versão assinada (AAB) com a sua chave, trocar o ícone e a tela de abertura pelos definitivos, e preencher política de privacidade, classificação etária e o formulário de segurança de dados.
+- O AAB assinado sai em **Actions → Quitanda · AAB para a Play Store → Run workflow**.
+- O passo a passo completo (chave de upload, AdMob, textos, imagens e respostas da Play Console) está em `docs/loja-play/quitanda-zen/LEIAME.md`.
+- O identificador `com.feiraviva.quitanda` não pode mudar depois da publicação.

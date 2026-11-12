@@ -1,0 +1,98 @@
+# Gera o AAB assinado da Quitanda Zen para enviar à Google Play Console.
+# Rodar em: Actions → "Quitanda · AAB para a Play Store" → Run workflow.
+#
+# Segredos do repositório (Settings → Secrets and variables → Actions → Secrets):
+#   QUITANDA_KEYSTORE_BASE64   arquivo .jks da chave de upload, em base64
+#   QUITANDA_KEYSTORE_PASSWORD senha do arquivo .jks
+#   QUITANDA_KEY_ALIAS         apelido da chave (ex.: upload)
+#   QUITANDA_KEY_PASSWORD      senha da chave
+# Variáveis (mesma tela, aba Variables; não são secretas):
+#   ADMOB_APP_ID, ADMOB_REWARDED_ID, ADMOB_INTERSTITIAL_ID  (sem elas, o app sai com anúncios de TESTE)
+name: Quitanda · AAB para a Play Store
+
+on:
+  workflow_dispatch:
+    inputs:
+      versao:
+        description: 'Versão que o jogador vê (versionName), ex.: 1.0.0'
+        required: true
+        default: '1.0.0'
+      codigo:
+        description: 'Código da versão (versionCode). Vazio = número desta execução. Precisa ser maior que o do último envio.'
+        required: false
+        default: ''
+  push:
+    paths:
+      - '.github/workflows/quitanda-aab.yml'
+
+jobs:
+  aab:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app-android
+    env:
+      VERSION_NAME: ${{ inputs.versao || '1.0.0' }}
+      VERSION_CODE: ${{ inputs.codigo || github.run_number }}
+      ADMOB_APP_ID: ${{ vars.ADMOB_APP_ID }}
+      ADMOB_REWARDED_ID: ${{ vars.ADMOB_REWARDED_ID }}
+      ADMOB_INTERSTITIAL_ID: ${{ vars.ADMOB_INTERSTITIAL_ID }}
+      TEM_CHAVE: ${{ secrets.QUITANDA_KEYSTORE_BASE64 != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app-android/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Instalar dependências
+        run: npm ci
+      - name: Copiar o jogo em modo de publicação
+        env:
+          PUBLICACAO: '1'
+          VERSAO: ${{ env.VERSION_NAME }}
+        run: node scripts/copy-web.js && npx cap sync android
+      - name: Avisos
+        run: |
+          if [ "$TEM_CHAVE" != "true" ]; then echo "::warning::Sem a chave de upload (segredo QUITANDA_KEYSTORE_BASE64): o AAB sai SEM assinatura e a Play Console não aceita."; fi
+          if [ -z "$ADMOB_APP_ID" ] || [ -z "$ADMOB_REWARDED_ID" ] || [ -z "$ADMOB_INTERSTITIAL_ID" ]; then echo "::warning::IDs do AdMob não definidos (variáveis ADMOB_*): o app usa anúncios de TESTE e não gera receita."; fi
+          echo "Versão $VERSION_NAME (código $VERSION_CODE)"
+      - name: Preparar a chave de upload
+        if: env.TEM_CHAVE == 'true'
+        env:
+          KS_BASE64: ${{ secrets.QUITANDA_KEYSTORE_BASE64 }}
+        run: |
+          echo "$KS_BASE64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          echo "QUITANDA_KEYSTORE=$RUNNER_TEMP/upload.jks" >> "$GITHUB_ENV"
+      - name: Compilar o AAB
+        working-directory: app-android/android
+        env:
+          QUITANDA_KEYSTORE_PASSWORD: ${{ secrets.QUITANDA_KEYSTORE_PASSWORD }}
+          QUITANDA_KEY_ALIAS: ${{ secrets.QUITANDA_KEY_ALIAS }}
+          QUITANDA_KEY_PASSWORD: ${{ secrets.QUITANDA_KEY_PASSWORD }}
+        run: chmod +x gradlew && ./gradlew bundleRelease --no-daemon
+      - name: Conferir a assinatura
+        if: env.TEM_CHAVE == 'true'
+        working-directory: app-android/android
+        run: |
+          saida=$(jarsigner -verify app/build/outputs/bundle/release/app-release.aab)
+          echo "$saida" | grep -q "jar verified" || { echo "$saida"; echo "::error::O AAB não está assinado."; exit 1; }
+          echo "Assinatura conferida: jar verified"
+      - name: Dar nome ao arquivo
+        working-directory: app-android/android
+        run: |
+          sufixo=$([ "$TEM_CHAVE" = "true" ] && echo "" || echo "-NAO-ASSINADO")
+          mkdir -p ../saida && cp app/build/outputs/bundle/release/app-release.aab "../saida/quitanda-zen-v${VERSION_NAME}-${VERSION_CODE}${sufixo}.aab"
+      - name: Guardar o AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: quitanda-aab-v${{ env.VERSION_NAME }}-${{ env.VERSION_CODE }}
+          path: app-android/saida/*.aab
+          if-no-files-found: error
+      - name: Limpar a chave
+        if: always()
+        run: rm -f "$RUNNER_TEMP/upload.jks"

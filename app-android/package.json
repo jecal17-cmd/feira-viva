@@ -1,7 +1,7 @@
 {
   "name": "quitanda-android",
   "private": true,
-  "version": "0.4.0",
+  "version": "1.0.0",
   "description": "App Android da Versão B (Quitanda) empacotado com Capacitor",
   "scripts": {
     "copy-web": "node scripts/copy-web.js",
