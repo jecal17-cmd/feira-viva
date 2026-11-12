@@ -1,5 +1,17 @@
 apply plugin: 'com.android.application'
 
+// Assinatura e versão da publicação na Play Store.
+// Vêm de variáveis de ambiente (GitHub Actions) ou do arquivo android/keystore.properties (computador, fora do git):
+//   QUITANDA_KEYSTORE (caminho do .jks), QUITANDA_KEYSTORE_PASSWORD, QUITANDA_KEY_ALIAS, QUITANDA_KEY_PASSWORD
+//   VERSION_CODE (número inteiro que sempre sobe), VERSION_NAME (ex.: 1.0.0), ADMOB_APP_ID
+def props = new Properties()
+def propsFile = rootProject.file('keystore.properties')
+if (propsFile.exists()) propsFile.withInputStream { props.load(it) }
+def cfg = { String k -> System.getenv(k) ?: props.getProperty(k) }
+def keystorePath = cfg('QUITANDA_KEYSTORE')
+// ID de app de TESTE do Google (exemplo oficial); a publicação usa o ID real vindo de ADMOB_APP_ID
+def admobAppId = cfg('ADMOB_APP_ID') ?: 'ca-app-pub-3940256099942544~3347511713'
+
 android {
     namespace = "com.feiraviva.quitanda"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -7,8 +19,9 @@ android {
         applicationId "com.feiraviva.quitanda"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode((cfg('VERSION_CODE') ?: '1') as int)
+        versionName(cfg('VERSION_NAME') ?: '1.0.0')
+        resValue 'string', 'admob_app_id', admobAppId
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,8 +29,19 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            if (keystorePath) {
+                storeFile file(keystorePath)
+                storePassword cfg('QUITANDA_KEYSTORE_PASSWORD')
+                keyAlias cfg('QUITANDA_KEY_ALIAS')
+                keyPassword cfg('QUITANDA_KEY_PASSWORD')
+            }
+        }
+    }
     buildTypes {
         release {
+            if (keystorePath) signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
