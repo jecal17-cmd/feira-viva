@@ -22,7 +22,6 @@ A política de privacidade fica em `versao-b-quitanda-zen/privacidade.html`. Dep
 
 **https://jecal17-cmd.github.io/feira-viva/versao-b-quitanda-zen/privacidade.html**
 
-> Antes de publicar, troque `[e-mail de contato]` e `[contact email]` na política pelo e-mail de contato da desenvolvedora.
 
 ## Textos da página
 
@@ -41,7 +40,7 @@ A descrição completa está nos arquivos `descricao-completa.txt`.
 | Categoria | Casual (alternativa: Quebra-cabeça) |
 | Tags sugeridas | Juntar (Merge), Casual, Relaxante, Simulação de loja, Offline |
 | Gratuito ou pago | Gratuito (não dá para mudar depois) |
-| E-mail de contato | o e-mail público da desenvolvedora (obrigatório) |
+| E-mail de contato | jecal17@gmail.com (o mesmo da política de privacidade) |
 | Site | opcional; pode ser `https://jecal17-cmd.github.io/feira-viva/` |
 | Idioma padrão | Português (Brasil) – pt-BR; adicionar a tradução Inglês (Estados Unidos) – en-US |
 

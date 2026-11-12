@@ -82,7 +82,7 @@ O antigo `docs/arte/icones/gerar-icones.js` (ícones desenhados em SVG) sobrescr
 1. **Arte dos itens:** os itens ainda são emojis provisórios, alguns pouco fiéis (caju aparece como maçã). A lista de arte e os prompts estão em `docs/arte/`.
 2. **Publicação da Quitanda** (passo a passo em `docs/loja-play/quitanda-zen/LEIAME.md`):
    - Feito: build de publicação (`PUBLICACAO=1` no `copy-web.js`: sem Loja paga e sem ferramentas de teste), workflow do AAB, política de privacidade, textos, capturas e respostas da Play Console.
-   - Falta: criar a chave de upload e os segredos `QUITANDA_*`; criar os blocos do AdMob e as variáveis `ADMOB_*`; pôr o e-mail de contato na política; teste fechado de 14 dias.
+   - Falta: criar a chave de upload e os segredos `QUITANDA_*`; criar os blocos do AdMob e as variáveis `ADMOB_*`; teste fechado de 14 dias.
    - Depois: integrar Google Play Billing e religar a Loja (`PUB.loja`).
 3. **Rota das Feiras:**
    - Só 7 fases.
