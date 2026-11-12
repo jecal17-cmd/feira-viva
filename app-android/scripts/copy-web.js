@@ -4,4 +4,6 @@ const src = path.join(__dirname, '..', '..', 'versao-b-quitanda-zen', 'index.htm
 const dst = path.join(__dirname, '..', 'www');
 fs.mkdirSync(dst, { recursive: true });
 fs.copyFileSync(src, path.join(dst, 'index.html'));
+const icone = path.join(path.dirname(src), 'icone-192.png');
+if (fs.existsSync(icone)) fs.copyFileSync(icone, path.join(dst, 'icone-192.png'));
 console.log('Jogo copiado para www/index.html');
