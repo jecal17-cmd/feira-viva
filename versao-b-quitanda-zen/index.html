@@ -93,6 +93,7 @@ button:disabled{opacity:.45;cursor:default}
 .fx{position:fixed;z-index:16;pointer-events:none;font-family:var(--display);font-weight:800;font-size:15px;color:var(--gold);text-shadow:0 1px 0 var(--panel),0 -1px 0 var(--panel),1px 0 0 var(--panel),-1px 0 0 var(--panel);transform:translate(-50%,-50%);animation:fx .9s ease-out forwards;white-space:nowrap}
 @keyframes fx{to{transform:translate(-50%,-260%);opacity:0}}
 @media (prefers-reduced-motion: reduce){.cell.pop,.cell.hint,.tutglow,.encb.chama,.strip.go,.floaty i,.node .ring{animation:none!important}.fx{animation-duration:.01s}}
+.ii{width:1.12em;height:1.12em;object-fit:contain;vertical-align:-.2em;pointer-events:none;-webkit-user-drag:none}
 .ghost{position:fixed;z-index:15;pointer-events:none;font-size:40px;line-height:1;transform:translate(-50%,-70%)}
 .info{min-height:42px;background:var(--panel);border-radius:14px;padding:5px 10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .info p{margin:0;flex:1;min-width:0;font-size:12.5px;line-height:1.25}
@@ -638,7 +639,10 @@ const UI={
 const $=id=>document.getElementById(id), fmt=n=>Math.round(n).toLocaleString(LANG==='en'?'en-US':'pt-BR');
 const dstr=t=>new Date(t).toLocaleDateString('sv'), today=()=>dstr(Date.now());
 const pick=a=>a[Math.floor(Math.random()*a.length)];
-const item=(l,n)=>{ const x=LINES[l].it[n-1]; return [x[0],LANG==='en'?x[2]:x[1]]; };
+// Arte dos itens (pasta itens/, nome = código da lista de arte, ex.: fr-1). Sem arte, fica o emoji.
+const ITEM_ART=new Set(['fr-1','fr-2','fr-3','fr-4','fr-5','fr-6','fr-7','fr-8','ve-1','ca-2']);
+const ie=(l,n)=>ITEM_ART.has(l+'-'+n)?`<img class="ii" src="itens/${l}-${n}.webp" alt="" draggable="false">`:LINES[l].it[n-1][0];
+const item=(l,n)=>{ const x=LINES[l].it[n-1]; return [ie(l,n),LANG==='en'?x[2]:x[1]]; };
 const gloss=(l,n)=>LANG==='en'?GLOSS[l+n]:null;
 const lname=l=>tx(LINES[l].name);
 const lc=l=>`hsl(${LINES[l].hue} 62% 46%)`;
@@ -892,7 +896,7 @@ function travelAsk(){
   const nx=S.stop+1, f=feira(nx), ls=linesAt(nx), gone=lines().filter(k=>!ls.includes(k));
   const val=S.board.reduce((a,x)=>a+(x&&gone.includes(x.l)?COV[x.n]*(x.n>=5?2:1):0),0);
   modal(`${heroHtml(f)}<h1>${f.n}</h1><p>${f.c} (${f.uf}) · ${reg(f)}${lap(nx)>1?' · '+t('lapN',lap(nx)):''}</p><p class="note">${tx(f.txt)}</p>
-   <ul><li>${t('stalls')}: ${ls.map(k=>LINES[k].it[0][0]+' '+lname(k)).join(', ')}</li>${gone.length?`<li>${t('willSell',gone.map(lname).join(t('and')),fmt(val))}</li>`:''}<li>${t('arrivesFull')}</li></ul>
+   <ul><li>${t('stalls')}: ${ls.map(k=>ie(k,1)+' '+lname(k)).join(', ')}</li>${gone.length?`<li>${t('willSell',gone.map(lname).join(t('and')),fmt(val))}</li>`:''}<li>${t('arrivesFull')}</li></ul>
    <button class="btn" data-act="travel">${t('hitRoad')}</button><button class="btn ghosty" data-act="mclose">${t('notYet')}</button>`);
 }
 function travel(){
@@ -1036,7 +1040,7 @@ function tutPasso(){
 function left(b){ if(b.c>=cap()) return t('bFull'); const s=Math.max(0,Math.ceil((period()-(Date.now()-b.t))/1000)); return mmss(s); }
 function renderBaskets(){
   $('baskets').innerHTML=lines().map(k=>{ const b=S.baskets[k];
-    return `<button class="basket" style="--lc:${lc(k)}" data-act="basket:${k}" aria-label="${t('basketAria',lname(k))}"><span class="em">${LINES[k].it[0][0]}</span><b id="bc-${k}">${b.c}/${cap()}</b><small id="bt-${k}">${left(b)}</small></button>`; }).join('')
+    return `<button class="basket" style="--lc:${lc(k)}" data-act="basket:${k}" aria-label="${t('basketAria',lname(k))}"><span class="em">${ie(k,1)}</span><b id="bc-${k}">${b.c}/${cap()}</b><small id="bt-${k}">${left(b)}</small></button>`; }).join('')
     +`<button class="basket bo" data-act="magnet" aria-label="${t('magAria')}"><span class="em">🧲</span><b>${S.boost.mag}</b><small>${t('magLbl')}</small></button>`
     +`<button class="basket bo" data-act="recharge" aria-label="${t('recAria')}"><span class="em">⚡</span><b>${S.boost.rec}</b><small>${t('recLbl')}</small></button>`
     +`<button class="basket ad bo" data-act="adcharge" aria-label="${t('adAria')}" ${S.daily.adCharge>=AD_MAX?'disabled':''}><span class="em">▶</span><b>+${Math.round(AD_CHARGE*bonus())}</b><small>${S.daily.adCharge}/${AD_MAX}</small></button>`;
@@ -1045,7 +1049,7 @@ function renderHome(){
   const f=feira(S.stop), g=goal(S.stop), ls=lines(), gift=S.giftDay!==today(), d=Math.min((S.giftDay===dstr(Date.now()-864e5)?S.streak:0)+1,7), N=t('nav');
   $('homein').innerHTML=`<div class="floaty" aria-hidden="true"><i style="left:4%;top:6px">🍉</i><i style="right:6%;top:0;animation-delay:.8s">🧀</i><i style="left:1%;top:40px;animation-delay:1.5s;font-size:20px">🌽</i><i style="right:1%;top:44px;animation-delay:.4s;font-size:20px">🥖</i></div>
    <div class="logo"><b>${t('logo')}</b><small>${t('logoSub')}</small>${t('logoSay')?`<p class="say">${t('logoSay')}</p>`:''}</div>
-   <div class="stall"><div class="awning"></div><div class="shelf" aria-hidden="true">${ls.map(k=>LINES[k].it.slice(0,ls.length>3?2:3).map(x=>x[0]).join('')).join('')}</div>
+   <div class="stall"><div class="awning"></div><div class="shelf" aria-hidden="true">${ls.map(k=>LINES[k].it.slice(0,ls.length>3?2:3).map((x,j)=>ie(k,j+1)).join('')).join('')}</div>
      <div class="deco" aria-label="${t('decoAria')}">${S.decor.map(i=>DECOR[i][0]).join('')}</div>
      <div class="keeper"><span>👨‍🌾</span><p><b>Seu Zé:</b> ${tx(TIPS[tip])}</p></div></div>
    <button class="play" data-act="play">▶ ${t('play',S.stats.items||S.stats.merges)}</button>
@@ -1090,12 +1094,12 @@ function renderSheet(){
     const base=(lap(S.stop)-1)*FEIRAS.length, g=goal(S.stop), done=S.served>=g;
     h=`<p class="note">${t('mapNote',lap(S.stop),S.stop,Math.round((lapBonus()-1)*100))}</p>${t('mapGloss')?`<p class="note">${t('mapGloss')}</p>`:''}<div class="map">${mapSvg()}<div class="legend">${REGS.map((r,i)=>`<span><i class="r${i}" style="background:var(--r${i})"></i>${tx([r,REG[r]])}</span>`).join('')}</div></div>`
      +FEIRAS.map((f,i)=>{ const s=base+i, st=s<S.stop?'ok':s===S.stop?'cur':'lock', ls=linesAt(s), loc=CAST.filter(c=>c.at===i);
-        return `<div class="row ${st==='cur'?'cur':st==='lock'?'lock':''}">${f.img?tileHtml(f,st==='lock'?'lock':''):`<span class="mtile">${st==='lock'?'🔒':f.ic}</span>`}<div><b>${i+1}. ${f.n}</b> ${st==='ok'?'⭐':''}<p>${f.c} (${f.uf}) · ${reg(f)}</p><p>${tx(f.txt)}</p><p>${ls.map(k=>LINES[k].it[0][0]).join(' ')} · ${loc.map(c=>c.f).join(' ')} · ${t('goalN',goal(s))}</p>${st==='cur'?`<div class="bar"><i style="width:${Math.min(100,S.served/g*100)}%"></i></div><p>${t('served',S.served,g)}</p>`:''}</div>${st==='cur'?`<button class="btn" data-act="travelask" ${done?'':'disabled'}>${t('travel')}</button>`:''}</div>`; }).join('');
+        return `<div class="row ${st==='cur'?'cur':st==='lock'?'lock':''}">${f.img?tileHtml(f,st==='lock'?'lock':''):`<span class="mtile">${st==='lock'?'🔒':f.ic}</span>`}<div><b>${i+1}. ${f.n}</b> ${st==='ok'?'⭐':''}<p>${f.c} (${f.uf}) · ${reg(f)}</p><p>${tx(f.txt)}</p><p>${ls.map(k=>ie(k,1)).join(' ')} · ${loc.map(c=>c.f).join(' ')} · ${t('goalN',goal(s))}</p>${st==='cur'?`<div class="bar"><i style="width:${Math.min(100,S.served/g*100)}%"></i></div><p>${t('served',S.served,g)}</p>`:''}</div>${st==='cur'?`<button class="btn" data-act="travelask" ${done?'':'disabled'}>${t('travel')}</button>`:''}</div>`; }).join('');
   } else if(sheetName==='turma'){
     const met=c=>c.at<0||S.stop>=c.at;
     h=`<p class="note">${t('turmaNote')}</p>`
      +CAST.map(c=>{ const f=S.friends[c.id]||{h:0,lv:0}, here=c.at<0||c.at===S.stop%FEIRAS.length;
-        return met(c)?`<div class="row${here?' cur':''}"><span class="face">${c.f}</span><div><b>${c.n}</b> · ❤️ ${f.lv}<p>${tx(c.role)} · ${c.at<0?t('withYou'):FEIRAS[c.at].c} · ${t('likes',LINES[c.fav].it[0][0],lname(c.fav))}</p><p>“${tx(c.q)}”</p><div class="bar"><i style="width:${f.h/needH(f.lv)*100}%"></i></div></div></div>`
+        return met(c)?`<div class="row${here?' cur':''}"><span class="face">${c.f}</span><div><b>${c.n}</b> · ❤️ ${f.lv}<p>${tx(c.role)} · ${c.at<0?t('withYou'):FEIRAS[c.at].c} · ${t('likes',ie(c.fav,1),lname(c.fav))}</p><p>“${tx(c.q)}”</p><div class="bar"><i style="width:${f.h/needH(f.lv)*100}%"></i></div></div></div>`
           :`<div class="row lock"><span class="face">❔</span><div><b>???</b><p>${t('meetAt',FEIRAS[c.at].n,FEIRAS[c.at].c)}</p></div></div>`; }).join('');
   } else if(sheetName==='miss'){
     const L=encLvl();
@@ -1233,7 +1237,7 @@ document.addEventListener('click',e=>{
 $('board').addEventListener('pointerdown',e=>{ lastAct=Date.now(); const c=e.target.closest('[data-cell]'); if(!c) return; const i=+c.dataset.cell; if(!S.board[i]) return; drag={i,x:e.clientX,y:e.clientY,on:false,id:e.pointerId,g:null,cur:-1,prev:-1}; });
 window.addEventListener('pointermove',e=>{
   if(!drag||e.pointerId!==drag.id) return;
-  if(!drag.on&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>8){ drag.on=true; const it=S.board[drag.i]; drag.g=document.createElement('div'); drag.g.className='ghost'; drag.g.textContent=item(it.l,it.n)[0]; document.body.appendChild(drag.g);
+  if(!drag.on&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>8){ drag.on=true; const it=S.board[drag.i]; drag.g=document.createElement('div'); drag.g.className='ghost'; drag.g.innerHTML=item(it.l,it.n)[0]; document.body.appendChild(drag.g);
     const c=$('board').querySelector(`[data-cell="${drag.i}"]`); if(c)c.classList.add('drag'); }
   if(drag.on){ drag.g.style.left=e.clientX+'px'; drag.g.style.top=e.clientY+'px';
     // Guarda o último item igual por onde o dedo passou; ele só entra na fusão se for vizinho do destino.
