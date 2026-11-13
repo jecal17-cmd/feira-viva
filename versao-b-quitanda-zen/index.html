@@ -653,7 +653,7 @@ const $=id=>document.getElementById(id), fmt=n=>Math.round(n).toLocaleString(LAN
 const dstr=t=>new Date(t).toLocaleDateString('sv'), today=()=>dstr(Date.now());
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 // Arte dos itens (pasta itens/, nome = código da lista de arte, ex.: fr-1). Sem arte, fica o emoji.
-const ITEM_ART=new Set(['fr','pe','ve'].flatMap(l=>[1,2,3,4,5,6,7,8].map(n=>l+'-'+n)).concat(['ca-2']));
+const ITEM_ART=new Set(['fr','pe','ve','te','be'].flatMap(l=>[1,2,3,4,5,6,7,8].map(n=>l+'-'+n)).concat(['ca-2','ar-1','ar-2']));
 const ie=(l,n)=>ITEM_ART.has(l+'-'+n)?`<img class="ii" src="itens/${l}-${n}.webp" alt="" draggable="false">`:LINES[l].it[n-1][0];
 const item=(l,n)=>{ const x=LINES[l].it[n-1]; return [ie(l,n),LANG==='en'?x[2]:x[1]]; };
 const gloss=(l,n)=>LANG==='en'?GLOSS[l+n]:null;

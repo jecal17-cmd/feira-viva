@@ -13,15 +13,13 @@ Atualizado por `atualizar_status.py`. ✅ = imagem já no jogo · ⬜ = falta ge
 | Grupo | Prontas | Faltam |
 |---|---|---|
 | Mercados | 12 de 12 | 0 |
-| Itens do tabuleiro | 25 de 104 | 79 |
+| Itens do tabuleiro | 43 de 104 | 61 |
 | Personagens | 0 de 28 | 28 |
 | Decoração da banca | 0 de 12 | 12 |
 
 **Itens que faltam, por linha:**
 
-- Temperos (8): Sal, Alho, Cebola, Pimenta-malagueta, Pimentão, Azeite de dendê, Mel, Molho
-- Bebidas (8): Água, Água de coco, Suco, Café, Caldo de cana, Chimarrão, Guaraná, Cajuína
-- Artesanato (8): Linha, Novelo, Fita do Bonfim, Renda, Chapéu de palha, Cesto de palha, Boneco de barro, Viola
+- Artesanato (6): Fita do Bonfim, Renda, Chapéu de palha, Cesto de palha, Boneco de barro, Viola
 - Armazém (8): Amendoim, Castanha-do-pará, Pipoca, Arroz, Farinha de mandioca, Feijão, Cuscuz, Baião de dois
 - Doces (8): Rapadura, Paçoca, Chocolate, Cocada, Quindim, Sonho, Goiabada, Bolo de rolo
 - Carnes (7): Ovo, Torresmo, Linguiça, Carne de sol, Costela, Espetinho, Feijoada
@@ -135,34 +133,34 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 
 | Nível | Arquivo | Português | Inglês | Explicação (inglês) | Emoji provisório | Arte |
 |---|---|---|---|---|---|---|
-| 1 | `itens/te-1.png` | Sal | Salt |  | 🧂 | ⬜ |
-| 2 | `itens/te-2.png` | Alho | Garlic |  | 🧄 | ⬜ |
-| 3 | `itens/te-3.png` | Cebola | Onion |  | 🧅 | ⬜ |
-| 4 | `itens/te-4.png` | Pimenta-malagueta | Malagueta pepper | small, fiery Brazilian chili | 🌶️ | ⬜ |
-| 5 | `itens/te-5.png` | Pimentão | Bell pepper |  | 🫑 | ⬜ |
-| 6 | `itens/te-6.png` | Azeite de dendê | Dendê oil | red palm oil, the soul of Bahian cooking | 🫒 | ⬜ |
-| 7 | `itens/te-7.png` | Mel | Honey |  | 🍯 | ⬜ |
-| 8 | `itens/te-8.png` | Molho | Sauce |  | 🥫 | ⬜ |
+| 1 | `itens/te-1.png` | Sal | Salt |  | 🧂 | ✅ |
+| 2 | `itens/te-2.png` | Alho | Garlic |  | 🧄 | ✅ |
+| 3 | `itens/te-3.png` | Cebola | Onion |  | 🧅 | ✅ |
+| 4 | `itens/te-4.png` | Pimenta-malagueta | Malagueta pepper | small, fiery Brazilian chili | 🌶️ | ✅ |
+| 5 | `itens/te-5.png` | Pimentão | Bell pepper |  | 🫑 | ✅ |
+| 6 | `itens/te-6.png` | Azeite de dendê | Dendê oil | red palm oil, the soul of Bahian cooking | 🫒 | ✅ |
+| 7 | `itens/te-7.png` | Mel | Honey |  | 🍯 | ✅ |
+| 8 | `itens/te-8.png` | Molho | Sauce |  | 🥫 | ✅ |
 
 ### Bebidas / Drinks (`be`)
 
 | Nível | Arquivo | Português | Inglês | Explicação (inglês) | Emoji provisório | Arte |
 |---|---|---|---|---|---|---|
-| 1 | `itens/be-1.png` | Água | Water |  | 💧 | ⬜ |
-| 2 | `itens/be-2.png` | Água de coco | Coconut water |  | 🥥 | ⬜ |
-| 3 | `itens/be-3.png` | Suco | Juice |  | 🧃 | ⬜ |
-| 4 | `itens/be-4.png` | Café | Coffee |  | ☕ | ⬜ |
-| 5 | `itens/be-5.png` | Caldo de cana | Caldo de cana | fresh-pressed sugarcane juice | 🍵 | ⬜ |
-| 6 | `itens/be-6.png` | Chimarrão | Chimarrão | hot yerba mate sipped from a gourd | 🧉 | ⬜ |
-| 7 | `itens/be-7.png` | Guaraná | Guaraná | soda made from an Amazonian berry | 🥤 | ⬜ |
-| 8 | `itens/be-8.png` | Cajuína | Cajuína | clear, sweet cashew-fruit drink from the Northeast | 🍹 | ⬜ |
+| 1 | `itens/be-1.png` | Água | Water |  | 💧 | ✅ |
+| 2 | `itens/be-2.png` | Água de coco | Coconut water |  | 🥥 | ✅ |
+| 3 | `itens/be-3.png` | Suco | Juice |  | 🧃 | ✅ |
+| 4 | `itens/be-4.png` | Café | Coffee |  | ☕ | ✅ |
+| 5 | `itens/be-5.png` | Caldo de cana | Caldo de cana | fresh-pressed sugarcane juice | 🍵 | ✅ |
+| 6 | `itens/be-6.png` | Chimarrão | Chimarrão | hot yerba mate sipped from a gourd | 🧉 | ✅ |
+| 7 | `itens/be-7.png` | Guaraná | Guaraná | soda made from an Amazonian berry | 🥤 | ✅ |
+| 8 | `itens/be-8.png` | Cajuína | Cajuína | clear, sweet cashew-fruit drink from the Northeast | 🍹 | ✅ |
 
 ### Artesanato / Crafts (`ar`)
 
 | Nível | Arquivo | Português | Inglês | Explicação (inglês) | Emoji provisório | Arte |
 |---|---|---|---|---|---|---|
-| 1 | `itens/ar-1.png` | Linha | Thread |  | 🧵 | ⬜ |
-| 2 | `itens/ar-2.png` | Novelo | Ball of yarn |  | 🧶 | ⬜ |
+| 1 | `itens/ar-1.png` | Linha | Thread |  | 🧵 | ✅ |
+| 2 | `itens/ar-2.png` | Novelo | Ball of yarn |  | 🧶 | ✅ |
 | 3 | `itens/ar-3.png` | Fita do Bonfim | Fita do Bonfim | wish ribbon from Salvador: tie it on and make three wishes | 🎗️ | ⬜ |
 | 4 | `itens/ar-4.png` | Renda | Bobbin lace |  | 🎀 | ⬜ |
 | 5 | `itens/ar-5.png` | Chapéu de palha | Straw hat |  | 👒 | ⬜ |
