@@ -13,15 +13,14 @@ Atualizado por `atualizar_status.py`. ✅ = imagem já no jogo · ⬜ = falta ge
 | Grupo | Prontas | Faltam |
 |---|---|---|
 | Mercados | 12 de 12 | 0 |
-| Itens do tabuleiro | 43 de 104 | 61 |
+| Itens do tabuleiro | 58 de 104 | 46 |
 | Personagens | 0 de 28 | 28 |
 | Decoração da banca | 0 de 12 | 12 |
 
 **Itens que faltam, por linha:**
 
-- Artesanato (6): Fita do Bonfim, Renda, Chapéu de palha, Cesto de palha, Boneco de barro, Viola
-- Armazém (8): Amendoim, Castanha-do-pará, Pipoca, Arroz, Farinha de mandioca, Feijão, Cuscuz, Baião de dois
-- Doces (8): Rapadura, Paçoca, Chocolate, Cocada, Quindim, Sonho, Goiabada, Bolo de rolo
+- Armazém (1): Farinha de mandioca
+- Doces (6): Chocolate, Cocada, Quindim, Sonho, Goiabada, Bolo de rolo
 - Carnes (7): Ovo, Torresmo, Linguiça, Carne de sol, Costela, Espetinho, Feijoada
 - Laticínios (8): Leite, Manteiga, Queijo minas, Requeijão, Queijo coalho, Doce de leite, Romeu e Julieta, Pudim
 - Lanches (8): Pastel, Tapioca, Sanduíche de mortadela, Coxinha, Acarajé, X-tudo, Tapioca recheada, Marmita
@@ -39,7 +38,7 @@ São **dois estilos**, de propósito: os mercados (e os personagens que vivem ne
 **Itens do tabuleiro e decoração da banca: render 3D brilhante.** Referência em `referencias/item-estilo-caju.jpg`.
 - Estilo: *glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, plain pure white background, no shadow, no text, square 1:1*.
 - Formato: quadrado, fundo branco liso, sem sombra no chão. O fundo branco é tirado depois e a imagem vira PNG de 512 × 512 com fundo transparente.
-- Para pôr no jogo: `python docs/arte/itens/recortar_itens.py fr-1=limao.png fr-2=laranja.png ...` tira o fundo (com o rembg), apaga textos soltos que o gerador escreveu, centraliza, salva a matriz de 512 px em `docs/arte/itens/` e o WebP de 256 px em `versao-b-quitanda-zen/itens/`. Depois, acrescente os códigos em `ITEM_ART`, no `index.html`, e rode `python docs/arte/atualizar_status.py` para marcar a lista.
+- Para pôr no jogo: `python docs/arte/itens/recortar_itens.py fr-1=limao.png fr-2=laranja.png ...` tira o fundo (com o rembg), apaga textos soltos que o gerador escreveu, centraliza, salva a matriz de 512 px em `docs/arte/itens/` e o WebP de 256 px em `versao-b-quitanda-zen/itens/`. O WebP do jogo sai normalizado: itens compridos e deitados vão para a diagonal e todos ocupam a mesma área visível da casa (`AREA_ALVO`). Para mudar essa regra e refazer todos sem recortar de novo, rode o script com `--todos`. Depois, acrescente os códigos em `ITEM_ART`, no `index.html`, e rode `python docs/arte/atualizar_status.py` para marcar a lista.
 - Os itens de uma mesma linha devem parecer uma evolução: do nível 1 ao 8 o item fica maior, mais caprichado e mais valioso. O prompt do nível 1 pede algo simples e o do nível 8, a versão mais caprichada.
 
 **Para todos:**
@@ -161,32 +160,32 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 |---|---|---|---|---|---|---|
 | 1 | `itens/ar-1.png` | Linha | Thread |  | 🧵 | ✅ |
 | 2 | `itens/ar-2.png` | Novelo | Ball of yarn |  | 🧶 | ✅ |
-| 3 | `itens/ar-3.png` | Fita do Bonfim | Fita do Bonfim | wish ribbon from Salvador: tie it on and make three wishes | 🎗️ | ⬜ |
-| 4 | `itens/ar-4.png` | Renda | Bobbin lace |  | 🎀 | ⬜ |
-| 5 | `itens/ar-5.png` | Chapéu de palha | Straw hat |  | 👒 | ⬜ |
-| 6 | `itens/ar-6.png` | Cesto de palha | Straw basket |  | 🧺 | ⬜ |
-| 7 | `itens/ar-7.png` | Boneco de barro | Clay figurine |  | 🏺 | ⬜ |
-| 8 | `itens/ar-8.png` | Viola | Viola caipira | ten-string Brazilian country guitar | 🎸 | ⬜ |
+| 3 | `itens/ar-3.png` | Fita do Bonfim | Fita do Bonfim | wish ribbon from Salvador: tie it on and make three wishes | 🎗️ | ✅ |
+| 4 | `itens/ar-4.png` | Renda | Bobbin lace |  | 🎀 | ✅ |
+| 5 | `itens/ar-5.png` | Chapéu de palha | Straw hat |  | 👒 | ✅ |
+| 6 | `itens/ar-6.png` | Cesto de palha | Straw basket |  | 🧺 | ✅ |
+| 7 | `itens/ar-7.png` | Boneco de barro | Clay figurine |  | 🏺 | ✅ |
+| 8 | `itens/ar-8.png` | Viola | Viola caipira | ten-string Brazilian country guitar | 🎸 | ✅ |
 
 ### Armazém / Pantry (`gr`)
 
 | Nível | Arquivo | Português | Inglês | Explicação (inglês) | Emoji provisório | Arte |
 |---|---|---|---|---|---|---|
-| 1 | `itens/gr-1.png` | Amendoim | Peanuts |  | 🥜 | ⬜ |
-| 2 | `itens/gr-2.png` | Castanha-do-pará | Brazil nuts |  | 🌰 | ⬜ |
-| 3 | `itens/gr-3.png` | Pipoca | Popcorn |  | 🍿 | ⬜ |
-| 4 | `itens/gr-4.png` | Arroz | Rice |  | 🍚 | ⬜ |
+| 1 | `itens/gr-1.png` | Amendoim | Peanuts |  | 🥜 | ✅ |
+| 2 | `itens/gr-2.png` | Castanha-do-pará | Brazil nuts |  | 🌰 | ✅ |
+| 3 | `itens/gr-3.png` | Pipoca | Popcorn |  | 🍿 | ✅ |
+| 4 | `itens/gr-4.png` | Arroz | Rice |  | 🍚 | ✅ |
 | 5 | `itens/gr-5.png` | Farinha de mandioca | Cassava flour |  | 🥣 | ⬜ |
-| 6 | `itens/gr-6.png` | Feijão | Beans |  | 🫘 | ⬜ |
-| 7 | `itens/gr-7.png` | Cuscuz | Cuscuz | steamed cornmeal cake from the Northeast | 🥮 | ⬜ |
-| 8 | `itens/gr-8.png` | Baião de dois | Baião de dois | rice and beans cooked together with cheese, from Ceará | 🍛 | ⬜ |
+| 6 | `itens/gr-6.png` | Feijão | Beans |  | 🫘 | ✅ |
+| 7 | `itens/gr-7.png` | Cuscuz | Cuscuz | steamed cornmeal cake from the Northeast | 🥮 | ✅ |
+| 8 | `itens/gr-8.png` | Baião de dois | Baião de dois | rice and beans cooked together with cheese, from Ceará | 🍛 | ✅ |
 
 ### Doces / Sweets (`do`)
 
 | Nível | Arquivo | Português | Inglês | Explicação (inglês) | Emoji provisório | Arte |
 |---|---|---|---|---|---|---|
-| 1 | `itens/do-1.png` | Rapadura | Rapadura | block of unrefined cane sugar | 🍬 | ⬜ |
-| 2 | `itens/do-2.png` | Paçoca | Paçoca | crumbly peanut candy | 🍭 | ⬜ |
+| 1 | `itens/do-1.png` | Rapadura | Rapadura | block of unrefined cane sugar | 🍬 | ✅ |
+| 2 | `itens/do-2.png` | Paçoca | Paçoca | crumbly peanut candy | 🍭 | ✅ |
 | 3 | `itens/do-3.png` | Chocolate | Chocolate |  | 🍫 | ⬜ |
 | 4 | `itens/do-4.png` | Cocada | Cocada | chewy coconut candy | 🍪 | ⬜ |
 | 5 | `itens/do-5.png` | Quindim | Quindim | glossy coconut and egg-yolk custard | 🧁 | ⬜ |
