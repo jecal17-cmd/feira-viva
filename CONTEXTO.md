@@ -55,6 +55,14 @@ No Ler Brincando, a arte nova (coruja) e os ícones já gerados estão em `docs/
 
 O antigo `docs/arte/icones/gerar-icones.js` (ícones desenhados em SVG) sobrescreve os novos; não rodar.
 
+## Arte dos mercados
+
+Os 12 mercados têm ilustração, em `versao-b-quitanda-zen/mercados/*.webp`, ligadas pelo campo `img` em `FEIRAS`. Aparecem no topo dos avisos de viagem, chegada e feira concluída, no cartão do mercado na tela inicial, na lista e nos pontos do mapa e na faixa do tabuleiro. Mercados sem `img` continuam com o emoji. O `app-android/scripts/copy-web.js` copia a pasta para o app. As imagens originais e os estilos de arte estão em `docs/arte/referencias/` e `docs/arte/lista-de-arte.md`.
+
+## Arte dos itens
+
+Os itens do tabuleiro com arte ficam em `versao-b-quitanda-zen/itens/<código>.webp` (256 px, fundo transparente) e são listados em `ITEM_ART`, no `index.html`; os demais continuam com o emoji. A imagem aparece no tabuleiro, nos pedidos, nos cestos, na prateleira da tela inicial, nas receitas e ao arrastar. Para recortar arte nova: `docs/arte/itens/recortar_itens.py` (rembg). Para marcar o que já está pronto na lista de arte: `docs/arte/atualizar_status.py`.
+
 ## Decisões importantes
 
 **Quitanda Zen (v0.5)**

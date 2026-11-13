@@ -93,6 +93,7 @@ button:disabled{opacity:.45;cursor:default}
 .fx{position:fixed;z-index:16;pointer-events:none;font-family:var(--display);font-weight:800;font-size:15px;color:var(--gold);text-shadow:0 1px 0 var(--panel),0 -1px 0 var(--panel),1px 0 0 var(--panel),-1px 0 0 var(--panel);transform:translate(-50%,-50%);animation:fx .9s ease-out forwards;white-space:nowrap}
 @keyframes fx{to{transform:translate(-50%,-260%);opacity:0}}
 @media (prefers-reduced-motion: reduce){.cell.pop,.cell.hint,.tutglow,.encb.chama,.strip.go,.floaty i,.node .ring{animation:none!important}.fx{animation-duration:.01s}}
+.ii{width:1.12em;height:1.12em;object-fit:contain;vertical-align:-.2em;pointer-events:none;-webkit-user-drag:none}
 .ghost{position:fixed;z-index:15;pointer-events:none;font-size:40px;line-height:1;transform:translate(-50%,-70%)}
 .info{min-height:42px;background:var(--panel);border-radius:14px;padding:5px 10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .info p{margin:0;flex:1;min-width:0;font-size:12.5px;line-height:1.25}
@@ -133,6 +134,8 @@ a.btn{text-decoration:none;display:inline-block;text-align:center}
 .play:active{transform:translateY(3px);box-shadow:0 2px 0 color-mix(in srgb,var(--accent) 60%,#000)}
 .where{background:var(--panel);border-radius:14px;padding:10px 12px;text-align:left;display:flex;flex-direction:column;gap:6px}
 .where small{color:var(--muted)}
+.where.art{background:linear-gradient(to top,rgba(20,24,20,.82),rgba(20,24,20,.35) 55%,rgba(20,24,20,0) 85%),var(--art) center 40%/cover,var(--panel);color:#fff;min-height:132px;justify-content:flex-end;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.where.art small{color:rgba(255,255,255,.88)}
 .hnav{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
 .hnav button{background:var(--panel);border-radius:12px;padding:7px 1px;font-weight:800;font-size:10px;position:relative;min-width:0;overflow:hidden;white-space:nowrap}
 .hnav span{display:block;font-size:19px}
@@ -168,7 +171,7 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
 .node.cur circle{stroke:var(--sun);stroke-width:4}
 .node .ring{fill:none;stroke:var(--sun);stroke-width:3;transform-box:fill-box;transform-origin:center;animation:ring 1.6s ease-out infinite}
 @keyframes ring{from{transform:scale(1);opacity:.9}to{transform:scale(1.9);opacity:0}}
-.node.lock{opacity:.75}
+.node.lock{opacity:.75} .node.lock image{filter:grayscale(1)}
 .veh{font-size:40px}
 .legend{display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;font-size:12px;color:var(--muted);padding:6px 0 2px}
 .legend span{display:flex;align-items:center;gap:5px}
@@ -192,6 +195,14 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
 .card{background:var(--panel);border-radius:20px;padding:20px;max-width:340px;width:100%;display:flex;flex-direction:column;gap:12px;text-align:center;max-height:90vh;overflow:auto}
 .card p{margin:0}
 .card .big{font-size:48px;line-height:1}
+.card .hero{margin:-20px -20px 2px;aspect-ratio:16/9;overflow:hidden;border-radius:20px 20px 0 0;flex:0 0 auto;background:var(--bg)}
+.card .hero.inline{margin:0;border-radius:12px}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.mtile{flex:0 0 auto;width:56px;height:56px;border-radius:12px;overflow:hidden;display:grid;place-items:center;font-size:30px;line-height:1;background:var(--bg);position:relative}
+.mtile img{width:100%;height:100%;object-fit:cover;display:block}
+.mtile.lock img{filter:grayscale(1) blur(1.5px);opacity:.6}
+.mtile.lock::after{content:'🔒';position:absolute;font-size:22px}
+.mtile.xs{width:22px;height:22px;border-radius:6px;font-size:15px}
 .card ul{margin:0;padding-left:18px;text-align:left}
 .adbox{border:2px dashed var(--line);border-radius:14px;padding:24px 12px;color:var(--muted)}
 .intro{position:fixed;inset:0;z-index:40;background:var(--introbg);display:grid;place-items:center;cursor:pointer;transition:opacity .5s}
@@ -348,18 +359,18 @@ const REGS=['Norte','Nordeste','Centro-Oeste','Sudeste','Sul'], REGUF={ac:0,am:0
 const REG={Norte:'North',Nordeste:'Northeast','Centro-Oeste':'Center-West',Sudeste:'Southeast',Sul:'South'};
 // Rota das Feiras: 12 paradas por volta, voltas infinitas. Textos curtos, a validar com pesquisa local.
 const FEIRAS=[
- {n:'Ver-o-Peso',c:'Belém',uf:'PA',reg:'Norte',ic:'🛶',lon:-48.5,lat:-1.45,lines:['fr','pe','te','be'],txt:['Feira à beira da baía do Guajará.','Market on the shore of Guajará Bay.']},
- {n:'Mercado Adolpho Lisboa',c:'Manaus',uf:'AM',reg:'Norte',ic:'🌳',lon:-60,lat:-3.1,lines:['pe','fr','ar','gr'],txt:['Mercado às margens do rio Negro.','Market hall on the banks of the Rio Negro.']},
- {n:'Feira de São Joaquim',c:'Salvador',uf:'BA',reg:'Nordeste',ic:'🥁',lon:-38.5,lat:-13,lines:['te','pe','gr','do'],txt:['Feira popular junto à Baía de Todos-os-Santos.','Bustling market by the Bay of All Saints.']},
- {n:'Mercado de São José',c:'Recife',uf:'PE',reg:'Nordeste',ic:'🎭',lon:-34.9,lat:-8.05,lines:['ca','gr','la','ar'],txt:['Mercado de ferro do século XIX.','A 19th-century iron market hall.']},
- {n:'Mercado Central',c:'Fortaleza',uf:'CE',reg:'Nordeste',ic:'⛵',lon:-38.5,lat:-3.7,lines:['fr','ar','do','pe'],txt:['Conhecido pelo artesanato.','Known for its handicrafts.']},
- {n:'Feira Central',c:'Campo Grande',uf:'MS',reg:'Centro-Oeste',ic:'🐆',lon:-54.6,lat:-20.45,lines:['ln','be','ca','ve'],txt:['Famosa pelo sobá.','Famous for sobá noodle soup.']},
- {n:'Mercadão',c:'São Paulo',uf:'SP',reg:'Sudeste',ic:'🏙️',lon:-46.6,lat:-23.55,lines:['ln','fr','la','pa'],txt:['Lembrado pelo sanduíche de mortadela e pelos vitrais.','Loved for its mortadella sandwich and stained-glass windows.']},
- {n:'Mercado Central',c:'Belo Horizonte',uf:'MG',reg:'Sudeste',ic:'⛰️',lon:-43.9,lat:-19.9,lines:['la','do','pa','be'],txt:['Queijos, doces e café de Minas.','Cheeses, sweets and coffee from Minas Gerais.']},
- {n:'Feira de São Cristóvão',c:'Rio de Janeiro',uf:'RJ',reg:'Sudeste',ic:'🪗',lon:-43.2,lat:-22.9,lines:['gr','ca','ln','te'],txt:['Tradições nordestinas no Rio.','Northeastern Brazilian traditions in Rio.']},
- {n:'Mercado Público',c:'Porto Alegre',uf:'RS',reg:'Sul',ic:'🧉',lon:-51.2,lat:-30,lines:['be','ca','la','ve'],txt:['No centro histórico da cidade.','In the heart of the historic center.']},
- {n:'Mercado Público',c:'Florianópolis',uf:'SC',reg:'Sul',ic:'🏝️',lon:-48.55,lat:-27.6,lines:['pe','ve','pa','fl'],txt:['Frutos do mar perto do cais.','Fresh seafood near the waterfront.']},
- {n:'Mercado Municipal',c:'Curitiba',uf:'PR',reg:'Sul',ic:'🌲',lon:-49.3,lat:-25.4,lines:['gr','pa','fl','do'],txt:['Bancas com produtos de muitas origens.','Stalls with goods from many origins.']}
+ {n:'Ver-o-Peso',c:'Belém',img:'01-ver-o-peso-belem',uf:'PA',reg:'Norte',ic:'🛶',lon:-48.5,lat:-1.45,lines:['fr','pe','te','be'],txt:['Feira à beira da baía do Guajará.','Market on the shore of Guajará Bay.']},
+ {n:'Mercado Adolpho Lisboa',c:'Manaus',img:'02-mercado-adolpho-lisboa-manaus',uf:'AM',reg:'Norte',ic:'🌳',lon:-60,lat:-3.1,lines:['pe','fr','ar','gr'],txt:['Mercado às margens do rio Negro.','Market hall on the banks of the Rio Negro.']},
+ {n:'Feira de São Joaquim',c:'Salvador',img:'03-feira-de-sao-joaquim-salvador',uf:'BA',reg:'Nordeste',ic:'🥁',lon:-38.5,lat:-13,lines:['te','pe','gr','do'],txt:['Feira popular junto à Baía de Todos-os-Santos.','Bustling market by the Bay of All Saints.']},
+ {n:'Mercado de São José',c:'Recife',img:'04-mercado-de-sao-jose-recife',uf:'PE',reg:'Nordeste',ic:'🎭',lon:-34.9,lat:-8.05,lines:['ca','gr','la','ar'],txt:['Mercado de ferro do século XIX.','A 19th-century iron market hall.']},
+ {n:'Mercado Central',c:'Fortaleza',img:'05-mercado-central-fortaleza',uf:'CE',reg:'Nordeste',ic:'⛵',lon:-38.5,lat:-3.7,lines:['fr','ar','do','pe'],txt:['Conhecido pelo artesanato.','Known for its handicrafts.']},
+ {n:'Feira Central',c:'Campo Grande',img:'06-feira-central-campo-grande',uf:'MS',reg:'Centro-Oeste',ic:'🐆',lon:-54.6,lat:-20.45,lines:['ln','be','ca','ve'],txt:['Famosa pelo sobá.','Famous for sobá noodle soup.']},
+ {n:'Mercadão',c:'São Paulo',img:'07-mercadao-sao-paulo',uf:'SP',reg:'Sudeste',ic:'🏙️',lon:-46.6,lat:-23.55,lines:['ln','fr','la','pa'],txt:['Lembrado pelo sanduíche de mortadela e pelos vitrais.','Loved for its mortadella sandwich and stained-glass windows.']},
+ {n:'Mercado Central',c:'Belo Horizonte',img:'08-mercado-central-belo-horizonte',uf:'MG',reg:'Sudeste',ic:'⛰️',lon:-43.9,lat:-19.9,lines:['la','do','pa','be'],txt:['Queijos, doces e café de Minas.','Cheeses, sweets and coffee from Minas Gerais.']},
+ {n:'Feira de São Cristóvão',c:'Rio de Janeiro',img:'09-feira-de-sao-cristovao-rio-de-janeiro',uf:'RJ',reg:'Sudeste',ic:'🪗',lon:-43.2,lat:-22.9,lines:['gr','ca','ln','te'],txt:['Tradições nordestinas no Rio.','Northeastern Brazilian traditions in Rio.']},
+ {n:'Mercado Público',c:'Porto Alegre',img:'10-mercado-publico-porto-alegre',uf:'RS',reg:'Sul',ic:'🧉',lon:-51.2,lat:-30,lines:['be','ca','la','ve'],txt:['No centro histórico da cidade.','In the heart of the historic center.']},
+ {n:'Mercado Público',c:'Florianópolis',img:'11-mercado-publico-florianopolis',uf:'SC',reg:'Sul',ic:'🏝️',lon:-48.55,lat:-27.6,lines:['pe','ve','pa','fl'],txt:['Frutos do mar perto do cais.','Fresh seafood near the waterfront.']},
+ {n:'Mercado Municipal',c:'Curitiba',img:'12-mercado-municipal-curitiba',uf:'PR',reg:'Sul',ic:'🌲',lon:-49.3,lat:-25.4,lines:['gr','pa','fl','do'],txt:['Bancas com produtos de muitas origens.','Stalls with goods from many origins.']}
 ];
 // Turma da Feira: at = índice da feira (-1 = viaja com você). fav = linha preferida.
 const CAST=[
@@ -628,11 +639,18 @@ const UI={
 const $=id=>document.getElementById(id), fmt=n=>Math.round(n).toLocaleString(LANG==='en'?'en-US':'pt-BR');
 const dstr=t=>new Date(t).toLocaleDateString('sv'), today=()=>dstr(Date.now());
 const pick=a=>a[Math.floor(Math.random()*a.length)];
-const item=(l,n)=>{ const x=LINES[l].it[n-1]; return [x[0],LANG==='en'?x[2]:x[1]]; };
+// Arte dos itens (pasta itens/, nome = código da lista de arte, ex.: fr-1). Sem arte, fica o emoji.
+const ITEM_ART=new Set(['fr-1','fr-2','fr-3','fr-4','fr-5','fr-6','fr-7','fr-8','ve-1','ca-2']);
+const ie=(l,n)=>ITEM_ART.has(l+'-'+n)?`<img class="ii" src="itens/${l}-${n}.webp" alt="" draggable="false">`:LINES[l].it[n-1][0];
+const item=(l,n)=>{ const x=LINES[l].it[n-1]; return [ie(l,n),LANG==='en'?x[2]:x[1]]; };
 const gloss=(l,n)=>LANG==='en'?GLOSS[l+n]:null;
 const lname=l=>tx(LINES[l].name);
 const lc=l=>`hsl(${LINES[l].hue} 62% 46%)`;
 const feira=s=>FEIRAS[s%FEIRAS.length], lap=s=>Math.floor(s/FEIRAS.length)+1;
+// Arte dos mercados (pasta mercados/). Sem arte, fica o emoji do mercado.
+const artUrl=f=>f.img?`mercados/${f.img}.webp`:'';
+const heroHtml=(f,cls='')=>f.img?`<div class="hero${cls?' '+cls:''}"><img src="${artUrl(f)}" alt="${f.n}, ${f.c}" onerror="this.parentNode.outerHTML='<div class=&quot;big&quot;>${f.ic}</div>'"></div>`:`<div class="big">${f.ic}</div>`;
+const tileHtml=(f,cls='')=>`<span class="mtile${cls?' '+cls:''}" aria-hidden="true">${f.img?`<img src="${artUrl(f)}" alt="" onerror="this.replaceWith('${f.ic}')">`:f.ic}</span>`;
 const reg=f=>LANG==='en'?REG[f.reg]:f.reg;
 const linesAt=s=>feira(s).lines.slice(0,s===0?2:s===1?3:4);
 const lines=()=>linesAt(S.stop);
@@ -847,7 +865,7 @@ function deliver(i,id){
     S.orders[S.orders.indexOf(o)]=newOrder();
     offer={xp:o.xp,co:o.co,who:c,until:Date.now()+8000};
     if(S.served>=goal(S.stop)&&!S.goalSeen){ S.goalSeen=true; const nx=feira(S.stop+1);
-      modal(`<div class="big">⭐</div><h1>${t('fairDone')}</h1><p>${t('fairDoneP',goal(S.stop),feira(S.stop).n)}</p><p>${t('nextStop',nx.ic,nx.n,nx.c,nx.uf)}</p><button class="btn" data-act="travelask">${t('travelNow')}</button><button class="btn ghosty" data-act="mclose">${t('stay')}</button>`); }
+      modal(`<div class="big">⭐</div><h1>${t('fairDone')}</h1><p>${t('fairDoneP',goal(S.stop),feira(S.stop).n)}</p><p>${t('nextStop',nx.ic,nx.n,nx.c,nx.uf)}</p>${nx.img?heroHtml(nx,'inline'):''}<button class="btn" data-act="travelask">${t('travelNow')}</button><button class="btn ghosty" data-act="mclose">${t('stay')}</button>`); }
     if(S.stats.orders%4===0) maybeInter();
   }
   render();
@@ -877,8 +895,8 @@ function expand(paid){
 function travelAsk(){
   const nx=S.stop+1, f=feira(nx), ls=linesAt(nx), gone=lines().filter(k=>!ls.includes(k));
   const val=S.board.reduce((a,x)=>a+(x&&gone.includes(x.l)?COV[x.n]*(x.n>=5?2:1):0),0);
-  modal(`<div class="big">${f.ic}</div><h1>${f.n}</h1><p>${f.c} (${f.uf}) · ${reg(f)}${lap(nx)>1?' · '+t('lapN',lap(nx)):''}</p><p class="note">${tx(f.txt)}</p>
-   <ul><li>${t('stalls')}: ${ls.map(k=>LINES[k].it[0][0]+' '+lname(k)).join(', ')}</li>${gone.length?`<li>${t('willSell',gone.map(lname).join(t('and')),fmt(val))}</li>`:''}<li>${t('arrivesFull')}</li></ul>
+  modal(`${heroHtml(f)}<h1>${f.n}</h1><p>${f.c} (${f.uf}) · ${reg(f)}${lap(nx)>1?' · '+t('lapN',lap(nx)):''}</p><p class="note">${tx(f.txt)}</p>
+   <ul><li>${t('stalls')}: ${ls.map(k=>ie(k,1)+' '+lname(k)).join(', ')}</li>${gone.length?`<li>${t('willSell',gone.map(lname).join(t('and')),fmt(val))}</li>`:''}<li>${t('arrivesFull')}</li></ul>
    <button class="btn" data-act="travel">${t('hitRoad')}</button><button class="btn ghosty" data-act="mclose">${t('notYet')}</button>`);
 }
 function travel(){
@@ -890,7 +908,7 @@ function travel(){
   const rew=Math.min(500,50+25*old); S.coins+=sold+rew; S.boost.mag++; sel=null; selOrder=null; offer=null; tripBonus=rew;
   sheetName=null; $('sheet').hidden=true; homeOn=false;
   const loc=CAST.filter(c=>c.at===S.stop%FEIRAS.length);
-  const html=`<div class="big">${f.ic}</div><h1>${t('welcome',f.c)}</h1><p><b>${f.n}</b>${lap(S.stop)>oldLap?`<br>${t('newLap',lap(S.stop),Math.round((lapBonus()-1)*100))}`:''}</p>
+  const html=`${heroHtml(f)}<h1>${t('welcome',f.c)}</h1><p><b>${f.n}</b>${lap(S.stop)>oldLap?`<br>${t('newLap',lap(S.stop),Math.round((lapBonus()-1)*100))}`:''}</p>
    <p>${t('tripRew',fmt(rew+sold))}</p><p>${t('meet')}<br>${loc.map(c=>`${c.f} <b>${c.n}</b>, ${tx(c.role)}`).join('<br>')}</p><button class="btn" data-act="arrive">${t('openStall')}</button><button class="btn ghosty" data-act="tripdouble">${t('tripDouble',fmt(rew))}</button>`;
   render(); playTrip(old%FEIRAS.length,S.stop%FEIRAS.length,()=>{ beep(520); beep(660,.12); beep(880,.24); modal(html); });
 }
@@ -971,7 +989,7 @@ function render(){
   const curIt=sel!=null?S.board[sel]:null, EL=encLvl();
   $('stripbox').className='striprow';
   $('stripbox').innerHTML=(done?`<button class="strip go" data-act="travelask"><span>${t('goTravel',feira(S.stop+1).c)}</span></button>`
-    :`<button class="strip" data-act="nav:map" aria-label="${t('openMap')}"><span>${f.ic} ${f.n} · ${f.c}</span><div class="bar"><i style="width:${S.served/g*100}%"></i></div><span>${t('clients',S.served,g)}</span></button>`)
+    :`<button class="strip" data-act="nav:map" aria-label="${t('openMap')}">${tileHtml(f,'xs')}<span>${f.n} · ${f.c}</span><div class="bar"><i style="width:${S.served/g*100}%"></i></div><span>${t('clients',S.served,g)}</span></button>`)
     +`<button class="encb${curIt&&curIt.n>=EL?' want':''}${S.encHint===1?' chama':''}" data-enc="1" aria-label="${t('encAria',ENC_N,EL)}">📦 ${S.enc.got}/${ENC_N} <small>${t('levelPlus',EL)}</small></button>`;
   $('board').innerHTML=S.board.map((x,i)=>x
     ?`<button class="cell has${sel===i?' sel':''}${popAt===i?' pop':''}" style="--lc:${lc(x.l)}" data-cell="${i}" aria-label="${t('cellAria',item(x.l,x.n)[1],x.n)}"><span class="em">${item(x.l,x.n)[0]}</span><span class="lv">${x.n}</span></button>`
@@ -1022,7 +1040,7 @@ function tutPasso(){
 function left(b){ if(b.c>=cap()) return t('bFull'); const s=Math.max(0,Math.ceil((period()-(Date.now()-b.t))/1000)); return mmss(s); }
 function renderBaskets(){
   $('baskets').innerHTML=lines().map(k=>{ const b=S.baskets[k];
-    return `<button class="basket" style="--lc:${lc(k)}" data-act="basket:${k}" aria-label="${t('basketAria',lname(k))}"><span class="em">${LINES[k].it[0][0]}</span><b id="bc-${k}">${b.c}/${cap()}</b><small id="bt-${k}">${left(b)}</small></button>`; }).join('')
+    return `<button class="basket" style="--lc:${lc(k)}" data-act="basket:${k}" aria-label="${t('basketAria',lname(k))}"><span class="em">${ie(k,1)}</span><b id="bc-${k}">${b.c}/${cap()}</b><small id="bt-${k}">${left(b)}</small></button>`; }).join('')
     +`<button class="basket bo" data-act="magnet" aria-label="${t('magAria')}"><span class="em">🧲</span><b>${S.boost.mag}</b><small>${t('magLbl')}</small></button>`
     +`<button class="basket bo" data-act="recharge" aria-label="${t('recAria')}"><span class="em">⚡</span><b>${S.boost.rec}</b><small>${t('recLbl')}</small></button>`
     +`<button class="basket ad bo" data-act="adcharge" aria-label="${t('adAria')}" ${S.daily.adCharge>=AD_MAX?'disabled':''}><span class="em">▶</span><b>+${Math.round(AD_CHARGE*bonus())}</b><small>${S.daily.adCharge}/${AD_MAX}</small></button>`;
@@ -1031,12 +1049,12 @@ function renderHome(){
   const f=feira(S.stop), g=goal(S.stop), ls=lines(), gift=S.giftDay!==today(), d=Math.min((S.giftDay===dstr(Date.now()-864e5)?S.streak:0)+1,7), N=t('nav');
   $('homein').innerHTML=`<div class="floaty" aria-hidden="true"><i style="left:4%;top:6px">🍉</i><i style="right:6%;top:0;animation-delay:.8s">🧀</i><i style="left:1%;top:40px;animation-delay:1.5s;font-size:20px">🌽</i><i style="right:1%;top:44px;animation-delay:.4s;font-size:20px">🥖</i></div>
    <div class="logo"><b>${t('logo')}</b><small>${t('logoSub')}</small>${t('logoSay')?`<p class="say">${t('logoSay')}</p>`:''}</div>
-   <div class="stall"><div class="awning"></div><div class="shelf" aria-hidden="true">${ls.map(k=>LINES[k].it.slice(0,ls.length>3?2:3).map(x=>x[0]).join('')).join('')}</div>
+   <div class="stall"><div class="awning"></div><div class="shelf" aria-hidden="true">${ls.map(k=>LINES[k].it.slice(0,ls.length>3?2:3).map((x,j)=>ie(k,j+1)).join('')).join('')}</div>
      <div class="deco" aria-label="${t('decoAria')}">${S.decor.map(i=>DECOR[i][0]).join('')}</div>
      <div class="keeper"><span>👨‍🌾</span><p><b>Seu Zé:</b> ${tx(TIPS[tip])}</p></div></div>
    <button class="play" data-act="play">▶ ${t('play',S.stats.items||S.stats.merges)}</button>
    ${gift?`<button class="gift" data-act="gift">${t('giftBtn',d,20*d)}</button>`:''}
-   <button class="where" data-act="nav:map"><span><b>${f.ic} ${f.n}</b> · ${f.c} (${f.uf})</span><div class="bar"><i style="width:${Math.min(100,S.served/g*100)}%"></i></div>
+   <button class="where${f.img?' art':''}" data-act="nav:map"${f.img?` style="--art:url('${artUrl(f)}')"`:''}><span><b>${f.img?'':f.ic+' '}${f.n}</b> · ${f.c} (${f.uf})</span><div class="bar"><i style="width:${Math.min(100,S.served/g*100)}%"></i></div>
      <small>${t('homeLine',S.level,S.stop,lap(S.stop))} · ${S.served>=g?t('ready'):t('clients',S.served,g)}</small></button>
    <div class="hnav">${[['map','🗺️',S.served>=g],['turma','🧑‍🤝‍🧑'],['miss','🎯',S.missions.some(m=>m.p>=m.goal)],...(PUB.loja?[['shop','🛒']]:[]),['help','❓'],['cfg','⚙️']].map(([k,i,dt])=>`<button data-act="nav:${k}"><span>${i}</span>${N[k]}${dt?'<i class="dot"></i>':''}</button>`).join('')}</div>
    <div class="seg" role="group" aria-label="${t('lang')}"><button data-act="lang:pt" aria-pressed="${LANG==='pt'}">🇧🇷 Português</button><button data-act="lang:en" aria-pressed="${LANG==='en'}">🌎 English</button></div>`;
@@ -1067,8 +1085,8 @@ function mapSvg(o={}){
   if(o.trip){ const [a,b]=o.trip.map(i=>pts[i]), mx=(a[0]+b[0])/2, my=(a[1]+b[1])/2, dx=b[0]-a[0], dy=b[1]-a[1], L=Math.hypot(dx,dy)||1, off=L*(o.plane?.22:.08);
     extra=`<path id="trippath" class="trippath" d="M${a[0].toFixed(1)} ${a[1].toFixed(1)} Q${(mx+dy/L*off).toFixed(1)} ${(my-dx/L*off).toFixed(1)} ${b[0].toFixed(1)} ${b[1].toFixed(1)}"/><g id="veh" transform="translate(${a[0]} ${a[1]})"><text class="veh">${o.plane?'✈️':'🚌'}</text></g>`; }
   const nodes=pts.map((p,i)=>{ const st=base+i<S.stop?'done':i===cur?'cur':'lock';
-    return `<g class="node ${st}" transform="translate(${p[0].toFixed(1)} ${p[1].toFixed(1)})"><title>${i+1}. ${FEIRAS[i].n}, ${FEIRAS[i].c}</title>${st==='cur'?'<circle class="ring" r="18"/>':''}<circle r="18"/><text>${FEIRAS[i].ic}</text>${st==='done'?'<circle class="ok" cx="14" cy="-14" r="8"/><text class="okt" x="14" y="-14">✓</text>':''}</g>`; }).join('');
-  return `<svg viewBox="-8 -8 647 655" role="img" aria-label="${t('mapAria')}">${ufs}${labs}${route}${nodes}${extra}</svg>`;
+    return `<g class="node ${st}" transform="translate(${p[0].toFixed(1)} ${p[1].toFixed(1)})"><title>${i+1}. ${FEIRAS[i].n}, ${FEIRAS[i].c}</title>${st==='cur'?'<circle class="ring" r="18"/>':''}<circle r="18"/>${FEIRAS[i].img?`<image href="${artUrl(FEIRAS[i])}" x="-16" y="-16" width="32" height="32" preserveAspectRatio="xMidYMid slice" clip-path="url(#nclip)"/>`:`<text>${FEIRAS[i].ic}</text>`}${st==='done'?'<circle class="ok" cx="14" cy="-14" r="8"/><text class="okt" x="14" y="-14">✓</text>':''}</g>`; }).join('');
+  return `<svg viewBox="-8 -8 647 655" role="img" aria-label="${t('mapAria')}"><defs><clipPath id="nclip"><circle r="16"/></clipPath></defs>${ufs}${labs}${route}${nodes}${extra}</svg>`;
 }
 function renderSheet(){
   const T=t('T'); let h='';
@@ -1076,12 +1094,12 @@ function renderSheet(){
     const base=(lap(S.stop)-1)*FEIRAS.length, g=goal(S.stop), done=S.served>=g;
     h=`<p class="note">${t('mapNote',lap(S.stop),S.stop,Math.round((lapBonus()-1)*100))}</p>${t('mapGloss')?`<p class="note">${t('mapGloss')}</p>`:''}<div class="map">${mapSvg()}<div class="legend">${REGS.map((r,i)=>`<span><i class="r${i}" style="background:var(--r${i})"></i>${tx([r,REG[r]])}</span>`).join('')}</div></div>`
      +FEIRAS.map((f,i)=>{ const s=base+i, st=s<S.stop?'ok':s===S.stop?'cur':'lock', ls=linesAt(s), loc=CAST.filter(c=>c.at===i);
-        return `<div class="row ${st==='cur'?'cur':st==='lock'?'lock':''}"><span class="face">${st==='lock'?'🔒':f.ic}</span><div><b>${i+1}. ${f.n}</b> ${st==='ok'?'⭐':''}<p>${f.c} (${f.uf}) · ${reg(f)}</p><p>${tx(f.txt)}</p><p>${ls.map(k=>LINES[k].it[0][0]).join(' ')} · ${loc.map(c=>c.f).join(' ')} · ${t('goalN',goal(s))}</p>${st==='cur'?`<div class="bar"><i style="width:${Math.min(100,S.served/g*100)}%"></i></div><p>${t('served',S.served,g)}</p>`:''}</div>${st==='cur'?`<button class="btn" data-act="travelask" ${done?'':'disabled'}>${t('travel')}</button>`:''}</div>`; }).join('');
+        return `<div class="row ${st==='cur'?'cur':st==='lock'?'lock':''}">${f.img?tileHtml(f,st==='lock'?'lock':''):`<span class="mtile">${st==='lock'?'🔒':f.ic}</span>`}<div><b>${i+1}. ${f.n}</b> ${st==='ok'?'⭐':''}<p>${f.c} (${f.uf}) · ${reg(f)}</p><p>${tx(f.txt)}</p><p>${ls.map(k=>ie(k,1)).join(' ')} · ${loc.map(c=>c.f).join(' ')} · ${t('goalN',goal(s))}</p>${st==='cur'?`<div class="bar"><i style="width:${Math.min(100,S.served/g*100)}%"></i></div><p>${t('served',S.served,g)}</p>`:''}</div>${st==='cur'?`<button class="btn" data-act="travelask" ${done?'':'disabled'}>${t('travel')}</button>`:''}</div>`; }).join('');
   } else if(sheetName==='turma'){
     const met=c=>c.at<0||S.stop>=c.at;
     h=`<p class="note">${t('turmaNote')}</p>`
      +CAST.map(c=>{ const f=S.friends[c.id]||{h:0,lv:0}, here=c.at<0||c.at===S.stop%FEIRAS.length;
-        return met(c)?`<div class="row${here?' cur':''}"><span class="face">${c.f}</span><div><b>${c.n}</b> · ❤️ ${f.lv}<p>${tx(c.role)} · ${c.at<0?t('withYou'):FEIRAS[c.at].c} · ${t('likes',LINES[c.fav].it[0][0],lname(c.fav))}</p><p>“${tx(c.q)}”</p><div class="bar"><i style="width:${f.h/needH(f.lv)*100}%"></i></div></div></div>`
+        return met(c)?`<div class="row${here?' cur':''}"><span class="face">${c.f}</span><div><b>${c.n}</b> · ❤️ ${f.lv}<p>${tx(c.role)} · ${c.at<0?t('withYou'):FEIRAS[c.at].c} · ${t('likes',ie(c.fav,1),lname(c.fav))}</p><p>“${tx(c.q)}”</p><div class="bar"><i style="width:${f.h/needH(f.lv)*100}%"></i></div></div></div>`
           :`<div class="row lock"><span class="face">❔</span><div><b>???</b><p>${t('meetAt',FEIRAS[c.at].n,FEIRAS[c.at].c)}</p></div></div>`; }).join('');
   } else if(sheetName==='miss'){
     const L=encLvl();
@@ -1219,7 +1237,7 @@ document.addEventListener('click',e=>{
 $('board').addEventListener('pointerdown',e=>{ lastAct=Date.now(); const c=e.target.closest('[data-cell]'); if(!c) return; const i=+c.dataset.cell; if(!S.board[i]) return; drag={i,x:e.clientX,y:e.clientY,on:false,id:e.pointerId,g:null,cur:-1,prev:-1}; });
 window.addEventListener('pointermove',e=>{
   if(!drag||e.pointerId!==drag.id) return;
-  if(!drag.on&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>8){ drag.on=true; const it=S.board[drag.i]; drag.g=document.createElement('div'); drag.g.className='ghost'; drag.g.textContent=item(it.l,it.n)[0]; document.body.appendChild(drag.g);
+  if(!drag.on&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>8){ drag.on=true; const it=S.board[drag.i]; drag.g=document.createElement('div'); drag.g.className='ghost'; drag.g.innerHTML=item(it.l,it.n)[0]; document.body.appendChild(drag.g);
     const c=$('board').querySelector(`[data-cell="${drag.i}"]`); if(c)c.classList.add('drag'); }
   if(drag.on){ drag.g.style.left=e.clientX+'px'; drag.g.style.top=e.clientY+'px';
     // Guarda o último item igual por onde o dedo passou; ele só entra na fusão se for vizinho do destino.
