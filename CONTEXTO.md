@@ -12,7 +12,7 @@ Três jogos mobile em português, todos feitos em HTML5 de arquivo único e empa
 | **Rota das Feiras** (Versão A da Feira Viva) | `feira-viva` · `versao-a-rota-das-feiras/` | Puzzle de fusão com turnos contados, fases, estrelas e chefe | Compras (simuladas), sem anúncios | Protótipo de teste v0.1 (só o Ver-o-Peso) |
 | **Ler Brincando** | `LerBrincando` (raiz) | Alfabetização pelo método fônico, 5 a 7 anos | Nenhuma (sem anúncios, compras ou rastreadores) | v1.3.1 |
 
-A desenvolvedora se chama **Bentevi** (Bentevi Games): a vinheta de abertura da Quitanda e da Rota mostra o bem-te-vi pousando e cantando.
+A desenvolvedora se chama **Bentevi** (Bentevi Games): a vinheta de abertura da Quitanda e da Rota mostra o bem-te-vi pousando e cantando. O canto é uma gravação real (0,84 s), isolada de um vídeo com filtro de ruído espectral e embutida em base64 nos dois `index.html` (`CANTO`); se o aparelho não decodificar, volta o canto sintetizado (`birdSynth`). O bico e as letras "bem · te · vi" seguem o tempo das notas da gravação (`CALL`). Arquivos em `docs/arte/bentevi-canto.wav` e `.mp3`.
 
 ## Onde está cada coisa (feira-viva)
 
@@ -102,7 +102,7 @@ Os itens do tabuleiro com arte ficam em `versao-b-quitanda-zen/itens/<código>.w
    - Moedas com pouco uso.
 4. **Textos culturais** (Diário, mercados, glosas em inglês) precisam de revisão local e de falante nativo de inglês.
 5. **Nome e marca:** verificar "Quitanda" e "Bentevi" no INPI e nas lojas.
-6. **Testes reais:** nada foi testado em celular real nem com jogadores; o canto do bem-te-vi e a música não foram ouvidos por quem desenvolveu.
+6. **Testes reais:** nada foi testado em celular real nem com jogadores; a música não foi ouvida por quem desenvolveu (o canto do bem-te-vi agora é uma gravação enviada pela dona do projeto).
 
 ## Ler Brincando (repositório LerBrincando)
 

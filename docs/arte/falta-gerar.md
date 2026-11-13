@@ -12,7 +12,7 @@ Gerado por `atualizar_status.py` a partir de `lista-de-arte.csv`; não edite à 
 | Grupo | Prontas | Faltam |
 |---|---|---|
 | Mercados | 12 de 12 | 0 |
-| Itens do tabuleiro | 25 de 104 | 79 |
+| Itens do tabuleiro | 43 de 104 | 61 |
 | Personagens | 0 de 28 | 28 |
 | Decoração da banca | 0 de 12 | 12 |
 
@@ -51,126 +51,14 @@ Açaí bowl, thick deep purple açaí purée topped with banana slices and grano
 ```
 
 
-## Itens do tabuleiro (79)
-
-### Temperos
-
-**te-1** · Sal (Salt) · nível 1
-
-```
-Salt (small and simple), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**te-2** · Alho (Garlic) · nível 2
-
-```
-Garlic, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**te-3** · Cebola (Onion) · nível 3
-
-```
-Onion, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**te-4** · Pimenta-malagueta (Malagueta pepper) · nível 4
-
-```
-Malagueta pepper (small, fiery Brazilian chili), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**te-5** · Pimentão (Bell pepper) · nível 5
-
-```
-Bell pepper, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**te-6** · Azeite de dendê (Dendê oil) · nível 6
-
-```
-Dendê oil (red palm oil, the soul of Bahian cooking), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**te-7** · Mel (Honey) · nível 7
-
-```
-Honey, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**te-8** · Molho (Sauce) · nível 8
-
-```
-Sauce (the most impressive, abundant version, with extra detail), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-### Bebidas
-
-**be-1** · Água (Water) · nível 1
-
-```
-Water (small and simple), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**be-2** · Água de coco (Coconut water) · nível 2
-
-```
-Coconut water, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**be-3** · Suco (Juice) · nível 3
-
-```
-Juice, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**be-4** · Café (Coffee) · nível 4
-
-```
-Coffee, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**be-5** · Caldo de cana · nível 5
-
-```
-Caldo de cana (fresh-pressed sugarcane juice), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**be-6** · Chimarrão · nível 6
-
-```
-Chimarrão (hot yerba mate sipped from a gourd), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**be-7** · Guaraná · nível 7
-
-```
-Guaraná (soda made from an Amazonian berry), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**be-8** · Cajuína · nível 8
-
-```
-Cajuína (clear, sweet cashew-fruit drink from the Northeast; the most impressive, abundant version, with extra detail), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
+## Itens do tabuleiro (61)
 
 ### Artesanato
-
-**ar-1** · Linha (Thread) · nível 1
-
-```
-Thread (small and simple), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**ar-2** · Novelo (Ball of yarn) · nível 2
-
-```
-Ball of yarn, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
 
 **ar-3** · Fita do Bonfim · nível 3
 
 ```
-Fita do Bonfim (wish ribbon from Salvador: tie it on and make three wishes), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
+Fita do Bonfim, a bunch of plain colorful satin wish ribbons tied together in a knot, completely blank ribbons without any printed words (wish ribbon from Salvador: tie it on and make three wishes), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
 ```
 
 **ar-4** · Renda (Bobbin lace) · nível 4
