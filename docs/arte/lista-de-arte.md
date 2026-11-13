@@ -4,6 +4,8 @@ Lista de tudo o que precisa de imagem na Versão B (Quitanda Zen / *Quitanda: Me
 
 A mesma lista está em `lista-de-arte.csv`, com uma coluna `prompt_en` pronta para colar em geradores de imagem.
 
+**Para continuar gerando, use `falta-gerar.md`:** ele traz só o que ainda falta, linha por linha, com o nome do arquivo e o prompt pronto para copiar, além da lista do que vale refazer.
+
 ## Progresso da arte
 
 Atualizado por `atualizar_status.py`. ✅ = imagem já no jogo · ⬜ = falta gerar.
@@ -11,14 +13,12 @@ Atualizado por `atualizar_status.py`. ✅ = imagem já no jogo · ⬜ = falta ge
 | Grupo | Prontas | Faltam |
 |---|---|---|
 | Mercados | 12 de 12 | 0 |
-| Itens do tabuleiro | 10 de 104 | 94 |
+| Itens do tabuleiro | 25 de 104 | 79 |
 | Personagens | 0 de 28 | 28 |
 | Decoração da banca | 0 de 12 | 12 |
 
 **Itens que faltam, por linha:**
 
-- Verduras (7): Couve, Cenoura, Tomate, Milho, Mandioca, Abóbora, Salada
-- Peixes (8): Camarão, Sardinha, Peixe, Caranguejo, Tainha, Lagosta, Pirarucu, Moqueca
 - Temperos (8): Sal, Alho, Cebola, Pimenta-malagueta, Pimentão, Azeite de dendê, Mel, Molho
 - Bebidas (8): Água, Água de coco, Suco, Café, Caldo de cana, Chimarrão, Guaraná, Cajuína
 - Artesanato (8): Linha, Novelo, Fita do Bonfim, Renda, Chapéu de palha, Cesto de palha, Boneco de barro, Viola
@@ -110,26 +110,26 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 | Nível | Arquivo | Português | Inglês | Explicação (inglês) | Emoji provisório | Arte |
 |---|---|---|---|---|---|---|
 | 1 | `itens/ve-1.png` | Cheiro-verde | Cheiro-verde | bundle of parsley and green onion, in almost every Brazilian dish | 🌿 | ✅ |
-| 2 | `itens/ve-2.png` | Couve | Collard greens |  | 🥬 | ⬜ |
-| 3 | `itens/ve-3.png` | Cenoura | Carrot |  | 🥕 | ⬜ |
-| 4 | `itens/ve-4.png` | Tomate | Tomato |  | 🍅 | ⬜ |
-| 5 | `itens/ve-5.png` | Milho | Corn |  | 🌽 | ⬜ |
-| 6 | `itens/ve-6.png` | Mandioca | Mandioca | cassava root, a staple all over Brazil | 🍠 | ⬜ |
-| 7 | `itens/ve-7.png` | Abóbora | Pumpkin |  | 🎃 | ⬜ |
-| 8 | `itens/ve-8.png` | Salada | Salad |  | 🥗 | ⬜ |
+| 2 | `itens/ve-2.png` | Couve | Collard greens |  | 🥬 | ✅ |
+| 3 | `itens/ve-3.png` | Cenoura | Carrot |  | 🥕 | ✅ |
+| 4 | `itens/ve-4.png` | Tomate | Tomato |  | 🍅 | ✅ |
+| 5 | `itens/ve-5.png` | Milho | Corn |  | 🌽 | ✅ |
+| 6 | `itens/ve-6.png` | Mandioca | Mandioca | cassava root, a staple all over Brazil | 🍠 | ✅ |
+| 7 | `itens/ve-7.png` | Abóbora | Pumpkin |  | 🎃 | ✅ |
+| 8 | `itens/ve-8.png` | Salada | Salad |  | 🥗 | ✅ |
 
 ### Peixes / Seafood (`pe`)
 
 | Nível | Arquivo | Português | Inglês | Explicação (inglês) | Emoji provisório | Arte |
 |---|---|---|---|---|---|---|
-| 1 | `itens/pe-1.png` | Camarão | Shrimp |  | 🦐 | ⬜ |
-| 2 | `itens/pe-2.png` | Sardinha | Sardine |  | 🐟 | ⬜ |
-| 3 | `itens/pe-3.png` | Peixe | Fish |  | 🐠 | ⬜ |
-| 4 | `itens/pe-4.png` | Caranguejo | Crab |  | 🦀 | ⬜ |
-| 5 | `itens/pe-5.png` | Tainha | Tainha | mullet, the winter catch of southern Brazil | 🐡 | ⬜ |
-| 6 | `itens/pe-6.png` | Lagosta | Lobster |  | 🦞 | ⬜ |
-| 7 | `itens/pe-7.png` | Pirarucu | Pirarucu | giant Amazon river fish | 🎣 | ⬜ |
-| 8 | `itens/pe-8.png` | Moqueca | Moqueca | Brazilian fish stew, often with coconut milk and dendê oil | 🍲 | ⬜ |
+| 1 | `itens/pe-1.png` | Camarão | Shrimp |  | 🦐 | ✅ |
+| 2 | `itens/pe-2.png` | Sardinha | Sardine |  | 🐟 | ✅ |
+| 3 | `itens/pe-3.png` | Peixe | Fish |  | 🐠 | ✅ |
+| 4 | `itens/pe-4.png` | Caranguejo | Crab |  | 🦀 | ✅ |
+| 5 | `itens/pe-5.png` | Tainha | Tainha | mullet, the winter catch of southern Brazil | 🐡 | ✅ |
+| 6 | `itens/pe-6.png` | Lagosta | Lobster |  | 🦞 | ✅ |
+| 7 | `itens/pe-7.png` | Pirarucu | Pirarucu | giant Amazon river fish | 🎣 | ✅ |
+| 8 | `itens/pe-8.png` | Moqueca | Moqueca | Brazilian fish stew, often with coconut milk and dendê oil | 🍲 | ✅ |
 
 ### Temperos / Spices (`te`)
 

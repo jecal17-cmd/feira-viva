@@ -113,6 +113,15 @@ a.btn{text-decoration:none;display:inline-block;text-align:center}
 .nav{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
 .nav button{background:var(--panel);border-radius:12px;padding:6px 2px;font-weight:800;font-size:11px;min-width:0;position:relative;line-height:1.2}
 .nav button span{display:block;font-size:17px}
+.albl{display:flex;justify-content:space-between;align-items:center;margin:12px 2px 6px;font-size:14px} .albl span{color:var(--muted);font-size:12px;font-weight:800}
+.alb{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.ing{background:var(--panel);border-radius:12px;padding:6px 3px 5px;text-align:center;position:relative;box-shadow:inset 0 -3px 0 var(--lc);min-width:0}
+.ing .e{display:block;font-size:30px;line-height:1.15;height:36px} .ing .e .ii{vertical-align:0}
+.ing small{display:block;font-size:10.5px;line-height:1.2;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ing i{position:absolute;top:3px;left:5px;font:800 10px var(--text);font-style:normal;color:var(--muted)}
+.ing em{position:absolute;top:-5px;right:-3px;background:var(--sun);color:#3a2a00;font:800 9px var(--text);font-style:normal;border-radius:99px;padding:1px 5px}
+.ing.no{opacity:.55} .ing.no .e{filter:grayscale(1)} .ing.new{box-shadow:inset 0 -3px 0 var(--lc),0 0 0 2px var(--sun)}
+.ndot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--warn);vertical-align:2px}
 .dot{position:absolute;top:4px;right:8px;width:10px;height:10px;border-radius:50%;background:var(--warn)}
 .sheet,.over,.home{position:fixed;inset:0}
 .home{z-index:18;background:var(--bg);overflow:auto;padding-block:calc(12px + env(safe-area-inset-top,0px)) calc(16px + env(safe-area-inset-bottom,0px));padding-inline:16px;display:flex}
@@ -497,7 +506,9 @@ const UI={
   noMag:'Sem Junta-tudo. Ganhe subindo de nível, viajando e fazendo amizades.', noPair:'Nenhum par para juntar agora.',
   magDone:n=>`Junta-tudo: ${n} ${n>1?'fusões':'fusão'}`, noRec:'Sem Recarga. Ganhe subindo de nível e nos presentes.', fullB:'Cestos cheios',
   friendUp:(n,lv,co,m)=>`Amizade com ${n}: nível ${lv} · +${co} moedas${m?' e 🧲':''}`,
-  notOrdered:'Este cliente não pediu esse item.', rushDone:'Pedido relâmpago: recompensa em dobro', recipeFound:n=>`Receita descoberta: ${n} · +30 XP`,
+  notOrdered:'Este cliente não pediu esse item.', rushDone:'Pedido relâmpago: recompensa em dobro', recipeFound:n=>`Receita descoberta: ${n} · +30 XP`, tabRec:'Receitas', tabIng:'Ingredientes', newTag:'novo', lineDone:'completa',
+  ingNote:(a,b,x,c)=>`${a} de ${b} ingredientes descobertos. Tudo o que passa pelo seu tabuleiro entra aqui. Complete os 8 níveis de uma linha para ganhar +${x} XP e +${c} moedas.`,
+  albDone:(l,x,c)=>`Linha completa no álbum: ${l} · +${x} XP e +${c} moedas`,
   fairDone:'Feira concluída', fairDoneP:(g,n)=>`Você atendeu ${g} clientes em ${n}.`, nextStop:(ic,n,c,uf)=>`Próxima parada: <b>${ic} ${n}</b>, ${c} (${uf}).`,
   travelNow:'Viajar agora', stay:'Ficar mais um pouco',
   encMin:L=>`A encomenda só aceita itens de nível ${L} ou mais.`, encDone:(x,co)=>`Encomenda entregue: +${x} XP, +${co} moedas e ⚡`,
@@ -584,7 +595,9 @@ const UI={
   noMag:'No Merge-all left. Earn more by leveling up, traveling and making friends.', noPair:'No pairs to merge right now.',
   magDone:n=>`Merge-all: ${n} merge${n>1?'s':''}`, noRec:'No Refills left. Earn more by leveling up and from gifts.', fullB:'Baskets full',
   friendUp:(n,lv,co,m)=>`Friendship with ${n}: level ${lv} · +${co} coins${m?' and 🧲':''}`,
-  notOrdered:'This customer didn’t order that.', rushDone:'Rush order: double reward', recipeFound:n=>`Recipe discovered: ${n} · +30 XP`,
+  notOrdered:'This customer didn’t order that.', rushDone:'Rush order: double reward', recipeFound:n=>`Recipe discovered: ${n} · +30 XP`, tabRec:'Recipes', tabIng:'Ingredients', newTag:'new', lineDone:'complete',
+  ingNote:(a,b,x,c)=>`${a} of ${b} ingredients discovered. Everything that lands on your board shows up here. Complete all 8 levels of a line to earn +${x} XP and +${c} coins.`,
+  albDone:(l,x,c)=>`Album line complete: ${l} · +${x} XP and +${c} coins`,
   fairDone:'Market complete', fairDoneP:(g,n)=>`You served ${g} customers at ${n}.`, nextStop:(ic,n,c,uf)=>`Next stop: <b>${ic} ${n}</b>, ${c} (${uf}).`,
   travelNow:'Travel now', stay:'Stay a little longer',
   encMin:L=>`The bulk order only takes items of level ${L} or higher.`, encDone:(x,co)=>`Bulk order delivered: +${x} XP, +${co} coins and ⚡`,
@@ -640,7 +653,7 @@ const $=id=>document.getElementById(id), fmt=n=>Math.round(n).toLocaleString(LAN
 const dstr=t=>new Date(t).toLocaleDateString('sv'), today=()=>dstr(Date.now());
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 // Arte dos itens (pasta itens/, nome = código da lista de arte, ex.: fr-1). Sem arte, fica o emoji.
-const ITEM_ART=new Set(['fr-1','fr-2','fr-3','fr-4','fr-5','fr-6','fr-7','fr-8','ve-1','ca-2']);
+const ITEM_ART=new Set(['fr','pe','ve'].flatMap(l=>[1,2,3,4,5,6,7,8].map(n=>l+'-'+n)).concat(['ca-2']));
 const ie=(l,n)=>ITEM_ART.has(l+'-'+n)?`<img class="ii" src="itens/${l}-${n}.webp" alt="" draggable="false">`:LINES[l].it[n-1][0];
 const item=(l,n)=>{ const x=LINES[l].it[n-1]; return [ie(l,n),LANG==='en'?x[2]:x[1]]; };
 const gloss=(l,n)=>LANG==='en'?GLOSS[l+n]:null;
@@ -667,7 +680,7 @@ const mmss=sec=>sec<60?sec+' s':Math.floor(sec/60)+':'+String(sec%60).padStart(2
 const upCost=k=>Math.round(UPS[k].base*Math.pow(UPS[k].k,S.up[k])/10)*10;
 const encLvl=()=>Math.min(7,4+Math.floor(S.enc.k/3));
 const needH=lv=>3+2*lv;
-let S, sel=null, selOrder=null, offer=null, drag=null, popAt=-1, noClick=false, sheetName=null, adTimer=null, toastTimer=null, audio=null;
+let recTab='rec', S, sel=null, selOrder=null, offer=null, drag=null, popAt=-1, noClick=false, sheetName=null, adTimer=null, toastTimer=null, audio=null;
 let trip=null, tripBonus=0, homeOn=true, lastAct=Date.now(), combo=0, lastMerge=0, fxQ=[], modalQ=[], tip=Math.floor(Math.random()*TIPS.length);
 
 const isAdj=(x,y,cols)=>{ const d=Math.abs(x-y); return d===cols||(d===1&&Math.floor(x/cols)===Math.floor(y/cols)); };
@@ -746,6 +759,13 @@ const Musica={ tm:null, i:2, n:0,
 function bump(k,n){ for(const m of S.missions) if(m.t===k) m.p+=n; }
 function fx(i,m){ fxQ.push([i,m]); }
 
+// Álbum de ingredientes: tudo que já passou pelo tabuleiro. Linha completa (8 níveis) rende um bônus.
+const ALB_XP=100, ALB_CO=150;
+function noteSeen(){
+  for(const x of S.board) if(x&&!S.seen[x.l+x.n]) S.seen[x.l+x.n]=x.n===1?2:1;
+  for(const l of Object.keys(LINES)) if(!S.albumDone.includes(l)&&LINES[l].it.every((_,j)=>S.seen[l+(j+1)])){
+    S.albumDone.push(l); setTimeout(()=>{ const x=gain(ALB_XP,ALB_CO); beep(880); beep(1100,.12); toast(t('albDone',lname(l),x,Math.round(ALB_CO*lapBonus()))); save(); render(); },300); }
+}
 function gain(xp,co){
   xp=Math.round(xp*(1+S.decor.length/100)*lapBonus()); co=Math.round(co*lapBonus()); S.xp+=xp; S.coins+=co; S.stats.xp+=xp;
   const ups=[]; while(S.xp>=need(S.level)){ S.xp-=need(S.level); S.level++; ups.push(S.level); }
@@ -995,8 +1015,9 @@ function render(){
     ?`<button class="cell has${sel===i?' sel':''}${popAt===i?' pop':''}" style="--lc:${lc(x.l)}" data-cell="${i}" aria-label="${t('cellAria',item(x.l,x.n)[1],x.n)}"><span class="em">${item(x.l,x.n)[0]}</span><span class="lv">${x.n}</span></button>`
     :`<button class="cell" data-cell="${i}" aria-label="${t('emptyCell')}"></button>`).join('');
   popAt=-1; fit(); renderBaskets(); renderInfo();
-  const mdot=S.missions.some(m=>m.p>=m.goal), N=t('nav');
-  $('nav').innerHTML=[['map','🗺️',done],['turma','🧑‍🤝‍🧑'],['miss','🎯',mdot],['rec','📖'],['up','🛠️']].map(([k,i,d])=>`<button data-act="nav:${k}"><span>${i}</span>${N[k]}${d?'<i class="dot"></i>':''}</button>`).join('');
+  noteSeen();
+  const mdot=S.missions.some(m=>m.p>=m.goal), N=t('nav'), adot=Object.values(S.seen).includes(1);
+  $('nav').innerHTML=[['map','🗺️',done],['turma','🧑‍🤝‍🧑'],['miss','🎯',mdot],['rec','📖',adot],['up','🛠️']].map(([k,i,d])=>`<button data-act="nav:${k}"><span>${i}</span>${N[k]}${d?'<i class="dot"></i>':''}</button>`).join('');
   for(const [i,m] of fxQ){ const c=$('board').querySelector(`[data-cell="${i}"]`); if(!c||homeOn) continue; const r=c.getBoundingClientRect(), d=document.createElement('div');
     d.className='fx'; d.textContent=m; d.style.left=Math.min(innerWidth-70,Math.max(70,r.left+r.width/2))+'px'; d.style.top=r.top+'px'; document.body.appendChild(d); setTimeout(()=>d.remove(),950); }
   fxQ=[];
@@ -1108,11 +1129,20 @@ function renderSheet(){
       +`<div class="row"><div><b>${t('encRow',S.enc.k+1)}</b><p>${t('encRowP',S.enc.got,ENC_N,L,fmt(XPV[L]*ENC_N*1.5),fmt(COV[L]*ENC_N*2))}</p></div></div>`
       +`<div class="row"><div><b>${t('chest')}</b><p>${t('chestP',S.daily.chest,Math.round(80*bonus()))}</p></div><button class="btn" data-act="chest" ${S.daily.chest>=CHEST_MAX?'disabled':''}>${t('open')}</button></div>`;
   } else if(sheetName==='rec'){
-    const ls=lines();
-    h=S.level<3?`<p class="note">${t('recLocked')}</p>`
+    const ls=lines(), nova=Object.values(S.seen).includes(1);
+    const tabs=`<div class="seg" role="group"><button data-act="rtab:rec" aria-pressed="${recTab==='rec'}">📖 ${t('tabRec')}</button><button data-act="rtab:ing" aria-pressed="${recTab==='ing'}">🧺 ${t('tabIng')}${nova?' <i class="ndot"></i>':''}</button></div>`;
+    if(recTab==='ing'){
+      const tot=Object.keys(LINES).length*MAX, got=Object.keys(S.seen).length;
+      h=tabs+`<p class="note">${t('ingNote',got,tot,ALB_XP,ALB_CO)}</p>`+Object.keys(LINES).map(l=>{ const k=LINES[l].it.filter((_,j)=>S.seen[l+(j+1)]).length;
+        return `<div class="albl"><b>${ie(l,1)} ${lname(l)}</b><span>${S.albumDone.includes(l)?'⭐ '+t('lineDone'):k+'/'+MAX}</span></div><div class="alb">`+LINES[l].it.map((x,j)=>{ const st=S.seen[l+(j+1)], d=item(l,j+1), gl=gloss(l,j+1);
+          return st?`<div class="ing${st===1?' new':''}" style="--lc:${lc(l)}"${gl?` title="${gl}"`:''}><span class="e">${d[0]}</span><small>${d[1]}</small><i>${j+1}</i>${st===1?`<em>${t('newTag')}</em>`:''}</div>`
+                   :`<div class="ing no" style="--lc:${lc(l)}"><span class="e">❔</span><small>???</small><i>${j+1}</i></div>`; }).join('')+'</div>'; }).join('');
+      for(const k in S.seen) if(S.seen[k]===1) S.seen[k]=2;
+      save(); const nd=document.querySelector('#nav [data-act="nav:rec"] .dot'); if(nd) nd.remove();
+    } else h=tabs+(S.level<3?`<p class="note">${t('recLocked')}</p>`
      :`<p class="note">${t('recNote',S.recipes.length,RECIPES.length)}</p>`+RECIPES.map((r,i)=>S.recipes.includes(i)
         ?`<div class="row"><div><b>${tx(r.name)}</b><p>${r.it.map(([l,n])=>item(l,n)[0]+' '+item(l,n)[1]).join(' + ')} · ${tx(r.note)}</p></div></div>`
-        :`<div class="row lock"><div><b>???</b><p>${r.it.every(x=>ls.includes(x[0]))?t('recHere'):t('recOther')} · ${r.it.map(x=>lname(x[0])).join(' + ')}</p></div></div>`).join('');
+        :`<div class="row lock"><div><b>???</b><p>${r.it.every(x=>ls.includes(x[0]))?t('recHere'):t('recOther')} · ${r.it.map(x=>lname(x[0])).join(' + ')}</p></div></div>`).join(''));
   } else if(sheetName==='up'){
     const e=EXPS[S.exp], buy=(act,c,dis)=>`<button class="btn buy" data-act="${act}" ${dis?'disabled':''}><span>${t('buy')}</span><small>🪙 ${fmt(c)}</small></button>`;
     const val=(k,lv)=>k==='far'?t('farV',...farOdds(lv).map(x=>Math.round(x*100))):k==='cap'?t('capV',BASE_CAP+CAP_UP*lv):t('spdV',mmss(Math.round(periodAt(lv)/1000)));
@@ -1182,6 +1212,7 @@ document.addEventListener('click',e=>{
     else if(k==='play'){ homeOn=false; Musica.ligar(); render(); }
     else if(k==='home'){ homeOn=true; tip=Math.floor(Math.random()*TIPS.length); sel=null; selOrder=null; render(); }
     else if(k==='lang') setLang(v);
+    else if(k==='rtab'){ recTab=v; renderSheet(); }
     else if(k==='gift') claimGift();
     else if(k==='magnet') magnet();
     else if(k==='recharge') recharge();
@@ -1201,7 +1232,7 @@ document.addEventListener('click',e=>{
     else if(k==='sort') sortBoard();
     else if(k==='swap') swapOrder(+v);
     else if(k==='double'){ const o=offer; if(o&&S.daily.adDouble<DOUBLE_MAX){ offer=null; showAd('rew',()=>{ S.daily.adDouble++; const x=gain(o.xp*bonus(),Math.round(o.co*bonus())); toast(t('doubled',x)); }); } }
-    else if(k==='nav'){ $('toast').hidden=true; sheetName=v==='shop'&&!PUB.loja?'up':v; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
+    else if(k==='nav'){ $('toast').hidden=true; sheetName=v==='shop'&&!PUB.loja?'up':v; if(v==='rec'&&Object.values(S.seen).includes(1)) recTab='ing'; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
     else if(k==='close'){ sheetName=null; $('sheet').hidden=true; render(); }
     else if(k==='claim'){ const m=S.missions[+v]; if(m&&m.p>=m.goal){ S.missions[+v]=newMission(S,+v); S.coins+=m.co; const x=gain(m.xp,0); beep(880); toast(t('missDone',m.co,x)); render(); } }
     else if(k==='chest'){ if(S.daily.chest<CHEST_MAX) showAd('rew',()=>{ S.daily.chest++; S.coins+=Math.round(80*bonus()); S.boost.mag++; }); }
@@ -1299,6 +1330,8 @@ function start(d){
   let q=null; try{ q=new URLSearchParams(location.search).get('lang'); }catch(e){}
   if(q==='en'||q==='pt') S.opts.lang=q; LANG=S.opts.lang||LANG; S.opts.lang=LANG;
   S.iap=S.iap||{n:0,usd:0,once:[]}; if(S.tut==null) S.tut=(S.stats.merges||S.stats.orders)?4:0; if(S.opts.music==null) S.opts.music=true;
+  if(!S.seen){ S.seen={}; S.board.forEach(x=>{ if(x) S.seen[x.l+x.n]=2; }); }   // Álbum de ingredientes: 1 = novo, 2 = já visto
+  S.albumDone=S.albumDone||[];
   if(!PUB.dev){ S.opts.dev=false; S.opts.test=false; }
   applyLang(); render(); setInterval(tick,1000);
   let q2=null; try{ q2=new URLSearchParams(location.search).get('intro'); }catch(e){} if(q2!=='0') intro();
