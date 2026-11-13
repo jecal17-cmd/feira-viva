@@ -24,13 +24,15 @@ São **dois estilos**, de propósito: os mercados (e os personagens que vivem ne
 
 ### Referências já aprovadas
 
+Estas cinco já estão no jogo, em `versao-b-quitanda-zen/mercados/` (WebP de 960 px de largura). Para pôr a arte de outro mercado: salve a imagem como WebP nessa pasta, com o nome da coluna *Arquivo*, e preencha o campo `img` do mercado em `FEIRAS`, no `index.html`. Sem `img`, o jogo continua usando o emoji.
+
 | Arquivo | Mercado |
 |---|---|
 | `referencias/mercado-04-sao-jose-recife.jpg` | Mercado de São José, Recife (pavilhão verde) |
 | `referencias/mercado-07-mercadao-sp-interior.jpg` | Mercadão, São Paulo (salão interno) |
 | `referencias/mercado-09-sao-cristovao-aerea.jpg` | Feira de São Cristóvão, Rio de Janeiro (vista aérea) |
 | `referencias/mercado-10-porto-alegre.jpg` | Mercado Público, Porto Alegre (fachada amarela) |
-| `referencias/mercado-sem-identificacao-fachada-vermelha.jpg` | ainda sem mercado definido (fachada vermelha e amarela com relógio) |
+| `referencias/mercado-02-adolpho-lisboa-manaus.jpg` | Mercado Adolpho Lisboa (Mercado Municipal), Manaus (fachada vermelha) |
 | `referencias/item-estilo-caju.jpg` | estilo dos itens (caju) |
 
 ## Mercados (12)
@@ -38,7 +40,7 @@ São **dois estilos**, de propósito: os mercados (e os personagens que vivem ne
 | # | Arquivo | Mercado | Cidade | Região (pt / en) | Descrição visual |
 |---|---|---|---|---|---|
 | 1 | `mercados/01-ver-o-peso-belem.png` | Ver-o-Peso | Belém (PA) | Norte / North | mercado de ferro com torrezinhas na beira da baía, barcos coloridos |
-| 2 | `mercados/02-mercado-adolpho-lisboa-manaus.png` | Mercado Adolpho Lisboa | Manaus (AM) | Norte / North | mercado de ferro art nouveau à beira do rio Negro |
+| 2 | `mercados/02-mercado-adolpho-lisboa-manaus.png` | Mercado Adolpho Lisboa | Manaus (AM) | Norte / North | fachada vermelha e amarela com torre do relógio, portão em arco verde e toldos brancos |
 | 3 | `mercados/03-feira-de-sao-joaquim-salvador.png` | Feira de São Joaquim | Salvador (BA) | Nordeste / Northeast | feira movimentada com barracas e barcos à vela na baía |
 | 4 | `mercados/04-mercado-de-sao-jose-recife.png` | Mercado de São José | Recife (PE) | Nordeste / Northeast | pavilhão de ferro verde-claro do século XIX, frontão com arabescos e grande janela em arco de vidro ao centro |
 | 5 | `mercados/05-mercado-central-fortaleza.png` | Mercado Central | Fortaleza (CE) | Nordeste / Northeast | prédio de vários andares cheio de redes, rendas e artesanato |

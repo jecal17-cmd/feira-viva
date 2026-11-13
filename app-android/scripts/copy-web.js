@@ -31,4 +31,7 @@ if (process.env.PUBLICACAO === '1') {
 fs.writeFileSync(path.join(dst, 'index.html'), html);
 const icone = path.join(path.dirname(src), 'icone-192.png');
 if (fs.existsSync(icone)) fs.copyFileSync(icone, path.join(dst, 'icone-192.png'));
+// Arte dos mercados (imagens usadas no mapa, na tela inicial e nas viagens)
+const arte = path.join(path.dirname(src), 'mercados');
+if (fs.existsSync(arte)) fs.cpSync(arte, path.join(dst, 'mercados'), { recursive: true });
 console.log('Jogo copiado para www/index.html');

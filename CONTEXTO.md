@@ -55,6 +55,10 @@ No Ler Brincando, a arte nova (coruja) e os ícones já gerados estão em `docs/
 
 O antigo `docs/arte/icones/gerar-icones.js` (ícones desenhados em SVG) sobrescreve os novos; não rodar.
 
+## Arte dos mercados
+
+Cinco mercados já têm ilustração (Manaus, Recife, São Paulo, Rio de Janeiro e Porto Alegre), em `versao-b-quitanda-zen/mercados/*.webp`, ligadas pelo campo `img` em `FEIRAS`. Aparecem no topo dos avisos de viagem, chegada e feira concluída, no cartão do mercado na tela inicial, na lista e nos pontos do mapa e na faixa do tabuleiro. Mercados sem `img` continuam com o emoji. O `app-android/scripts/copy-web.js` copia a pasta para o app. As imagens originais e os estilos de arte estão em `docs/arte/referencias/` e `docs/arte/lista-de-arte.md`.
+
 ## Decisões importantes
 
 **Quitanda Zen (v0.5)**
