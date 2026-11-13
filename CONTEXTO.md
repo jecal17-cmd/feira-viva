@@ -63,6 +63,8 @@ Os 12 mercados têm ilustração, em `versao-b-quitanda-zen/mercados/*.webp`, li
 
 Os itens do tabuleiro com arte ficam em `versao-b-quitanda-zen/itens/<código>.webp` (256 px, fundo transparente) e são listados em `ITEM_ART`, no `index.html`; os demais continuam com o emoji. A imagem aparece no tabuleiro, nos pedidos, nos cestos, na prateleira da tela inicial, nas receitas e ao arrastar. Para recortar arte nova: `docs/arte/itens/recortar_itens.py` (rembg). Para marcar o que já está pronto na lista de arte: `docs/arte/atualizar_status.py`.
 
+**Botão voltar do Android** (Quitanda): o plugin `@capacitor/app` entrega o botão ao jogo (`voltar()` no `index.html`). Ele fecha a camada da frente (vinheta, aviso com botão de fechar ou continuar, painel), volta do tabuleiro para a tela inicial e, na tela inicial, sai do app no segundo toque em até 2 s. Anúncio simulado só fecha depois da contagem. A Rota das Feiras ainda não tem isso.
+
 **Álbum de ingredientes** (aba "Ingredientes" do Caderno de Receitas): mostra as 13 linhas × 8 níveis; tudo o que passa pelo tabuleiro entra (`S.seen`, 1 = novo, 2 = visto; o nível 1 já entra como visto). Um ponto no botão Receitas avisa quando há novidade, e o Caderno abre direto nessa aba. Completar os 8 níveis de uma linha rende +100 XP e +150 moedas, com o bônus da volta (`ALB_XP`, `ALB_CO`, `S.albumDone`). Saves antigos começam com o que estiver no tabuleiro.
 
 ## Decisões importantes

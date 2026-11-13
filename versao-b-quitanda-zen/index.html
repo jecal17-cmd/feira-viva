@@ -506,7 +506,7 @@ const UI={
   noMag:'Sem Junta-tudo. Ganhe subindo de nível, viajando e fazendo amizades.', noPair:'Nenhum par para juntar agora.',
   magDone:n=>`Junta-tudo: ${n} ${n>1?'fusões':'fusão'}`, noRec:'Sem Recarga. Ganhe subindo de nível e nos presentes.', fullB:'Cestos cheios',
   friendUp:(n,lv,co,m)=>`Amizade com ${n}: nível ${lv} · +${co} moedas${m?' e 🧲':''}`,
-  notOrdered:'Este cliente não pediu esse item.', rushDone:'Pedido relâmpago: recompensa em dobro', recipeFound:n=>`Receita descoberta: ${n} · +30 XP`, tabRec:'Receitas', tabIng:'Ingredientes', newTag:'novo', lineDone:'completa',
+  notOrdered:'Este cliente não pediu esse item.', rushDone:'Pedido relâmpago: recompensa em dobro', recipeFound:n=>`Receita descoberta: ${n} · +30 XP`, tabRec:'Receitas', backExit:'Toque em voltar de novo para sair', tabIng:'Ingredientes', newTag:'novo', lineDone:'completa',
   ingNote:(a,b,x,c)=>`${a} de ${b} ingredientes descobertos. Tudo o que passa pelo seu tabuleiro entra aqui. Complete os 8 níveis de uma linha para ganhar +${x} XP e +${c} moedas.`,
   albDone:(l,x,c)=>`Linha completa no álbum: ${l} · +${x} XP e +${c} moedas`,
   fairDone:'Feira concluída', fairDoneP:(g,n)=>`Você atendeu ${g} clientes em ${n}.`, nextStop:(ic,n,c,uf)=>`Próxima parada: <b>${ic} ${n}</b>, ${c} (${uf}).`,
@@ -595,7 +595,7 @@ const UI={
   noMag:'No Merge-all left. Earn more by leveling up, traveling and making friends.', noPair:'No pairs to merge right now.',
   magDone:n=>`Merge-all: ${n} merge${n>1?'s':''}`, noRec:'No Refills left. Earn more by leveling up and from gifts.', fullB:'Baskets full',
   friendUp:(n,lv,co,m)=>`Friendship with ${n}: level ${lv} · +${co} coins${m?' and 🧲':''}`,
-  notOrdered:'This customer didn’t order that.', rushDone:'Rush order: double reward', recipeFound:n=>`Recipe discovered: ${n} · +30 XP`, tabRec:'Recipes', tabIng:'Ingredients', newTag:'new', lineDone:'complete',
+  notOrdered:'This customer didn’t order that.', rushDone:'Rush order: double reward', recipeFound:n=>`Recipe discovered: ${n} · +30 XP`, tabRec:'Recipes', backExit:'Press back again to exit', tabIng:'Ingredients', newTag:'new', lineDone:'complete',
   ingNote:(a,b,x,c)=>`${a} of ${b} ingredients discovered. Everything that lands on your board shows up here. Complete all 8 levels of a line to earn +${x} XP and +${c} coins.`,
   albDone:(l,x,c)=>`Album line complete: ${l} · +${x} XP and +${c} coins`,
   fairDone:'Market complete', fairDoneP:(g,n)=>`You served ${g} customers at ${n}.`, nextStop:(ic,n,c,uf)=>`Next stop: <b>${ic} ${n}</b>, ${c} (${uf}).`,
@@ -1325,6 +1325,23 @@ function intro(){
   introState.tms.push(setTimeout(sing,matchMedia('(prefers-reduced-motion: reduce)').matches?300:2050));   // pousou, cantou
 }
 function introTap(){ endIntro(); }
+/* Botão voltar do Android: fecha a camada da frente (vinheta, aviso, painel), volta do tabuleiro para a tela
+   inicial e, na tela inicial, sai do app no segundo toque em até 2 s. */
+let backAt=0;
+function voltar(){
+  const C=window.Capacitor, P=C&&C.Plugins&&C.Plugins.App;
+  if(!$('intro').hidden){ endIntro(); return; }
+  if(!$('over').hidden){
+    const ad=$('adclose'); if(ad){ if(!ad.disabled) ad.click(); return; }   // anúncio: só fecha quando a contagem acaba
+    const b=$('card').querySelector('[data-act="mclose"],[data-act="lvlok"],[data-act="arrive"]'); if(b) b.click(); return; }
+  if(drag) return;
+  if(sheetName){ sheetName=null; $('sheet').hidden=true; render(); return; }
+  if(!homeOn){ homeOn=true; tip=Math.floor(Math.random()*TIPS.length); sel=null; selOrder=null; render(); return; }
+  if(Date.now()-backAt<2000){ save(); if(P&&P.exitApp) P.exitApp(); return; }
+  backAt=Date.now(); toast(t('backExit'));
+}
+(()=>{ const C=window.Capacitor, P=C&&C.isNativePlatform&&C.isNativePlatform()&&C.Plugins&&C.Plugins.App;
+  if(P&&P.addListener) P.addListener('backButton',voltar); })();
 function start(d){
   LANG=detectLang(); S=(d&&d.v===2&&Array.isArray(d.board))?d:load();
   let q=null; try{ q=new URLSearchParams(location.search).get('lang'); }catch(e){}
