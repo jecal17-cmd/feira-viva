@@ -4,6 +4,8 @@ Lista de tudo o que precisa de imagem na Versão B (Quitanda Zen / *Quitanda: Me
 
 A mesma lista está em `lista-de-arte.csv`, com uma coluna `prompt_en` pronta para colar em geradores de imagem.
 
+**Para continuar gerando, use `falta-gerar.md`:** ele traz só o que ainda falta, linha por linha, com o nome do arquivo e o prompt pronto para copiar, além da lista do que vale refazer.
+
 ## Progresso da arte
 
 Atualizado por `atualizar_status.py`. ✅ = imagem já no jogo · ⬜ = falta gerar.

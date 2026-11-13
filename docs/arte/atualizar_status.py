@@ -2,13 +2,22 @@
 
 Confere os arquivos de verdade em versao-b-quitanda-zen/ (mercados/*.webp, itens/*.webp, personagens/*.webp,
 decoracao/*.webp), atualiza a coluna "Arte" das tabelas de lista-de-arte.md, a seção "Progresso" e a coluna
-"status" de lista-de-arte.csv. Rode de novo sempre que entrar arte nova:  python docs/arte/atualizar_status.py
+"status" de lista-de-arte.csv e gera falta-gerar.md (só o que falta, com prompts prontos). Rode de novo sempre que entrar arte nova:  python docs/arte/atualizar_status.py
 """
 import csv, io, os, re
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 JOGO = os.path.normpath(os.path.join(AQUI, '..', '..', 'versao-b-quitanda-zen'))
 MD, CSV = os.path.join(AQUI, 'lista-de-arte.md'), os.path.join(AQUI, 'lista-de-arte.csv')
+FALTA = os.path.join(AQUI, 'falta-gerar.md')
+
+# Arte que já está no jogo mas vale gerar de novo (código ou arquivo -> motivo). Apague a linha quando refizer.
+REFAZER = {
+    'itens/fr-8.png': 'o creme saiu marrom, com cara de chocolate; açaí é roxo-escuro (o prompt já pede "deep purple")',
+    'mercados/03-feira-de-sao-joaquim-salvador.png': 'a faixa tem texto embaralhado; peça "no text, no signs"',
+    'mercados/05-mercado-central-fortaleza.png': 'a fachada tem texto embaralhado; peça "no text, no signs"',
+    'mercados/06-feira-central-campo-grande.png': 'toldos e placas com "SOBÁ" escrito à mão, letras tortas',
+}
 
 def tem(arquivo):                       # 'itens/fr-1.png' -> existe versao-b-quitanda-zen/itens/fr-1.webp?
     base = os.path.splitext(arquivo)[0]
@@ -70,3 +79,36 @@ else:
     i = md.index('## Como gerar'); md = md[:i] + bloco + md[i:]
 open(MD, 'w', encoding='utf-8').write(md)
 print({nomes[t]: f'{g[0]}/{g[1]}' for t, g in grupos.items()})
+
+# falta-gerar.md: lista de trabalho, só com o que falta
+nomes_pl = {'mercado': 'Mercados', 'item': 'Itens do tabuleiro', 'personagem': 'Personagens', 'decoracao': 'Decoração da banca'}
+f = ['# Feira Viva · Arte que falta gerar', '',
+     'Gerado por `atualizar_status.py` a partir de `lista-de-arte.csv`; não edite à mão. Cada bloco traz o nome do arquivo e o prompt pronto para colar no gerador.', '',
+     '## Como mandar', '',
+     '- **Itens e decoração:** render 3D brilhante, fundo branco liso, quadrado. Os prompts já pedem pose compacta (itens compridos, como peixe e milho, ficam pequenos nas casas) e nenhum texto.',
+     '- **Personagens:** ilustração pintada, busto, fundo liso claro.',
+     '- Mande em lotes (uma linha de 8 itens é um bom tamanho) e diga o código de cada imagem quando não for óbvio, por exemplo "te-3 cebola".',
+     '- O recorte, a troca no jogo e a atualização desta lista são feitos depois, com `itens/recortar_itens.py` e este script.', '',
+     '| Grupo | Prontas | Faltam |', '|---|---|---|']
+for t in ('mercado', 'item', 'personagem', 'decoracao'):
+    ok, tot, _ = grupos[t]; f.append(f'| {nomes_pl[t]} | {ok} de {tot} | {tot - ok} |')
+ref = [r for r in rows if r['arquivo'] in REFAZER]
+if ref:
+    f += ['', '## Refazer (já está no jogo, mas vale gerar de novo)', '']
+    for r in ref:
+        f += [f'### `{r["arquivo"]}` · {r["nome_pt"]}', '', f'Motivo: {REFAZER[r["arquivo"]]}.', '', '```', r['prompt_en'], '```', '']
+for t in ('item', 'decoracao', 'personagem'):
+    falta = grupos[t][2]
+    if not falta: continue
+    f += ['', f'## {nomes_pl[t]} ({len(falta)})', '']
+    grupo_atual = None
+    for r in falta:
+        g = r['descricao_pt'].split(',')[0] if t == 'item' else None
+        if g and g != grupo_atual:
+            grupo_atual = g; f += [f'### {g}', '']
+        cod = os.path.splitext(os.path.basename(r['arquivo']))[0]
+        titulo = f'**{cod}** · {r["nome_pt"]}' + (f' ({r["nome_en"]})' if r['nome_en'] != r['nome_pt'] else '')
+        if t == 'item': titulo += ' · ' + r['descricao_pt'].split(', ')[-1]
+        f += [titulo, '', '```', r['prompt_en'], '```', '']
+open(FALTA, 'w', encoding='utf-8').write('\n'.join(f).rstrip() + '\n')
+print('falta-gerar.md:', sum(len(grupos[t][2]) for t in grupos), 'imagens a gerar,', len(ref), 'a refazer')
