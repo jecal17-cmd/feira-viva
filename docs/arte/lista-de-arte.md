@@ -6,12 +6,32 @@ A mesma lista está em `lista-de-arte.csv`, com uma coluna `prompt_en` pronta pa
 
 ## Como gerar
 
-- **Estilo comum** (use em todas as imagens para manter a unidade): *cute 2D game icon, soft shading, bold clean outline, warm Brazilian street-market colors, centered, transparent background, no text*.
-- **Formato sugerido:** PNG quadrado de 512 × 512 px com fundo transparente. Os personagens podem ser só o busto. Os mercados ficam melhores em formato paisagem (por exemplo, 1024 × 576).
-- **Nome dos arquivos:** use a coluna *Arquivo*. Ela segue os códigos do jogo (`fr-1` = Frutas nível 1), o que facilita trocar os emojis pela arte depois.
-- **Itens de uma mesma linha** devem parecer uma evolução: do nível 1 ao 8 o item fica maior, mais caprichado e mais valioso.
-- **Mercados reais:** use fotos só como referência e desenhe ilustrações próprias, sem copiar fotos (direitos autorais). Confira os detalhes de cada prédio antes de publicar.
+São **dois estilos**, de propósito: os mercados (e os personagens que vivem neles) têm cara de ilustração pintada, e as peças do tabuleiro têm cara de objeto 3D brilhante. O texto de estilo já está no fim de cada `prompt_en` do CSV; basta colar o prompt inteiro.
+
+**Mercados e personagens: ilustração pintada.** Referências em `referencias/mercado-*.jpg`.
+- Estilo: *painted 2D illustration in a warm retro travel-poster style: golden late-afternoon light, big soft cumulus clouds, slightly grainy brush texture, flat shapes with soft shading, warm reds, ochres and teal greens, small figures of shoppers and vendors for scale*.
+- Formato: mercados em paisagem 16:9 (por exemplo, 1024 × 576 ou maior); personagens em busto, quadrado, fundo liso claro (o fundo é removido depois).
+
+**Itens do tabuleiro e decoração da banca: render 3D brilhante.** Referência em `referencias/item-estilo-caju.jpg`.
+- Estilo: *glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, plain pure white background, no shadow, no text, square 1:1*.
+- Formato: quadrado, fundo branco liso, sem sombra no chão. O fundo branco é tirado depois e a imagem vira PNG de 512 × 512 com fundo transparente.
+- Os itens de uma mesma linha devem parecer uma evolução: do nível 1 ao 8 o item fica maior, mais caprichado e mais valioso. O prompt do nível 1 pede algo simples e o do nível 8, a versão mais caprichada.
+
+**Para todos:**
+- **Nome dos arquivos:** use a coluna *Arquivo*. Ela segue os códigos do jogo (`fr-1` = Frutas nível 1), o que facilita trocar os emojis pela arte depois. Se o gerador salvar com outro nome, tudo bem: dá para renomear depois.
+- **Mercados reais:** use fotos só como referência e desenhe ilustrações próprias, sem copiar fotos (direitos autorais). Ilustrações geradas costumam inventar detalhes da arquitetura: confira cada prédio antes de publicar.
 - **Personagens:** evite estereótipos. As descrições são ponto de partida; o ideal é revisar com pessoas de cada região.
+
+### Referências já aprovadas
+
+| Arquivo | Mercado |
+|---|---|
+| `referencias/mercado-04-sao-jose-recife.jpg` | Mercado de São José, Recife (pavilhão verde) |
+| `referencias/mercado-07-mercadao-sp-interior.jpg` | Mercadão, São Paulo (salão interno) |
+| `referencias/mercado-09-sao-cristovao-aerea.jpg` | Feira de São Cristóvão, Rio de Janeiro (vista aérea) |
+| `referencias/mercado-10-porto-alegre.jpg` | Mercado Público, Porto Alegre (fachada amarela) |
+| `referencias/mercado-sem-identificacao-fachada-vermelha.jpg` | ainda sem mercado definido (fachada vermelha e amarela com relógio) |
+| `referencias/item-estilo-caju.jpg` | estilo dos itens (caju) |
 
 ## Mercados (12)
 
@@ -20,13 +40,13 @@ A mesma lista está em `lista-de-arte.csv`, com uma coluna `prompt_en` pronta pa
 | 1 | `mercados/01-ver-o-peso-belem.png` | Ver-o-Peso | Belém (PA) | Norte / North | mercado de ferro com torrezinhas na beira da baía, barcos coloridos |
 | 2 | `mercados/02-mercado-adolpho-lisboa-manaus.png` | Mercado Adolpho Lisboa | Manaus (AM) | Norte / North | mercado de ferro art nouveau à beira do rio Negro |
 | 3 | `mercados/03-feira-de-sao-joaquim-salvador.png` | Feira de São Joaquim | Salvador (BA) | Nordeste / Northeast | feira movimentada com barracas e barcos à vela na baía |
-| 4 | `mercados/04-mercado-de-sao-jose-recife.png` | Mercado de São José | Recife (PE) | Nordeste / Northeast | mercado de ferro do século XIX |
+| 4 | `mercados/04-mercado-de-sao-jose-recife.png` | Mercado de São José | Recife (PE) | Nordeste / Northeast | pavilhão de ferro verde-claro do século XIX, frontão com arabescos e grande janela em arco de vidro ao centro |
 | 5 | `mercados/05-mercado-central-fortaleza.png` | Mercado Central | Fortaleza (CE) | Nordeste / Northeast | prédio de vários andares cheio de redes, rendas e artesanato |
 | 6 | `mercados/06-feira-central-campo-grande.png` | Feira Central | Campo Grande (MS) | Centro-Oeste / Center-West | feira coberta à noite com bancas de sobá |
-| 7 | `mercados/07-mercadao-sao-paulo.png` | Mercadão | São Paulo (SP) | Sudeste / Southeast | grande salão com vitrais coloridos e bancas de frutas |
+| 7 | `mercados/07-mercadao-sao-paulo.png` | Mercadão | São Paulo (SP) | Sudeste / Southeast | salão interno com arcos de pedra clara, claraboia de vidro no teto, vitrais e corredores de bancas de frutas |
 | 8 | `mercados/08-mercado-central-belo-horizonte.png` | Mercado Central | Belo Horizonte (MG) | Sudeste / Southeast | corredores com queijos, doces e café |
-| 9 | `mercados/09-feira-de-sao-cristovao-rio-de-janeiro.png` | Feira de São Cristóvão | Rio de Janeiro (RJ) | Sudeste / Southeast | pavilhão com palco de forró, chapéus de couro e bandeirinhas |
-| 10 | `mercados/10-mercado-publico-porto-alegre.png` | Mercado Público | Porto Alegre (RS) | Sul / South | prédio histórico amarelo de dois andares |
+| 9 | `mercados/09-feira-de-sao-cristovao-rio-de-janeiro.png` | Feira de São Cristóvão | Rio de Janeiro (RJ) | Sudeste / Southeast | vista aérea do grande pavilhão oval, com bancas de lona azul cortadas por passarelas brancas em cruz |
+| 10 | `mercados/10-mercado-publico-porto-alegre.png` | Mercado Público | Porto Alegre (RS) | Sul / South | prédio histórico amarelo de dois andares, frontão no centro e portas em arco verdes |
 | 11 | `mercados/11-mercado-publico-florianopolis.png` | Mercado Público | Florianópolis (SC) | Sul / South | prédio histórico perto do mar com bancas de frutos do mar |
 | 12 | `mercados/12-mercado-municipal-curitiba.png` | Mercado Municipal | Curitiba (PR) | Sul / South | mercado coberto com bancas variadas |
 
