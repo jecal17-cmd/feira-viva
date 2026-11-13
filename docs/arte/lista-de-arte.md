@@ -14,6 +14,7 @@ Atualizado por `atualizar_status.py`. ✅ = imagem já no jogo · ⬜ = falta ge
 |---|---|---|
 | Mercados | 12 de 12 | 0 |
 | Itens do tabuleiro | 58 de 104 | 46 |
+| Itens da Rota das Feiras | 3 de 15 | 12 |
 | Personagens | 0 de 28 | 28 |
 | Decoração da banca | 0 de 12 | 12 |
 
@@ -257,6 +258,40 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 | 6 | `itens/fl-6.png` | Hibisco | Hibiscus |  | 🌺 | ⬜ |
 | 7 | `itens/fl-7.png` | Ipê-amarelo | Ipê-amarelo | tree that bursts into yellow bloom | 🌳 | ⬜ |
 | 8 | `itens/fl-8.png` | Buquê tropical | Tropical bouquet |  | 💐 | ⬜ |
+
+## Itens da Rota das Feiras (3 linhas × 5 níveis = 15)
+
+A Versão A tem itens próprios do Ver-o-Peso. Ficam em `versao-a-rota-das-feiras/itens/`; o código no jogo é o mesmo da coluna *Arquivo* (por exemplo, `ac-1`). Mesmo estilo 3D dos itens da Quitanda. Alguns reaproveitam imagens da Quitanda.
+
+### Açaí (`ac`)
+
+| Nível | Arquivo | Português | Inglês | Arte |
+|---|---|---|---|---|
+| 1 | `rota/itens/ac-1.png` | Cacho de açaí | Açaí bunch | ⬜ |
+| 2 | `rota/itens/ac-2.png` | Fruto | Açaí berries | ⬜ |
+| 3 | `rota/itens/ac-3.png` | Polpa | Açaí pulp | ⬜ |
+| 4 | `rota/itens/ac-4.png` | Açaí batido | Blended açaí | ⬜ |
+| 5 | `rota/itens/ac-5.png` | Tigela de açaí com tapioca | Açaí bowl with tapioca | ✅ |
+
+### Peixe (`pe`)
+
+| Nível | Arquivo | Português | Inglês | Arte |
+|---|---|---|---|---|
+| 1 | `rota/itens/pe-1.png` | Peixe pequeno | Small fish | ✅ |
+| 2 | `rota/itens/pe-2.png` | Peixe limpo | Cleaned fish | ✅ |
+| 3 | `rota/itens/pe-3.png` | Filé | Fillet | ⬜ |
+| 4 | `rota/itens/pe-4.png` | Peixe assado | Roast fish | ⬜ |
+| 5 | `rota/itens/pe-5.png` | Pirarucu de casaca | Pirarucu de casaca | ⬜ |
+
+### Jambu/Tucupi (`jt`)
+
+| Nível | Arquivo | Português | Inglês | Arte |
+|---|---|---|---|---|
+| 1 | `rota/itens/jt-1.png` | Folha de jambu | Jambu leaf | ⬜ |
+| 2 | `rota/itens/jt-2.png` | Maço de jambu | Jambu bunch | ⬜ |
+| 3 | `rota/itens/jt-3.png` | Caldo de tucupi | Tucupi broth | ⬜ |
+| 4 | `rota/itens/jt-4.png` | Tacacá | Tacacá | ⬜ |
+| 5 | `rota/itens/jt-5.png` | Pato no tucupi | Pato no tucupi | ⬜ |
 
 ## Personagens (28)
 

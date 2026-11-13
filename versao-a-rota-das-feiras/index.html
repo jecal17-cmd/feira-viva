@@ -69,7 +69,22 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px}
 .logo small{display:block;font-family:var(--text);font-size:12px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:6px}
 .hero{background:var(--panel);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:6px}
 .hero .big{font-size:40px;letter-spacing:6px}
-.hgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.hgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.ii{width:1.12em;height:1.12em;object-fit:contain;vertical-align:-.2em;pointer-events:none;-webkit-user-drag:none}
+.mbanner{flex:0 0 auto;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:var(--bg)} .mbanner img{width:100%;height:100%;object-fit:cover;display:block}
+.mtile{flex:0 0 auto;width:52px;height:52px;border-radius:12px;overflow:hidden;display:grid;place-items:center;font-size:28px;line-height:1;background:var(--bg);position:relative}
+.mtile img{width:100%;height:100%;object-fit:cover;display:block} .mtile.lock img{filter:grayscale(1) blur(1px);opacity:.6} .mtile.lock::after{content:'🔒';position:absolute;font-size:20px}
+.node.lock image{filter:grayscale(1);opacity:.75} .node .nlock{font-size:12px;transform:translate(11px,11px)}
+.albl{display:flex;justify-content:space-between;align-items:center;margin:12px 2px 6px;font-size:14px} .albl span{color:var(--muted);font-size:12px;font-weight:800}
+.alb{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.ing{background:var(--panel);border-radius:12px;padding:6px 2px 5px;text-align:center;position:relative;box-shadow:inset 0 -3px 0 var(--lc);min-width:0}
+.ing .e{display:block;font-size:28px;line-height:1.15;height:34px} .ing .e .ii{vertical-align:0}
+.ing small{display:block;font-size:10px;line-height:1.2;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ing i{position:absolute;top:3px;left:5px;font:800 10px var(--text);font-style:normal;color:var(--muted)}
+.ing em{position:absolute;top:-5px;right:-3px;background:var(--star);color:#3a2a00;font:800 9px var(--text);font-style:normal;border-radius:99px;padding:1px 5px}
+.ing.no{opacity:.55} .ing.no .e{filter:grayscale(1)} .ing.new{box-shadow:inset 0 -3px 0 var(--lc),0 0 0 2px var(--star)}
+.xcode{width:100%;font:12px/1.35 ui-monospace,monospace;border-radius:10px;border:2px solid var(--line);padding:8px;background:var(--cell);color:var(--ink);resize:none;word-break:break-all}
+.card h3{margin:4px 0 0;font-size:14px}
 .hgrid button{background:var(--panel);border-radius:14px;padding:10px 4px;font-weight:800;font-size:12.5px;position:relative}
 .hgrid span{display:block;font-size:22px}
 .dot{position:absolute;top:6px;right:10px;width:10px;height:10px;border-radius:50%;background:var(--warn)}
@@ -364,12 +379,12 @@ const SELOS=[['🍇',['Força do Açaí','Açaí Power'],['+3 turnos em toda fas
  ['🪗',['Forró','Forró'],['3 fusões seguidas sem colher devolvem 1 turno','3 merges in a row without picking give back 1 turn']],['🧉',['Chimarrão','Chimarrão'],['obstáculos congelados por 2 turnos no início','obstacles frozen for the first 2 turns']],
  ['🦪',['Pérola','Pearl'],['5% de chance de a fusão sair +1 nível','5% chance a merge goes up an extra level']],['🌰',['Pinhão','Pinhão'],['pedidos exigem 1 item a menos (mínimo 1)','orders need 1 item less (minimum 1)']]];
 const MARKETS=[
- {n:'Ver-o-Peso',c:'Belém',uf:'PA',reg:0,ic:'🛶',lon:-48.5,lat:-1.45},{n:'Mercado Adolpho Lisboa',c:'Manaus',uf:'AM',reg:0,ic:'🌳',lon:-60,lat:-3.1},
- {n:'Feira de São Joaquim',c:'Salvador',uf:'BA',reg:1,ic:'🥁',lon:-38.5,lat:-13},{n:'Mercado de São José',c:'Recife',uf:'PE',reg:1,ic:'🎭',lon:-34.9,lat:-8.05},
- {n:'Mercado Central',c:'Fortaleza',uf:'CE',reg:1,ic:'⛵',lon:-38.5,lat:-3.7},{n:'Feira Central',c:'Campo Grande',uf:'MS',reg:2,ic:'🐆',lon:-54.6,lat:-20.45},
- {n:'Mercadão',c:'São Paulo',uf:'SP',reg:3,ic:'🏙️',lon:-46.6,lat:-23.55},{n:'Mercado Central',c:'Belo Horizonte',uf:'MG',reg:3,ic:'⛰️',lon:-43.9,lat:-19.9},
- {n:'Feira de São Cristóvão',c:'Rio de Janeiro',uf:'RJ',reg:3,ic:'🪗',lon:-43.2,lat:-22.9},{n:'Mercado Público',c:'Porto Alegre',uf:'RS',reg:4,ic:'🧉',lon:-51.2,lat:-30},
- {n:'Mercado Público',c:'Florianópolis',uf:'SC',reg:4,ic:'🏝️',lon:-48.55,lat:-27.6},{n:'Mercado Municipal',c:'Curitiba',uf:'PR',reg:4,ic:'🌲',lon:-49.3,lat:-25.4}];
+ {n:'Ver-o-Peso',c:'Belém',img:'01-ver-o-peso-belem',uf:'PA',reg:0,ic:'🛶',lon:-48.5,lat:-1.45},{n:'Mercado Adolpho Lisboa',c:'Manaus',img:'02-mercado-adolpho-lisboa-manaus',uf:'AM',reg:0,ic:'🌳',lon:-60,lat:-3.1},
+ {n:'Feira de São Joaquim',c:'Salvador',img:'03-feira-de-sao-joaquim-salvador',uf:'BA',reg:1,ic:'🥁',lon:-38.5,lat:-13},{n:'Mercado de São José',c:'Recife',img:'04-mercado-de-sao-jose-recife',uf:'PE',reg:1,ic:'🎭',lon:-34.9,lat:-8.05},
+ {n:'Mercado Central',c:'Fortaleza',img:'05-mercado-central-fortaleza',uf:'CE',reg:1,ic:'⛵',lon:-38.5,lat:-3.7},{n:'Feira Central',c:'Campo Grande',img:'06-feira-central-campo-grande',uf:'MS',reg:2,ic:'🐆',lon:-54.6,lat:-20.45},
+ {n:'Mercadão',c:'São Paulo',img:'07-mercadao-sao-paulo',uf:'SP',reg:3,ic:'🏙️',lon:-46.6,lat:-23.55},{n:'Mercado Central',c:'Belo Horizonte',img:'08-mercado-central-belo-horizonte',uf:'MG',reg:3,ic:'⛰️',lon:-43.9,lat:-19.9},
+ {n:'Feira de São Cristóvão',c:'Rio de Janeiro',img:'09-feira-de-sao-cristovao-rio-de-janeiro',uf:'RJ',reg:3,ic:'🪗',lon:-43.2,lat:-22.9},{n:'Mercado Público',c:'Porto Alegre',img:'10-mercado-publico-porto-alegre',uf:'RS',reg:4,ic:'🧉',lon:-51.2,lat:-30},
+ {n:'Mercado Público',c:'Florianópolis',img:'11-mercado-publico-florianopolis',uf:'SC',reg:4,ic:'🏝️',lon:-48.55,lat:-27.6},{n:'Mercado Municipal',c:'Curitiba',img:'12-mercado-municipal-curitiba',uf:'PR',reg:4,ic:'🌲',lon:-49.3,lat:-25.4}];
 const REGN=[['Norte','North'],['Nordeste','Northeast'],['Centro-Oeste','Center-West'],['Sudeste','Southeast'],['Sul','South']];
 const FACES=[['👵','Dona Nazaré'],['🧔','Seu Raimundo'],['👩‍🦱','Iara'],['🧑‍🌾','Seu Chico'],['👨‍🌾','Seu Zé'],['👧','Bia'],['🧑‍🍳','Cida'],['👴','Seu Benedito']];
 const TOOLS={hammer:['🔨',['Martelo','Hammer'],['remove um item ou obstáculo','removes an item or obstacle'],120],
@@ -395,7 +410,12 @@ const REGS=['Norte','Nordeste','Centro-Oeste','Sudeste','Sul'], REGUF={ac:0,am:0
 /* ===================== ESTADO ===================== */
 const $=id=>document.getElementById(id), fmt=n=>Math.round(n).toLocaleString(LANG==='en'?'en-US':'pt-BR');
 const pick=a=>a[Math.floor(Math.random()*a.length)], rint=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
-const item=(l,n)=>{ const x=LINES[l].it[n-1]; return [x[0],LANG==='en'?x[2]:x[1]]; };
+// Arte (pastas itens/ e mercados/). Sem arte, fica o emoji.
+const ITEM_ART=new Set(['pe-1','pe-2','ac-5']);
+const ie=(l,n)=>ITEM_ART.has(l+'-'+n)?`<img class="ii" src="itens/${l}-${n}.webp" alt="" draggable="false">`:LINES[l].it[n-1][0];
+const artUrl=f=>f.img?`mercados/${f.img}.webp`:'';
+const tileHtml=(f,cls='')=>`<span class="mtile${cls?' '+cls:''}" aria-hidden="true">${f.img?`<img src="${artUrl(f)}" alt="" onerror="this.replaceWith('${f.ic}')">`:f.ic}</span>`;
+const item=(l,n)=>{ const x=LINES[l].it[n-1]; return [ie(l,n),LANG==='en'?x[2]:x[1]]; };
 const lname=l=>tx(LINES[l].name);
 const gloss=(l,n)=>LANG==='en'?GLOSS[l+n]:null;
 const lc=l=>`hsl(${LINES[l].hue} 55% 46%)`;
@@ -406,6 +426,24 @@ const isAdj=(x,y)=>{ const d=Math.abs(x-y); return d===COLS||(d===1&&Math.floor(
 const nbrs=i=>[i-COLS,i+COLS,i%COLS?i-1:-1,i%COLS<COLS-1?i+1:-1].filter(k=>k>=0&&k<COLS*ROWS);
 let S, P=null, screen='home', sel=null, drag=null, noClick=false, popAt=-1, audio=null, toastTimer=null, quiet=false, lastAct=Date.now(), sheetName=null;
 
+/* Trocar de aparelho: o progresso vira um código de texto (JSON comprimido em base64url, com verificação). */
+const b64u={ enc:u=>{ let s=''; for(let i=0;i<u.length;i+=0x8000) s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000)); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); },
+  dec:t=>{ const s=atob(t.replace(/-/g,'+').replace(/_/g,'/')); const u=new Uint8Array(s.length); for(let i=0;i<s.length;i++) u[i]=s.charCodeAt(i); return u; } };
+const soma=t=>{ let h=2166136261; for(let i=0;i<t.length;i++){ h^=t.charCodeAt(i); h=Math.imul(h,16777619); } return (h>>>0).toString(36).slice(-4); };
+const pipe=(u,T)=>new Response(new Blob([u]).stream().pipeThrough(T)).arrayBuffer().then(b=>new Uint8Array(b));
+async function saveCode(){ save(); const u=new TextEncoder().encode(JSON.stringify(S)); let v='RF0', d=u;
+  if(window.CompressionStream){ try{ d=await pipe(u,new CompressionStream('deflate-raw')); v='RF1'; }catch(e){ d=u; v='RF0'; } }
+  const body=b64u.enc(d); return `${v}-${body}-${soma(body)}`; }
+async function readCode(txt){ const m=String(txt).replace(/\s+/g,'').match(/^(RF[01])-([A-Za-z0-9_-]+)-([a-z0-9]{1,4})$/); if(!m||soma(m[2])!==m[3]) throw 0;
+  let u=b64u.dec(m[2]); if(m[1]==='RF1') u=await pipe(u,new DecompressionStream('deflate-raw'));
+  const d=JSON.parse(new TextDecoder().decode(u)); if(!d||d.v!==1||!d.tools) throw 0; return d; }
+let xferNew=null;
+function transferModal(){ modal(`<div class="big">📲</div><h2>${tr('Trocar de aparelho','Switch devices')}</h2><p>${tr('No aparelho antigo, copie o código e mande para você mesmo (WhatsApp, e-mail). No aparelho novo, cole o código aqui. O código não expira e não usa internet.','On the old device, copy the code and send it to yourself (WhatsApp, email). On the new device, paste the code here. The code never expires and works offline.')}</p>
+   <h3>${tr('Seu código','Your code')}</h3><textarea id="xcode" class="xcode" readonly rows="3" placeholder="…"></textarea><button class="btn" data-act="xcopy">${tr('Copiar código','Copy code')}</button>
+   <h3>${tr('Restaurar de outro aparelho','Restore from another device')}</h3><textarea id="xin" class="xcode" rows="3" placeholder="${tr('Cole aqui o código','Paste the code here')}" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea><button class="btn ghosty" data-act="xload">${tr('Restaurar progresso','Restore progress')}</button>
+   <button class="btn ghosty" data-act="mclose">${tr('Fechar','Close')}</button>`);
+  saveCode().then(c=>{ const el=$('xcode'); if(el) el.value=c; }).catch(()=>{}); }
+const starsIn=d=>Object.values(d.best||{}).reduce((a,b)=>a+(+b||0),0);
 function fresh(){ return {v:1,coins:100,best:{},cards:[],tools:{hammer:3,pot:3,turns:1},iap:{n:0,usd:0,once:[]},selos:[],sealOn:true,selo5:{ac:0,pe:0,jt:0},seen:{},diaryDone:false,
   stats:{ph:{}},opts:{sound:true,test:false,lang:LANG}}; }
 function load(){ try{ const d=JSON.parse(localStorage.getItem(KEY)); if(d&&d.v===1) return d; }catch(e){} return fresh(); }
@@ -576,16 +614,23 @@ function render(){
   else if(screen==='market') m.innerHTML=marketHtml();
   else { m.innerHTML=gameHtml(); fit(); }
   if(sheetName) renderSheet();
+  if(screen==='game'&&P) noteSeen();
   save();
+}
+const ALB_CO=100;
+function noteSeen(){
+  for(const x of P.board) if(isItem(x)&&!S.alb[x.l+x.n]) S.alb[x.l+x.n]=x.n===1?2:1;
+  for(const l of Object.keys(LINES)) if(!S.albDone.includes(l)&&LINES[l].it.every((_,j)=>S.alb[l+(j+1)])){
+    S.albDone.push(l); S.coins+=ALB_CO; beep(880); beep(1100,.12); toast(tr(`Linha completa no álbum: ${lname(l)} · +${ALB_CO} 🪙`,`Album line complete: ${lname(l)} · +${ALB_CO} 🪙`)); }
 }
 const langSeg=()=>`<div class="seg" role="group" aria-label="${tr('Idioma','Language')}"><button data-act="lang:pt" aria-pressed="${LANG==='pt'}">🇧🇷 Português</button><button data-act="lang:en" aria-pressed="${LANG==='en'}">🌎 English</button></div>`;
 function homeHtml(){
   const ts=totalStars(), nc=S.cards.length;
   return `<div class="homein"><div class="logo"><b>Rota das<br>Feiras</b><small>${tr('Feira Viva · versão de teste','Brazil’s market trail · test build')}</small>${LANG==='en'?'<p class="say"><i>rota das feiras</i> (HO-tah dahs FAY-rahs): the trail of street markets</p>':''}</div>
-   <div class="hero"><div class="big" aria-hidden="true">🛶🍇🐟🌿</div><b>${tr('Viaje pelos mercados do Brasil','Travel through Brazil’s markets')}</b><p class="note" style="margin:0 auto">${tr('Puzzle de fusão com turnos contados. Comece pelo Ver-o-Peso, em Belém.','A merge puzzle with limited turns. Start at Ver-o-Peso, in Belém.')}</p>
+   <div class="hero"><div class="mbanner"><img src="${artUrl(MARKETS[0])}" alt="Ver-o-Peso, Belém"></div><b>${tr('Viaje pelos mercados do Brasil','Travel through Brazil’s markets')}</b><p class="note" style="margin:0 auto">${tr('Puzzle de fusão com turnos contados. Comece pelo Ver-o-Peso, em Belém.','A merge puzzle with limited turns. Start at Ver-o-Peso, in Belém.')}</p>
    <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap"><span class="pill">⭐ ${ts}</span><span class="pill">🪙 ${fmt(S.coins)}</span><span class="pill">📖 ${nc}/${CARDS.length}</span></div></div>
    <button class="btn big" data-act="go:map">▶ ${tr('Jogar','Play')}</button>
-   <div class="hgrid"><button data-act="sheet:diary"><span>📖</span>${tr('Diário','Journal')}</button><button data-act="sheet:selos"><span>🏅</span>${tr('Selos','Seals')}</button><button data-act="sheet:shop"><span>🛒</span>${tr('Loja','Shop')}</button><button data-act="sheet:cfg"><span>⚙️</span>${tr('Ajustes','Settings')}</button></div>
+   <div class="hgrid"><button data-act="sheet:diary"><span>📖</span>${tr('Diário','Journal')}</button><button data-act="sheet:selos"><span>🏅</span>${tr('Selos','Seals')}</button><button data-act="sheet:album"><span>🧺</span>${tr('Álbum','Album')}${Object.values(S.alb).includes(1)?'<i class="dot"></i>':''}</button><button data-act="sheet:shop"><span>🛒</span>${tr('Loja','Shop')}</button><button data-act="sheet:cfg"><span>⚙️</span>${tr('Ajustes','Settings')}</button></div>
    ${langSeg()}</div>`;
 }
 const PXY=(lon,lat)=>{ const mer=a=>Math.log(Math.tan(Math.PI/4+a*Math.PI/360)), K=638.5/(mer(5.27)-mer(-33.75)); return [.3+(lon+73.99)*612/39.2,.3+(mer(5.27)-mer(lat))*K]; };
@@ -593,20 +638,21 @@ function mapSvg(){
   const pts=MARKETS.map(f=>PXY(f.lon,f.lat));
   const ufs=Object.entries(UFMAP).map(([k,d])=>`<path class="uf r${REGUF[k]}" d="${d}"><title>${k.toUpperCase()} · ${tx(REGN[REGUF[k]])}</title></path>`).join('');
   const labs=Object.entries(UFLAB).filter(([k])=>k!=='df').map(([k,[x,y,r]])=>`<text class="uflab${r<15?' s':''}" x="${x}" y="${y}">${k.toUpperCase()}</text>`).join('');
-  const nodes=pts.map((p,i)=>`<g class="node ${i===0?'open':'lock'}" ${i===0?`data-act="go:market" role="button" aria-label="${tr('Abrir o Ver-o-Peso','Open Ver-o-Peso')}"`:''} transform="translate(${p[0].toFixed(1)} ${p[1].toFixed(1)})"><title>${MARKETS[i].n}, ${MARKETS[i].c}${i?tr(' (em breve)',' (coming soon)'):''}</title>${i===0?'<circle class="ring" r="18"/>':''}<circle r="18"/><text>${i===0?MARKETS[i].ic:'🔒'}</text></g>`).join('');
-  return `<svg viewBox="-8 -8 647 655" role="img" aria-label="${tr('Mapa do Brasil com os mercados da Rota das Feiras','Map of Brazil with the markets on the trail')}">${ufs}${labs}<polyline class="route" points="${pts.map(p=>p.join(',')).join(' ')}"/>${nodes}</svg>`;
+  const nodes=pts.map((p,i)=>`<g class="node ${i===0?'open':'lock'}" ${i===0?`data-act="go:market" role="button" aria-label="${tr('Abrir o Ver-o-Peso','Open Ver-o-Peso')}"`:''} transform="translate(${p[0].toFixed(1)} ${p[1].toFixed(1)})"><title>${MARKETS[i].n}, ${MARKETS[i].c}${i?tr(' (em breve)',' (coming soon)'):''}</title>${i===0?'<circle class="ring" r="18"/>':''}<circle r="18"/><image href="${artUrl(MARKETS[i])}" x="-16" y="-16" width="32" height="32" preserveAspectRatio="xMidYMid slice" clip-path="url(#nclip)"/>${i?'<text class="nlock">🔒</text>':''}</g>`).join('');
+  return `<svg viewBox="-8 -8 647 655" role="img" aria-label="${tr('Mapa do Brasil com os mercados da Rota das Feiras','Map of Brazil with the markets on the trail')}"><defs><clipPath id="nclip"><circle r="16"/></clipPath></defs>${ufs}${labs}<polyline class="route" points="${pts.map(p=>p.join(',')).join(' ')}"/>${nodes}</svg>`;
 }
 function mapHtml(){
   return `<div class="head"><button class="icon" data-act="go:home" aria-label="${tr('Voltar','Back')}">◀</button><div class="t"><b>Rota das Feiras</b><small>⭐ ${totalStars()} ${tr('estrelas','stars')} · 🪙 ${fmt(S.coins)}</small></div></div>
    ${LANG==='en'?'<p class="note">In Portuguese, a <i>feira</i> is an open-air street market and a <i>mercado</i> is a covered market hall. <i>Mercadão</i> means “big market”.</p>':''}
    <div class="map">${mapSvg()}<div class="legend">${REGN.map((r,i)=>`<span><i style="background:var(--r${i})"></i>${tx(r)}</span>`).join('')}</div></div>
-   <button class="row cur" data-act="go:market"><span class="face">🛶</span><div><b>Ver-o-Peso</b> · Belém (PA)<p>${totalStars()}/21 ⭐ · ${tr('7 fases com chefe','7 levels with a boss')}</p></div><span class="btn sm">${tr('Jogar','Play')}</span></button>
-   ${MARKETS.slice(1).map(f=>`<div class="row lock"><span class="face">${f.ic}</span><div><b>${f.n}</b> · ${f.c} (${f.uf})<p>${tr('Em breve. Neste teste só o Ver-o-Peso está aberto.','Coming soon. Only Ver-o-Peso is open in this test.')}</p></div></div>`).join('')}
+   <button class="row cur" data-act="go:market">${tileHtml(MARKETS[0])}<div><b>Ver-o-Peso</b> · Belém (PA)<p>${totalStars()}/21 ⭐ · ${tr('7 fases com chefe','7 levels with a boss')}</p></div><span class="btn sm">${tr('Jogar','Play')}</span></button>
+   ${MARKETS.slice(1).map(f=>`<div class="row lock">${tileHtml(f,'lock')}<div><b>${f.n}</b> · ${f.c} (${f.uf})<p>${tr('Em breve. Neste teste só o Ver-o-Peso está aberto.','Coming soon. Only Ver-o-Peso is open in this test.')}</p></div></div>`).join('')}
    <p class="note">${tr('No jogo completo, sair do Norte vai pedir 30 ⭐ e cada mercado abre ao vencer o chefe do anterior.','In the full game, leaving the North will take 30 ⭐ and each market opens when you beat the previous boss.')}</p>`;
 }
 function marketHtml(){
   const seal=S.selos.includes(0), next=PHASES.findIndex((c,i)=>unlocked(i)&&!starsOf(i));
   return `<div class="head"><button class="icon" data-act="go:map" aria-label="${tr('Voltar ao mapa','Back to the map')}">◀</button><div class="t"><b>🛶 Ver-o-Peso</b><small>Belém (PA) · ${totalStars()}/21 ⭐</small></div><button class="pill" data-act="sheet:shop" aria-label="${tr(`${fmt(S.coins)} moedas. Abrir a Loja`,`${fmt(S.coins)} coins. Open the Shop`)}">🪙 ${fmt(S.coins)} ＋</button></div>
+   <div class="mbanner"><img src="${artUrl(MARKETS[0])}" alt="Ver-o-Peso, Belém"></div>
    ${PHASES.map((c,i)=>{ const st=starsOf(i), ok=unlocked(i);
      return `<button class="row${i===next?' cur':''}${ok?'':' lock'}" data-act="${ok?'start:'+i:'locked'}"><span class="face">${ok?(c.boss?'🌊':i+1):'🔒'}</span><div><b>${ptitle(i)}</b>${i===next?` <span class="tag">${tr('próxima','next')}</span>`:''}<p>${ok?`<b>🎯 ${c.goals.map(goalFull).join(' + ')}</b> · ${c.turns} ${turnsW(c.turns)}`:tr(`Abre ao vencer a fase ${i}`,`Opens when you beat level ${i}`)}</p></div><span class="stars">${[1,2,3].map(k=>`<span class="${k>st?'off':''}">★</span>`).join('')}</span></button>`; }).join('')}
    <div class="row"><span class="face">${seal?'🏅':'🍇'}</span><div><b>${tr('Selo de Domínio: Força do Açaí','Mastery Seal: Açaí Power')}</b><p>${seal?tr('Conquistado: +3 turnos em toda fase.','Earned: +3 turns on every level.'):`${tr('Entregue 3 itens de nível 5 de cada linha no espaço 🏅 e vença o chefe.','Deliver 3 level 5 items of each line to the 🏅 slot and beat the boss.')} ${Object.keys(LINES).map(k=>`${item(k,5)[0]} ${Math.min(3,S.selo5[k]||0)}/3`).join(' · ')} · ${tr('chefe','boss')} ${starsOf(6)?'✓':'—'}`}</p></div></div>
@@ -640,7 +686,7 @@ function gameHtml(){
       if(x.o==='mold') return `<button class="cell mold${ar}${ky}" data-cell="${i}" aria-label="${tr('Mofo','Mold')}"></button>`;
       return `<button class="cell has${x.m?' moldy':''}${fl}${ar}${sel===i?' sel':''}${popAt===i?' pop':''}" style="--lc:${lc(x.l)}" data-cell="${i}" aria-label="${item(x.l,x.n)[1]}${tr(' nível ',', level ')}${x.n}${x.m?tr(', mofado',', moldy'):''}"><span class="em">${item(x.l,x.n)[0]}</span><span class="lv">${x.n}</span></button>`; }).join('')}</div></div>
    <div class="info${P.armed?' armed':''}">${info}</div>
-   <div class="dock">${c.lines.map(l=>`<button class="basket" style="--lc:${lc(l)}" data-act="spawn:${l}" aria-label="${tr(`Cesto de ${lname(l)}: gasta 1 turno`,`${lname(l)} basket: costs 1 turn`)}${mk&&mk.l===l?tr('. Linha do objetivo','. Goal line'):''}">${mk&&mk.l===l?'<i class="tgt">🎯</i>':''}<span class="em">${LINES[l].it[0][0]}</span><b>${lname(l)}</b><small>${tr('−1 turno','−1 turn')}</small></button>`).join('')}
+   <div class="dock">${c.lines.map(l=>`<button class="basket" style="--lc:${lc(l)}" data-act="spawn:${l}" aria-label="${tr(`Cesto de ${lname(l)}: gasta 1 turno`,`${lname(l)} basket: costs 1 turn`)}${mk&&mk.l===l?tr('. Linha do objetivo','. Goal line'):''}">${mk&&mk.l===l?'<i class="tgt">🎯</i>':''}<span class="em">${ie(l,1)}</span><b>${lname(l)}</b><small>${tr('−1 turno','−1 turn')}</small></button>`).join('')}
     ${Object.entries(TOOLS).map(([k,[em]])=>`<button class="basket tool${P.armed===k?' on':''}" data-act="tool:${k}" aria-label="${tname(k)}: ${tr('você tem','you have')} ${S.tools[k]||0}" ${S.tools[k]>0&&P.toolsUsed<MAX_TOOLS?'':'disabled'}><span class="em">${em}</span><b>${S.tools[k]||0}</b><small>${P.toolsUsed}/${MAX_TOOLS}</small></button>`).join('')}</div>`;
 }
 function fit(){
@@ -650,6 +696,14 @@ function fit(){
 function renderSheet(){
   let h='', T='';
   if(sheetName==='shop'){ T=tr('Loja','Shop'); h=shopHtml(); }
+  else if(sheetName==='album'){ T=tr('Álbum de ingredientes','Ingredient album');
+    const tot=Object.keys(LINES).length*MAX, got=Object.keys(S.alb).length;
+    h=`<p class="note">${tr(`${got} de ${tot} ingredientes descobertos. Tudo o que aparece no seu tabuleiro entra aqui. Complete os ${MAX} níveis de uma linha para ganhar +${ALB_CO} 🪙.`,`${got} of ${tot} ingredients discovered. Everything that shows up on your board lands here. Complete all ${MAX} levels of a line to earn +${ALB_CO} 🪙.`)}</p>`
+     +Object.keys(LINES).map(l=>{ const k=LINES[l].it.filter((_,j)=>S.alb[l+(j+1)]).length;
+       return `<div class="albl"><b>${ie(l,1)} ${lname(l)}</b><span>${S.albDone.includes(l)?'⭐ '+tr('completa','complete'):k+'/'+MAX}</span></div><div class="alb">`+LINES[l].it.map((x,j)=>{ const st=S.alb[l+(j+1)], d=item(l,j+1), gl=gloss(l,j+1);
+         return st?`<div class="ing${st===1?' new':''}" style="--lc:${lc(l)}"${gl?` title="${gl}"`:''}><span class="e">${d[0]}</span><small>${d[1]}</small><i>${j+1}</i>${st===1?`<em>${tr('novo','new')}</em>`:''}</div>`
+                  :`<div class="ing no" style="--lc:${lc(l)}"><span class="e">❔</span><small>???</small><i>${j+1}</i></div>`; }).join('')+'</div>'; }).join('');
+    for(const k in S.alb) if(S.alb[k]===1) S.alb[k]=2; save(); }
   else if(sheetName==='diary'){ T=tr('Diário de Viagem','Travel Journal');
     h=`<p class="note">${tr('Cada fase vencida revela um cartão sobre o lugar ou o produto.','Each level you beat reveals a card about the place or the food.')} ${S.cards.length}/${CARDS.length} ${tr('cartões','cards')}${S.diaryDone?tr(' · coleção completa!',' · collection complete!'):tr(' · complete o Ver-o-Peso e ganhe 150 🪙',' · complete Ver-o-Peso to earn 150 🪙')}.</p><h2>🛶 Ver-o-Peso</h2><div class="dgrid">`
      +CARDS.map((c,i)=>S.cards.includes(i)?`<button class="dcard" data-act="card:${i}"><span class="em">${c.em}</span><b>${tx(c.t)}</b><small>${tx(c.p)}</small></button>`
@@ -668,7 +722,8 @@ function renderSheet(){
      +`<h2>${tr('Painel do teste','Test panel')}</h2><p class="note">${tr('Por fase: tentativas, vitórias, derrotas (🧱 = tabuleiro travado), taxa de derrota, média de turnos sobrando nas vitórias e melhor resultado. Pela heurística do documento de design, taxa de derrota acima de 60% ou abaixo de 10% pede ajuste (em vermelho, a partir de 3 partidas).','Per level: attempts, wins, losses (🧱 = board stuck), loss rate, average turns left on wins and best result. Following the design document’s rule of thumb, a loss rate above 60% or below 10% needs tuning (shown in red after 3 games).')}</p>
       <table class="met"><thead><tr><th>${tr('Fase','Level')}</th><th>${tr('Tent.','Tries')}</th><th>${tr('Vit.','Wins')}</th><th>${tr('Der.','Losses')}</th><th>${tr('Taxa','Rate')}</th><th>${tr('Sobra','Left')}</th><th>⭐</th></tr></thead><tbody>${rows}</tbody></table>
       <p class="note">${tr('Compras simuladas','Simulated purchases')}: ${S.iap.n} · ${usd(S.iap.usd)}.</p>
-      <p class="note">${tr('O progresso fica salvo só neste navegador. Mapa do Brasil: @svg-maps/brazil, licença CC BY 4.0.','Progress is saved only in this browser. Map of Brazil: @svg-maps/brazil, CC BY 4.0 license.')}</p>
+      <p class="note">${tr('O progresso fica salvo neste aparelho (para levar a outro, use Trocar de aparelho). Mapa do Brasil: @svg-maps/brazil, licença CC BY 4.0.','Progress is saved on this device (to move it, use Switch devices). Map of Brazil: @svg-maps/brazil, CC BY 4.0 license.')}</p>
+      <div class="row"><div><b>${tr('Trocar de aparelho','Switch devices')}</b><p>${tr('Leve seu progresso para outro celular com um código.','Take your progress to another phone with a code.')}</p></div><button class="btn ghosty" data-act="xfer">${tr('Abrir','Open')}</button></div>
       <div class="row"><div><b>${tr('Recomeçar do zero','Start over')}</b><p class="warn">${tr('Apaga todo o progresso e o painel.','Erases all progress and the test panel.')}</p></div><button class="btn ghosty" data-act="reset">${tr('Recomeçar','Start over')}</button></div>`;
   }
   $('sheetin').innerHTML=`<header><h1>${T}</h1><button class="btn ghosty" data-act="sheetclose">${tr('Fechar','Close')}</button></header>${h}`;
@@ -753,6 +808,14 @@ document.addEventListener('click',e=>{
     else if(k==='reset') modal(`<h2>${tr('Recomeçar do zero?','Start over?')}</h2><p>${tr('Todo o progresso e o painel de teste serão apagados.','All progress and the test panel will be erased.')}</p><button class="btn" data-act="resetyes">${tr('Apagar e recomeçar','Erase and start over')}</button><button class="btn ghosty" data-act="mclose">${tr('Cancelar','Cancel')}</button>`);
     else if(k==='resetyes'){ S=fresh(); closeModal(); sheetName=null; $('sheet').hidden=true; screen='home'; P=null; render(); }
     else if(k==='mclose'){ closeModal(); render(); }
+    else if(k==='xfer') transferModal();
+    else if(k==='xcopy'){ const el=$('xcode'); if(!el||!el.value) return; const ok=()=>toast(tr('Código copiado','Code copied'));
+      if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(el.value).then(ok,()=>{ el.select(); try{ document.execCommand('copy'); ok(); }catch(e){} });
+      else { el.select(); try{ document.execCommand('copy'); ok(); }catch(e){} } }
+    else if(k==='xload'){ const el=$('xin'); readCode(el?el.value:'').then(d=>{ xferNew=d;
+        $('card').innerHTML=`<div class="big">📲</div><h2>${tr('Trocar o progresso?','Replace your progress?')}</h2><p>${tr(`O código traz: ${starsIn(d)} ⭐, ${fmt(d.coins||0)} moedas e ${(d.cards||[]).length} cartões do diário. O progresso atual deste aparelho será substituído.`,`The code holds: ${starsIn(d)} ⭐, ${fmt(d.coins||0)} coins and ${(d.cards||[]).length} journal cards. The current progress on this device will be replaced.`)}</p><button class="btn" data-act="xyes">${tr('Usar este progresso','Use this progress')}</button><button class="btn ghosty" data-act="mclose">${tr('Cancelar','Cancel')}</button>`; })
+        .catch(()=>toast(tr('Código inválido. Confira se copiou ele inteiro.','Invalid code. Make sure you copied all of it.'))); }
+    else if(k==='xyes'){ if(!xferNew) return; try{ localStorage.setItem(KEY,JSON.stringify(xferNew)); }catch(e){ toast(tr('Código inválido. Confira se copiou ele inteiro.','Invalid code. Make sure you copied all of it.')); return; } location.reload(); }
     return;
   }
   if(noClick||screen!=='game'||!P||P.over) return;
@@ -776,7 +839,7 @@ document.addEventListener('pointerdown',e=>{ lastAct=Date.now(); const c=e.targe
   if(!isItem(P.board[i])||flooded(i)) return; drag={i,x:e.clientX,y:e.clientY,on:false,id:e.pointerId,g:null,cur:-1,prev:-1}; });
 window.addEventListener('pointermove',e=>{
   if(!drag||e.pointerId!==drag.id) return;
-  if(!drag.on&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>8){ drag.on=true; const it=P.board[drag.i]; drag.g=document.createElement('div'); drag.g.className='ghost'; drag.g.textContent=item(it.l,it.n)[0]; document.body.appendChild(drag.g);
+  if(!drag.on&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>8){ drag.on=true; const it=P.board[drag.i]; drag.g=document.createElement('div'); drag.g.className='ghost'; drag.g.innerHTML=item(it.l,it.n)[0]; document.body.appendChild(drag.g);
     const c=$('board').querySelector(`[data-cell="${drag.i}"]`); if(c)c.classList.add('drag'); }
   if(drag.on){ drag.g.style.left=e.clientX+'px'; drag.g.style.top=e.clientY+'px';
     // Guarda o último item igual por onde o dedo passou; ele só entra na fusão (tripla) se for vizinho do destino.
@@ -848,7 +911,7 @@ function intro(){
 function introTap(){ endIntro(); }
 
 function start(){
-  LANG=detectLang(); S=load(); S.opts=S.opts||{sound:true,test:false}; S.iap=S.iap||{n:0,usd:0,once:[]}; S.tools.turns=S.tools.turns||0;
+  LANG=detectLang(); S=load(); S.alb=S.alb||{}; S.albDone=S.albDone||[]; S.opts=S.opts||{sound:true,test:false}; S.iap=S.iap||{n:0,usd:0,once:[]}; S.tools.turns=S.tools.turns||0;
   let ql=null; try{ ql=new URLSearchParams(location.search).get('lang'); }catch(e){}
   if(ql==='en'||ql==='pt') S.opts.lang=ql; LANG=S.opts.lang||LANG; S.opts.lang=LANG; applyLang(); render();
   let q=null; try{ q=new URLSearchParams(location.search).get('intro'); }catch(e){} if(q!=='0') intro();

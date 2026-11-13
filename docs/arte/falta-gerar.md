@@ -13,6 +13,7 @@ Gerado por `atualizar_status.py` a partir de `lista-de-arte.csv`; não edite à 
 |---|---|---|
 | Mercados | 12 de 12 | 0 |
 | Itens do tabuleiro | 58 de 104 | 46 |
+| Itens da Rota das Feiras | 3 de 15 | 12 |
 | Personagens | 0 de 28 | 28 |
 | Decoração da banca | 0 de 12 | 12 |
 
@@ -341,6 +342,87 @@ Ipê-amarelo (tree that bursts into yellow bloom), game item icon, glossy styliz
 
 ```
 Tropical bouquet (the most impressive, abundant version, with extra detail), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
+```
+
+
+## Itens da Rota das Feiras (12)
+
+### Açaí
+
+**ac-1** · Cacho de açaí (Açaí bunch) · nível 1
+
+```
+A bunch of small dark purple açaí palm berries still on the stem (small and simple), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
+```
+
+**ac-2** · Fruto (Açaí berries) · nível 2
+
+```
+A handful of loose dark purple açaí berries, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
+```
+
+**ac-3** · Polpa (Açaí pulp) · nível 3
+
+```
+A small glass jar of thick deep purple açaí pulp, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
+```
+
+**ac-4** · Açaí batido (Blended açaí) · nível 4
+
+```
+A tall glass of blended deep purple açaí with a straw, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
+```
+
+### Peixe
+
+**pe-3** · Filé (Fillet) · nível 3
+
+```
+A raw white fish fillet on a leaf, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
+```
+
+**pe-4** · Peixe assado (Roast fish) · nível 4
+
+```
+A whole roasted fish on a plate with lemon, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
+```
+
+**pe-5** · Pirarucu de casaca · nível 5
+
+```
+Pirarucu de casaca, a layered Amazonian dish of shredded salted fish, farofa and banana in a clay dish (the most impressive, abundant version, with extra detail), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
+```
+
+### Jambu/Tucupi
+
+**jt-1** · Folha de jambu (Jambu leaf) · nível 1
+
+```
+A single green jambu leaf with a small yellow flower bud (small and simple), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
+```
+
+**jt-2** · Maço de jambu (Jambu bunch) · nível 2
+
+```
+A tied bunch of green jambu herb with tiny yellow flower buds, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
+```
+
+**jt-3** · Caldo de tucupi (Tucupi broth) · nível 3
+
+```
+A clay bowl of bright yellow tucupi broth, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
+```
+
+**jt-4** · Tacacá · nível 4
+
+```
+Tacacá, a gourd bowl (cuia) of yellow tucupi soup with jambu leaves and small dried shrimp, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
+```
+
+**jt-5** · Pato no tucupi · nível 5
+
+```
+Pato no tucupi, roast duck pieces in yellow tucupi broth with jambu leaves, in a clay pot (the most impressive, abundant version, with extra detail), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
 ```
 
 
