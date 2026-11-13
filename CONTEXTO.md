@@ -57,7 +57,7 @@ O antigo `docs/arte/icones/gerar-icones.js` (ícones desenhados em SVG) sobrescr
 
 ## Arte dos mercados
 
-Dez dos 12 mercados já têm ilustração (faltam Ver-o-Peso, em Belém, e a Feira Central de Campo Grande), em `versao-b-quitanda-zen/mercados/*.webp`, ligadas pelo campo `img` em `FEIRAS`. Aparecem no topo dos avisos de viagem, chegada e feira concluída, no cartão do mercado na tela inicial, na lista e nos pontos do mapa e na faixa do tabuleiro. Mercados sem `img` continuam com o emoji. O `app-android/scripts/copy-web.js` copia a pasta para o app. As imagens originais e os estilos de arte estão em `docs/arte/referencias/` e `docs/arte/lista-de-arte.md`.
+Os 12 mercados têm ilustração, em `versao-b-quitanda-zen/mercados/*.webp`, ligadas pelo campo `img` em `FEIRAS`. Aparecem no topo dos avisos de viagem, chegada e feira concluída, no cartão do mercado na tela inicial, na lista e nos pontos do mapa e na faixa do tabuleiro. Mercados sem `img` continuam com o emoji. O `app-android/scripts/copy-web.js` copia a pasta para o app. As imagens originais e os estilos de arte estão em `docs/arte/referencias/` e `docs/arte/lista-de-arte.md`.
 
 ## Decisões importantes
 

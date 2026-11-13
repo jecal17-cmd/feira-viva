@@ -24,14 +24,16 @@ São **dois estilos**, de propósito: os mercados (e os personagens que vivem ne
 
 ### Referências já aprovadas
 
-Estas dez já estão no jogo (faltam Ver-o-Peso e Feira Central de Campo Grande), em `versao-b-quitanda-zen/mercados/` (WebP de 960 px de largura). Para pôr a arte de outro mercado: salve a imagem como WebP nessa pasta, com o nome da coluna *Arquivo*, e preencha o campo `img` do mercado em `FEIRAS`, no `index.html`. Sem `img`, o jogo continua usando o emoji.
+Os 12 mercados já estão no jogo, em `versao-b-quitanda-zen/mercados/` (WebP de 960 px de largura). Para pôr a arte de outro mercado: salve a imagem como WebP nessa pasta, com o nome da coluna *Arquivo*, e preencha o campo `img` do mercado em `FEIRAS`, no `index.html`. Sem `img`, o jogo continua usando o emoji.
 
 | Arquivo | Mercado |
 |---|---|
 | `referencias/mercado-04-sao-jose-recife.jpg` | Mercado de São José, Recife (pavilhão verde) |
+| `referencias/mercado-06-feira-central-campo-grande.jpg` | Feira Central, Campo Grande (galpão à noite) |
 | `referencias/mercado-07-mercadao-sp-interior.jpg` | Mercadão, São Paulo (salão interno) |
 | `referencias/mercado-09-sao-cristovao-aerea.jpg` | Feira de São Cristóvão, Rio de Janeiro (vista aérea) |
 | `referencias/mercado-10-porto-alegre.jpg` | Mercado Público, Porto Alegre (fachada amarela) |
+| `referencias/mercado-01-ver-o-peso-belem.jpg` | Ver-o-Peso, Belém (mercado azul à beira da baía) |
 | `referencias/mercado-02-adolpho-lisboa-manaus.jpg` | Mercado Adolpho Lisboa (Mercado Municipal), Manaus (fachada vermelha) |
 | `referencias/mercado-03-sao-joaquim-salvador.jpg` | Feira de São Joaquim, Salvador (rua de feira) |
 | `referencias/mercado-05-fortaleza.jpg` | Mercado Central, Fortaleza (prédio redondo) |
@@ -44,12 +46,12 @@ Estas dez já estão no jogo (faltam Ver-o-Peso e Feira Central de Campo Grande)
 
 | # | Arquivo | Mercado | Cidade | Região (pt / en) | Descrição visual |
 |---|---|---|---|---|---|
-| 1 | `mercados/01-ver-o-peso-belem.png` | Ver-o-Peso | Belém (PA) | Norte / North | mercado de ferro com torrezinhas na beira da baía, barcos coloridos |
+| 1 | `mercados/01-ver-o-peso-belem.png` | Ver-o-Peso | Belém (PA) | Norte / North | mercado azul com quatro torrinhas pontudas e telhado de telhas, à beira da baía, barcos e tendas brancas no cais |
 | 2 | `mercados/02-mercado-adolpho-lisboa-manaus.png` | Mercado Adolpho Lisboa | Manaus (AM) | Norte / North | fachada vermelha e amarela com torre do relógio, portão em arco verde e toldos brancos |
 | 3 | `mercados/03-feira-de-sao-joaquim-salvador.png` | Feira de São Joaquim | Salvador (BA) | Nordeste / Northeast | rua de feira com faixa de entrada, bancas com toldos verdes, cobertura de lona ao fundo |
 | 4 | `mercados/04-mercado-de-sao-jose-recife.png` | Mercado de São José | Recife (PE) | Nordeste / Northeast | pavilhão de ferro verde-claro do século XIX, frontão com arabescos e grande janela em arco de vidro ao centro |
 | 5 | `mercados/05-mercado-central-fortaleza.png` | Mercado Central | Fortaleza (CE) | Nordeste / Northeast | prédio redondo como um estádio, faixas verdes, grande arco amarelo na entrada |
-| 6 | `mercados/06-feira-central-campo-grande.png` | Feira Central | Campo Grande (MS) | Centro-Oeste / Center-West | feira coberta à noite com bancas de sobá |
+| 6 | `mercados/06-feira-central-campo-grande.png` | Feira Central | Campo Grande (MS) | Centro-Oeste / Center-West | galpão coberto à noite com arcos no teto, luz quente e bancas de sobá fumegando |
 | 7 | `mercados/07-mercadao-sao-paulo.png` | Mercadão | São Paulo (SP) | Sudeste / Southeast | salão interno com arcos de pedra clara, claraboia de vidro no teto, vitrais e corredores de bancas de frutas |
 | 8 | `mercados/08-mercado-central-belo-horizonte.png` | Mercado Central | Belo Horizonte (MG) | Sudeste / Southeast | vista aérea de um galpão com telhado em abóbadas claras e fachada vermelha, entre prédios |
 | 9 | `mercados/09-feira-de-sao-cristovao-rio-de-janeiro.png` | Feira de São Cristóvão | Rio de Janeiro (RJ) | Sudeste / Southeast | vista aérea do grande pavilhão oval, com bancas de lona azul cortadas por passarelas brancas em cruz |
