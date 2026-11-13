@@ -19,9 +19,11 @@ REFAZER = {
     'mercados/06-feira-central-campo-grande.png': 'toldos e placas com "SOBÁ" escrito à mão, letras tortas',
 }
 
-def tem(arquivo):                       # 'itens/fr-1.png' -> existe versao-b-quitanda-zen/itens/fr-1.webp?
-    base = os.path.splitext(arquivo)[0]
-    return any(os.path.exists(os.path.join(JOGO, base + ext)) for ext in ('.webp', '.png'))
+ROTA = os.path.normpath(os.path.join(AQUI, '..', '..', 'versao-a-rota-das-feiras'))
+def tem(arquivo):                       # 'itens/fr-1.png' -> versao-b-quitanda-zen/itens/fr-1.webp; 'rota/itens/ac-1.png' -> versao-a-...
+    base = os.path.splitext(arquivo)[0]; raiz = JOGO
+    if base.startswith('rota/'): base, raiz = base[5:], ROTA
+    return any(os.path.exists(os.path.join(raiz, base + ext)) for ext in ('.webp', '.png'))
 
 # CSV
 with open(CSV, encoding='utf-8-sig', newline='') as f: rows = list(csv.DictReader(f))
@@ -47,7 +49,7 @@ for n, ln in enumerate(linhas):
         hdr = out[-1].count('|') - 1
         ln = ln.strip() + ('---|' if cols < hdr else '')
     elif na_tabela and ln.startswith('|'):
-        m = re.search(r'`((?:mercados|itens|personagens|decoracao)/[^`]+)`', ln)
+        m = re.search(r'`((?:mercados|itens|rota/itens|personagens|decoracao)/[^`]+)`', ln)
         marca = ('✅' if m and tem(m.group(1)) else '⬜')
         cel = ln.rstrip().split('|')[1:-1]
         ncols = next(l for l in reversed(out) if 'Arquivo' in l).count('|') - 1
@@ -60,10 +62,10 @@ for n, ln in enumerate(linhas):
 md = '\n'.join(out)
 
 # MD: seção Progresso
-nomes = {'mercado': 'Mercados', 'item': 'Itens do tabuleiro', 'personagem': 'Personagens', 'decoracao': 'Decoração da banca'}
+nomes = {'mercado': 'Mercados', 'item': 'Itens do tabuleiro', 'item-rota': 'Itens da Rota das Feiras', 'personagem': 'Personagens', 'decoracao': 'Decoração da banca'}
 p = ['## Progresso da arte', '', 'Atualizado por `atualizar_status.py`. ✅ = imagem já no jogo · ⬜ = falta gerar.', '',
      '| Grupo | Prontas | Faltam |', '|---|---|---|']
-for t in ('mercado', 'item', 'personagem', 'decoracao'):
+for t in ('mercado', 'item', 'item-rota', 'personagem', 'decoracao'):
     ok, tot, falta = grupos[t]; p.append(f'| {nomes[t]} | {ok} de {tot} | {tot - ok} |')
 falta_it = grupos['item'][2]
 if falta_it:
@@ -81,7 +83,7 @@ open(MD, 'w', encoding='utf-8').write(md)
 print({nomes[t]: f'{g[0]}/{g[1]}' for t, g in grupos.items()})
 
 # falta-gerar.md: lista de trabalho, só com o que falta
-nomes_pl = {'mercado': 'Mercados', 'item': 'Itens do tabuleiro', 'personagem': 'Personagens', 'decoracao': 'Decoração da banca'}
+nomes_pl = {'mercado': 'Mercados', 'item': 'Itens do tabuleiro', 'item-rota': 'Itens da Rota das Feiras', 'personagem': 'Personagens', 'decoracao': 'Decoração da banca'}
 f = ['# Feira Viva · Arte que falta gerar', '',
      'Gerado por `atualizar_status.py` a partir de `lista-de-arte.csv`; não edite à mão. Cada bloco traz o nome do arquivo e o prompt pronto para colar no gerador.', '',
      '## Como mandar', '',
@@ -90,25 +92,25 @@ f = ['# Feira Viva · Arte que falta gerar', '',
      '- Mande em lotes (uma linha de 8 itens é um bom tamanho) e diga o código de cada imagem quando não for óbvio, por exemplo "te-3 cebola".',
      '- O recorte, a troca no jogo e a atualização desta lista são feitos depois, com `itens/recortar_itens.py` e este script.', '',
      '| Grupo | Prontas | Faltam |', '|---|---|---|']
-for t in ('mercado', 'item', 'personagem', 'decoracao'):
+for t in ('mercado', 'item', 'item-rota', 'personagem', 'decoracao'):
     ok, tot, _ = grupos[t]; f.append(f'| {nomes_pl[t]} | {ok} de {tot} | {tot - ok} |')
 ref = [r for r in rows if r['arquivo'] in REFAZER]
 if ref:
     f += ['', '## Refazer (já está no jogo, mas vale gerar de novo)', '']
     for r in ref:
         f += [f'### `{r["arquivo"]}` · {r["nome_pt"]}', '', f'Motivo: {REFAZER[r["arquivo"]]}.', '', '```', r['prompt_en'], '```', '']
-for t in ('item', 'decoracao', 'personagem'):
+for t in ('item', 'item-rota', 'decoracao', 'personagem'):
     falta = grupos[t][2]
     if not falta: continue
     f += ['', f'## {nomes_pl[t]} ({len(falta)})', '']
     grupo_atual = None
     for r in falta:
-        g = r['descricao_pt'].split(',')[0] if t == 'item' else None
+        g = r['descricao_pt'].split(',')[0] if t in ('item', 'item-rota') else None
         if g and g != grupo_atual:
             grupo_atual = g; f += [f'### {g}', '']
         cod = os.path.splitext(os.path.basename(r['arquivo']))[0]
         titulo = f'**{cod}** · {r["nome_pt"]}' + (f' ({r["nome_en"]})' if r['nome_en'] != r['nome_pt'] else '')
-        if t == 'item': titulo += ' · ' + r['descricao_pt'].split(', ')[-1]
+        if t in ('item', 'item-rota'): titulo += ' · ' + r['descricao_pt'].split(', ')[-1]
         f += [titulo, '', '```', r['prompt_en'], '```', '']
 open(FALTA, 'w', encoding='utf-8').write('\n'.join(f).rstrip() + '\n')
 print('falta-gerar.md:', sum(len(grupos[t][2]) for t in grupos), 'imagens a gerar,', len(ref), 'a refazer')

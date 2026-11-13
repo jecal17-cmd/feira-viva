@@ -1,1 +1,7 @@
-First release of Quitanda! Merge, deliver and travel through 12 markets across Brazil.
+What's new in 1.1:
+• All 12 markets now have their own illustrations, from Ver-o-Peso to Curitiba's Mercado Municipal.
+• 50+ board items with brand-new art.
+• Ingredient album in the Recipe Book: complete a line for a bonus.
+• Switch phones without losing progress: Settings › Switch devices.
+• Your phone's back button now returns to the previous screen.
+• The opening now features the song of a real bem-te-vi bird.
