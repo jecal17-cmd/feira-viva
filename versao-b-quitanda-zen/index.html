@@ -121,6 +121,8 @@ a.btn{text-decoration:none;display:inline-block;text-align:center}
 .ing i{position:absolute;top:3px;left:5px;font:800 10px var(--text);font-style:normal;color:var(--muted)}
 .ing em{position:absolute;top:-5px;right:-3px;background:var(--sun);color:#3a2a00;font:800 9px var(--text);font-style:normal;border-radius:99px;padding:1px 5px}
 .ing.no{opacity:.55} .ing.no .e{filter:grayscale(1)} .ing.new{box-shadow:inset 0 -3px 0 var(--lc),0 0 0 2px var(--sun)}
+.xcode{width:100%;font:12px/1.35 ui-monospace,monospace;border-radius:10px;border:2px solid var(--line);padding:8px;background:var(--cell);color:var(--ink);resize:none;word-break:break-all}
+.card h3{margin:4px 0 0;font-size:14px}
 .ndot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--warn);vertical-align:2px}
 .dot{position:absolute;top:4px;right:8px;width:10px;height:10px;border-radius:50%;background:var(--warn)}
 .sheet,.over,.home{position:fixed;inset:0}
@@ -552,6 +554,9 @@ const UI={
   oNoAds:['Remover anúncios (simulado)','Simula a compra única: sem anúncios de tela cheia e +25% nas recompensas.'],
   oTest:['Modo teste','Só para testadores: cestos recarregam 10 vezes mais rápido e os intervalos de anúncio encurtam.'],
   lang:'Idioma', langP:'O jogo também está em inglês.', panel:'Painel do teste', panelNote:'Os anúncios são simulados. O progresso fica salvo só neste navegador.',
+  xfer:['Trocar de aparelho','Leve seu progresso para outro celular com um código.'], xferB:'Abrir', xferP:'No aparelho antigo, copie o código e mande para você mesmo (WhatsApp, e-mail). No aparelho novo, cole o código aqui. O código não expira e não usa internet.',
+  xferOut:'Seu código', xferCopy:'Copiar código', xferCopied:'Código copiado', xferIn:'Restaurar de outro aparelho', xferPaste:'Cole aqui o código', xferLoad:'Restaurar progresso',
+  xferBad:'Código inválido. Confira se copiou ele inteiro.', xferQ:'Trocar o progresso?', xferQP:(l,s,c)=>`O código traz: nível ${l}, ${s} feiras concluídas, ${c} moedas. O progresso atual deste aparelho será substituído.`, xferYes:'Usar este progresso',
   reset:'Recomeçar do zero', resetP:'Apaga todo o progresso.', resetB:'Recomeçar', resetQ:'Recomeçar do zero?', resetQP:'Todo o progresso desta quitanda será apagado.', resetYes:'Apagar e recomeçar', cancel:'Cancelar',
   adCharge:g=>`+${g} cargas em cada cesto`, doubled:x=>`Recompensa dobrada: +${x} XP`, missDone:(co,x)=>`Missão cumprida: +${co} moedas e +${x} XP`,
   pickFirst:'Escolha um item no tabuleiro primeiro.'
@@ -642,6 +647,9 @@ const UI={
   oNoAds:['Remove ads (simulated)','Simulates the one-time purchase: no full-screen ads and +25% rewards.'],
   oTest:['Test mode','Testers only: baskets refill 10 times faster and ad intervals are shorter.'],
   lang:'Language', langP:'O jogo também está em português.', panel:'Test panel', panelNote:'Ads are simulated. Progress is saved only in this browser.',
+  xfer:['Switch devices','Take your progress to another phone with a code.'], xferB:'Open', xferP:'On the old device, copy the code and send it to yourself (WhatsApp, email). On the new device, paste the code here. The code never expires and works offline.',
+  xferOut:'Your code', xferCopy:'Copy code', xferCopied:'Code copied', xferIn:'Restore from another device', xferPaste:'Paste the code here', xferLoad:'Restore progress',
+  xferBad:'Invalid code. Make sure you copied all of it.', xferQ:'Replace your progress?', xferQP:(l,s,c)=>`The code holds: level ${l}, ${s} markets done, ${c} coins. The current progress on this device will be replaced.`, xferYes:'Use this progress',
   reset:'Start over', resetP:'Erases all progress.', resetB:'Start over', resetQ:'Start over?', resetQP:'All progress at this quitanda will be erased.', resetYes:'Erase and start over', cancel:'Cancel',
   adCharge:g=>`+${g} charges in every basket`, doubled:x=>`Reward doubled: +${x} XP`, missDone:(co,x)=>`Mission complete: +${co} coins and +${x} XP`,
   pickFirst:'Pick an item on the board first.'
@@ -653,7 +661,7 @@ const $=id=>document.getElementById(id), fmt=n=>Math.round(n).toLocaleString(LAN
 const dstr=t=>new Date(t).toLocaleDateString('sv'), today=()=>dstr(Date.now());
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 // Arte dos itens (pasta itens/, nome = código da lista de arte, ex.: fr-1). Sem arte, fica o emoji.
-const ITEM_ART=new Set(['fr','pe','ve','te','be'].flatMap(l=>[1,2,3,4,5,6,7,8].map(n=>l+'-'+n)).concat(['ca-2','ar-1','ar-2']));
+const ITEM_ART=new Set(['fr','pe','ve','te','be','ar'].flatMap(l=>[1,2,3,4,5,6,7,8].map(n=>l+'-'+n)).concat(['ca-2','gr-1','gr-2','gr-3','gr-4','gr-6','gr-7','gr-8','do-1','do-2']));
 const ie=(l,n)=>ITEM_ART.has(l+'-'+n)?`<img class="ii" src="itens/${l}-${n}.webp" alt="" draggable="false">`:LINES[l].it[n-1][0];
 const item=(l,n)=>{ const x=LINES[l].it[n-1]; return [ie(l,n),LANG==='en'?x[2]:x[1]]; };
 const gloss=(l,n)=>LANG==='en'?GLOSS[l+n]:null;
@@ -680,7 +688,7 @@ const mmss=sec=>sec<60?sec+' s':Math.floor(sec/60)+':'+String(sec%60).padStart(2
 const upCost=k=>Math.round(UPS[k].base*Math.pow(UPS[k].k,S.up[k])/10)*10;
 const encLvl=()=>Math.min(7,4+Math.floor(S.enc.k/3));
 const needH=lv=>3+2*lv;
-let recTab='rec', S, sel=null, selOrder=null, offer=null, drag=null, popAt=-1, noClick=false, sheetName=null, adTimer=null, toastTimer=null, audio=null;
+let recTab='rec', xferNew=null, S, sel=null, selOrder=null, offer=null, drag=null, popAt=-1, noClick=false, sheetName=null, adTimer=null, toastTimer=null, audio=null;
 let trip=null, tripBonus=0, homeOn=true, lastAct=Date.now(), combo=0, lastMerge=0, fxQ=[], modalQ=[], tip=Math.floor(Math.random()*TIPS.length);
 
 const isAdj=(x,y,cols)=>{ const d=Math.abs(x-y); return d===cols||(d===1&&Math.floor(x/cols)===Math.floor(y/cols)); };
@@ -766,6 +774,23 @@ function noteSeen(){
   for(const l of Object.keys(LINES)) if(!S.albumDone.includes(l)&&LINES[l].it.every((_,j)=>S.seen[l+(j+1)])){
     S.albumDone.push(l); setTimeout(()=>{ const x=gain(ALB_XP,ALB_CO); beep(880); beep(1100,.12); toast(t('albDone',lname(l),x,Math.round(ALB_CO*lapBonus()))); save(); render(); },300); }
 }
+/* Trocar de aparelho: o progresso inteiro vira um código de texto (JSON comprimido em base64url, com verificação).
+   QZ1 = comprimido (deflate-raw), QZ0 = sem compressão (aparelho sem CompressionStream). */
+const b64u={ enc:u=>{ let s=''; for(let i=0;i<u.length;i+=0x8000) s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000)); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); },
+  dec:t=>{ const s=atob(t.replace(/-/g,'+').replace(/_/g,'/')); const u=new Uint8Array(s.length); for(let i=0;i<s.length;i++) u[i]=s.charCodeAt(i); return u; } };
+const soma=t=>{ let h=2166136261; for(let i=0;i<t.length;i++){ h^=t.charCodeAt(i); h=Math.imul(h,16777619); } return (h>>>0).toString(36).slice(-4); };
+const pipe=(u,T)=>new Response(new Blob([u]).stream().pipeThrough(T)).arrayBuffer().then(b=>new Uint8Array(b));
+async function saveCode(){ save(); const u=new TextEncoder().encode(JSON.stringify(S)); let v='QZ0', d=u;
+  if(window.CompressionStream){ try{ d=await pipe(u,new CompressionStream('deflate-raw')); v='QZ1'; }catch(e){ d=u; v='QZ0'; } }
+  const body=b64u.enc(d); return `${v}-${body}-${soma(body)}`; }
+async function readCode(txt){ const m=String(txt).replace(/\s+/g,'').match(/^(QZ[01])-([A-Za-z0-9_-]+)-([a-z0-9]{1,4})$/); if(!m||soma(m[2])!==m[3]) throw 0;
+  let u=b64u.dec(m[2]); if(m[1]==='QZ1') u=await pipe(u,new DecompressionStream('deflate-raw'));
+  const d=JSON.parse(new TextDecoder().decode(u)); if(!d||d.v!==2||!Array.isArray(d.board)) throw 0; return d; }
+function transferModal(){ modal(`<div class="big">📲</div><h2>${t('xfer')[0]}</h2><p>${t('xferP')}</p>
+   <h3>${t('xferOut')}</h3><textarea id="xcode" class="xcode" readonly rows="3" placeholder="…"></textarea><button class="btn" data-act="xcopy">${t('xferCopy')}</button>
+   <h3>${t('xferIn')}</h3><textarea id="xin" class="xcode" rows="3" placeholder="${t('xferPaste')}" autocomplete="off" autocapitalize="off" spellcheck="false"></textarea><button class="btn ghosty" data-act="xload">${t('xferLoad')}</button>
+   <button class="btn ghosty" data-act="mclose">${t('close')}</button>`);
+  saveCode().then(c=>{ const el=$('xcode'); if(el) el.value=c; }).catch(()=>{}); }
 function gain(xp,co){
   xp=Math.round(xp*(1+S.decor.length/100)*lapBonus()); co=Math.round(co*lapBonus()); S.xp+=xp; S.coins+=co; S.stats.xp+=xp;
   const ups=[]; while(S.xp>=need(S.level)){ S.xp-=need(S.level); S.level++; ups.push(S.level); }
@@ -1164,6 +1189,7 @@ function renderSheet(){
      +`<div class="row"><div><b>${t('priv')[0]}</b><p>${t('priv')[1]}</p></div><a class="btn ghosty" href="${PUB.priv}" target="_blank" rel="noopener">${t('privB')}</a></div>`
      +(AdNet&&AdNet.privReq()?`<div class="row"><div><b>${t('adPriv')[0]}</b><p>${t('adPriv')[1]}</p></div><button class="btn ghosty" data-act="adpriv">${t('adPrivB')}</button></div>`:'')
      +`<p class="note">${t('credit')}</p>`
+     +`<div class="row"><div><b>${t('xfer')[0]}</b><p>${t('xfer')[1]}</p></div><button class="btn ghosty" data-act="xfer">${t('xferB')}</button></div>`
      +`<div class="row"><div><b>${t('reset')}</b><p class="warn">${t('resetP')}</p></div><button class="btn ghosty" data-act="reset">${t('resetB')}</button></div>`;
   }
   if(sheetName==='cfg') h+=`<button class="ver" data-act="ver">${t('version')}</button>`;
@@ -1244,6 +1270,14 @@ document.addEventListener('click',e=>{
     else if(k==='travelask'){ closeModal(); travelAsk(); }
     else if(k==='travel'){ closeModal(); travel(); }
     else if(k==='mclose'){ closeModal(); render(); }
+    else if(k==='xfer') transferModal();
+    else if(k==='xcopy'){ const el=$('xcode'); if(!el||!el.value) return; const ok=()=>toast(t('xferCopied'));
+      if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(el.value).then(ok,()=>{ el.select(); try{ document.execCommand('copy'); ok(); }catch(e){} });
+      else { el.select(); try{ document.execCommand('copy'); ok(); }catch(e){} } }
+    else if(k==='xload'){ const el=$('xin'); readCode(el?el.value:'').then(d=>{ xferNew=d;
+        $('card').innerHTML=`<div class="big">📲</div><h2>${t('xferQ')}</h2><p>${t('xferQP',d.level||1,d.stop||0,fmt(d.coins||0))}</p><button class="btn" data-act="xyes">${t('xferYes')}</button><button class="btn ghosty" data-act="mclose">${t('cancel')}</button>`; })
+        .catch(()=>toast(t('xferBad'))); }
+    else if(k==='xyes'){ if(!xferNew) return; try{ localStorage.setItem(KEY,JSON.stringify(xferNew)); }catch(e){ toast(t('xferBad')); return; } location.reload(); }
     else if(k==='reset') modal(`<h2>${t('resetQ')}</h2><p>${t('resetQP')}</p><button class="btn" data-act="resetyes">${t('resetYes')}</button><button class="btn ghosty" data-act="mclose">${t('cancel')}</button>`);
     else if(k==='resetyes'){ try{ localStorage.removeItem('quitanda-zen-v1'); }catch(e){} S=fresh(); sel=null; selOrder=null; offer=null; modalQ=[]; closeModal(); sheetName=null; $('sheet').hidden=true; homeOn=true; render(); }
     else if(k==='lvlok'){ closeModal(); render(); maybeInter(); }

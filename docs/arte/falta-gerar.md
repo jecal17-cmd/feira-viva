@@ -12,7 +12,7 @@ Gerado por `atualizar_status.py` a partir de `lista-de-arte.csv`; não edite à 
 | Grupo | Prontas | Faltam |
 |---|---|---|
 | Mercados | 12 de 12 | 0 |
-| Itens do tabuleiro | 43 de 104 | 61 |
+| Itens do tabuleiro | 58 de 104 | 46 |
 | Personagens | 0 de 28 | 28 |
 | Decoração da banca | 0 de 12 | 12 |
 
@@ -51,71 +51,9 @@ Açaí bowl, thick deep purple açaí purée topped with banana slices and grano
 ```
 
 
-## Itens do tabuleiro (61)
-
-### Artesanato
-
-**ar-3** · Fita do Bonfim · nível 3
-
-```
-Fita do Bonfim, a bunch of plain colorful satin wish ribbons tied together in a knot, completely blank ribbons without any printed words (wish ribbon from Salvador: tie it on and make three wishes), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**ar-4** · Renda (Bobbin lace) · nível 4
-
-```
-Bobbin lace, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**ar-5** · Chapéu de palha (Straw hat) · nível 5
-
-```
-Straw hat, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**ar-6** · Cesto de palha (Straw basket) · nível 6
-
-```
-Straw basket, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**ar-7** · Boneco de barro (Clay figurine) · nível 7
-
-```
-Clay figurine, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**ar-8** · Viola (Viola caipira) · nível 8
-
-```
-Viola caipira (ten-string Brazilian country guitar; the most impressive, abundant version, with extra detail), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
+## Itens do tabuleiro (46)
 
 ### Armazém
-
-**gr-1** · Amendoim (Peanuts) · nível 1
-
-```
-Peanuts (small and simple), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**gr-2** · Castanha-do-pará (Brazil nuts) · nível 2
-
-```
-Brazil nuts, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**gr-3** · Pipoca (Popcorn) · nível 3
-
-```
-Popcorn, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**gr-4** · Arroz (Rice) · nível 4
-
-```
-Rice, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
 
 **gr-5** · Farinha de mandioca (Cassava flour) · nível 5
 
@@ -123,37 +61,7 @@ Rice, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid sa
 Cassava flour, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
 ```
 
-**gr-6** · Feijão (Beans) · nível 6
-
-```
-Beans, game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**gr-7** · Cuscuz · nível 7
-
-```
-Cuscuz (steamed cornmeal cake from the Northeast), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**gr-8** · Baião de dois · nível 8
-
-```
-Baião de dois (rice and beans cooked together with cheese, from Ceará; the most impressive, abundant version, with extra detail), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
 ### Doces
-
-**do-1** · Rapadura · nível 1
-
-```
-Rapadura (block of unrefined cane sugar; small and simple), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
-
-**do-2** · Paçoca · nível 2
-
-```
-Paçoca (crumbly peanut candy), game item icon, glossy stylized 3D render, smooth rounded shapes, vivid saturated colors with soft gradients, soft studio lighting with gentle highlights, single object centered and fully in frame, compact pose that fills a square frame, plain pure white background, no shadow, no text, no letters, no watermark, square 1:1
-```
 
 **do-3** · Chocolate · nível 3
 

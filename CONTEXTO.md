@@ -65,6 +65,8 @@ Os itens do tabuleiro com arte ficam em `versao-b-quitanda-zen/itens/<código>.w
 
 **Botão voltar do Android** (Quitanda): o plugin `@capacitor/app` entrega o botão ao jogo (`voltar()` no `index.html`). Ele fecha a camada da frente (vinheta, aviso com botão de fechar ou continuar, painel), volta do tabuleiro para a tela inicial e, na tela inicial, sai do app no segundo toque em até 2 s. Anúncio simulado só fecha depois da contagem. A Rota das Feiras ainda não tem isso.
 
+**Trocar de aparelho** (Ajustes): `saveCode()` transforma o progresso inteiro (`S`) num código de texto (`QZ1-<JSON comprimido com deflate-raw em base64url>-<verificação>`, uns 900 caracteres; `QZ0` sem compressão em aparelhos sem `CompressionStream`). No outro aparelho, `readCode()` confere a verificação e a versão, mostra nível, feiras e moedas, e, se a pessoa confirmar, grava em `localStorage` e recarrega. Não usa servidor nem conta.
+
 **Álbum de ingredientes** (aba "Ingredientes" do Caderno de Receitas): mostra as 13 linhas × 8 níveis; tudo o que passa pelo tabuleiro entra (`S.seen`, 1 = novo, 2 = visto; o nível 1 já entra como visto). Um ponto no botão Receitas avisa quando há novidade, e o Caderno abre direto nessa aba. Completar os 8 níveis de uma linha rende +100 XP e +150 moedas, com o bônus da volta (`ALB_XP`, `ALB_CO`, `S.albumDone`). Saves antigos começam com o que estiver no tabuleiro.
 
 ## Decisões importantes
