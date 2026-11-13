@@ -61,7 +61,7 @@ Os 12 mercados têm ilustração, em `versao-b-quitanda-zen/mercados/*.webp`, li
 
 ## Arte dos itens
 
-Os itens do tabuleiro com arte ficam em `versao-b-quitanda-zen/itens/<código>.webp` (256 px, fundo transparente) e são listados em `ITEM_ART`, no `index.html`; os demais continuam com o emoji. A imagem aparece no tabuleiro, nos pedidos, nos cestos, na prateleira da tela inicial, nas receitas e ao arrastar. Para recortar arte nova: `docs/arte/itens/recortar_itens.py` (rembg). Para marcar o que já está pronto na lista de arte: `docs/arte/atualizar_status.py`.
+Os itens do tabuleiro com arte ficam em `versao-b-quitanda-zen/itens/<código>.webp` (256 px, fundo transparente) e são listados em `ITEM_ART`, no `index.html`; os demais continuam com o emoji. A imagem aparece no tabuleiro, nos pedidos, nos cestos, na prateleira da tela inicial, nas receitas e ao arrastar. Para recortar arte nova: `docs/arte/itens/recortar_itens.py` (rembg). O WebP do jogo é normalizado a partir da matriz de 512 px: itens compridos e deitados são girados para a diagonal (`GIRO` define os que sobem pela direita) e todos ocupam 36% da casa (`AREA_ALVO`); `--todos` refaz tudo. Para marcar o que já está pronto na lista de arte: `docs/arte/atualizar_status.py`.
 
 **Botão voltar do Android** (Quitanda): o plugin `@capacitor/app` entrega o botão ao jogo (`voltar()` no `index.html`). Ele fecha a camada da frente (vinheta, aviso com botão de fechar ou continuar, painel), volta do tabuleiro para a tela inicial e, na tela inicial, sai do app no segundo toque em até 2 s. Anúncio simulado só fecha depois da contagem. A Rota das Feiras ainda não tem isso.
 
