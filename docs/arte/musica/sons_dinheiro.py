@@ -12,6 +12,7 @@ Gasto (Teto):
   E-notas       notas sendo contadas, com um "tic" de confirmação
   F-carimbo     carimbo suave de registro
 Versão 2 (segundo as referências enviadas): A2-moedinhas, B2-punhado, C2-caixa-antiga, C3-cha-ching
+Versão 3 (ajustes pedidos): A3-moedinhas (mais moedas, mais longo), B3-punhado (mais longo), C4-caixa-antiga (sino mais grave)
 """
 import os, sys, wave
 import numpy as np
@@ -125,6 +126,20 @@ SONS.update({
     'B2-punhado': lambda: mix(punhado(14, .75) + [(chocalho_metal(.3, .25), 0, 1)], 1.0),
     'C2-caixa-antiga': lambda: mix(catraca(9, .42) + [(baque(160, .2, .8), .47, 1), (chocalho_metal(.12, .5), .48, 1), (sino_caixa(2064, 1.6, 1), .52, 1)] + punhado(3, .15, .5)[:0], 2.0),
     'C3-cha-ching': lambda: mix([(estalo(.2, 1), 0, 1), (sino_caixa(5000, 1.3, .9, ((1, 1, .5), (.89, .9, .45), (.305, .45, .35), (1.6, .25, .2)), .001), .13, 1)], 1.4),
+})
+
+# ---------------- versão 3: ajustes pedidos (A3 mais moedas e mais longo, B3 mais longo, C4 mais grave) ----------------
+def chuva(n, dur, v=1.0, fim=.6):
+    """Moedas caindo com densidade que diminui no fim (assentando), como nas referências."""
+    u = np.sort(rng.random(n)) ** 1.35 * dur; u[0] = 0
+    return [(tilim(v * rng.uniform(.5, 1.0) * (1 - fim * t / dur)), t, 1) for t in u]
+
+SONS.update({
+    'A3-moedinhas': lambda: mix([(tilim(1, base=5600), 0, 1), (tilim(.85, base=5350), .07, 1), (tilim(.75, base=5800), .13, 1)] + chuva(6, .55, .55)[1:]
+                                 + [(tilim(.45, base=5450), .62, 1), (tilim(.3, base=5700), .72, 1)], .95),
+    'B3-punhado': lambda: mix(chuva(30, 1.6) + [(chocalho_metal(.5, .25), 0, 1), (chocalho_metal(.4, .15), .6, 1)], 2.0),
+    'C4-caixa-antiga': lambda: mix(catraca(9, .42, .9) + [(baque(110, .25, .9), .47, 1), (chocalho_metal(.12, .4), .48, 1),
+                                    (sino_caixa(1380, 1.9, 1, ((1, 1, .5), (2.4, .22, .25), (.5, .12, .4), (3.1, .06, .12))), .52, 1)], 2.4),
 })
 
 if __name__ == '__main__':
