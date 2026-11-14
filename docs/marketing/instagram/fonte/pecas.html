@@ -1,0 +1,153 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800;900&display=swap">
+<style>
+:root{--creme:#FFF6D9;--verde:#1B4A3F;--folha:#2A8F63;--sol:#F2B33D;--amarelo:#F2CB25;--ouro:#E0A800;--toldo:#E4573D;--menta:#DCEFE4;--tinta:#16322B;--branco:#FFFDF6}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:transparent}
+body{font-family:Nunito,system-ui,sans-serif;color:var(--tinta)}
+.peca{position:relative;overflow:hidden;background:var(--creme)}
+.d{font-family:"Baloo 2",system-ui,sans-serif;font-weight:800;line-height:.95;letter-spacing:-.01em}
+.toldo{position:absolute;left:-20px;right:-20px;top:0;height:120px;background:repeating-linear-gradient(90deg,var(--toldo) 0 90px,#FFF7EA 90px 180px);
+  -webkit-mask:radial-gradient(45px at 45px 100%,#0000 98%,#000) 0 0/90px 100%;mask:radial-gradient(48px at 45px 120px,#0000 98%,#000) -45px 0/90px 100% repeat-x;filter:drop-shadow(0 10px 0 rgba(0,0,0,.08))}
+.toldo.b{top:auto;bottom:0;transform:scaleY(-1)}
+.st{position:absolute;filter:drop-shadow(0 18px 22px rgba(40,30,0,.25))}
+.st img{width:100%;display:block}
+.chip{display:inline-flex;align-items:center;gap:14px;background:var(--verde);color:#fff;border-radius:999px;padding:14px 34px;font:900 34px Nunito}
+.chip.sol{background:var(--sol);color:var(--tinta)}
+.gp{display:inline-flex;align-items:center;gap:18px;background:#111;color:#fff;border-radius:22px;padding:16px 30px 16px 22px;font:800 24px Nunito;line-height:1.05;text-align:left}
+.gp b{display:block;font:800 40px "Baloo 2";line-height:.9}
+.gp svg{width:56px;height:56px}
+.assin{position:absolute;display:flex;align-items:center;gap:12px;font:800 28px Nunito;color:var(--verde)}
+.assin img{height:54px}
+.cartao{background:var(--branco);border-radius:44px;box-shadow:0 24px 50px rgba(27,74,63,.18)}
+.n{display:inline-grid;place-items:center;width:92px;height:92px;border-radius:50%;background:var(--toldo);color:#fff;font:800 58px "Baloo 2"}
+.foto{border-radius:36px;overflow:hidden;box-shadow:0 22px 44px rgba(0,0,0,.22)}
+.foto img{width:100%;height:100%;object-fit:cover;display:block}
+.celular{border-radius:64px;background:#111;padding:18px;box-shadow:0 40px 70px rgba(0,0,0,.3)}
+.celular img{display:block;width:100%;border-radius:48px}
+.dots{position:absolute;bottom:40px;left:0;right:0;display:flex;justify-content:center;gap:14px}
+.dots i{width:16px;height:16px;border-radius:50%;background:rgba(27,74,63,.25)} .dots i.on{background:var(--verde);width:44px;border-radius:99px}
+.seta{position:absolute;right:46px;bottom:30px;font:800 30px Nunito;color:var(--verde)}
+</style></head><body><div id="root"></div>
+<script>
+const q=new URLSearchParams(location.search), P=q.get('p'), LG=q.get('l')||'pt', L=(pt,en)=>LG==='en'?en:pt;
+const A='assets/', I=c=>`${A}i/${c}.png`;
+const M={1:['mercado-01-ver-o-peso-belem','Ver-o-Peso','Belém · PA'],2:['mercado-02-adolpho-lisboa-manaus','Mercado Adolpho Lisboa','Manaus · AM'],3:['mercado-03-sao-joaquim-salvador','Feira de São Joaquim','Salvador · BA'],
+ 4:['mercado-04-sao-jose-recife','Mercado de São José','Recife · PE'],5:['mercado-05-fortaleza','Mercado Central','Fortaleza · CE'],6:['mercado-06-feira-central-campo-grande','Feira Central','Campo Grande · MS'],
+ 7:['mercado-07-mercadao-sp-interior','Mercadão','São Paulo · SP'],8:['mercado-08-belo-horizonte-aerea','Mercado Central','Belo Horizonte · MG'],9:['mercado-09-sao-cristovao-aerea','Feira de São Cristóvão','Rio de Janeiro · RJ'],
+ 10:['mercado-10-porto-alegre','Mercado Público','Porto Alegre · RS'],11:['mercado-11-florianopolis','Mercado Público','Florianópolis · SC'],12:['mercado-12-curitiba','Mercado Municipal','Curitiba · PR']};
+const MI=k=>`${A}m/${M[k][0]}.jpg`;
+const st=(c,x,y,w,r=0)=>`<div class="st" style="left:${x}px;top:${y}px;width:${w}px;transform:rotate(${r}deg)"><img src="${I(c)}"></div>`;
+const gp=()=>`<img src="${A}gp-${LG==='en'?'en':'pt'}.png" alt="${L('Disponível no Google Play','Get it on Google Play')}" style="width:420px;display:inline-block">`;
+const assin=(x,y,cor)=>`<div class="assin" style="left:${x}px;top:${y}px;${cor?'color:'+cor:''}"><img src="${A}bentevi-passaro.png">${L('um jogo Bentevi','a Bentevi game')}</div>`;
+const dots=(n,k)=>`<div class="dots">${Array.from({length:n},(_,i)=>`<i class="${i===k?'on':''}"></i>`).join('')}</div>`;
+const titulo=(t,sz,cor)=>`<div class="d" style="font-size:${sz}px;color:${cor||'var(--verde)'}">${t}</div>`;
+const W=1080, H=P.startsWith('s')||P.startsWith('h')||P.startsWith('c')?1920:P.startsWith('perfil')?1080:1350;
+const nomeJogo=L('Quitanda Zen','Quitanda');
+const pecas={
+// ---------------- FEED 1080x1350 ----------------
+f1:()=>`<div class="toldo"></div>
+  ${st('fr-5',50,430,170,-12)}${st('pe-3',840,420,200,10)}${st('ca-2',40,720,150,-6)}${st('fr-4',900,730,150,12)}${st('te-7',90,1060,150,8)}${st('be-2',850,1070,160,-8)}
+  <div style="position:absolute;left:0;right:0;top:170px;text-align:center">${titulo(L('Chegou a','Meet'),76,'var(--toldo)')}${titulo(nomeJogo,150)}</div>
+  <div style="position:absolute;left:290px;top:420px;width:500px;height:500px;border-radius:120px;overflow:hidden;box-shadow:0 40px 80px rgba(27,74,63,.35),0 0 0 14px #fff"><img src="${A}quitanda-icone.png" style="width:100%"></div>
+  <div style="position:absolute;left:0;right:0;top:965px;text-align:center;font:800 40px Nunito;color:var(--tinta)">${L('Junte · Entregue · Viaje pelo Brasil','Merge · Deliver · Travel across Brazil')}</div>
+  <div style="position:absolute;left:0;right:0;top:1060px;text-align:center">${gp()}</div>
+  ${assin(390,1225)}`,
+f2a:()=>`<div class="toldo"></div>
+  <div style="position:absolute;left:70px;top:190px;width:560px">${titulo(L('Como jogar','How to play'),110)}<div class="d" style="font-size:110px;color:var(--toldo)">${L('em 3 passos','in 3 steps')}</div>
+   <p style="font:700 38px/1.3 Nunito;margin-top:30px">${L('Fácil de aprender, gostoso de repetir. Arraste para o lado 👉','Easy to learn, hard to put down. Swipe 👉')}</p></div>
+  <div class="celular" style="position:absolute;left:650px;top:170px;width:390px;transform:rotate(6deg)"><img src="${A}cap/${LG==='en'?'en-US':'pt-BR'}/1-tabuleiro.png"></div>
+  ${st('fr-1',90,820,170,-10)}${st('fr-2',290,860,170,6)}${st('fr-3',480,820,170,-4)}
+  ${dots(5,0)}`,
+f2b:()=>`<div class="toldo"></div>
+  <div style="position:absolute;left:70px;top:180px"><span class="n">1</span></div>
+  <div style="position:absolute;left:190px;top:175px">${titulo(L('Junte','Merge'),120)}</div>
+  <div class="cartao" style="position:absolute;left:70px;top:380px;width:940px;height:520px;display:flex;align-items:center;justify-content:center;gap:10px">
+   <img src="${I('fr-1')}" style="width:220px"><span class="d" style="font-size:110px;color:var(--folha)">+</span><img src="${I('fr-1')}" style="width:220px"><span class="d" style="font-size:110px;color:var(--folha)">=</span><img src="${I('fr-2')}" style="width:250px"></div>
+  <p style="position:absolute;left:70px;right:70px;top:960px;font:800 46px/1.25 Nunito">${L('Arraste um item sobre outro igual: os dois viram um item melhor. Do limão à laranja, da laranja à banana…','Drag an item onto its twin and they become something better. Lime to orange, orange to banana…')}</p>
+  ${dots(5,1)}`,
+f2c:()=>`<div class="toldo"></div>
+  <div style="position:absolute;left:70px;top:180px"><span class="n">2</span></div>
+  <div style="position:absolute;left:190px;top:175px">${titulo(L('Entregue','Deliver'),120)}</div>
+  <div style="position:absolute;left:70px;top:380px;display:flex;gap:30px">
+   ${[['🧔🏽','Raimundo',['pe-3','te-2'],14],['👵🏽','Nazaré',['fr-4'],10],['🐈','Mingau',['be-2'],4]].map(([f,n,its,c])=>`<div class="cartao" style="width:293px;height:430px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:30px 10px;border:6px solid var(--folha)">
+     <b style="font:900 36px Nunito">${f} ${n}</b><div style="display:flex">${its.map(i=>`<img src="${I(i)}" style="width:${its.length>1?130:190}px">`).join('')}</div><span class="chip sol">🪙 ${c}</span></div>`).join('')}</div>
+  <p style="position:absolute;left:70px;right:70px;top:880px;font:800 46px/1.25 Nunito">${L('A turma da feira faz pedidos. Entregue e ganhe moedas, XP e novos amigos. Cada pedido mostra quanto paga.','The market crew places orders. Fill them for coins, XP and new friends. Every order shows what it pays.')}</p>
+  ${dots(5,2)}`,
+f2d:()=>`<div class="toldo"></div>
+  <div style="position:absolute;left:70px;top:180px"><span class="n">3</span></div>
+  <div style="position:absolute;left:190px;top:175px">${titulo(L('Viaje','Travel'),120)}</div>
+  <div class="foto" style="position:absolute;left:70px;top:370px;width:940px;height:529px"><img src="${MI(4)}"></div>
+  <span class="chip" style="position:absolute;left:100px;top:830px">📍 Recife · PE</span>
+  <p style="position:absolute;left:70px;right:70px;top:950px;font:800 46px/1.25 Nunito">${L('Complete a feira e pegue a estrada: são 12 mercados reais, de Belém a Porto Alegre.','Finish a market and hit the road: 12 real markets, from Belém to Porto Alegre.')}</p>
+  ${dots(5,3)}`,
+f2e:()=>`<div class="toldo"></div>
+  ${st('fr-8',40,960,210,-10)}${st('pe-8',830,950,210,10)}${st('ve-8',60,1150,150,6)}${st('te-8',870,1150,150,-8)}
+  <div style="position:absolute;left:0;right:0;top:300px;text-align:center">${titulo(L('Sem pressa.','No rush.'),120)}${titulo(L('Sem derrota.','No losing.'),120,'var(--toldo)')}
+   <p style="font:800 44px/1.3 Nunito;margin:40px auto 0;width:640px">${L('Um passatempo calmo, com cara de feira brasileira.','A calm pastime that feels like a Brazilian street market.')}</p>
+   <div style="margin-top:56px">${gp()}</div></div>
+  ${assin(390,1180)}${dots(5,4)}`,
+f3a:()=>`<div style="position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);gap:8px">${[1,2,3,4,5,6,7,8,9,10,11,12].map(k=>`<img src="${MI(k)}" style="width:100%;height:100%;object-fit:cover">`).join('')}</div>
+  <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,246,217,.15),rgba(22,50,43,.75))"></div>
+  <div class="cartao" style="position:absolute;left:90px;right:90px;top:420px;padding:56px 50px;text-align:center">${titulo(L('12 mercados','12 markets'),140,'var(--toldo)')}${titulo(L('do Brasil','of Brazil'),110)}
+   <p style="font:800 40px/1.3 Nunito;margin-top:26px">${L('Conheça a rota da Quitanda Zen 👉','Meet the Quitanda trail 👉')}</p></div>${dots(5,0)}`,
+f3b:()=>trio([1,2,3],L('Norte e Nordeste','North & Northeast'),1),
+f3c:()=>trio([4,5,6],L('Nordeste e Centro-Oeste','Northeast & Center-West'),2),
+f3d:()=>trio([7,8,9],L('Sudeste','Southeast'),3),
+f3e:()=>trio([10,11,12],L('Sul','South'),4),
+f4:()=>`<div class="toldo"></div>
+  <div style="position:absolute;left:0;right:0;top:170px;text-align:center">${titulo(L('Do limão','From lime'),104)}${titulo(L('ao açaí','to açaí bowl'),104,'var(--toldo)')}
+   <p style="font:800 38px Nunito;margin-top:18px">${L('8 níveis em cada linha. 13 linhas para descobrir.','8 levels per line. 13 lines to discover.')}</p></div>
+  ${['fr-1','fr-2','fr-3','fr-4','fr-5','fr-6','fr-7','fr-8'].map((c,k)=>{ const col=k%4, row=Math.floor(k/4), x=70+col*240, y=560+row*330+(col%2?40:0);
+     return `<div style="position:absolute;left:${x}px;top:${y}px;width:220px;text-align:center"><img src="${I(c)}" style="width:${150+k*8}px;filter:drop-shadow(0 14px 16px rgba(0,0,0,.2))"><div><span class="n" style="width:62px;height:62px;font-size:40px;background:var(--folha)">${k+1}</span></div></div>`; }).join('')}
+  ${assin(390,1240)}`,
+f5:()=>`<div style="position:absolute;inset:0;background:radial-gradient(circle at 70% 35%,#FFE89A,var(--creme) 60%)"></div>
+  <img src="${A}bentevi-galho.png" style="position:absolute;left:330px;top:120px;width:720px">
+  <div style="position:absolute;left:70px;top:150px;width:520px">${titulo(L('Prazer,','Hi, we’re'),90,'var(--toldo)')}<img src="${A}bentevi-marca.png" style="width:470px;margin-top:10px"></div>
+  <div class="cartao" style="position:absolute;left:70px;right:70px;top:780px;padding:46px 52px">
+   <p style="font:800 42px/1.3 Nunito">${L('Somos um estúdio independente brasileiro. Fazemos jogos e apps calmos, bonitos e com cara de Brasil, sem pressa e sem truques.','We’re an independent studio from Brazil. We make calm, good-looking games and apps that feel like home, with no rush and no tricks.')}</p>
+   <p style="font:700 32px/1.3 Nunito;margin-top:20px;color:var(--folha)">${L('O nome vem do bem-te-vi, o passarinho que canta o próprio nome. 🐦','Bentevi comes from bem-te-vi (“I saw you”), the Brazilian bird that sings its own name. 🐦')}</p></div>`,
+f6:()=>`<div class="toldo"></div>
+  <div style="position:absolute;left:0;right:0;top:170px;text-align:center">${titulo(L('Feito para você','Made for you'),100)}${titulo(L('jogar do seu jeito','to play your way'),80,'var(--toldo)')}</div>
+  <div style="position:absolute;left:70px;right:70px;top:420px;display:grid;grid-template-columns:1fr 1fr;gap:30px">
+   ${[['fr-3',L('Sem derrota','No losing'),L('Nada de vidas nem cronômetro na tela.','No lives, no timer on screen.')],
+      ['te-7',L('Joga offline','Plays offline'),L('Sem internet? A feira continua.','No signal? The market goes on.')],
+      ['ve-8',L('Álbum de ingredientes','Ingredient album'),L('Complete linhas e ganhe bônus.','Fill lines, earn bonuses.')],
+      ['be-6',L('Troque de celular','Switch phones'),L('Leve o progresso com um código.','Move your progress with a code.')]].map(([c,t,d])=>`<div class="cartao" style="padding:34px 30px;height:380px"><img src="${I(c)}" style="width:140px;filter:drop-shadow(0 10px 12px rgba(0,0,0,.18))"><div class="d" style="font-size:52px;margin:12px 0 10px">${t}</div><p style="font:700 32px/1.25 Nunito">${d}</p></div>`).join('')}</div>
+  ${assin(390,1240)}`,
+// ---------------- STORIES / CAPAS 1080x1920 ----------------
+s1:()=>`<div class="toldo"></div>
+  ${st('fr-5',40,560,200,-12)}${st('pe-6',820,600,220,10)}${st('be-7',60,1250,170,8)}${st('fr-8',840,1260,200,-8)}
+  <div style="position:absolute;left:0;right:0;top:330px;text-align:center">${titulo(L('Já disponível!','Out now!'),110,'var(--toldo)')}</div>
+  <div style="position:absolute;left:265px;top:520px;width:550px;height:550px;border-radius:130px;overflow:hidden;box-shadow:0 40px 80px rgba(27,74,63,.35),0 0 0 16px #fff"><img src="${A}quitanda-icone.png" style="width:100%"></div>
+  <div style="position:absolute;left:0;right:0;top:1130px;text-align:center">${titulo(nomeJogo,130)}<p style="font:800 42px Nunito;margin-top:16px">${L('Grátis no Google Play','Free on Google Play')}</p></div>
+  <div style="position:absolute;left:240px;right:240px;top:1520px;height:150px;border:5px dashed var(--verde);border-radius:40px;display:grid;place-items:center;font:800 34px Nunito;color:var(--verde);opacity:.6">${L('(cole aqui o adesivo de link)','(place the link sticker here)')}</div>`,
+s2:()=>`<div style="position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr">${[1,7,9,10].map(k=>`<img src="${MI(k)}" style="width:100%;height:100%;object-fit:cover">`).join('')}</div>
+  <div style="position:absolute;inset:0;background:rgba(22,50,43,.45)"></div>
+  <div class="cartao" style="position:absolute;left:90px;right:90px;top:300px;padding:50px;text-align:center">${titulo(L('Qual mercado','Which market'),96)}${titulo(L('você já visitou?','have you visited?'),80,'var(--toldo)')}</div>
+  <div style="position:absolute;left:240px;right:240px;top:1300px;height:260px;border:5px dashed #fff;border-radius:40px;display:grid;place-items:center;font:800 34px Nunito;color:#fff;opacity:.8;text-align:center">${L('(cole aqui a enquete:<br>Ver-o-Peso · Mercadão ·<br>São Cristóvão · Porto Alegre)','(place the poll here:<br>Ver-o-Peso · Mercadão ·<br>São Cristóvão · Porto Alegre)')}</div>`,
+s3:()=>`<div style="position:absolute;inset:0;background:var(--folha)"></div><div class="toldo"></div>
+  <div style="position:absolute;left:0;right:0;top:300px;text-align:center">${titulo(L('Sua banca','Your stall'),120,'#fff')}${titulo(L('te espera','is waiting'),120,'var(--amarelo)')}</div>
+  <div class="celular" style="position:absolute;left:290px;top:640px;width:500px;transform:rotate(-4deg)"><img src="${A}cap/${LG==='en'?'en-US':'pt-BR'}/2-inicio.png"></div>
+  ${st('fr-4',90,820,190,-10)}${st('te-4',820,980,180,14)}
+  <div style="position:absolute;left:0;right:0;bottom:120px;text-align:center">${gp()}</div>`,
+c1:()=>capaReel(L('Junte, entregue','Merge, deliver'),L('e viaje!','and travel!'),'fr-6'),
+c2:()=>capaReel(L('12 mercados','12 markets'),L('do Brasil','of Brazil'),null),
+h1:()=>dest(`<img src="${A}quitanda-icone.png" style="width:100%;border-radius:120px">`,'var(--folha)'),
+h2:()=>dest(`<img src="${I('fr-2')}" style="width:100%">`,'var(--sol)'),
+h3:()=>dest(`<div style="width:100%;aspect-ratio:1;border-radius:50%;overflow:hidden"><img src="${MI(1)}" style="width:100%;height:100%;object-fit:cover"></div>`,'var(--toldo)'),
+h4:()=>dest(`<img src="${A}bentevi-passaro.png" style="width:100%">`,'var(--creme)'),
+h5:()=>dest(`<img src="${I('ve-8')}" style="width:100%">`,'var(--verde)'),
+perfil1:()=>`<div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,#FFE27A,var(--amarelo) 70%)"></div><img src="${A}bentevi-passaro.png" style="position:absolute;left:150px;top:340px;width:760px">`,
+perfil2:()=>`<img src="${A}quitanda-icone.png" style="position:absolute;inset:0;width:100%;height:100%">`,
+};
+function trio(ks,reg,k){ return `<div class="toldo"></div><div style="position:absolute;left:70px;top:160px"><span class="chip">${reg}</span></div>
+  ${ks.map((m,i)=>`<div class="foto" style="position:absolute;left:70px;top:${265+i*340}px;width:940px;height:310px"><img src="${MI(m)}"><div style="position:absolute;left:0;right:0;bottom:0;padding:60px 30px 20px;background:linear-gradient(transparent,rgba(0,0,0,.7));color:#fff"><div class="d" style="font-size:54px">${M[m][1]}</div><div style="font:800 28px Nunito">📍 ${M[m][2]}</div></div></div>`).join('')}${dots(5,k)}`; }
+function capaReel(a,b,item){ return `<img src="${MI(item?4:9)}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"><div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(22,50,43,.1) 30%,rgba(22,50,43,.85))"></div>
+  ${item?`<div class="celular" style="position:absolute;left:290px;top:190px;width:500px;transform:rotate(-5deg)"><img src="${A}cap/${LG==='en'?'en-US':'pt-BR'}/1-tabuleiro.png"></div>`:''}
+  <div style="position:absolute;left:70px;right:70px;top:1220px;text-align:center">${titulo(a,120,'#fff')}${titulo(b,120,'var(--amarelo)')}<div style="margin-top:30px"><span class="chip sol">${nomeJogo}</span></div></div>`; }
+function dest(miolo,cor){ return `<div style="position:absolute;inset:0;background:${cor}"></div><div style="position:absolute;left:220px;top:600px;width:640px;height:640px;display:grid;place-items:center">${miolo}</div>`; }
+const r=document.getElementById('root'); r.innerHTML=`<div class="peca" id="peca" style="width:${W}px;height:${H}px">${pecas[P]()}</div>`;
+document.fonts.ready.then(()=>Promise.all([...document.images].map(i=>i.complete?1:new Promise(o=>{i.onload=i.onerror=o;})))).then(()=>{ document.body.dataset.pronto=1; });
+</script></body></html>

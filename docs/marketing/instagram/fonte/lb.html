@@ -1,0 +1,75 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Andika:wght@400;700&display=swap">
+<style>
+:root{--ceu:#7FD6F5;--ceu2:#BDEBFB;--areia:#FFE8A3;--azul:#2F6FDE;--azul2:#1D4FB0;--tinta:#1F2A44;--sol:#FFD54A;--verde:#17804A;--coral:#FF7A59;--branco:#FFFFFF}
+*{box-sizing:border-box;margin:0;padding:0} html,body{background:transparent} body{font-family:Andika,system-ui,sans-serif;color:var(--tinta)}
+.peca{position:relative;overflow:hidden;background:linear-gradient(180deg,var(--ceu) 0%,var(--ceu2) 62%,var(--areia) 62.1%,#FFDF86 100%)}
+.d{font-family:"Baloo 2",system-ui,sans-serif;font-weight:800;line-height:.95}
+.sol{position:absolute;right:-70px;top:-70px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,#FFE680 0 55%,rgba(255,230,128,.35) 56% 70%,transparent 71%)}
+.nuvem{position:absolute;background:#fff;border-radius:999px;opacity:.9}
+.nuvem::before,.nuvem::after{content:"";position:absolute;background:#fff;border-radius:50%}
+.nuvem::before{width:55%;height:150%;left:15%;bottom:20%} .nuvem::after{width:40%;height:120%;right:12%;bottom:25%}
+.cartao{background:#fff;border-radius:44px;box-shadow:0 8px 0 rgba(31,42,68,.12),0 24px 44px rgba(31,42,68,.14)}
+.chip{display:inline-flex;align-items:center;gap:10px;background:var(--azul);color:#fff;border-radius:999px;padding:12px 30px;font:700 34px Andika;box-shadow:0 6px 0 var(--azul2)}
+.chip.sol2{background:var(--sol);color:var(--tinta);box-shadow:0 6px 0 #D9A900}
+.chip.verde{background:var(--verde);box-shadow:0 6px 0 #0F5C34}
+.celular{border-radius:60px;background:#1F2A44;padding:16px;box-shadow:0 36px 64px rgba(31,42,68,.3)} .celular img{display:block;width:100%;border-radius:46px}
+.n{display:inline-grid;place-items:center;width:96px;height:96px;border-radius:50%;background:var(--coral);color:#fff;font:800 60px "Baloo 2";box-shadow:0 6px 0 #C9553A}
+.dots{position:absolute;bottom:38px;left:0;right:0;display:flex;justify-content:center;gap:14px}
+.dots i{width:16px;height:16px;border-radius:50%;background:rgba(31,42,68,.25)} .dots i.on{background:var(--azul);width:44px;border-radius:99px}
+.assin{position:absolute;display:flex;align-items:center;gap:12px;font:700 28px Andika;color:var(--tinta)} .assin img{height:52px}
+.logo{font:800 150px/0.85 "Baloo 2";color:#fff;text-shadow:0 8px 0 var(--azul2),0 14px 26px rgba(31,42,68,.25)} .logo span{color:var(--sol);text-shadow:0 8px 0 #D9A900,0 14px 26px rgba(31,42,68,.25)}
+</style></head><body><div id="root"></div>
+<script>
+const P=new URLSearchParams(location.search).get('p'), A='assets/', LB=A+'lb/';
+const cap=n=>`${LB}celular-${n}.png`;
+const lili=(x,y,w,r=0)=>`<img src="${LB}lili.svg" style="position:absolute;left:${x}px;top:${y}px;width:${w}px;transform:rotate(${r}deg);filter:drop-shadow(0 18px 18px rgba(31,42,68,.25))">`;
+const nuvens=()=>`<div class="sol"></div><div class="nuvem" style="left:70px;top:120px;width:220px;height:60px"></div><div class="nuvem" style="left:640px;top:250px;width:180px;height:50px"></div>`;
+const assin=(x,y)=>`<div class="assin" style="left:${x}px;top:${y}px"><img src="${A}bentevi-passaro.png">um app Bentevi</div>`;
+const dots=(n,k)=>`<div class="dots">${Array.from({length:n},(_,i)=>`<i class="${i===k?'on':''}"></i>`).join('')}</div>`;
+const W=1080, H=P.startsWith('ls')||P.startsWith('lh')?1920:1350;
+const pecas={
+l1:()=>`${nuvens()}${lili(330,150,420)}
+  <div style="position:absolute;left:0;right:0;top:600px;text-align:center"><div class="logo">Ler <span>Brincando</span></div>
+   <p style="font:700 44px/1.3 Andika;margin:34px auto 0;width:860px">Aprender a ler pelo som das letras, com a corujinha Lili. Para crianças de 5 a 7 anos.</p></div>
+  <div style="position:absolute;left:0;right:0;top:1070px;display:flex;justify-content:center;gap:16px;flex-wrap:wrap;padding:0 60px">
+   <span class="chip verde">Sem anúncios</span><span class="chip verde">Sem compras</span><span class="chip verde">Funciona offline</span></div>
+  ${assin(410,1250)}`,
+l2a:()=>`${nuvens()}
+  <div style="position:absolute;left:70px;top:200px;width:560px"><div class="d" style="font-size:104px;color:#fff;text-shadow:0 6px 0 var(--azul2)">Como o</div><div class="d" style="font-size:104px;color:var(--tinta)">Ler Brincando</div><div class="d" style="font-size:104px;color:var(--azul)">ensina</div>
+   <p style="font:700 38px/1.3 Andika;margin-top:30px">Arraste para o lado 👉</p></div>
+  <div class="celular" style="position:absolute;left:640px;top:170px;width:380px;transform:rotate(6deg)"><img src="${cap('3-mapa')}"></div>
+  ${lili(110,860,300,-6)}${dots(5,0)}`,
+l2b:()=>passo(1,'8 mundos, 93 fases','Da Ilha dos Sons à Biblioteca Encantada, em fases curtas e sempre com instruções faladas. Não é preciso saber ler para jogar.','3-mapa',1),
+l2c:()=>passo(2,'Do som à palavra','Método fônico: primeiro as vogais, depois as consoantes que dá para "esticar" (F, V, M, S…), sílabas e as regras do português.','5-trem-das-silabas',2),
+l2d:()=>passo(3,'Errar faz parte','Sem vidas e sem "X" vermelho: o jogo repete mais devagar, dá uma dica e ajuda a acertar. 11 historinhas com leitura acompanhada.','6-historia',3),
+l2e:()=>passo(4,'Área dos Pais','Progresso, sons que mais confundem, tempo de uso por dia e limite de tela. Até 4 crianças no mesmo aparelho.','7-area-dos-pais',4),
+l3:()=>`${nuvens()}${lili(380,140,320)}
+  <div style="position:absolute;left:0;right:0;top:500px;text-align:center"><div class="d" style="font-size:96px;color:var(--tinta)">Feito para</div><div class="d" style="font-size:96px;color:var(--azul)">a criança</div></div>
+  <div style="position:absolute;left:70px;right:70px;top:760px;display:grid;grid-template-columns:1fr 1fr;gap:26px">
+   ${[['🚫','Sem anúncios'],['🛒','Sem compras'],['🔒','Sem rastreadores'],['📶','Funciona sem internet']].map(([e,t])=>`<div class="cartao" style="padding:30px 28px;display:flex;align-items:center;gap:20px"><span style="font-size:58px">${e}</span><b style="font:700 38px/1.15 Andika">${t}</b></div>`).join('')}</div>
+  <p style="position:absolute;left:70px;right:70px;top:1110px;text-align:center;font:700 34px/1.3 Andika">O progresso fica só no aparelho. Nada é enviado para lugar nenhum.</p>
+  ${assin(410,1250)}`,
+l4:()=>`${nuvens()}${lili(250,170,580)}
+  <div class="cartao" style="position:absolute;left:80px;right:80px;top:820px;padding:44px 50px;text-align:center">
+   <div class="d" style="font-size:84px;color:var(--azul)">Oi, eu sou a Lili!</div>
+   <p style="font:700 40px/1.3 Andika;margin-top:14px">Eu falo cada instrução em voz alta, comemoro cada acerto e ajudo quando a palavra fica difícil. 🦉</p></div>`,
+ls1:()=>`${nuvens()}${lili(250,330,580)}
+  <div style="position:absolute;left:0;right:0;top:960px;text-align:center"><div class="logo" style="font-size:140px">Ler <span>Brincando</span></div>
+   <div style="margin-top:50px"><span class="chip sol2" style="font-size:44px;padding:16px 40px">Em breve no celular</span></div></div>
+  <div style="position:absolute;left:240px;right:240px;top:1540px;height:170px;border:5px dashed var(--tinta);border-radius:40px;display:grid;place-items:center;font:700 32px Andika;opacity:.55;text-align:center">(cole aqui o adesivo<br>de contagem regressiva)</div>`,
+ls2:()=>`${nuvens()}
+  <div class="cartao" style="position:absolute;left:80px;right:80px;top:300px;padding:50px;text-align:center"><div class="d" style="font-size:88px">Quiz da Lili 🦉</div>
+   <p style="font:700 46px/1.3 Andika;margin-top:16px">Qual é o primeiro som de</p><div class="d" style="font-size:150px;color:var(--azul);margin-top:10px">BOLA?</div></div>
+  ${lili(380,960,320)}
+  <div style="position:absolute;left:200px;right:200px;top:1360px;height:240px;border:5px dashed var(--tinta);border-radius:40px;display:grid;place-items:center;font:700 32px Andika;opacity:.55;text-align:center">(cole aqui o adesivo de quiz:<br>/b/ · /p/ · /d/)</div>`,
+lh1:()=>`<div style="position:absolute;inset:0;background:var(--ceu)"></div><img src="${LB}lili.svg" style="position:absolute;left:220px;top:600px;width:640px">`,
+};
+function passo(n,t,txt,img,k){ return `${nuvens()}
+  <div style="position:absolute;left:70px;top:150px;display:flex;align-items:center;gap:24px"><span class="n">${n}</span><div class="d" style="font-size:80px;color:var(--tinta)">${t}</div></div>
+  <div class="celular" style="position:absolute;left:340px;top:270px;width:400px"><img src="${cap(img)}"></div>
+  <div class="cartao" style="position:absolute;left:60px;right:60px;top:1040px;padding:30px 40px"><p style="font:700 36px/1.3 Andika">${txt}</p></div>${dots(5,k)}`; }
+document.getElementById('root').innerHTML=`<div class="peca" id="peca" style="width:${W}px;height:${H}px">${pecas[P]()}</div>`;
+document.fonts.ready.then(()=>Promise.all([...document.images].map(i=>i.complete?1:new Promise(o=>{i.onload=i.onerror=o;})))).then(()=>{ document.body.dataset.pronto=1; });
+</script></body></html>

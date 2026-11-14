@@ -31,8 +31,8 @@ if (process.env.PUBLICACAO === '1') {
 fs.writeFileSync(path.join(dst, 'index.html'), html);
 const icone = path.join(path.dirname(src), 'icone-192.png');
 if (fs.existsSync(icone)) fs.copyFileSync(icone, path.join(dst, 'icone-192.png'));
-// Arte dos mercados (mapa, tela inicial e viagens) e dos itens do tabuleiro
-for (const pasta of ['mercados', 'itens']) {
+// Arte dos mercados (mapa, tela inicial e viagens), dos itens do tabuleiro e trilhas dos mercados
+for (const pasta of ['mercados', 'itens', 'musica']) {
   const arte = path.join(path.dirname(src), pasta);
   if (fs.existsSync(arte)) fs.cpSync(arte, path.join(dst, pasta), { recursive: true });
 }
