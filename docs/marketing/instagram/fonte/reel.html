@@ -39,7 +39,7 @@ const LEG={jogo:{pt:[[0.06,1.6,'Junte, entregue e viaje!'],[2.7,4.6,'Na Quitanda
          mercados:{pt:[[0.06,1.9,'Do Ver-o-Peso, em Belém,'],[2.0,3.5,'ao Mercadão de São Paulo.'],[4.0,5.6,'Doze mercados do Brasil,'],[5.6,6.9,'cada um com o seu sabor.'],[7.5,8.5,'Quitanda Zen:'],[8.5,10.3,'o Brasil inteiro numa banca.']],
                    en:[[0.18,1.6,'From Ver-o-Peso in Belém'],[1.6,3.1,'to São Paulo’s Mercadão.'],[4.2,5.6,'Twelve real Brazilian markets,'],[5.6,7.2,'each with its own flavor.'],[8.34,8.9,'Quitanda:'],[8.9,11.0,'all of Brazil in one market stall.']]}}[TIPO][LG];
 const ease=x=>x<0?0:x>1?1:1-Math.pow(1-x,3), pop=x=>{ x=Math.max(0,Math.min(1,x)); const c1=1.7,c3=c1+1; return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2); }, cl=(x,a,b)=>Math.max(a,Math.min(b,x));
-const gp=`<div class="gp"><svg viewBox="0 0 48 48"><path fill="#34A853" d="M6 4l23 20L6 44c-1-.5-1.6-1.5-1.6-2.8V6.8C4.4 5.5 5 4.5 6 4z"/><path fill="#FBBC04" d="M29 24l7 6-25 14c-1 .5-2 .6-3 .3L29 24z"/><path fill="#4285F4" d="M36 18l6 3.4c2.4 1.4 2.4 3.8 0 5.2L36 30l-7-6 7-6z"/><path fill="#EA4335" d="M8 3.7c1-.3 2-.2 3 .3l25 14-7 6L8 3.7z"/></svg><span>${L('DISPONÍVEL NO','GET IT ON')}<b>Google Play</b></span></div>`;
+const gp=`<img src="assets/gp-${LG==='en'?'en':'pt'}.png" alt="Google Play" style="width:470px;display:inline-block">`;
 $('apres').textContent=L('apresenta','presents');
 // cena "palavras" (só no reel do jogo)
 const PAL=[[L('Junte','Merge'),'var(--folha)','fr-2',0.1],[L('Entregue','Deliver'),'var(--sol)','pe-3',0.65],[L('Viaje!','Travel!'),'var(--toldo)','fr-8',1.25]];

@@ -39,7 +39,7 @@ const M={1:['mercado-01-ver-o-peso-belem','Ver-o-Peso','Belém · PA'],2:['merca
  10:['mercado-10-porto-alegre','Mercado Público','Porto Alegre · RS'],11:['mercado-11-florianopolis','Mercado Público','Florianópolis · SC'],12:['mercado-12-curitiba','Mercado Municipal','Curitiba · PR']};
 const MI=k=>`${A}m/${M[k][0]}.jpg`;
 const st=(c,x,y,w,r=0)=>`<div class="st" style="left:${x}px;top:${y}px;width:${w}px;transform:rotate(${r}deg)"><img src="${I(c)}"></div>`;
-const gp=()=>`<div class="gp"><svg viewBox="0 0 48 48"><path fill="#34A853" d="M6 4l23 20L6 44c-1-.5-1.6-1.5-1.6-2.8V6.8C4.4 5.5 5 4.5 6 4z"/><path fill="#FBBC04" d="M29 24l7 6-25 14c-1 .5-2 .6-3 .3L29 24z"/><path fill="#4285F4" d="M36 18l6 3.4c2.4 1.4 2.4 3.8 0 5.2L36 30l-7-6 7-6z"/><path fill="#EA4335" d="M8 3.7c1-.3 2-.2 3 .3l25 14-7 6L8 3.7z"/></svg><span>${L('DISPONÍVEL NO','GET IT ON')}<b>Google Play</b></span></div>`;
+const gp=()=>`<img src="${A}gp-${LG==='en'?'en':'pt'}.png" alt="${L('Disponível no Google Play','Get it on Google Play')}" style="width:420px;display:inline-block">`;
 const assin=(x,y,cor)=>`<div class="assin" style="left:${x}px;top:${y}px;${cor?'color:'+cor:''}"><img src="${A}bentevi-passaro.png">${L('um jogo Bentevi','a Bentevi game')}</div>`;
 const dots=(n,k)=>`<div class="dots">${Array.from({length:n},(_,i)=>`<i class="${i===k?'on':''}"></i>`).join('')}</div>`;
 const titulo=(t,sz,cor)=>`<div class="d" style="font-size:${sz}px;color:${cor||'var(--verde)'}">${t}</div>`;

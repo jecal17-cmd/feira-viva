@@ -1,0 +1,4 @@
+#!/bin/bash
+# mux.sh tipo lang  -> out/reels/reel-tipo-DIR.mp4 (quadros + trilha + narração com ducking, -14 LUFS)
+S=$(dirname "$0"); cd "$S"; tipo=$1; lang=$2; off=$([ $tipo = jogo ] && echo 1300 || echo 1250); dir=$([ $lang = pt ] && echo pt-BR || echo en-US)
+ffmpeg -v error -y -framerate 30 -i frames/$tipo-$lang/%04d.jpg -i audio/trilha-15s.wav -i audio/narr-$tipo-$lang.wav -filter_complex "[2:a]aresample=44100,adelay=$off|$off,volume=1.6,apad[n];[n]asplit[n1][n2];[1:a]volume=0.75[m];[m][n1]sidechaincompress=threshold=0.02:ratio=6:attack=15:release=350[md];[md][n2]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95,loudnorm=I=-14:TP=-1.2:LRA=11,aresample=44100,aformat=channel_layouts=stereo[a]" -map 0:v -map "[a]" -c:v libx264 -crf 20 -preset medium -pix_fmt yuv420p -r 30 -c:a aac -b:a 192k -t 15 -movflags +faststart out/reels/reel-$tipo-$dir.mp4

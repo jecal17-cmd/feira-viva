@@ -5,7 +5,7 @@ Material para abrir o perfil da Bentevi com foco no **Quitanda Zen** (nome inter
 ## 1. Antes de postar
 
 - **O jogo precisa estar público.** As peças dizem "Disponível no Google Play" e "Grátis". Se o Quitanda Zen ainda estiver só no teste fechado, segure os posts de lançamento (feed 01, story 1 e story 3) até a versão de produção sair. Os outros podem ir antes, como "em breve".
-- **Selo do Google Play.** O selo das peças foi desenhado aqui, imitando o oficial. As regras de marca do Google pedem o selo oficial. Baixe em <https://play.google.com/intl/pt-BR/badges/> (português) e <https://play.google.com/intl/en_us/badges/> (inglês), troque nas peças (o modelo está em `fonte/pecas.html`, função `gp()`) ou cole o selo por cima no editor que você usar.
+- **Selo do Google Play.** As peças e os Reels usam o selo oficial ("Disponível no Google Play" e "Get it on Google Play"), guardado em `fonte/selo-google-play-pt.png` e `-en.png`. Pelas regras do Google, o selo só pode aparecer depois que o app estiver publicado, e sem mudar cores nem proporções.
 - **Link na bio:** `https://play.google.com/store/apps/details?id=com.feiraviva.quitanda`. Quando houver mais de um produto, use uma página de links (por exemplo, a própria página do GitHub Pages do projeto).
 
 ## 2. Bentevi Games ou Bentevi Software?
@@ -101,6 +101,7 @@ Inglês:
 - **reel-mercados:** os 12 mercados em sequência, cada um com nome e cidade.
 - **Narração:** feita com voz sintética (Microsoft Azure, vozes Thalita e Jenny).
 - **Trilha:** composta para o projeto (zabumba, triângulo, baixo e sanfona), com o canto real do bem-te-vi no começo e no fim. É música própria, então não há problema de direitos.
+- **Trilhas dos mercados:** o jogo agora tem uma música de fundo para cada mercado (`versao-b-quitanda-zen/musica/01..12.ogg`). Elas também servem de fundo para posts e Reels de cada mercado (por exemplo, a de Belém no post do Ver-o-Peso).
 - **Volume:** os vídeos estão nivelados em −14 LUFS, o padrão das redes.
 - **Legendas:** gravadas no vídeo, porque muita gente assiste sem som.
 
@@ -189,7 +190,33 @@ Em cada post, publique a legenda em português e, embaixo, a versão em inglês,
 
 Salve tudo no destaque **Quitanda**.
 
-## 9. Para gerar de novo ou mudar textos
+## 9. Ler Brincando
+
+Pasta `ler-brincando/`, **só em português**: o app ensina a ler em português e o público são famílias e escolas brasileiras. A identidade visual é a do próprio app (céu azul, areia, a corujinha Lili e a fonte Andika), diferente da feira do Quitanda. A Lili em vetor está em `ler-brincando/lili.svg`.
+
+| Peça | Arquivo |
+|---|---|
+| Apresentação | `feed/01-conheca.jpg` |
+| Carrossel "Como ensina" (5) | `feed/02-como-ensina-1..5.jpg` |
+| Confiança para os pais | `feed/03-feito-para-a-crianca.jpg` |
+| A mascote | `feed/04-oi-eu-sou-a-lili.jpg` |
+| Stories | `stories/story-1-em-breve.jpg` (com espaço para a contagem regressiva) e `stories/story-2-quiz.jpg` |
+| Capa do destaque | `destaque/ler-brincando.jpg` |
+
+**Antes de postar:** como o app ainda não está publicado, as peças dizem "em breve" e não usam o selo do Google Play. Quando sair, avise que eu gero as versões com o selo.
+
+**Legendas**
+- **01 · Conheça:** Vem aí o Ler Brincando! 🦉 Um app para crianças de 5 a 7 anos aprenderem a ler pelo som das letras, com a corujinha Lili. Sem anúncios, sem compras e funcionando sem internet. É o nosso projeto educativo, sem fins lucrativos. 💙
+- **02 · Como ensina:** Como a Lili ensina a ler 👇 8 mundos e 93 fases curtas, do som das vogais às regras do português. O método é fônico: a criança liga o som à letra e lê palavras de verdade. E errar faz parte, porque o jogo ajuda sem castigar.
+- **03 · Feito para a criança:** Para quem cuida: o Ler Brincando não tem anúncios, compras nem rastreadores. O progresso fica só no aparelho, e a Área dos Pais mostra o que a criança já domina.
+- **04 · Lili:** Prazer, Lili! 🦉 Ela fala cada instrução em voz alta (não precisa saber ler para jogar), comemora os acertos e dá uma dica quando a palavra fica difícil.
+- **Em inglês (para contar a história do estúdio lá fora):** Ler Brincando (“learn to read through play”) is our free, ad-free phonics app that helps Brazilian kids aged 5 to 7 learn to read in Portuguese, guided by Lili the owl. 🦉
+
+**Hashtags:** `#LerBrincando #Alfabetização #MétodoFônico #EducaçãoInfantil #AprenderALer #Bentevi #AppEducativo #MaternidadeReal #Professoras`
+
+**No perfil da Bentevi:** crie o destaque "Ler Brincando" e alterne um post dele a cada 3 ou 4 do Quitanda. Se o app crescer, ele pode ganhar perfil próprio, voltado a pais e professores.
+
+## 10. Para gerar de novo ou mudar textos
 
 Os textos de cada peça estão em `fonte/pecas.html`, e os dos Reels (roteiro e legendas) em `fonte/reel.html`. As imagens vêm das pastas do repositório (`docs/arte/referencias/`, `docs/arte/itens/`, `docs/loja-play/quitanda-zen/*/capturas/`), copiadas para uma pasta `assets/` ao lado dos modelos.
 
@@ -199,4 +226,6 @@ Os textos de cada peça estão em `fonte/pecas.html`, e os dos Reels (roteiro e 
 | `gameplay.js` | Grava a partida |
 | `reel.js` | Gera os quadros dos Reels |
 | `trilha.py` | Compõe a trilha |
+| `lb.html` + `render2.js` | Peças do Ler Brincando (`TPL=lb.html node render2.js SAIDA l1:pt …`) |
+| `mux.sh` | Junta quadros, trilha e narração de um Reel (com nivelamento em −14 LUFS) |
 | `tts.py` | Gera as narrações |
