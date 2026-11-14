@@ -841,12 +841,19 @@ const AdNet=(()=>{
   }
   return {show, privReq:()=>privReq, privacy:()=>P.showPrivacyOptionsForm().catch(()=>{})};
 })();
+// Pedidos relâmpago param de contar enquanto um anúncio (real ou simulado) está na tela: no fim, o prazo é estendido
+// pelo tempo do anúncio. Painéis e menus não pausam.
+let adPausa=null, adN=0;
+function rushPausa(){ if(adN++===0) adPausa=Date.now(); }
+function rushVolta(){ if(adN===0||--adN>0) return; const d=Date.now()-adPausa, t0=adPausa; adPausa=null;
+  for(const o of S.orders) if(o.rush&&o.rush>t0) o.rush+=d; save(); }
 function showAd(kind,cb){
+  rushPausa();
   if(kind==='rew')S.stats.rew++; else S.stats.inter++;
-  if(AdNet){ closeModal(); AdNet.show(kind).then(ok=>{ if(kind==='rew'){ if(ok){ if(cb)cb(); } else toast(t('adFail')); } render(); }); return; }
+  if(AdNet){ closeModal(); AdNet.show(kind).catch(()=>false).then(ok=>{ rushVolta(); if(kind==='rew'){ if(ok){ if(cb)cb(); } else toast(t('adFail')); } render(); }); return; }
   let s=kind==='rew'?4:3;
   const draw=()=>{ $('card').innerHTML=`<h2>${t('adTitle')}</h2><div class="adbox">${t(kind==='rew'?'adRew':'adInt')}</div><button class="btn" id="adclose" ${s>0?'disabled':''}>${s>0?t('closeIn',s):t('close')}</button>`;
-    if(s<=0){ $('adclose').onclick=()=>{ closeModal(); if(cb)cb(); render(); }; $('adclose').focus(); } };
+    if(s<=0){ $('adclose').onclick=()=>{ rushVolta(); closeModal(); if(cb)cb(); render(); }; $('adclose').focus(); } };
   $('over').hidden=false; draw(); clearInterval(adTimer);
   adTimer=setInterval(()=>{ s--; draw(); if(s<=0)clearInterval(adTimer); },1000);
 }

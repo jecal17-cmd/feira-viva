@@ -69,6 +69,8 @@ Os itens do tabuleiro com arte ficam em `versao-b-quitanda-zen/itens/<código>.w
 
 **Álbum de ingredientes** (aba "Ingredientes" do Caderno de Receitas): mostra as 13 linhas × 8 níveis; tudo o que passa pelo tabuleiro entra (`S.seen`, 1 = novo, 2 = visto; o nível 1 já entra como visto). Um ponto no botão Receitas avisa quando há novidade, e o Caderno abre direto nessa aba. Completar os 8 níveis de uma linha rende +100 XP e +150 moedas, com o bônus da volta (`ALB_XP`, `ALB_CO`, `S.albumDone`). Saves antigos começam com o que estiver no tabuleiro.
 
+**Pedidos relâmpago e anúncios** (Quitanda): o prazo para de contar durante qualquer anúncio, real ou simulado (`rushPausa`/`rushVolta` em `showAd`); ao fechar, o prazo dos relâmpagos ainda ativos é estendido pelo tempo do anúncio. Painéis e menus não pausam.
+
 **Valor dos pedidos:** cada pedido mostra quantas moedas paga (`orderPay(o)`, a mesma conta que `deliver()` credita). Na Quitanda: itens (`COV`) com o bônus da volta, em dobro no relâmpago dentro do prazo e com +30 da receita ainda não descoberta. Na Rota: `ORDER_COIN` (2) × nível de cada item.
 
 ## Rota das Feiras: arte, álbum e troca de aparelho
