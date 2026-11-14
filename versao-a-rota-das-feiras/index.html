@@ -138,6 +138,7 @@ button.pill{cursor:pointer}
 .orders{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
 .order{min-width:0;background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:5px 2px;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:58px}
 .order.ready{border-color:var(--accent);background:var(--cell)}
+.order .pay{font:800 10.5px/1 var(--text);color:var(--gold);background:color-mix(in srgb,var(--gold) 14%,transparent);border-radius:99px;padding:2px 6px;margin-top:1px;white-space:nowrap}
 .order.want{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
 .order .who{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .need{display:flex;gap:9px;font-size:24px;line-height:1.1}
@@ -390,7 +391,7 @@ const FACES=[['👵','Dona Nazaré'],['🧔','Seu Raimundo'],['👩‍🦱','Iar
 const TOOLS={hammer:['🔨',['Martelo','Hammer'],['remove um item ou obstáculo','removes an item or obstacle'],120],
  pot:['🫕',['Caldeirão','Cauldron'],['sobe 1 nível de um item (até o nível 4)','raises an item by 1 level (up to level 4)'],150],
  turns:['⏳',['+3 Turnos','+3 Turns'],['dá 3 turnos extras na fase','gives you 3 extra turns in a level'],0]};
-const MAX_CONT=2, ORDER_COIN=2;                       // continuações por fase ao ficar sem turnos; moedas por nível de item entregue
+const MAX_CONT=2, ORDER_COIN=2; const orderPay=o=>o.items.reduce((a,x)=>a+ORDER_COIN*x.n,0);                       // continuações por fase ao ficar sem turnos; moedas por nível de item entregue
 // Loja: compras com dinheiro real (simuladas neste protótipo), de US$ 0,50 a US$ 9,99. Selos e cartões nunca são vendidos.
 // UNIT é o valor de referência de cada coisa comprada avulsa; serve para calcular a economia dos kits.
 const UNIT={coins:.5/150,hammer:.33,pot:.33,turns:.5};
@@ -514,7 +515,7 @@ function deliver(i,id){
   const o=id!=null?P.orders.find(x=>x.id===id):P.orders.find(x=>matches(x,it)), nd=o&&matches(o,it);
   if(!nd){ toast(tr('Esse cliente não pediu esse item.','This customer didn’t order that.')); return; }
   nd.done=true; P.board[i]=null; sel=null; beep(700);
-  if(o.items.every(x=>x.done)){ progress('orders'); const co=o.items.reduce((a,x)=>a+ORDER_COIN*x.n,0); S.coins+=co; P.earned+=co; P.orders[P.orders.indexOf(o)]=newOrder(); beep(940,.1); toast(`${o.face} ${o.who}: +${co} 🪙`); }
+  if(o.items.every(x=>x.done)){ progress('orders'); const co=orderPay(o); S.coins+=co; P.earned+=co; P.orders[P.orders.indexOf(o)]=newOrder(); beep(940,.1); toast(`${o.face} ${o.who}: +${co} 🪙`); }
   checkEnd();
 }
 function deliverSeal(i){
@@ -677,7 +678,7 @@ function gameHtml(){
     <div class="sub"><span>${tr(`3 ⭐ se sobrarem ${need3} turnos · 2 ⭐ com ${Math.ceil(P.turns*.25)}`,`3 ⭐ with ${need3} turns left · 2 ⭐ with ${Math.ceil(P.turns*.25)}`)}</span>${tide}</div></div>
    <div class="olab${ordKey?' key':''}">${ordKey?tr('🎯 Pedidos: contam para vencer','🎯 Orders: these count toward winning'):tr('Pedidos extras: não contam para vencer, mas rendem moedas','Extra orders: they don’t count toward winning, but they pay coins')}</div>
    <div class="orders ${ordKey?'key':'extra'}">${P.orders.map(o=>{ const want=cur&&!cur.m&&matches(o,cur), ready=o.items.some(x=>!x.done&&have.has(x.l+x.n));
-      return `<button class="order${want?' want':''}${ready?' ready':''}" data-order="${o.id}" aria-label="${tr(`Pedido de ${o.who}`,`${o.who}’s order`)}: ${o.items.map(x=>item(x.l,x.n)[1]+tr(' nível ',', level ')+x.n).join(tr(' e ',' and '))}"><span class="who">${o.face} ${o.who}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span></button>`; }).join('')}
+      return `<button class="order${want?' want':''}${ready?' ready':''}" data-order="${o.id}" aria-label="${tr(`Pedido de ${o.who}`,`${o.who}’s order`)}: ${o.items.map(x=>item(x.l,x.n)[1]+tr(' nível ',', level ')+x.n).join(tr(' e ',' and '))} · ${orderPay(o)} 🪙"><span class="who">${o.face} ${o.who}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span><span class="pay">🪙 ${orderPay(o)}</span></button>`; }).join('')}
     <button class="order seal${cur&&cur.n===MAX&&!cur.m?' want':''}" data-seal="1" aria-label="${tr('Espaço do Selo: itens de nível 5','Seal slot: level 5 items')}"><span class="who">🏅 ${tr('Selo','Seal')}</span><span style="font-size:12px;line-height:1.5">${Object.keys(LINES).map(k=>`${item(k,5)[0]}${Math.min(3,S.selo5[k]||0)}`).join(' ')}</span><span class="who">${tr('nível 5','level 5')}</span></button></div>
    <div class="wrap" id="wrap"><div class="board" id="board">${P.board.map((x,i)=>{
       const fl=flooded(i)?' flood':'', ar=P.armed?' armed':'', ky=clrKey?' key':'';

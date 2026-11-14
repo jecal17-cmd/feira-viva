@@ -53,6 +53,8 @@ button:disabled{opacity:.45;cursor:default}
 .order.rush{border-color:var(--warn)}
 .order.want,.order.osel{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
 .order .who{font-size:11.5px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:flex;align-items:center;gap:3px;line-height:1.2}
+.order .pay{font:800 11px/1 var(--text);color:var(--gold);background:color-mix(in srgb,var(--gold) 14%,transparent);border-radius:99px;padding:2px 7px;margin-top:2px;white-space:nowrap}
+.order .pay.x2{color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,transparent)}
 .order .who i{font-style:normal;font-size:17px;line-height:1}
 .order.rush .who{color:var(--warn)}
 .need{display:flex;gap:9px;font-size:26px;line-height:1.1}
@@ -839,12 +841,19 @@ const AdNet=(()=>{
   }
   return {show, privReq:()=>privReq, privacy:()=>P.showPrivacyOptionsForm().catch(()=>{})};
 })();
+// Pedidos relâmpago param de contar enquanto um anúncio (real ou simulado) está na tela: no fim, o prazo é estendido
+// pelo tempo do anúncio. Painéis e menus não pausam.
+let adPausa=null, adN=0;
+function rushPausa(){ if(adN++===0) adPausa=Date.now(); }
+function rushVolta(){ if(adN===0||--adN>0) return; const d=Date.now()-adPausa, t0=adPausa; adPausa=null;
+  for(const o of S.orders) if(o.rush&&o.rush>t0) o.rush+=d; save(); }
 function showAd(kind,cb){
+  rushPausa();
   if(kind==='rew')S.stats.rew++; else S.stats.inter++;
-  if(AdNet){ closeModal(); AdNet.show(kind).then(ok=>{ if(kind==='rew'){ if(ok){ if(cb)cb(); } else toast(t('adFail')); } render(); }); return; }
+  if(AdNet){ closeModal(); AdNet.show(kind).catch(()=>false).then(ok=>{ rushVolta(); if(kind==='rew'){ if(ok){ if(cb)cb(); } else toast(t('adFail')); } render(); }); return; }
   let s=kind==='rew'?4:3;
   const draw=()=>{ $('card').innerHTML=`<h2>${t('adTitle')}</h2><div class="adbox">${t(kind==='rew'?'adRew':'adInt')}</div><button class="btn" id="adclose" ${s>0?'disabled':''}>${s>0?t('closeIn',s):t('close')}</button>`;
-    if(s<=0){ $('adclose').onclick=()=>{ closeModal(); if(cb)cb(); render(); }; $('adclose').focus(); } };
+    if(s<=0){ $('adclose').onclick=()=>{ rushVolta(); closeModal(); if(cb)cb(); render(); }; $('adclose').focus(); } };
   $('over').hidden=false; draw(); clearInterval(adTimer);
   adTimer=setInterval(()=>{ s--; draw(); if(s<=0)clearInterval(adTimer); },1000);
 }
@@ -897,6 +906,10 @@ function befriend(c){
   if(f.h>=needH(f.lv)){ f.h=0; f.lv++; const co=30*f.lv; S.coins+=co; if(f.lv%2===0) S.boost.mag++;
     toast(t('friendUp',c.n,f.lv,co,f.lv%2===0)); }
 }
+// Moedas que o pedido paga ao ser concluído (o que a função deliver credita): itens com o bônus da volta,
+// em dobro se for relâmpago ainda no prazo, mais o bônus da receita ainda não descoberta.
+function orderPay(o){ const lb=lapBonus(); let v=o.items.reduce((a,x)=>a+Math.round(COV[x.n]*lb),0);
+  if(o.rush&&Date.now()<o.rush) v*=2; if(o.rec!=null&&!S.recipes.includes(o.rec)) v+=Math.round(30*lb); return v; }
 function deliver(i,id){
   const it=S.board[i]; if(!it) return; const o=id?S.orders.find(x=>x.id===id):orderFor(it);
   const nd=o&&matches(o,it);
@@ -1054,7 +1067,7 @@ function renderOrders(){
   const cur=sel!=null?S.board[sel]:null, have=new Set(S.board.filter(Boolean).map(x=>x.l+x.n)), now=Date.now();
   $('orders').innerHTML=S.orders.map(o=>{
     const c=CAST.find(x=>x.id===o.who), want=cur&&matches(o,cur), ready=o.items.some(x=>!x.done&&have.has(x.l+x.n)), rush=o.rush&&now<o.rush, s=rush?Math.ceil((o.rush-now)/1000):0;
-    return `<button class="order${want?' want':''}${ready?' ready':''}${rush?' rush':''}${selOrder===o.id?' osel':''}" data-order="${o.id}" aria-label="${t('orderAria',c.n,o.items.map(x=>t('itemLv',item(x.l,x.n)[1],x.n)).join(t('and')))}"><span class="who"><i>${c.f}</i>${rush?`⏱️ ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`:o.rec!=null?t('recipeTag'):curto(c.n)}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span></button>`;
+    return `<button class="order${want?' want':''}${ready?' ready':''}${rush?' rush':''}${selOrder===o.id?' osel':''}" data-order="${o.id}" aria-label="${t('orderAria',c.n,o.items.map(x=>t('itemLv',item(x.l,x.n)[1],x.n)).join(t('and')))} · ${fmt(orderPay(o))} 🪙"><span class="who"><i>${c.f}</i>${rush?`⏱️ ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`:o.rec!=null?t('recipeTag'):curto(c.n)}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span><span class="pay${rush?' x2':''}">🪙 ${fmt(orderPay(o))}</span></button>`;
   }).join('');
 }
 function renderInfo(){
