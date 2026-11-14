@@ -11,6 +11,7 @@ Gasto (Teto):
   D-saida       moeda deslizando para fora, em dois tons que descem
   E-notas       notas sendo contadas, com um "tic" de confirmação
   F-carimbo     carimbo suave de registro
+Versão 2 (segundo as referências enviadas): A2-moedinhas, B2-punhado, C2-caixa-antiga, C3-cha-ching
 """
 import os, sys, wave
 import numpy as np
@@ -83,6 +84,48 @@ SONS = {
     'E-notas': lambda: mix([(papel(.06, 1 - .08 * k), .065 * k, 1) for k in range(5)] + [(tom(1320, 1320, .07, .8), .42, 1)], .65),
     'F-carimbo': lambda: mix([(baque(120, .25, 1), 0, 1), (papel(.05, .5), .005, 1), (tom(990, 990, .09, .45), .12, 1), (tom(1485, 1485, .14, .4), .2, 1)], .5),
 }
+
+# ---------------- versão 2: perfis medidos nas referências enviadas (moedas agudas, caixa antiga e "cha-ching") ----------------
+def tilim(v=1.0, d=.16, base=None):
+    """Batida de moeda contra moeda: parciais agudas (5,5 a 12 kHz) que somem rápido."""
+    t = t_(d); base = base or rng.uniform(5200, 5900); s = np.zeros_like(t)
+    for r, a, dec in [(1, .8, .05), (1.72, 1, .045), (2.2, .55, .03), (2.95, .3, .02)]:
+        f = base * r * rng.uniform(.985, 1.015)
+        if f < 15000: s += a * np.sin(2 * np.pi * f * t + rng.random() * 6) * np.exp(-t / dec)
+    clique = np.diff(rng.standard_normal(len(t)), prepend=0) * np.exp(-t / .0025) * .35
+    return (s * np.minimum(1, t / .0008) * .3 + clique) * v
+
+def punhado(n, dur, v=1.0):
+    ts = np.sort(rng.uniform(0, dur, n)); ts[0] = 0
+    return [(tilim(rng.uniform(.45, 1.0) * v), t, 1) for t in ts]
+
+def catraca(n, dur, v=1.0):
+    """Mecanismo da caixa antiga: cliques secos com ressonância de metal (3 a 7,5 kHz)."""
+    out = []
+    for k in range(n):
+        t0 = k * dur / n + rng.uniform(-.01, .01); d = .05; t = t_(d); s = np.zeros_like(t)
+        for f in rng.choice([3300, 3600, 4750, 4900, 5350, 5850, 7600], 3, replace=False): s += np.sin(2 * np.pi * f * t) * np.exp(-t / .012)
+        s += np.diff(rng.standard_normal(len(t)), prepend=0) * np.exp(-t / .003) * 1.5
+        out.append((s * .12 * v * rng.uniform(.6, 1), max(0, t0), 1))
+    return out
+
+def sino_caixa(f=2064, d=1.6, v=1.0, parciais=((1, 1, .38), (2.525, .17, .2), (.333, .03, .3)), ataque=.002):
+    t = t_(d); s = sum(a * np.sin(2 * np.pi * f * r * t) * np.exp(-t / dec) for r, a, dec in parciais)
+    return s * np.minimum(1, t / ataque) * .4 * v
+
+def estalo(d=.2, v=1.0):
+    """O "cha" do cha-ching: ruído com faixas em 1,5 a 2,2 kHz e 6 a 10 kHz."""
+    n = rng.standard_normal(int(d * SR)); X = np.fft.rfft(n); fr = np.fft.rfftfreq(len(n), 1 / SR)
+    b = np.exp(-((fr - 1850) / 400) ** 2) + .8 * np.exp(-((fr - 7500) / 2200) ** 2)
+    y = np.fft.irfft(X * b, len(n)); t = t_(d)
+    return y / np.abs(y).max() * env(t, .003, .06) * .45 * v
+
+SONS.update({
+    'A2-moedinhas': lambda: mix([(tilim(1, base=5600), 0, 1), (tilim(.8, base=5350), .075, 1), (tilim(.5, base=5800), .16, 1)], .45),
+    'B2-punhado': lambda: mix(punhado(14, .75) + [(chocalho_metal(.3, .25), 0, 1)], 1.0),
+    'C2-caixa-antiga': lambda: mix(catraca(9, .42) + [(baque(160, .2, .8), .47, 1), (chocalho_metal(.12, .5), .48, 1), (sino_caixa(2064, 1.6, 1), .52, 1)] + punhado(3, .15, .5)[:0], 2.0),
+    'C3-cha-ching': lambda: mix([(estalo(.2, 1), 0, 1), (sino_caixa(5000, 1.3, .9, ((1, 1, .5), (.89, .9, .45), (.305, .45, .35), (1.6, .25, .2)), .001), .13, 1)], 1.4),
+})
 
 if __name__ == '__main__':
     out = sys.argv[1]; os.makedirs(out, exist_ok=True)
