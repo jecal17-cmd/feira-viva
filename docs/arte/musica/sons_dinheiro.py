@@ -13,6 +13,7 @@ Gasto (Teto):
   F-carimbo     carimbo suave de registro
 Versão 2 (segundo as referências enviadas): A2-moedinhas, B2-punhado, C2-caixa-antiga, C3-cha-ching
 Versão 3 (ajustes pedidos): A3-moedinhas (mais moedas, mais longo), B3-punhado (mais longo), C4-caixa-antiga (sino mais grave)
+Versão final: A3 (pedido entregue / entrada no Teto), B4-punhado (recompensas médias), C4 (feira ou fase concluída), F-carimbo (gasto no Teto)
 """
 import os, sys, wave
 import numpy as np
@@ -140,6 +141,10 @@ SONS.update({
     'B3-punhado': lambda: mix(chuva(30, 1.6) + [(chocalho_metal(.5, .25), 0, 1), (chocalho_metal(.4, .15), .6, 1)], 2.0),
     'C4-caixa-antiga': lambda: mix(catraca(9, .42, .9) + [(baque(110, .25, .9), .47, 1), (chocalho_metal(.12, .4), .48, 1),
                                     (sino_caixa(1380, 1.9, 1, ((1, 1, .5), (2.4, .22, .25), (.5, .12, .4), (3.1, .06, .12))), .52, 1)], 2.4),
+})
+
+SONS.update({
+    'B4-punhado': lambda: mix(chuva(60, 1.7) + [(chocalho_metal(.6, .3), 0, 1), (chocalho_metal(.5, .2), .5, 1), (chocalho_metal(.4, .12), 1.0, 1)], 2.1),
 })
 
 if __name__ == '__main__':

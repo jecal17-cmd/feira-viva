@@ -75,6 +75,8 @@ Os itens do tabuleiro com arte ficam em `versao-b-quitanda-zen/itens/<código>.w
 
 **Instagram:** o material de lançamento da Bentevi (Quitanda Zen em PT/EN e Ler Brincando em PT) está em `docs/marketing/instagram/`, com o guia em `GUIA.md`.
 
+**Sons de dinheiro** (Quitanda e Rota, `Sfx.tocar`): moedinhas (A3) a cada pedido entregue, punhado de moedas (B4) no baú e no bônus do álbum, caixa registradora (C4) ao concluir a feira (Quitanda) ou a fase (Rota). Embutidos em base64 no `index.html`; respeitam a opção Som. Gerados por `docs/arte/musica/sons_dinheiro.py`; os MP3 finais estão em `docs/arte/musica/sons/`. O Teto usa o carimbo (F) ao registrar gasto e as moedinhas ao registrar entrada.
+
 **Valor dos pedidos:** cada pedido mostra quantas moedas paga (`orderPay(o)`, a mesma conta que `deliver()` credita). Na Quitanda: itens (`COV`) com o bônus da volta, em dobro no relâmpago dentro do prazo e com +30 da receita ainda não descoberta. Na Rota: `ORDER_COIN` (2) × nível de cada item.
 
 ## Rota das Feiras: arte, álbum e troca de aparelho
