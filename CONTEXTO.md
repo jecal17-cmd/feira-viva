@@ -44,7 +44,7 @@ A desenvolvedora se chama **Bentevi** (Bentevi Games): a vinheta de abertura da 
 
 ## Ícones
 
-As artes vieram do Midjourney (prompts na conversa e em `docs/arte/`) e já trazem a própria moldura (quadrado arredondado) sobre um fundo liso. O script apaga o fundo de fora da moldura e encaixa a arte inteira em cada formato, sem cortar nada: no ícone adaptativo ela cabe no círculo seguro de 66 dp, sobre a cor de fundo. Ele gera os ícones adaptativos e antigos do Android em todas as densidades, as telas de abertura, o ícone da web (192 px) e o ícone da loja (512 px):
+As artes vieram do Midjourney (prompts na conversa e em `docs/arte/`) e já trazem a própria moldura (quadrado arredondado) sobre um fundo liso. O script apaga o fundo de fora da moldura. No ícone adaptativo, a arte fica com 78 dp (de 108) sobre uma versão desfocada dela mesma, para encher a máscara do celular sem anel de cor em volta; a prévia com máscaras de vários celulares está em `previa-icones.png`. Ele gera os ícones adaptativos e antigos do Android em todas as densidades, as telas de abertura, o ícone da web (192 px) e o ícone da loja (512 px):
 
 ```bash
 python docs/arte/icones/gerar_icones_arte.py docs/arte/icones/quitanda-arte.png app-android/android/app/src/main/res --cor '#3E9B5F' --web versao-b-quitanda-zen/icone-192.png --loja docs/arte/icones/quitanda-512.png
