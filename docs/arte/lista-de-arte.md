@@ -13,20 +13,10 @@ Atualizado por `atualizar_status.py`. ✅ = imagem já no jogo · ⬜ = falta ge
 | Grupo | Prontas | Faltam |
 |---|---|---|
 | Mercados | 12 de 12 | 0 |
-| Itens do tabuleiro | 58 de 104 | 46 |
-| Itens da Rota das Feiras | 3 de 15 | 12 |
+| Itens do tabuleiro | 104 de 104 | 0 |
+| Itens da Rota das Feiras | 15 de 15 | 0 |
 | Personagens | 0 de 28 | 28 |
 | Decoração da banca | 0 de 12 | 12 |
-
-**Itens que faltam, por linha:**
-
-- Armazém (1): Farinha de mandioca
-- Doces (6): Chocolate, Cocada, Quindim, Sonho, Goiabada, Bolo de rolo
-- Carnes (7): Ovo, Torresmo, Linguiça, Carne de sol, Costela, Espetinho, Feijoada
-- Laticínios (8): Leite, Manteiga, Queijo minas, Requeijão, Queijo coalho, Doce de leite, Romeu e Julieta, Pudim
-- Lanches (8): Pastel, Tapioca, Sanduíche de mortadela, Coxinha, Acarajé, X-tudo, Tapioca recheada, Marmita
-- Padaria (8): Trigo, Pão de forma, Pão francês, Pão de queijo, Rosca, Bolo de fubá, Empadão, Bolo de festa
-- Flores (8): Muda, Margarida, Orquídea, Girassol, Bromélia, Hibisco, Ipê-amarelo, Buquê tropical
 
 ## Como gerar
 
@@ -176,7 +166,7 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 | 2 | `itens/gr-2.png` | Castanha-do-pará | Brazil nuts |  | 🌰 | ✅ |
 | 3 | `itens/gr-3.png` | Pipoca | Popcorn |  | 🍿 | ✅ |
 | 4 | `itens/gr-4.png` | Arroz | Rice |  | 🍚 | ✅ |
-| 5 | `itens/gr-5.png` | Farinha de mandioca | Cassava flour |  | 🥣 | ⬜ |
+| 5 | `itens/gr-5.png` | Farinha de mandioca | Cassava flour |  | 🥣 | ✅ |
 | 6 | `itens/gr-6.png` | Feijão | Beans |  | 🫘 | ✅ |
 | 7 | `itens/gr-7.png` | Cuscuz | Cuscuz | steamed cornmeal cake from the Northeast | 🥮 | ✅ |
 | 8 | `itens/gr-8.png` | Baião de dois | Baião de dois | rice and beans cooked together with cheese, from Ceará | 🍛 | ✅ |
@@ -187,77 +177,77 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 |---|---|---|---|---|---|---|
 | 1 | `itens/do-1.png` | Rapadura | Rapadura | block of unrefined cane sugar | 🍬 | ✅ |
 | 2 | `itens/do-2.png` | Paçoca | Paçoca | crumbly peanut candy | 🍭 | ✅ |
-| 3 | `itens/do-3.png` | Chocolate | Chocolate |  | 🍫 | ⬜ |
-| 4 | `itens/do-4.png` | Cocada | Cocada | chewy coconut candy | 🍪 | ⬜ |
-| 5 | `itens/do-5.png` | Quindim | Quindim | glossy coconut and egg-yolk custard | 🧁 | ⬜ |
-| 6 | `itens/do-6.png` | Sonho | Sonho | cream-filled doughnut; the name means “dream” | 🍩 | ⬜ |
-| 7 | `itens/do-7.png` | Goiabada | Goiabada | thick guava paste | 🍡 | ⬜ |
-| 8 | `itens/do-8.png` | Bolo de rolo | Bolo de rolo | thin rolled cake with guava filling, from Pernambuco | 🍥 | ⬜ |
+| 3 | `itens/do-3.png` | Chocolate | Chocolate |  | 🍫 | ✅ |
+| 4 | `itens/do-4.png` | Cocada | Cocada | chewy coconut candy | 🍪 | ✅ |
+| 5 | `itens/do-5.png` | Quindim | Quindim | glossy coconut and egg-yolk custard | 🧁 | ✅ |
+| 6 | `itens/do-6.png` | Sonho | Sonho | cream-filled doughnut; the name means “dream” | 🍩 | ✅ |
+| 7 | `itens/do-7.png` | Goiabada | Goiabada | thick guava paste | 🍡 | ✅ |
+| 8 | `itens/do-8.png` | Bolo de rolo | Bolo de rolo | thin rolled cake with guava filling, from Pernambuco | 🍥 | ✅ |
 
 ### Carnes / Meats (`ca`)
 
 | Nível | Arquivo | Português | Inglês | Explicação (inglês) | Emoji provisório | Arte |
 |---|---|---|---|---|---|---|
-| 1 | `itens/ca-1.png` | Ovo | Egg |  | 🥚 | ⬜ |
+| 1 | `itens/ca-1.png` | Ovo | Egg |  | 🥚 | ✅ |
 | 2 | `itens/ca-2.png` | Frango | Chicken |  | 🍗 | ✅ |
-| 3 | `itens/ca-3.png` | Torresmo | Torresmo | crispy pork crackling | 🥓 | ⬜ |
-| 4 | `itens/ca-4.png` | Linguiça | Linguiça | Brazilian pork sausage | 🌭 | ⬜ |
-| 5 | `itens/ca-5.png` | Carne de sol | Carne de sol | salted, sun-cured beef | 🥩 | ⬜ |
-| 6 | `itens/ca-6.png` | Costela | Ribs |  | 🍖 | ⬜ |
-| 7 | `itens/ca-7.png` | Espetinho | Espetinho | street-food skewer grilled on charcoal | 🍢 | ⬜ |
-| 8 | `itens/ca-8.png` | Feijoada | Feijoada | black bean and pork stew, a national favorite | 🥘 | ⬜ |
+| 3 | `itens/ca-3.png` | Torresmo | Torresmo | crispy pork crackling | 🥓 | ✅ |
+| 4 | `itens/ca-4.png` | Linguiça | Linguiça | Brazilian pork sausage | 🌭 | ✅ |
+| 5 | `itens/ca-5.png` | Carne de sol | Carne de sol | salted, sun-cured beef | 🥩 | ✅ |
+| 6 | `itens/ca-6.png` | Costela | Ribs |  | 🍖 | ✅ |
+| 7 | `itens/ca-7.png` | Espetinho | Espetinho | street-food skewer grilled on charcoal | 🍢 | ✅ |
+| 8 | `itens/ca-8.png` | Feijoada | Feijoada | black bean and pork stew, a national favorite | 🥘 | ✅ |
 
 ### Laticínios / Dairy (`la`)
 
 | Nível | Arquivo | Português | Inglês | Explicação (inglês) | Emoji provisório | Arte |
 |---|---|---|---|---|---|---|
-| 1 | `itens/la-1.png` | Leite | Milk |  | 🥛 | ⬜ |
-| 2 | `itens/la-2.png` | Manteiga | Butter |  | 🧈 | ⬜ |
-| 3 | `itens/la-3.png` | Queijo minas | Queijo minas | mild fresh cheese from Minas Gerais | 🧀 | ⬜ |
-| 4 | `itens/la-4.png` | Requeijão | Requeijão | creamy spreadable cheese | 🍶 | ⬜ |
-| 5 | `itens/la-5.png` | Queijo coalho | Queijo coalho | firm cheese grilled on a stick | 🧇 | ⬜ |
-| 6 | `itens/la-6.png` | Doce de leite | Doce de leite | slow-cooked milk caramel | 🍨 | ⬜ |
-| 7 | `itens/la-7.png` | Romeu e Julieta | Romeu e Julieta | cheese with guava paste, a classic pairing | 🍰 | ⬜ |
-| 8 | `itens/la-8.png` | Pudim | Pudim | Brazilian caramel flan made with condensed milk | 🍮 | ⬜ |
+| 1 | `itens/la-1.png` | Leite | Milk |  | 🥛 | ✅ |
+| 2 | `itens/la-2.png` | Manteiga | Butter |  | 🧈 | ✅ |
+| 3 | `itens/la-3.png` | Queijo minas | Queijo minas | mild fresh cheese from Minas Gerais | 🧀 | ✅ |
+| 4 | `itens/la-4.png` | Requeijão | Requeijão | creamy spreadable cheese | 🍶 | ✅ |
+| 5 | `itens/la-5.png` | Queijo coalho | Queijo coalho | firm cheese grilled on a stick | 🧇 | ✅ |
+| 6 | `itens/la-6.png` | Doce de leite | Doce de leite | slow-cooked milk caramel | 🍨 | ✅ |
+| 7 | `itens/la-7.png` | Romeu e Julieta | Romeu e Julieta | cheese with guava paste, a classic pairing | 🍰 | ✅ |
+| 8 | `itens/la-8.png` | Pudim | Pudim | Brazilian caramel flan made with condensed milk | 🍮 | ✅ |
 
 ### Lanches / Snacks (`ln`)
 
 | Nível | Arquivo | Português | Inglês | Explicação (inglês) | Emoji provisório | Arte |
 |---|---|---|---|---|---|---|
-| 1 | `itens/ln-1.png` | Pastel | Pastel | crispy fried pastry, the classic street-market snack | 🥟 | ⬜ |
-| 2 | `itens/ln-2.png` | Tapioca | Tapioca | crepe made from cassava starch | 🫓 | ⬜ |
-| 3 | `itens/ln-3.png` | Sanduíche de mortadela | Mortadella sandwich |  | 🥪 | ⬜ |
-| 4 | `itens/ln-4.png` | Coxinha | Coxinha | teardrop-shaped chicken croquette | 🍤 | ⬜ |
-| 5 | `itens/ln-5.png` | Acarajé | Acarajé | black-eyed pea fritter fried in dendê oil | 🧆 | ⬜ |
-| 6 | `itens/ln-6.png` | X-tudo | X-tudo | “cheese-everything”: a fully loaded burger | 🍔 | ⬜ |
-| 7 | `itens/ln-7.png` | Tapioca recheada | Filled tapioca |  | 🌮 | ⬜ |
-| 8 | `itens/ln-8.png` | Marmita | Marmita | home-style packed lunch | 🍱 | ⬜ |
+| 1 | `itens/ln-1.png` | Pastel | Pastel | crispy fried pastry, the classic street-market snack | 🥟 | ✅ |
+| 2 | `itens/ln-2.png` | Tapioca | Tapioca | crepe made from cassava starch | 🫓 | ✅ |
+| 3 | `itens/ln-3.png` | Sanduíche de mortadela | Mortadella sandwich |  | 🥪 | ✅ |
+| 4 | `itens/ln-4.png` | Coxinha | Coxinha | teardrop-shaped chicken croquette | 🍤 | ✅ |
+| 5 | `itens/ln-5.png` | Acarajé | Acarajé | black-eyed pea fritter fried in dendê oil | 🧆 | ✅ |
+| 6 | `itens/ln-6.png` | X-tudo | X-tudo | “cheese-everything”: a fully loaded burger | 🍔 | ✅ |
+| 7 | `itens/ln-7.png` | Tapioca recheada | Filled tapioca |  | 🌮 | ✅ |
+| 8 | `itens/ln-8.png` | Marmita | Marmita | home-style packed lunch | 🍱 | ✅ |
 
 ### Padaria / Bakery (`pa`)
 
 | Nível | Arquivo | Português | Inglês | Explicação (inglês) | Emoji provisório | Arte |
 |---|---|---|---|---|---|---|
-| 1 | `itens/pa-1.png` | Trigo | Wheat |  | 🌾 | ⬜ |
-| 2 | `itens/pa-2.png` | Pão de forma | Sandwich loaf |  | 🍞 | ⬜ |
-| 3 | `itens/pa-3.png` | Pão francês | Pão francês | crusty bread roll eaten every morning in Brazil | 🥖 | ⬜ |
-| 4 | `itens/pa-4.png` | Pão de queijo | Pão de queijo | chewy little cheese bread | 🥯 | ⬜ |
-| 5 | `itens/pa-5.png` | Rosca | Sweet bread ring |  | 🥨 | ⬜ |
-| 6 | `itens/pa-6.png` | Bolo de fubá | Bolo de fubá | cornmeal cake | 🥞 | ⬜ |
-| 7 | `itens/pa-7.png` | Empadão | Empadão | savory pot pie | 🥧 | ⬜ |
-| 8 | `itens/pa-8.png` | Bolo de festa | Party cake |  | 🎂 | ⬜ |
+| 1 | `itens/pa-1.png` | Trigo | Wheat |  | 🌾 | ✅ |
+| 2 | `itens/pa-2.png` | Pão de forma | Sandwich loaf |  | 🍞 | ✅ |
+| 3 | `itens/pa-3.png` | Pão francês | Pão francês | crusty bread roll eaten every morning in Brazil | 🥖 | ✅ |
+| 4 | `itens/pa-4.png` | Pão de queijo | Pão de queijo | chewy little cheese bread | 🥯 | ✅ |
+| 5 | `itens/pa-5.png` | Rosca | Sweet bread ring |  | 🥨 | ✅ |
+| 6 | `itens/pa-6.png` | Bolo de fubá | Bolo de fubá | cornmeal cake | 🥞 | ✅ |
+| 7 | `itens/pa-7.png` | Empadão | Empadão | savory pot pie | 🥧 | ✅ |
+| 8 | `itens/pa-8.png` | Bolo de festa | Party cake |  | 🎂 | ✅ |
 
 ### Flores / Flowers (`fl`)
 
 | Nível | Arquivo | Português | Inglês | Explicação (inglês) | Emoji provisório | Arte |
 |---|---|---|---|---|---|---|
-| 1 | `itens/fl-1.png` | Muda | Seedling |  | 🌱 | ⬜ |
-| 2 | `itens/fl-2.png` | Margarida | Daisy |  | 🌼 | ⬜ |
-| 3 | `itens/fl-3.png` | Orquídea | Orchid |  | 🌷 | ⬜ |
-| 4 | `itens/fl-4.png` | Girassol | Sunflower |  | 🌻 | ⬜ |
-| 5 | `itens/fl-5.png` | Bromélia | Bromeliad |  | 🌹 | ⬜ |
-| 6 | `itens/fl-6.png` | Hibisco | Hibiscus |  | 🌺 | ⬜ |
-| 7 | `itens/fl-7.png` | Ipê-amarelo | Ipê-amarelo | tree that bursts into yellow bloom | 🌳 | ⬜ |
-| 8 | `itens/fl-8.png` | Buquê tropical | Tropical bouquet |  | 💐 | ⬜ |
+| 1 | `itens/fl-1.png` | Muda | Seedling |  | 🌱 | ✅ |
+| 2 | `itens/fl-2.png` | Margarida | Daisy |  | 🌼 | ✅ |
+| 3 | `itens/fl-3.png` | Orquídea | Orchid |  | 🌷 | ✅ |
+| 4 | `itens/fl-4.png` | Girassol | Sunflower |  | 🌻 | ✅ |
+| 5 | `itens/fl-5.png` | Bromélia | Bromeliad |  | 🌹 | ✅ |
+| 6 | `itens/fl-6.png` | Hibisco | Hibiscus |  | 🌺 | ✅ |
+| 7 | `itens/fl-7.png` | Ipê-amarelo | Ipê-amarelo | tree that bursts into yellow bloom | 🌳 | ✅ |
+| 8 | `itens/fl-8.png` | Buquê tropical | Tropical bouquet |  | 💐 | ✅ |
 
 ## Itens da Rota das Feiras (3 linhas × 5 níveis = 15)
 
@@ -267,10 +257,10 @@ A Versão A tem itens próprios do Ver-o-Peso. Ficam em `versao-a-rota-das-feira
 
 | Nível | Arquivo | Português | Inglês | Arte |
 |---|---|---|---|---|
-| 1 | `rota/itens/ac-1.png` | Cacho de açaí | Açaí bunch | ⬜ |
-| 2 | `rota/itens/ac-2.png` | Fruto | Açaí berries | ⬜ |
-| 3 | `rota/itens/ac-3.png` | Polpa | Açaí pulp | ⬜ |
-| 4 | `rota/itens/ac-4.png` | Açaí batido | Blended açaí | ⬜ |
+| 1 | `rota/itens/ac-1.png` | Cacho de açaí | Açaí bunch | ✅ |
+| 2 | `rota/itens/ac-2.png` | Fruto | Açaí berries | ✅ |
+| 3 | `rota/itens/ac-3.png` | Polpa | Açaí pulp | ✅ |
+| 4 | `rota/itens/ac-4.png` | Açaí batido | Blended açaí | ✅ |
 | 5 | `rota/itens/ac-5.png` | Tigela de açaí com tapioca | Açaí bowl with tapioca | ✅ |
 
 ### Peixe (`pe`)
@@ -279,19 +269,19 @@ A Versão A tem itens próprios do Ver-o-Peso. Ficam em `versao-a-rota-das-feira
 |---|---|---|---|---|
 | 1 | `rota/itens/pe-1.png` | Peixe pequeno | Small fish | ✅ |
 | 2 | `rota/itens/pe-2.png` | Peixe limpo | Cleaned fish | ✅ |
-| 3 | `rota/itens/pe-3.png` | Filé | Fillet | ⬜ |
-| 4 | `rota/itens/pe-4.png` | Peixe assado | Roast fish | ⬜ |
-| 5 | `rota/itens/pe-5.png` | Pirarucu de casaca | Pirarucu de casaca | ⬜ |
+| 3 | `rota/itens/pe-3.png` | Filé | Fillet | ✅ |
+| 4 | `rota/itens/pe-4.png` | Peixe assado | Roast fish | ✅ |
+| 5 | `rota/itens/pe-5.png` | Pirarucu de casaca | Pirarucu de casaca | ✅ |
 
 ### Jambu/Tucupi (`jt`)
 
 | Nível | Arquivo | Português | Inglês | Arte |
 |---|---|---|---|---|
-| 1 | `rota/itens/jt-1.png` | Folha de jambu | Jambu leaf | ⬜ |
-| 2 | `rota/itens/jt-2.png` | Maço de jambu | Jambu bunch | ⬜ |
-| 3 | `rota/itens/jt-3.png` | Caldo de tucupi | Tucupi broth | ⬜ |
-| 4 | `rota/itens/jt-4.png` | Tacacá | Tacacá | ⬜ |
-| 5 | `rota/itens/jt-5.png` | Pato no tucupi | Pato no tucupi | ⬜ |
+| 1 | `rota/itens/jt-1.png` | Folha de jambu | Jambu leaf | ✅ |
+| 2 | `rota/itens/jt-2.png` | Maço de jambu | Jambu bunch | ✅ |
+| 3 | `rota/itens/jt-3.png` | Caldo de tucupi | Tucupi broth | ✅ |
+| 4 | `rota/itens/jt-4.png` | Tacacá | Tacacá | ✅ |
+| 5 | `rota/itens/jt-5.png` | Pato no tucupi | Pato no tucupi | ✅ |
 
 ## Personagens (28)
 

@@ -412,7 +412,7 @@ const REGS=['Norte','Nordeste','Centro-Oeste','Sudeste','Sul'], REGUF={ac:0,am:0
 const $=id=>document.getElementById(id), fmt=n=>Math.round(n).toLocaleString(LANG==='en'?'en-US':'pt-BR');
 const pick=a=>a[Math.floor(Math.random()*a.length)], rint=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 // Arte (pastas itens/ e mercados/). Sem arte, fica o emoji.
-const ITEM_ART=new Set(['pe-1','pe-2','ac-5']);
+const ITEM_ART=new Set(Object.keys(LINES).flatMap(l=>[1,2,3,4,5].map(n=>l+'-'+n)));   // todas as 15 imagens prontas
 const ie=(l,n)=>ITEM_ART.has(l+'-'+n)?`<img class="ii" src="itens/${l}-${n}.webp" alt="" draggable="false">`:LINES[l].it[n-1][0];
 const artUrl=f=>f.img?`mercados/${f.img}.webp`:'';
 const tileHtml=(f,cls='')=>`<span class="mtile${cls?' '+cls:''}" aria-hidden="true">${f.img?`<img src="${artUrl(f)}" alt="" onerror="this.replaceWith('${f.ic}')">`:f.ic}</span>`;
