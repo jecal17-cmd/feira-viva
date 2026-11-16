@@ -50,7 +50,8 @@ jobs:
           distribution: temurin
           java-version: 21
       - name: Instalar dependências
-        run: npm ci
+        # npm ci exige a lista travada (package-lock.json) em dia; se um plugin novo ainda não estiver nela, instala normalmente
+        run: npm ci || npm install --no-audit --no-fund
       - name: Copiar o jogo em modo de publicação
         env:
           PUBLICACAO: '1'
