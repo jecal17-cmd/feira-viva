@@ -137,10 +137,35 @@ a.btn{text-decoration:none;display:inline-block;text-align:center}
 .floaty{position:relative;height:0}
 .floaty i{position:absolute;font-style:normal;font-size:26px;animation:bob 3s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(-8px) rotate(6deg)}}
-.stall{background:var(--panel);border-radius:20px;overflow:hidden;box-shadow:0 4px 0 var(--line)}
-.awning{height:30px;background:repeating-linear-gradient(90deg,var(--stripe) 0 28px,#FFF6E8 28px 56px);border-bottom-left-radius:14px 10px;border-bottom-right-radius:14px 10px}
-.shelf{display:flex;justify-content:center;gap:4px;font-size:26px;padding:10px 8px 4px;flex-wrap:wrap}
-.deco{font-size:26px;min-height:8px;letter-spacing:2px}
+.homein{min-height:100%}
+.stall{background:var(--panel);border-radius:20px;overflow:hidden;box-shadow:0 4px 0 var(--line);flex:1 1 auto;display:flex;flex-direction:column}
+/* Banca da tela inicial: cena quadrada que ocupa o espaço que sobra; caixotes enchem com os itens descobertos */
+.banca{flex:1 1 auto;min-height:calc(min(100vw - 32px,420px) * .86);position:relative;background:#DDF0E6}
+.cena{position:absolute;bottom:0;left:50%;width:var(--lado,86%);height:var(--lado,100%);transform:translateX(-50%)}
+.chao{left:-100%;right:-100%;bottom:0;height:17%;background:repeating-linear-gradient(90deg,#ECA98A 0 calc(10% / 3 - 1px),#D98765 0 calc(10% / 3)),#ECA98A;box-shadow:inset 0 3px 0 #D98765}
+.cena>*{position:absolute}
+.cena img{display:block;width:100%;height:auto;pointer-events:none;-webkit-user-drag:none}
+.cena .madeira{background:linear-gradient(90deg,#9C6A3F,#C08A55 40%,#9C6A3F);border-radius:2px;box-shadow:inset 0 0 0 1px #6E4524}
+.poste{top:8%;bottom:12%;width:3.4%}
+.viga{left:5%;right:5%;top:7%;height:3%}
+.tabua{left:11%;right:11%;height:2.2%;background:linear-gradient(#C99460,#8E5E35)!important}
+.balcao{left:3%;right:3%;top:70%;bottom:7%;border-radius:3px;background:repeating-linear-gradient(90deg,#B57E4A 0 9%,#A06D3E 9% 9.6%);box-shadow:inset 0 -6px 0 #0001,inset 0 0 0 1px #6E4524}
+.balcao::before{content:'';position:absolute;left:-1.5%;right:-1.5%;top:-6%;height:12%;border-radius:3px;background:linear-gradient(#D7A46D,#A9743F);box-shadow:inset 0 0 0 1px #6E4524}
+.toldo{left:1%;right:1%;top:1%;height:16%;border-radius:6px 6px 0 0;
+  background:repeating-linear-gradient(90deg,#E0503C 0 7.14%,#FFF4E2 7.14% 14.28%);box-shadow:inset 0 -2px 0 #0002}
+.toldo::after{content:'';position:absolute;left:0;right:0;top:100%;height:40%;
+  background:radial-gradient(circle at 50% 0,#E0503C 70%,transparent 72%) 0 0/14.28% 100%,radial-gradient(circle at 50% 0,#FFF4E2 70%,transparent 72%) 7.14% 0/14.28% 100%;
+  filter:drop-shadow(0 2px 0 #0002)}
+.varal{left:11%;right:11%;display:flex}
+.varal img{width:33.4%}
+.cx{width:13.5%;display:flex;flex-direction:column;align-items:center}
+.cx .pl{display:flex;flex-wrap:wrap-reverse;justify-content:center;width:130%;margin-bottom:-11%;padding-inline:6%;position:relative;z-index:1}
+.cx .pl img{width:40%;margin:0 -7.5% -15%;filter:drop-shadow(0 1px 1px #0003)}
+.cx .pl img.nv{animation:brilho 1.6s ease-in-out infinite}
+@keyframes brilho{50%{filter:drop-shadow(0 0 3px #FFE27A) brightness(1.12)}}
+.cx i{display:block;width:100%;aspect-ratio:2.6;border-radius:2px;position:relative;z-index:2;
+  background:linear-gradient(#0000 46%,#7A4A26 46% 54%,#0000 54%),linear-gradient(#EBCB92,#CFA265);box-shadow:inset 0 0 0 1px #8A5A30,inset 3px 0 #7A4A2655,inset -3px 0 #7A4A2655}
+.vazia{left:14%;right:14%;top:47%;font-size:12px;color:#5E6B63;text-align:center;font-style:italic}
 .pf{width:1.3em;height:1.3em;object-fit:contain;vertical-align:-.3em;pointer-events:none;-webkit-user-drag:none}
 .face .pf,.keeper .pf{width:1.5em;height:1.5em}
 .keeper{display:flex;align-items:center;gap:10px;padding:8px 12px 12px;text-align:left}
@@ -568,7 +593,7 @@ const UI={
   dChest:(n,co)=>`Baú diário renovado: <b>${n}</b> aberturas de ${co} moedas e 1 🧲`, dDouble:n=>`Dobrar recompensa: <b>${n}</b> vezes hoje`,
   dFull:'Seus cestos encheram enquanto você estava fora', dClaim:'🎁 Pegar presente', dOk:'Vamos lá',
   saldo:'Seu saldo', lvOf:(a,b)=>`nível ${a} de ${b}`, oNotif:['Avisos','Avisa no celular quando os cestos encherem com o jogo fechado.'],
-  nTitle:'Cestos cheios! 🧺', nBody:'Sua banca está pronta: venha colher, juntar e entregar.', decoAria:'Decoração',
+  nTitle:'Cestos cheios! 🧺', nBody:'Sua banca está pronta: venha colher, juntar e entregar.', decoAria:'Sua banca', bancaVazia:'Banca vazia: cada item que você descobrir aparece aqui.',
   homeLine:(l,s,p)=>`Nível ${l} · ⭐ ${s} feiras concluídas · ${'Volta '+p}`, ready:'pronto para viajar',
   st:['Tempo de jogo','XP por minuto','Fusões','Itens colhidos','Pedidos atendidos','Feiras concluídas','Anúncios com recompensa','Anúncios de tela cheia','Compras simuladas'], waiting:'aguardando',
   mapAria:'Mapa do Brasil com a Rota das Feiras',
@@ -667,7 +692,7 @@ const UI={
   dChest:(n,co)=>`Daily chest refreshed: <b>${n}</b> opens of ${co} coins and 1 🧲`, dDouble:n=>`Double reward: <b>${n}</b> times today`,
   dFull:'Your baskets filled up while you were away', dClaim:'🎁 Claim gift', dOk:'Let’s go',
   saldo:'Your balance', lvOf:(a,b)=>`level ${a} of ${b}`, oNotif:['Notifications','Lets you know when your baskets are full while the game is closed.'],
-  nTitle:'Baskets full! 🧺', nBody:'Your stall is ready: come pick, merge and deliver.', decoAria:'Decorations',
+  nTitle:'Baskets full! 🧺', nBody:'Your stall is ready: come pick, merge and deliver.', decoAria:'Your stall', bancaVazia:'Empty stall: every item you discover shows up here.',
   homeLine:(l,s,p)=>`Level ${l} · ⭐ ${s} markets done · Lap ${p}`, ready:'ready to travel',
   st:['Play time','XP per minute','Merges','Items picked','Orders filled','Markets completed','Rewarded ads','Full-screen ads','Simulated purchases'], waiting:'waiting',
   mapAria:'Map of Brazil with the Market Trail',
@@ -1229,12 +1254,35 @@ function renderBaskets(){
     +`<button class="basket bo" data-act="recharge" aria-label="${t('recAria')}"><span class="em">⚡</span><b>${S.boost.rec}</b><small>${t('recLbl')}</small></button>`
     +`<button class="basket ad bo" data-act="adcharge" aria-label="${t('adAria')}" ${S.daily.adCharge>=AD_MAX?'disabled':''}><span class="em">▶</span><b>+${Math.round(AD_CHARGE*bonus())}</b><small>${S.daily.adCharge}/${AD_MAX}</small></button>`;
 }
+// Banca da tela inicial. Cada linha com algum item descoberto ganha um caixote (balcão, depois prateleiras);
+// o caixote mostra os itens já descobertos da linha (os novos brilham). As decorações ficam no lugar e no
+// tamanho de verdade: posições em % da cena quadrada, larguras proporcionais (balcão ≈ 90 cm = 20% da cena).
+const CAIXOTES=[[19,30],[38,30],[57,30],[76,30],[12.5,43],[27.4,43],[42.3,43],[57.2,43],[72.1,43],[12.5,58],[27.4,58],[42.3,58],[57.2,58]];   // [esquerda, base] em %
+const DECOR_POS={1:'left:0;bottom:4%;width:13%;z-index:3',2:'left:5%;bottom:3%;width:23%',3:'left:36%;bottom:1%;width:15%;z-index:4',
+  4:'left:5%;bottom:30%;width:11%',6:'left:73%;bottom:58%;width:10%',7:'right:-1%;bottom:2%;width:27%;z-index:4',8:'right:23%;bottom:1%;width:13%;z-index:5',
+  9:'right:2.5%;top:24%;width:9%',11:'left:21%;bottom:0;width:12%;z-index:5'};
+function bancaHtml(){
+  const has=i=>S.decor.includes(i), linhas=Object.keys(LINES).filter(l=>LINES[l].it.some((_,j)=>S.seen[l+(j+1)])).slice(0,CAIXOTES.length);
+  const varal=(i,top)=>has(i)?`<div class="varal" style="top:${top}%;z-index:2">${de(i).repeat(3)}</div>`:'';
+  const tot=Object.keys(S.seen).length;
+  return `<div class="banca" role="img" aria-label="${t('decoAria')}: ${tot} / ${Object.keys(LINES).length*MAX}"><div class="cena"><div class="chao"></div>`
+   +`<div class="madeira poste" style="left:8%"></div><div class="madeira poste" style="right:8%"></div><div class="madeira viga"></div>`
+   +`<div class="madeira tabua" style="top:42%"></div><div class="madeira tabua" style="top:57%"></div>`
+   +(has(0)?'<div class="toldo"></div>':'')+varal(5,8.5)+varal(10,14.5)
+   +linhas.map((l,k)=>{ const [x,b]=CAIXOTES[k], its=LINES[l].it.map((_,j)=>j+1).filter(n=>S.seen[l+n]);
+      return `<div class="cx" style="left:${x}%;bottom:${b}%;${k<4?'width:15%;z-index:3':''}"><div class="pl">${its.map(n=>ie(l,n).replace('class="ii"',S.seen[l+n]===1?'class="nv"':'')).join('')}</div><i></i></div>`; }).join('')
+   +'<div class="balcao"></div>'
+   +Object.entries(DECOR_POS).filter(([i])=>has(+i)).map(([i,st])=>`<div style="${st}">${de(+i)}</div>`).join('')
+   +(linhas.length?'':`<p class="vazia">${t('bancaVazia')}</p>`)
+   +'</div></div>';
+}
+function ajustaBanca(){ const b=document.querySelector('.banca'); if(b) b.style.setProperty('--lado',Math.min(b.clientWidth,b.clientHeight)+'px'); }
+addEventListener('resize',()=>{ if(homeOn) ajustaBanca(); });
 function renderHome(){
   const f=feira(S.stop), g=goal(S.stop), ls=lines(), gift=S.giftDay!==today(), d=Math.min((S.giftDay===dstr(Date.now()-864e5)?S.streak:0)+1,7), N=t('nav');
   $('homein').innerHTML=`<div class="floaty" aria-hidden="true"><i style="left:4%;top:6px">🍉</i><i style="right:6%;top:0;animation-delay:.8s">🧀</i><i style="left:1%;top:40px;animation-delay:1.5s;font-size:20px">🌽</i><i style="right:1%;top:44px;animation-delay:.4s;font-size:20px">🥖</i></div>
    <div class="logo"><b>${t('logo')}</b><small>${t('logoSub')}</small>${t('logoSay')?`<p class="say">${t('logoSay')}</p>`:''}</div>
-   <div class="stall"><div class="awning"></div><div class="shelf" aria-hidden="true">${ls.map(k=>LINES[k].it.slice(0,ls.length>3?2:3).map((x,j)=>ie(k,j+1)).join('')).join('')}</div>
-     <div class="deco" aria-label="${t('decoAria')}">${S.decor.map(i=>de(i)).join('')}</div>
+   <div class="stall">${bancaHtml()}
      <div class="keeper"><span>${pf(CAST[0])}</span><p><b>Seu Zé:</b> ${tx(TIPS[tip])}</p></div></div>
    <button class="play" data-act="play">▶ ${t('play',S.stats.items||S.stats.merges)}</button>
    ${gift?`<button class="gift" data-act="gift">${t('giftBtn',d,20*d)}</button>`:''}
@@ -1242,6 +1290,7 @@ function renderHome(){
      <small>${t('homeLine',S.level,S.stop,lap(S.stop))} · ${S.served>=g?t('ready'):t('clients',S.served,g)}</small></button>
    <div class="hnav">${[['map','🗺️',S.served>=g],['turma','🧑‍🤝‍🧑'],['miss','🎯',S.missions.some(m=>m.p>=m.goal)],...(PUB.loja?[['shop','🛒']]:[]),['help','❓'],['cfg','⚙️']].map(([k,i,dt])=>`<button data-act="nav:${k}"><span>${i}</span>${N[k]}${dt?'<i class="dot"></i>':''}</button>`).join('')}</div>
    <div class="seg" role="group" aria-label="${t('lang')}"><button data-act="lang:pt" aria-pressed="${LANG==='pt'}">🇧🇷 Português</button><button data-act="lang:en" aria-pressed="${LANG==='en'}">🌎 English</button></div>`;
+  ajustaBanca();
 }
 function tick(){
   if(document.visibilityState==='visible') S.stats.playMs+=1000;

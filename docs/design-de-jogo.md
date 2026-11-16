@@ -320,6 +320,12 @@ Pedido da dona do projeto: deixar o jogo mais "livre", avisar quando os cestos e
 - **Receitas no fim da feira:** o aviso de feira concluída lista as receitas descobertas naquele mercado (ingredientes e descrição curta) e quantas o Caderno já tem. A lista recomeça a cada viagem (`S.recFeira`).
 - **Melhorias:** o saldo de moedas fica fixo no topo da tela (e pulsa depois de cada compra), e cada melhoria mostra bolinhas cheias até o nível atual e vazias até o máximo, com o número (ex.: 3/10). O mesmo vale para a ampliação do tabuleiro (0/3) e para as decorações (0/12).
 
+### 4.12 Banca da tela inicial (novembro de 2026)
+
+- A banca da tela inicial virou uma cena de feira: parede, piso, postes, duas prateleiras e balcão, ocupando o espaço que sobra na tela (`bancaHtml()`, `ajustaBanca()`).
+- **Começa vazia e enche com o Álbum:** cada linha com pelo menos um item descoberto (`S.seen`) ganha um caixote. Os 4 primeiros vão no balcão, depois a prateleira do meio (5) e a de cima (4). O caixote mostra os itens já descobertos da linha, e os ainda não vistos no Álbum brilham.
+- **Decorações no lugar e no tamanho de verdade** (`DECOR_POS`; o balcão de uns 90 cm vale 20% da cena): toldo listrado em cima, luzinhas e bandeirinhas penduradas, relógio no poste, balança no balcão, rádio na prateleira de cima e, no chão, vasos de ervas, banco, caminha do Mingau, lousa, carrinho de feira e bicicleta. Sem toldo, a banca mostra só a viga de madeira.
+
 ## 5. Localização e idiomas
 
 **Ordem de lançamento.** Português (BR) + inglês no início; espanhol em seguida (público latino-americano); outros idiomas (alemão, francês etc.) só depois que os dados mostrarem de onde vêm jogadores e receita. O inglês é quase obrigatório porque o dinheiro do gênero está concentrado em mercados ocidentais, em especial os EUA.
