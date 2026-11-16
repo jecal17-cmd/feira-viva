@@ -186,4 +186,4 @@ Style for every character: friendly cartoon illustration for a cozy mobile game,
 
 ## Depois de gerar
 
-Mande os arquivos. Eu fatio as grades (`docs/arte/itens/fatiar_grade.py GRADE.png 5 4 extra` e `... 6 5 personagens`), tiro o fundo, troco as imagens no jogo e atualizo a lista de arte.
+Mande os arquivos. Personagens são recortados pela silhueta (`docs/arte/itens/fatiar_por_silhueta.py GRADE.png 3 2 personagens-2`), porque chapéus e cabeças costumam passar do limite da célula. Eu fatio as grades (`docs/arte/itens/fatiar_grade.py GRADE.png 5 4 extra` e `... 6 5 personagens`), tiro o fundo, troco as imagens no jogo e atualizo a lista de arte.
