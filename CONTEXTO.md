@@ -1,6 +1,6 @@
 # Contexto do projeto (para retomar o trabalho)
 
-Resumo do estado atual, das decisões tomadas e de como continuar. Atualizado em 16/11/2026.
+Resumo do estado atual, das decisões tomadas e de como continuar. Atualizado em 16/11/2026 (fim da tarde).
 
 ## O que é
 
@@ -143,7 +143,8 @@ A Versão A usa as mesmas ilustrações dos 12 mercados (`versao-a-rota-das-feir
 ## Arte gerada com o Nano Banana (novembro de 2026)
 
 - Prompts em `docs/arte/prompt-nano-banana.md` e `prompt-nano-banana-2.md` (3D dos itens, personagens, mercados). As grades geradas ficam em `docs/arte/referencias/grade-*.jpg`, e `docs/arte/itens/grades.json` diz o que é cada casa.
-- Itens e decoração: `fatiar_grade.py` corta a grade em casas e `recortar_itens.py` tira o fundo (rembg) e normaliza.
+- Itens e decoração: `fatiar_grade.py` corta a grade em casas e `recortar_itens.py` tira o fundo (rembg) e normaliza. Sem o rembg instalado, o script usa `mascara_fundo_branco` (branco ligado à borda e vãos grandes de branco puro viram fundo).
+- **Arte toda no estilo novo (16/11, fim da tarde):** tudo o que tinha entrado antes de 16/11 foi refeito com `prompt-nano-banana-3.md`: 52 itens da Quitanda em 4 grades (`grade-refazer-1..4.jpg`, lotes `refazer-1..4` no `grades.json`; a sardinha e o peixe também servem de `pe-1` e `pe-2` da Rota) e 9 mercados (todos menos 03, 05 e 06, que já eram de hoje), nas pastas `mercados/` dos dois jogos. O saleiro (`te-1`) foi recortado sem tirar os brancos internos.
 - Personagens: `fatiar_por_silhueta.py <grade> <colunas> <linhas> <chave>` recorta pela silhueta (não corta cabeças), trata branco ligado à borda e vãos fechados entre braços e objetos como fundo. Ajustes finos (Dona Geralda, Seu Giuseppe) foram feitos tapando vãos internos transparentes.
 - Status da lista: `python docs/arte/atualizar_status.py` (tudo pronto: 12/12 mercados, 104/104 itens, 15/15 da Rota, 28/28 personagens, 12/12 decorações).
 - No jogo: personagens com `pf(c)` (Quitanda: pedidos, Turma da Feira, mapa, chegada, Seu Zé da tela inicial) e decorações com `de(i)` (banca e loja). Os scripts `copy-web.js` copiam `personagens/` e `decoracao/`.

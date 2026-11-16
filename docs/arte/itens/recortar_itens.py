@@ -22,10 +22,30 @@ RAIZ = os.path.normpath(os.path.join(AQUI, '..', '..', '..'))
 JOGO = os.path.join(RAIZ, 'versao-b-quitanda-zen', 'itens')
 
 _sessao = None
+def mascara_fundo_branco(img, tol=26, branco=247, buraco=0.004):
+    """Alternativa sem rembg, para fundo branco liso: o fundo é o branco ligado à borda da imagem,
+    mais os vãos internos grandes de branco puro (alça de cesto, entre bananas). Borda suavizada em 1 px."""
+    im = np.asarray(img).astype(np.int16)
+    claro = (255 - im.min(axis=2)) < tol
+    rot, _ = ndimage.label(claro)
+    borda = np.unique(np.concatenate([rot[0], rot[-1], rot[:, 0], rot[:, -1]]))
+    fundo = np.isin(rot, borda[borda > 0])
+    puro = im.min(axis=2) >= branco
+    rp, n = ndimage.label(puro & ~fundo)
+    if n:
+        tam = ndimage.sum(np.ones(puro.shape), rp, range(1, n + 1))
+        fundo |= np.isin(rp, [i + 1 for i, t in enumerate(tam) if t >= buraco * puro.size])
+    alfa = ndimage.gaussian_filter((~fundo).astype(np.float32), 0.8)
+    return np.clip((alfa - 0.15) / 0.7, 0, 1)
+
 def mascara(img):
-    """Alfa da peça pelo removedor de fundo rembg (modelo isnet-general-use, baixado na 1ª vez)."""
+    """Alfa da peça pelo removedor de fundo rembg (modelo isnet-general-use, baixado na 1ª vez).
+    Sem o rembg instalado, usa mascara_fundo_branco."""
     global _sessao
-    from rembg import new_session, remove
+    try:
+        from rembg import new_session, remove
+    except ImportError:
+        return mascara_fundo_branco(img)
     if _sessao is None: _sessao = new_session('isnet-general-use')
     return np.asarray(remove(img, session=_sessao, only_mask=True), dtype=np.float32) / 255
 
