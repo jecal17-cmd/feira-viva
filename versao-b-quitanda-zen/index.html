@@ -53,6 +53,7 @@ button:disabled{opacity:.45;cursor:default}
 .order.rush{border-color:var(--warn)}
 .order.want,.order.osel{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
 .order .who{font-size:11.5px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:flex;align-items:center;gap:3px;line-height:1.2}
+.order .rtag{position:absolute;top:-8px;left:-5px;width:20px;height:20px;border-radius:50%;background:var(--gold);font-size:11px;line-height:20px;text-align:center;box-shadow:0 1px 0 var(--line)}
 .order .pay{font:800 11px/1 var(--text);color:var(--gold);background:color-mix(in srgb,var(--gold) 14%,transparent);border-radius:99px;padding:2px 7px;margin-top:2px;white-space:nowrap}
 .order .pay.x2{color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,transparent)}
 .order .who i{font-style:normal;font-size:17px;line-height:1}
@@ -236,6 +237,8 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
 .mtile.lock img{filter:grayscale(1) blur(1.5px);opacity:.6}
 .mtile.lock::after{content:'🔒';position:absolute;font-size:22px}
 .mtile.xs{width:22px;height:22px;border-radius:6px;font-size:15px}
+.recf{display:flex;flex-direction:column;gap:6px;text-align:left}.recf>b{text-align:center;color:var(--gold);font-family:var(--display)}
+.recf .row{background:var(--bg);padding:8px 10px}.recf .row p{margin:2px 0 0;font-size:13px}.rie{display:flex;flex:0 0 auto;font-size:24px;line-height:1}.rie img{width:30px;height:30px}
 .card ul{margin:0;padding-left:18px;text-align:left}
 .adbox{border:2px dashed var(--line);border-radius:14px;padding:24px 12px;color:var(--muted)}
 .intro{position:fixed;inset:0;z-index:40;background:var(--introbg);display:grid;place-items:center;cursor:pointer;transition:opacity .5s}
@@ -534,7 +537,7 @@ const UI={
   noMag:'Sem Junta-tudo. Ganhe subindo de nível, viajando e fazendo amizades.', noPair:'Nenhum par para juntar agora.',
   magDone:n=>`Junta-tudo: ${n} ${n>1?'fusões':'fusão'}`, noRec:'Sem Recarga. Ganhe subindo de nível e nos presentes.', fullB:'Cestos cheios',
   friendUp:(n,lv,co,m)=>`Amizade com ${n}: nível ${lv} · +${co} moedas${m?' e 🧲':''}`,
-  notOrdered:'Este cliente não pediu esse item.', rushDone:'Pedido relâmpago: recompensa em dobro', recipeFound:n=>`Receita descoberta: ${n} · +30 XP`, tabRec:'Receitas', backExit:'Toque em voltar de novo para sair', tabIng:'Ingredientes', newTag:'novo', lineDone:'completa',
+  notOrdered:'Este cliente não pediu esse item.', rushDone:'Pedido relâmpago: recompensa em dobro', recipeFound:n=>`Receita descoberta: ${n} · +30 XP`, recFeira:n=>n>1?`${n} receitas novas nesta feira`:'Receita nova nesta feira', recFeiraP:(a,b)=>`Caderno de Receitas: ${a} de ${b}.`, tabRec:'Receitas', backExit:'Toque em voltar de novo para sair', tabIng:'Ingredientes', newTag:'novo', lineDone:'completa',
   ingNote:(a,b,x,c)=>`${a} de ${b} ingredientes descobertos. Tudo o que passa pelo seu tabuleiro entra aqui. Complete os 8 níveis de uma linha para ganhar +${x} XP e +${c} moedas.`,
   albDone:(l,x,c)=>`Linha completa no álbum: ${l} · +${x} XP e +${c} moedas`,
   fairDone:'Feira concluída', fairDoneP:(g,n)=>`Você atendeu ${g} clientes em ${n}.`, nextStop:(ic,n,c,uf)=>`Próxima parada: <b>${ic} ${n}</b>, ${c} (${uf}).`,
@@ -633,7 +636,7 @@ const UI={
   noMag:'No Merge-all left. Earn more by leveling up, traveling and making friends.', noPair:'No pairs to merge right now.',
   magDone:n=>`Merge-all: ${n} merge${n>1?'s':''}`, noRec:'No Refills left. Earn more by leveling up and from gifts.', fullB:'Baskets full',
   friendUp:(n,lv,co,m)=>`Friendship with ${n}: level ${lv} · +${co} coins${m?' and 🧲':''}`,
-  notOrdered:'This customer didn’t order that.', rushDone:'Rush order: double reward', recipeFound:n=>`Recipe discovered: ${n} · +30 XP`, tabRec:'Recipes', backExit:'Press back again to exit', tabIng:'Ingredients', newTag:'new', lineDone:'complete',
+  notOrdered:'This customer didn’t order that.', rushDone:'Rush order: double reward', recipeFound:n=>`Recipe discovered: ${n} · +30 XP`, recFeira:n=>n>1?`${n} new recipes at this market`:'New recipe at this market', recFeiraP:(a,b)=>`Recipe Book: ${a} of ${b}.`, tabRec:'Recipes', backExit:'Press back again to exit', tabIng:'Ingredients', newTag:'new', lineDone:'complete',
   ingNote:(a,b,x,c)=>`${a} of ${b} ingredients discovered. Everything that lands on your board shows up here. Complete all 8 levels of a line to earn +${x} XP and +${c} coins.`,
   albDone:(l,x,c)=>`Album line complete: ${l} · +${x} XP and +${c} coins`,
   fairDone:'Market complete', fairDoneP:(g,n)=>`You served ${g} customers at ${n}.`, nextStop:(ic,n,c,uf)=>`Next stop: <b>${ic} ${n}</b>, ${c} (${uf}).`,
@@ -989,11 +992,11 @@ function deliver(i,id){
     tutMarca(2);
     const c=CAST.find(x=>x.id===o.who); S.stats.orders++; S.served++; bump('orders',1); befriend(c); Sfx.tocar('pedido');
     if(o.rush&&Date.now()<o.rush){ gain(o.xp,o.co); o.xp*=2; o.co*=2; toast(t('rushDone')); }
-    if(o.rec!=null&&!S.recipes.includes(o.rec)){ S.recipes.push(o.rec); gain(30,30); toast(t('recipeFound',tx(RECIPES[o.rec].name))); }
+    if(o.rec!=null&&!S.recipes.includes(o.rec)){ S.recipes.push(o.rec); (S.recFeira=S.recFeira||[]).push(o.rec); gain(30,30); toast(t('recipeFound',tx(RECIPES[o.rec].name))); }
     S.orders[S.orders.indexOf(o)]=newOrder();
     offer={xp:o.xp,co:o.co,who:c,until:Date.now()+8000};
     if(S.served>=goal(S.stop)&&!S.goalSeen){ S.goalSeen=true; const nx=feira(S.stop+1); setTimeout(()=>Sfx.tocar('feira'),350);
-      modal(`<div class="big">⭐</div><h1>${t('fairDone')}</h1><p>${t('fairDoneP',goal(S.stop),feira(S.stop).n)}</p><p>${t('nextStop',nx.ic,nx.n,nx.c,nx.uf)}</p>${nx.img?heroHtml(nx,'inline'):''}<button class="btn" data-act="travelask">${t('travelNow')}</button><button class="btn ghosty" data-act="mclose">${t('stay')}</button>`); }
+      modal(`<div class="big">⭐</div><h1>${t('fairDone')}</h1><p>${t('fairDoneP',goal(S.stop),feira(S.stop).n)}</p><p>${t('nextStop',nx.ic,nx.n,nx.c,nx.uf)}</p>${recFeiraHtml()}${nx.img?heroHtml(nx,'inline'):''}<button class="btn" data-act="travelask">${t('travelNow')}</button><button class="btn ghosty" data-act="mclose">${t('stay')}</button>`); }
     if(S.stats.orders%INTER_ORDERS===0) maybeInter();
   }
   render();
@@ -1027,9 +1030,13 @@ function travelAsk(){
    <ul><li>${t('stalls')}: ${ls.map(k=>ie(k,1)+' '+lname(k)).join(', ')}</li>${gone.length?`<li>${t('willSell',gone.map(lname).join(t('and')),fmt(val))}</li>`:''}<li>${t('arrivesFull')}</li></ul>
    <button class="btn" data-act="travel">${t('hitRoad')}</button><button class="btn ghosty" data-act="mclose">${t('notYet')}</button>`);
 }
+// Fim da feira: lista as receitas descobertas neste mercado, com os ingredientes e uma descrição curta
+function recFeiraHtml(){ const rs=(S.recFeira||[]).filter(i=>RECIPES[i]); if(!rs.length) return '';
+  return `<div class="recf"><b>📖 ${t('recFeira',rs.length)}</b>${rs.map(i=>{ const r=RECIPES[i];
+    return `<div class="row"><span class="rie" aria-hidden="true">${r.it.map(([l,n])=>ie(l,n)).join('')}</span><div><b>${tx(r.name)}</b><p>${r.it.map(([l,n])=>item(l,n)[1]).join(' + ')}</p><p class="note">${tx(r.note)}</p></div></div>`; }).join('')}<p class="note">${t('recFeiraP',S.recipes.length,RECIPES.length)}</p></div>`; }
 function travel(){
   if(S.served<goal(S.stop)) return;
-  const old=S.stop, oldLap=lap(old); S.stop++; S.served=0; S.goalSeen=false;
+  const old=S.stop, oldLap=lap(old); S.stop++; S.served=0; S.goalSeen=false; S.recFeira=[];
   const ls=lines(), now=Date.now(), f=feira(S.stop); let sold=0;
   S.board=S.board.map(x=>{ if(x&&!ls.includes(x.l)){ sold+=COV[x.n]*(x.n>=5?2:1); return null; } return x; });
   S.baskets={}; ls.forEach(k=>S.baskets[k]={c:0,t:now}); S.orders=[]; fillBoard(S);
@@ -1185,7 +1192,7 @@ function renderOrders(){
   const cur=sel!=null?S.board[sel]:null, have=new Set(S.board.filter(Boolean).map(x=>x.l+x.n)), now=Date.now();
   $('orders').innerHTML=S.orders.map(o=>{
     const c=CAST.find(x=>x.id===o.who), want=cur&&matches(o,cur), ready=o.items.some(x=>!x.done&&have.has(x.l+x.n)), rush=o.rush&&now<o.rush, s=rush?Math.ceil((o.rush-now)/1000):0;
-    return `<button class="order${want?' want':''}${ready?' ready':''}${rush?' rush':''}${selOrder===o.id?' osel':''}" data-order="${o.id}" aria-label="${t('orderAria',c.n,o.items.map(x=>t('itemLv',item(x.l,x.n)[1],x.n)).join(t('and')))} · ${fmt(orderPay(o))} 🪙"><span class="who"><i>${pf(c)}</i>${rush?`⏱️ ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`:o.rec!=null?t('recipeTag'):curto(c.n)}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span><span class="pay${rush?' x2':''}">🪙 ${fmt(orderPay(o))}</span></button>`;
+    return `<button class="order${want?' want':''}${ready?' ready':''}${rush?' rush':''}${selOrder===o.id?' osel':''}" data-order="${o.id}" aria-label="${o.rec!=null?t('recipeTag')+' · ':''}${t('orderAria',c.n,o.items.map(x=>t('itemLv',item(x.l,x.n)[1],x.n)).join(t('and')))} · ${fmt(orderPay(o))} 🪙">${o.rec!=null?`<span class="rtag" title="${t('recipeTag')}">📖</span>`:''}<span class="who"><i>${pf(c)}</i>${rush?`⏱️ ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`:curto(c.n)}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span><span class="pay${rush?' x2':''}">🪙 ${fmt(orderPay(o))}</span></button>`;
   }).join('');
 }
 function renderInfo(){
