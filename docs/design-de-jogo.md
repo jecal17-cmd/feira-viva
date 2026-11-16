@@ -309,6 +309,17 @@ Mudanças feitas com base em `docs/avaliacoes/avaliacao-quitanda-zen.docx`. Onde
 - **Ferramentas de teste escondidas:** Modo teste, painel e "Remover anúncios (simulado)" aparecem após 5 toques no número da versão, em Ajustes.
 - **Não feito:** a arte no lugar dos emojis, que depende das imagens.
 
+### 4.11 Revisão de novembro de 2026 (avisos, novidades do dia e anúncios mais espaçados)
+
+Pedido da dona do projeto: deixar o jogo mais "livre", avisar quando os cestos encherem e mostrar melhor o que se ganha e o que se tem. Onde houver conflito com as seções anteriores, vale esta.
+
+- **Anúncios de tela cheia mais espaçados** (constantes `INTER_*` no bloco DADOS): primeiro só depois de 10 min de jogo desde a instalação (eram 5); pelo menos 6 min entre um e outro (eram 3); a cada 6 pedidos (eram 4); nunca nos 2 primeiros minutos depois de abrir o app (ou de voltar após mais de 5 min fora); nunca nos 4 min seguintes a um anúncio com prêmio que a pessoa escolheu ver; e não aparece mais ao subir de nível, que fica só como comemoração. Continua aparecendo ao chegar a um mercado, se as regras acima deixarem. Os anúncios com prêmio (cargas, baú, dobrar) não mudaram.
+- **Novidades de hoje:** na primeira abertura de cada dia, depois da vinheta, um aviso mostra linha por linha, com animação: o presente do dia (moedas contando, e quanto vale amanhã), os anúncios de cargas renovados, o baú diário renovado, o "Dobrar" renovado (a partir do segundo mercado) e, se for o caso, que os cestos encheram. O botão já pega o presente. Também aparece se o dia virar com o jogo aberto. Não aparece no primeiro dia do jogador (o tutorial já basta).
+- **Aviso de cestos cheios (só no app Android):** ao sair do jogo, o app agenda um aviso no celular para a hora em que todos os cestos do mercado atual estarão cheios; ao voltar, cancela. Usa `@capacitor/local-notifications`. A licença é pedida uma vez, num momento que faz sentido (primeiro cesto vazio, chegada a um mercado ou ao fechar as novidades do dia), e há a opção "Avisos" em Ajustes.
+- **Pedidos de receita:** o cartão mostra o nome do cliente, como os demais; a receita é indicada por um selinho 📖 no canto (antes, a palavra "Receita" ocupava o lugar do nome).
+- **Receitas no fim da feira:** o aviso de feira concluída lista as receitas descobertas naquele mercado (ingredientes e descrição curta) e quantas o Caderno já tem. A lista recomeça a cada viagem (`S.recFeira`).
+- **Melhorias:** o saldo de moedas fica fixo no topo da tela (e pulsa depois de cada compra), e cada melhoria mostra bolinhas cheias até o nível atual e vazias até o máximo, com o número (ex.: 3/10). O mesmo vale para a ampliação do tabuleiro (0/3) e para as decorações (0/12).
+
 ## 5. Localização e idiomas
 
 **Ordem de lançamento.** Português (BR) + inglês no início; espanhol em seguida (público latino-americano); outros idiomas (alemão, francês etc.) só depois que os dados mostrarem de onde vêm jogadores e receita. O inglês é quase obrigatório porque o dinheiro do gênero está concentrado em mercados ocidentais, em especial os EUA.

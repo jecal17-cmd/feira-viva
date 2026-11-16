@@ -43,4 +43,6 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Avisos de cestos cheios (Android 13 ou mais novo pede licença ao jogador) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 </manifest>

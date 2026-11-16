@@ -2,5 +2,13 @@
   "appId": "com.feiraviva.quitanda",
   "appName": "Quitanda",
   "webDir": "www",
-  "android": { "backgroundColor": "#DCEFE4" }
+  "android": {
+    "backgroundColor": "#DCEFE4"
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_quitanda",
+      "iconColor": "#3E9B5F"
+    }
+  }
 }

@@ -53,6 +53,7 @@ button:disabled{opacity:.45;cursor:default}
 .order.rush{border-color:var(--warn)}
 .order.want,.order.osel{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
 .order .who{font-size:11.5px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:flex;align-items:center;gap:3px;line-height:1.2}
+.order .rtag{position:absolute;top:-8px;left:-5px;width:20px;height:20px;border-radius:50%;background:var(--gold);font-size:11px;line-height:20px;text-align:center;box-shadow:0 1px 0 var(--line)}
 .order .pay{font:800 11px/1 var(--text);color:var(--gold);background:color-mix(in srgb,var(--gold) 14%,transparent);border-radius:99px;padding:2px 7px;margin-top:2px;white-space:nowrap}
 .order .pay.x2{color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,transparent)}
 .order .who i{font-style:normal;font-size:17px;line-height:1}
@@ -210,6 +211,24 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
 .card{background:var(--panel);border-radius:20px;padding:20px;max-width:340px;width:100%;display:flex;flex-direction:column;gap:12px;text-align:center;max-height:90vh;overflow:auto}
 .card p{margin:0}
 .card .big{font-size:48px;line-height:1}
+/* Novidades de hoje: as linhas entram uma a uma, e o ícone de cada uma dá um pulinho */
+.hoje{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;text-align:left}
+.hoje li{display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:14px;padding:10px 12px;opacity:0;animation:hojeEntra .5s cubic-bezier(.2,1.5,.4,1) var(--d) forwards}
+.hoje li>span{font-size:28px;line-height:1;flex:0 0 auto;animation:hojePula .7s ease calc(var(--d) + .25s)}
+.hoje li p{margin:0;font-size:14px;line-height:1.3}.hoje li small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.hoje li b{color:var(--gold);font-family:var(--display);font-variant-numeric:tabular-nums}
+.big.sol{display:inline-block;animation:solGira 1.2s cubic-bezier(.2,1.4,.4,1)}
+@keyframes hojeEntra{from{opacity:0;transform:translateY(16px) scale(.92)}to{opacity:1;transform:none}}
+@keyframes hojePula{0%,100%{transform:none}40%{transform:scale(1.4) rotate(-10deg)}70%{transform:scale(.95)}}
+@keyframes solGira{from{transform:scale(.3) rotate(-120deg);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion: reduce){.hoje li,.hoje li>span,.big.sol{animation:none;opacity:1}}
+/* Melhorias: bolinhas de nível (cheias até o nível atual) e saldo de moedas fixo no topo */
+.pips{display:flex;align-items:center;flex-wrap:wrap;gap:3px;margin:4px 0 2px}
+.pips i{width:10px;height:10px;border-radius:50%;border:2px solid var(--accent);box-sizing:border-box}
+.pips i.on{background:var(--accent)}.pips.max i{border-color:var(--gold);background:var(--gold)}
+.pips em{font:800 12px/1 var(--display);font-style:normal;color:var(--muted);margin-left:4px;font-variant-numeric:tabular-nums}
+.sheet header .saldo{margin-left:auto;font-size:18px}
+.saldo.pulsa{animation:saldoPulsa .5s ease}@keyframes saldoPulsa{40%{transform:scale(1.15)}}
 .card .hero{margin:-20px -20px 2px;aspect-ratio:16/9;overflow:hidden;border-radius:20px 20px 0 0;flex:0 0 auto;background:var(--bg)}
 .card .hero.inline{margin:0;border-radius:12px}
 .hero img{width:100%;height:100%;object-fit:cover;display:block}
@@ -218,6 +237,8 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
 .mtile.lock img{filter:grayscale(1) blur(1.5px);opacity:.6}
 .mtile.lock::after{content:'🔒';position:absolute;font-size:22px}
 .mtile.xs{width:22px;height:22px;border-radius:6px;font-size:15px}
+.recf{display:flex;flex-direction:column;gap:6px;text-align:left}.recf>b{text-align:center;color:var(--gold);font-family:var(--display)}
+.recf .row{background:var(--bg);padding:8px 10px}.recf .row p{margin:2px 0 0;font-size:13px}.rie{display:flex;flex:0 0 auto;font-size:24px;line-height:1}.rie img{width:30px;height:30px}
 .card ul{margin:0;padding-left:18px;text-align:left}
 .adbox{border:2px dashed var(--line);border-radius:14px;padding:24px 12px;color:var(--muted)}
 .intro{position:fixed;inset:0;z-index:40;background:var(--introbg);display:grid;place-items:center;cursor:pointer;transition:opacity .5s}
@@ -337,6 +358,10 @@ const MAX=8, KEY='quitanda-zen-v2', ENC_N=5;
 const XPV=[0,1,4,9,18,36,70,140,280], COV=[0,1,2,5,10,22,45,90,180];
 const BASE_CAP=10, CAP_UP=2, BASE_PERIOD=90000;       // cargas por cesto, cargas por melhoria e ms por carga
 const AD_MAX=12, AD_CHARGE=6, CHEST_MAX=5, DOUBLE_MAX=15; // limites diários e prêmios de anúncio
+// Anúncios de tela cheia (espontâneos): só depois de 10 min de jogo desde a instalação, com pelo menos 6 min entre um e outro,
+// a cada 6 pedidos ou na chegada a um mercado; nunca nos 2 primeiros minutos depois de abrir o app nem nos 4 min seguintes a um
+// anúncio com prêmio que a pessoa escolheu ver. Subir de nível não mostra anúncio.
+const INTER_FIRST=6e5, INTER_GAP=36e4, INTER_ORDERS=6, INTER_ABRIR=12e4, INTER_REW=24e4;
 const need=n=>50+15*n;                                 // XP do nível n para n+1 (sem teto de nível)
 const goal=s=>Math.min(60,30+3*s);                     // clientes para concluir a feira s
 // Itens: [emoji, nome em português, nome em inglês]. Nomes brasileiros ficam em português e ganham explicação em GLOSS.
@@ -512,7 +537,7 @@ const UI={
   noMag:'Sem Junta-tudo. Ganhe subindo de nível, viajando e fazendo amizades.', noPair:'Nenhum par para juntar agora.',
   magDone:n=>`Junta-tudo: ${n} ${n>1?'fusões':'fusão'}`, noRec:'Sem Recarga. Ganhe subindo de nível e nos presentes.', fullB:'Cestos cheios',
   friendUp:(n,lv,co,m)=>`Amizade com ${n}: nível ${lv} · +${co} moedas${m?' e 🧲':''}`,
-  notOrdered:'Este cliente não pediu esse item.', rushDone:'Pedido relâmpago: recompensa em dobro', recipeFound:n=>`Receita descoberta: ${n} · +30 XP`, tabRec:'Receitas', backExit:'Toque em voltar de novo para sair', tabIng:'Ingredientes', newTag:'novo', lineDone:'completa',
+  notOrdered:'Este cliente não pediu esse item.', rushDone:'Pedido relâmpago: recompensa em dobro', recipeFound:n=>`Receita descoberta: ${n} · +30 XP`, recFeira:n=>n>1?`${n} receitas novas nesta feira`:'Receita nova nesta feira', recFeiraP:(a,b)=>`Caderno de Receitas: ${a} de ${b}.`, tabRec:'Receitas', backExit:'Toque em voltar de novo para sair', tabIng:'Ingredientes', newTag:'novo', lineDone:'completa',
   ingNote:(a,b,x,c)=>`${a} de ${b} ingredientes descobertos. Tudo o que passa pelo seu tabuleiro entra aqui. Complete os 8 níveis de uma linha para ganhar +${x} XP e +${c} moedas.`,
   albDone:(l,x,c)=>`Linha completa no álbum: ${l} · +${x} XP e +${c} moedas`,
   fairDone:'Feira concluída', fairDoneP:(g,n)=>`Você atendeu ${g} clientes em ${n}.`, nextStop:(ic,n,c,uf)=>`Próxima parada: <b>${ic} ${n}</b>, ${c} (${uf}).`,
@@ -536,7 +561,14 @@ const UI={
   itemInfo:(line,l,mx)=>`${line} nível ${l}${mx?' (máximo)':''}`, deliver:'Entregar', sellB:v=>`Vender +${v}`, swap:'Trocar pedido',
   thanks:(w,xp,co)=>`${w} agradece: +${xp} XP e +${co} moedas`, double:'▶ Dobrar', help:'Junte itens iguais. Pedido com borda verde: toque para entregar.', sort:'Organizar',
   bFull:'cheio', basketAria:n=>`Cesto de ${n}`, magAria:'Junta-tudo: funde todos os pares', magLbl:'junta', recAria:'Recarga: enche os cestos', recLbl:'recarga', adAria:'Assistir anúncio: mais cargas',
-  play:c=>c?'Continuar':'Jogar', giftBtn:(d,co)=>`🎁 Presente do dia ${d}: +${co} moedas`, decoAria:'Decoração',
+  play:c=>c?'Continuar':'Jogar', giftBtn:(d,co)=>`🎁 Presente do dia ${d}: +${co} moedas`,
+  dTitle:'Novidades de hoje', dGift:(d,co,wk)=>`Presente do dia ${d}: <b class="conta" data-n="${co}">+${co}</b> moedas${wk?' e 2 🧲 + 2 ⚡':''}`,
+  dNext:co=>`Volte amanhã e ganhe +${co}.`, dMax:'Sequência máxima: volte todo dia para mantê-la.',
+  dAds:(n,g)=>`Anúncios de cargas renovados: <b>${n}</b> hoje, com +${g} cargas em cada cesto`,
+  dChest:(n,co)=>`Baú diário renovado: <b>${n}</b> aberturas de ${co} moedas e 1 🧲`, dDouble:n=>`Dobrar recompensa: <b>${n}</b> vezes hoje`,
+  dFull:'Seus cestos encheram enquanto você estava fora', dClaim:'🎁 Pegar presente', dOk:'Vamos lá',
+  saldo:'Seu saldo', lvOf:(a,b)=>`nível ${a} de ${b}`, oNotif:['Avisos','Avisa no celular quando os cestos encherem com o jogo fechado.'],
+  nTitle:'Cestos cheios! 🧺', nBody:'Sua banca está pronta: venha colher, juntar e entregar.', decoAria:'Decoração',
   homeLine:(l,s,p)=>`Nível ${l} · ⭐ ${s} feiras concluídas · ${'Volta '+p}`, ready:'pronto para viajar',
   st:['Tempo de jogo','XP por minuto','Fusões','Itens colhidos','Pedidos atendidos','Feiras concluídas','Anúncios com recompensa','Anúncios de tela cheia','Compras simuladas'], waiting:'aguardando',
   mapAria:'Mapa do Brasil com a Rota das Feiras',
@@ -604,7 +636,7 @@ const UI={
   noMag:'No Merge-all left. Earn more by leveling up, traveling and making friends.', noPair:'No pairs to merge right now.',
   magDone:n=>`Merge-all: ${n} merge${n>1?'s':''}`, noRec:'No Refills left. Earn more by leveling up and from gifts.', fullB:'Baskets full',
   friendUp:(n,lv,co,m)=>`Friendship with ${n}: level ${lv} · +${co} coins${m?' and 🧲':''}`,
-  notOrdered:'This customer didn’t order that.', rushDone:'Rush order: double reward', recipeFound:n=>`Recipe discovered: ${n} · +30 XP`, tabRec:'Recipes', backExit:'Press back again to exit', tabIng:'Ingredients', newTag:'new', lineDone:'complete',
+  notOrdered:'This customer didn’t order that.', rushDone:'Rush order: double reward', recipeFound:n=>`Recipe discovered: ${n} · +30 XP`, recFeira:n=>n>1?`${n} new recipes at this market`:'New recipe at this market', recFeiraP:(a,b)=>`Recipe Book: ${a} of ${b}.`, tabRec:'Recipes', backExit:'Press back again to exit', tabIng:'Ingredients', newTag:'new', lineDone:'complete',
   ingNote:(a,b,x,c)=>`${a} of ${b} ingredients discovered. Everything that lands on your board shows up here. Complete all 8 levels of a line to earn +${x} XP and +${c} coins.`,
   albDone:(l,x,c)=>`Album line complete: ${l} · +${x} XP and +${c} coins`,
   fairDone:'Market complete', fairDoneP:(g,n)=>`You served ${g} customers at ${n}.`, nextStop:(ic,n,c,uf)=>`Next stop: <b>${ic} ${n}</b>, ${c} (${uf}).`,
@@ -628,7 +660,14 @@ const UI={
   itemInfo:(line,l,mx)=>`${line} level ${l}${mx?' (max)':''}`, deliver:'Deliver', sellB:v=>`Sell +${v}`, swap:'Swap order',
   thanks:(w,xp,co)=>`${w} says obrigado: +${xp} XP and +${co} coins`, double:'▶ Double', help:'Merge matching items. Tap a green-bordered order to deliver.', sort:'Sort',
   bFull:'full', basketAria:n=>`${n} basket`, magAria:'Merge-all: merges every pair', magLbl:'merge', recAria:'Refill: fills every basket', recLbl:'refill', adAria:'Watch an ad: more charges',
-  play:c=>c?'Continue':'Play', giftBtn:(d,co)=>`🎁 Day ${d} gift: +${co} coins`, decoAria:'Decorations',
+  play:c=>c?'Continue':'Play', giftBtn:(d,co)=>`🎁 Day ${d} gift: +${co} coins`,
+  dTitle:'Today’s perks', dGift:(d,co,wk)=>`Day ${d} gift: <b class="conta" data-n="${co}">+${co}</b> coins${wk?' plus 2 🧲 + 2 ⚡':''}`,
+  dNext:co=>`Come back tomorrow for +${co}.`, dMax:'Top streak: come back every day to keep it.',
+  dAds:(n,g)=>`Charge ads refreshed: <b>${n}</b> today, +${g} charges in every basket`,
+  dChest:(n,co)=>`Daily chest refreshed: <b>${n}</b> opens of ${co} coins and 1 🧲`, dDouble:n=>`Double reward: <b>${n}</b> times today`,
+  dFull:'Your baskets filled up while you were away', dClaim:'🎁 Claim gift', dOk:'Let’s go',
+  saldo:'Your balance', lvOf:(a,b)=>`level ${a} of ${b}`, oNotif:['Notifications','Lets you know when your baskets are full while the game is closed.'],
+  nTitle:'Baskets full! 🧺', nBody:'Your stall is ready: come pick, merge and deliver.', decoAria:'Decorations',
   homeLine:(l,s,p)=>`Level ${l} · ⭐ ${s} markets done · Lap ${p}`, ready:'ready to travel',
   st:['Play time','XP per minute','Merges','Items picked','Orders filled','Markets completed','Rewarded ads','Full-screen ads','Simulated purchases'], waiting:'waiting',
   mapAria:'Map of Brazil with the Market Trail',
@@ -881,7 +920,7 @@ function rushVolta(){ if(adN===0||--adN>0) return; const d=Date.now()-adPausa, t
   for(const o of S.orders) if(o.rush&&o.rush>t0) o.rush+=d; save(); }
 function showAd(kind,cb){
   rushPausa();
-  if(kind==='rew')S.stats.rew++; else S.stats.inter++;
+  if(kind==='rew'){ S.stats.rew++; S.stats.lastRew=Date.now(); } else S.stats.inter++;
   if(AdNet){ closeModal(); AdNet.show(kind).catch(()=>false).then(ok=>{ rushVolta(); if(kind==='rew'){ if(ok){ if(cb)cb(); } else toast(t('adFail')); } render(); }); return; }
   let s=kind==='rew'?4:3;
   const draw=()=>{ $('card').innerHTML=`<h2>${t('adTitle')}</h2><div class="adbox">${t(kind==='rew'?'adRew':'adInt')}</div><button class="btn" id="adclose" ${s>0?'disabled':''}>${s>0?t('closeIn',s):t('close')}</button>`;
@@ -889,9 +928,11 @@ function showAd(kind,cb){
   $('over').hidden=false; draw(); clearInterval(adTimer);
   adTimer=setInterval(()=>{ s--; draw(); if(s<=0)clearInterval(adTimer); },1000);
 }
+let sessIni=Date.now(), fundoEm=0;   // início da sessão (abrir o app ou voltar depois de 5 min fora) e hora em que saiu
 function maybeInter(){
   const k=S.opts.test?.1:1, now=Date.now();
-  if(S.stop<1||S.opts.noAds||now-S.stats.first<3e5*k||now-S.stats.lastInter<1.8e5*k||!$('over').hidden||trip) return;
+  if(S.stop<1||S.opts.noAds||now-S.stats.first<INTER_FIRST*k||now-S.stats.lastInter<INTER_GAP*k||now-sessIni<INTER_ABRIR*k
+     ||now-(S.stats.lastRew||0)<INTER_REW*k||!$('over').hidden||trip) return;
   S.stats.lastInter=now; showAd('int');
 }
 const bonus=()=>S.opts.noAds?1.25:1;
@@ -951,12 +992,12 @@ function deliver(i,id){
     tutMarca(2);
     const c=CAST.find(x=>x.id===o.who); S.stats.orders++; S.served++; bump('orders',1); befriend(c); Sfx.tocar('pedido');
     if(o.rush&&Date.now()<o.rush){ gain(o.xp,o.co); o.xp*=2; o.co*=2; toast(t('rushDone')); }
-    if(o.rec!=null&&!S.recipes.includes(o.rec)){ S.recipes.push(o.rec); gain(30,30); toast(t('recipeFound',tx(RECIPES[o.rec].name))); }
+    if(o.rec!=null&&!S.recipes.includes(o.rec)){ S.recipes.push(o.rec); (S.recFeira=S.recFeira||[]).push(o.rec); gain(30,30); toast(t('recipeFound',tx(RECIPES[o.rec].name))); }
     S.orders[S.orders.indexOf(o)]=newOrder();
     offer={xp:o.xp,co:o.co,who:c,until:Date.now()+8000};
     if(S.served>=goal(S.stop)&&!S.goalSeen){ S.goalSeen=true; const nx=feira(S.stop+1); setTimeout(()=>Sfx.tocar('feira'),350);
-      modal(`<div class="big">⭐</div><h1>${t('fairDone')}</h1><p>${t('fairDoneP',goal(S.stop),feira(S.stop).n)}</p><p>${t('nextStop',nx.ic,nx.n,nx.c,nx.uf)}</p>${nx.img?heroHtml(nx,'inline'):''}<button class="btn" data-act="travelask">${t('travelNow')}</button><button class="btn ghosty" data-act="mclose">${t('stay')}</button>`); }
-    if(S.stats.orders%4===0) maybeInter();
+      modal(`<div class="big">⭐</div><h1>${t('fairDone')}</h1><p>${t('fairDoneP',goal(S.stop),feira(S.stop).n)}</p><p>${t('nextStop',nx.ic,nx.n,nx.c,nx.uf)}</p>${recFeiraHtml()}${nx.img?heroHtml(nx,'inline'):''}<button class="btn" data-act="travelask">${t('travelNow')}</button><button class="btn ghosty" data-act="mclose">${t('stay')}</button>`); }
+    if(S.stats.orders%INTER_ORDERS===0) maybeInter();
   }
   render();
 }
@@ -989,9 +1030,13 @@ function travelAsk(){
    <ul><li>${t('stalls')}: ${ls.map(k=>ie(k,1)+' '+lname(k)).join(', ')}</li>${gone.length?`<li>${t('willSell',gone.map(lname).join(t('and')),fmt(val))}</li>`:''}<li>${t('arrivesFull')}</li></ul>
    <button class="btn" data-act="travel">${t('hitRoad')}</button><button class="btn ghosty" data-act="mclose">${t('notYet')}</button>`);
 }
+// Fim da feira: lista as receitas descobertas neste mercado, com os ingredientes e uma descrição curta
+function recFeiraHtml(){ const rs=(S.recFeira||[]).filter(i=>RECIPES[i]); if(!rs.length) return '';
+  return `<div class="recf"><b>📖 ${t('recFeira',rs.length)}</b>${rs.map(i=>{ const r=RECIPES[i];
+    return `<div class="row"><span class="rie" aria-hidden="true">${r.it.map(([l,n])=>ie(l,n)).join('')}</span><div><b>${tx(r.name)}</b><p>${r.it.map(([l,n])=>item(l,n)[1]).join(' + ')}</p><p class="note">${tx(r.note)}</p></div></div>`; }).join('')}<p class="note">${t('recFeiraP',S.recipes.length,RECIPES.length)}</p></div>`; }
 function travel(){
   if(S.served<goal(S.stop)) return;
-  const old=S.stop, oldLap=lap(old); S.stop++; S.served=0; S.goalSeen=false;
+  const old=S.stop, oldLap=lap(old); S.stop++; S.served=0; S.goalSeen=false; S.recFeira=[];
   const ls=lines(), now=Date.now(), f=feira(S.stop); let sold=0;
   S.board=S.board.map(x=>{ if(x&&!ls.includes(x.l)){ sold+=COV[x.n]*(x.n>=5?2:1); return null; } return x; });
   S.baskets={}; ls.forEach(k=>S.baskets[k]={c:0,t:now}); S.orders=[]; fillBoard(S);
@@ -1019,6 +1064,7 @@ function playTrip(a,b,cb){
 }
 function endTrip(){ if(!trip) return; cancelAnimationFrame(trip.raf); clearTimeout(trip.end); const cb=trip.cb; trip=null; $('trip').hidden=true; cb(); }
 function basketEmpty(k){
+  pedirAvisos();
   const b=S.baskets[k], nx=mmss(Math.max(0,Math.ceil((period()-(Date.now()-b.t))/1000))), ad=S.daily.adCharge<AD_MAX;
   modal(`<div class="big">🧺</div><h2>${t('emptyT')}</h2><p>${t('emptyP',lname(k),mmss(Math.round(period()/1000)),nx)}</p>
    ${ad?`<button class="btn" data-act="adcharge">${t('adFill',Math.round(AD_CHARGE*bonus()),S.daily.adCharge,AD_MAX)}</button>`:`<p class="note">${t('adLimit')}</p>`}
@@ -1058,6 +1104,53 @@ function claimGift(){
   const co=20*Math.min(S.streak,7); S.coins+=co; const wk=S.streak%7===0; if(wk){ S.boost.mag+=2; S.boost.rec+=2; }
   beep(880); toast(t('gift',S.streak,co,wk)); render();
 }
+/* Novidades de hoje: na primeira abertura de cada dia (depois da vinheta), um aviso mostra, linha por linha, o presente do dia,
+   os anúncios com prêmio que foram renovados e, se for o caso, os cestos que encheram. O botão já pega o presente. */
+function boasVindas(){
+  if(!S||S.newsDay===today()||!$('intro').hidden) return;
+  if(S.tut<4&&!S.stats.orders){ S.newsDay=today(); return; }   // primeiro dia: o tutorial já basta
+  checkDay(); S.newsDay=today(); save();
+  const gift=S.giftDay!==today(), st=S.giftDay===dstr(Date.now()-864e5)?S.streak+1:1, d=Math.min(st,7), wk=st%7===0, ls=[];
+  if(gift) ls.push(['🎁',t('dGift',d,20*d,wk),d<7?t('dNext',20*(d+1)):t('dMax')]);
+  ls.push(['▶️',t('dAds',AD_MAX-S.daily.adCharge,Math.round(AD_CHARGE*bonus()))]);
+  ls.push(['📦',t('dChest',CHEST_MAX-S.daily.chest,Math.round(80*bonus()))]);
+  if(S.stop>=1) ls.push(['✨',t('dDouble',DOUBLE_MAX-S.daily.adDouble)]);
+  tickBaskets(); if(lines().every(k=>S.baskets[k]&&S.baskets[k].c>=cap())) ls.push(['🧺',t('dFull')]);
+  const D=i=>(.35+i*.4).toFixed(2)+'s';
+  modal(`<div><span class="big sol" aria-hidden="true">🌞</span></div><h2>${t('dTitle')}</h2><ul class="hoje">${ls.map(([ic,x,s],i)=>`<li style="--d:${D(i)}"><span aria-hidden="true">${ic}</span><p>${x}${s?`<small>${s}</small>`:''}</p></li>`).join('')}</ul><button class="btn" data-act="dayok:${gift?1:0}">${gift?t('dClaim'):t('dOk')}</button>`);
+  const card=$('card').querySelector('.hoje'); if(!card||RM()) return;   // aviso na fila: aparece depois, já com os números finais
+  card.querySelectorAll('li').forEach((li,i)=>setTimeout(()=>beep(660+i*110),(.35+i*.4)*1000+120));
+  card.querySelectorAll('.conta').forEach(el=>{ const n=+el.dataset.n, t0=performance.now()+600, dur=700;
+    el.textContent='+0'; const passo=now=>{ const p=Math.max(0,Math.min(1,(now-t0)/dur)); el.textContent='+'+Math.round(n*p); if(p<1) requestAnimationFrame(passo); };
+    requestAnimationFrame(passo); });
+}
+function pulsaSaldo(){ const el=$('saldo'); if(!el||RM()) return; el.classList.remove('pulsa'); void el.offsetWidth; el.classList.add('pulsa'); }
+
+/* Avisos no celular (só no app Android, com @capacitor/local-notifications): quando o jogo vai para segundo plano,
+   agenda um aviso para a hora em que todos os cestos estarão cheios; ao voltar ao jogo, cancela. No navegador não faz nada. */
+const Avisos=(()=>{
+  const C=window.Capacitor, P=C&&C.isNativePlatform&&C.isNativePlatform()&&C.Plugins&&C.Plugins.LocalNotifications; if(!P) return null;
+  const ID=1, ok=r=>!!(r&&r.display==='granted');
+  return {
+    pedir(){ return P.checkPermissions().then(r=>ok(r)?true:P.requestPermissions().then(ok)).catch(()=>false); },
+    async agendar(){
+      try{ await P.cancel({notifications:[{id:ID}]}); }catch(e){}
+      if(!S||!S.opts.notif) return; const ms=msCheios(); if(ms<6e4) return;   // já cheios (ou quase): não precisa avisar
+      try{ if(!ok(await P.checkPermissions())) return;
+        await P.schedule({notifications:[{id:ID,title:t('nTitle'),body:t('nBody'),schedule:{at:new Date(Date.now()+ms),allowWhileIdle:true},smallIcon:'ic_stat_quitanda',iconColor:'#3E9B5F'}]}); }catch(e){}
+    },
+    cancelar(){ P.cancel({notifications:[{id:ID}]}).catch(()=>{}); }
+  };
+})();
+// Quanto falta (ms) para todos os cestos do mercado atual ficarem cheios
+function msCheios(){ tickBaskets(); const p=period(), C=cap(), now=Date.now(); let m=0;
+  for(const k of lines()){ const b=S.baskets[k]; if(b&&b.c<C) m=Math.max(m,(C-b.c-1)*p+Math.max(0,p-(now-b.t))); }
+  return m; }
+// Pede a permissão de avisos uma vez, num momento que faz sentido (cesto vazio, chegada a um mercado, novidades do dia)
+function pedirAvisos(){ if(!Avisos||!S.opts.notif||S.avisoPed) return; S.avisoPed=1; save(); Avisos.pedir(); }
+function saiu(){ if(!S) return; fundoEm=Date.now(); save(); if(Avisos) Avisos.agendar(); }
+function voltou(){ if(!S) return; if(Avisos) Avisos.cancelar(); if(fundoEm&&Date.now()-fundoEm>3e5) sessIni=Date.now(); fundoEm=0; render(); boasVindas(); }
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='hidden') saiu(); else voltou(); });
 function setLang(l){ LANG=l; S.opts.lang=l; applyLang(); render(); }
 
 /* ===================== DESENHO ===================== */
@@ -1099,7 +1192,7 @@ function renderOrders(){
   const cur=sel!=null?S.board[sel]:null, have=new Set(S.board.filter(Boolean).map(x=>x.l+x.n)), now=Date.now();
   $('orders').innerHTML=S.orders.map(o=>{
     const c=CAST.find(x=>x.id===o.who), want=cur&&matches(o,cur), ready=o.items.some(x=>!x.done&&have.has(x.l+x.n)), rush=o.rush&&now<o.rush, s=rush?Math.ceil((o.rush-now)/1000):0;
-    return `<button class="order${want?' want':''}${ready?' ready':''}${rush?' rush':''}${selOrder===o.id?' osel':''}" data-order="${o.id}" aria-label="${t('orderAria',c.n,o.items.map(x=>t('itemLv',item(x.l,x.n)[1],x.n)).join(t('and')))} · ${fmt(orderPay(o))} 🪙"><span class="who"><i>${pf(c)}</i>${rush?`⏱️ ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`:o.rec!=null?t('recipeTag'):curto(c.n)}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span><span class="pay${rush?' x2':''}">🪙 ${fmt(orderPay(o))}</span></button>`;
+    return `<button class="order${want?' want':''}${ready?' ready':''}${rush?' rush':''}${selOrder===o.id?' osel':''}" data-order="${o.id}" aria-label="${o.rec!=null?t('recipeTag')+' · ':''}${t('orderAria',c.n,o.items.map(x=>t('itemLv',item(x.l,x.n)[1],x.n)).join(t('and')))} · ${fmt(orderPay(o))} 🪙">${o.rec!=null?`<span class="rtag" title="${t('recipeTag')}">📖</span>`:''}<span class="who"><i>${pf(c)}</i>${rush?`⏱️ ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`:curto(c.n)}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span><span class="pay${rush?' x2':''}">🪙 ${fmt(orderPay(o))}</span></button>`;
   }).join('');
 }
 function renderInfo(){
@@ -1152,7 +1245,7 @@ function renderHome(){
 }
 function tick(){
   if(document.visibilityState==='visible') S.stats.playMs+=1000;
-  const d=S.day; checkDay(); if(d!==S.day){ render(); return; }
+  const d=S.day; checkDay(); if(d!==S.day){ render(); boasVindas(); return; }
   tickBaskets(); const now=Date.now();
   for(const k of lines()){ const b=S.baskets[k], c=$('bc-'+k), e=$('bt-'+k); if(c)c.textContent=b.c+'/'+cap(); if(e)e.textContent=left(b); }
   if(S.orders.some(o=>o.rush&&now<o.rush+1500)) renderOrders();
@@ -1179,6 +1272,8 @@ function mapSvg(o={}){
     return `<g class="node ${st}" transform="translate(${p[0].toFixed(1)} ${p[1].toFixed(1)})"><title>${i+1}. ${FEIRAS[i].n}, ${FEIRAS[i].c}</title>${st==='cur'?'<circle class="ring" r="18"/>':''}<circle r="18"/>${FEIRAS[i].img?`<image href="${artUrl(FEIRAS[i])}" x="-16" y="-16" width="32" height="32" preserveAspectRatio="xMidYMid slice" clip-path="url(#nclip)"/>`:`<text>${FEIRAS[i].ic}</text>`}${st==='done'?'<circle class="ok" cx="14" cy="-14" r="8"/><text class="okt" x="14" y="-14">✓</text>':''}</g>`; }).join('');
   return `<svg viewBox="-8 -8 647 655" role="img" aria-label="${t('mapAria')}"><defs><clipPath id="nclip"><circle r="16"/></clipPath></defs>${ufs}${labs}${route}${nodes}${extra}</svg>`;
 }
+// Bolinhas de nível: uma cheia para cada nível comprado, vazias até o máximo, e o número (ex.: 3/10)
+const pips=(a,b)=>`<span class="pips${a>=b?' max':''}" role="img" aria-label="${t('lvOf',a,b)}">${'<i class="on"></i>'.repeat(a)}${'<i></i>'.repeat(Math.max(0,b-a))}<em>${a}/${b}</em></span>`;
 function renderSheet(){
   const T=t('T'); let h='';
   if(sheetName==='map'){
@@ -1218,9 +1313,9 @@ function renderSheet(){
     const val=(k,lv)=>k==='far'?t('farV',...farOdds(lv).map(x=>Math.round(x*100))):k==='cap'?t('capV',BASE_CAP+CAP_UP*lv):t('spdV',mmss(Math.round(periodAt(lv)/1000)));
     const grid=(c,r,oc,or)=>{ const z=Math.min(44/c,44/r), q=(z*.8).toFixed(1); let g=''; for(let y=0;y<r;y++) for(let x=0;x<c;x++) g+=`<rect class="${x>=oc||y>=or?'gn':'gc'}" x="${(x*z+(44-c*z)/2).toFixed(1)}" y="${(y*z+(44-r*z)/2).toFixed(1)}" width="${q}" height="${q}" rx="1.5"/>`; return `<svg viewBox="0 0 44 44" aria-hidden="true">${g}</svg>`; };
     h=`<p class="note">${t('upNote')}</p>${S.stop>=1&&PUB.loja?`<div class="row"><div><p>${t('toShop')}</p></div><button class="btn sm" data-act="nav:shop">${t('openShop')}</button></div>`:''}<h2>${t('hBaskets')}</h2>`+Object.keys(UPS).map(k=>{ const u=UPS[k], lv=S.up[k], c=upCost(k), mx=lv>=u.max;
-        return `<div class="row"><span class="thumb" aria-hidden="true">${u.ic}${u.bd?`<b>${u.bd}</b>`:''}</span><div><b>${tx(u.n)}</b> · ${t('lvN',lv)}<p>${tx(u.d)}</p><p class="nn">${mx?t('nowMax',val(k,lv)):t('nowNext',val(k,lv),val(k,lv+1))}</p></div>${mx?'':buy('buyup:'+k,c,S.coins<c)}</div>`; }).join('')
-     +`<h2>${t('hBoard')}</h2>`+(e?`<div class="row"><span class="thumb">${grid(e.cols,e.rows,S.cols,S.rows)}</span><div><b>${t('expandTo',e.cols,e.rows)}</b><p>${t('boardD')}${S.level<e.lvl?' '+t('opensAt',e.lvl):''}</p><p class="nn">${t('nowNext',t('boardV',S.cols,S.rows),t('boardV',e.cols,e.rows))}</p></div>${buy('buyexp',e.cost,S.level<e.lvl||S.coins<e.cost)}</div>`:`<p class="note">${t('boardMax')}</p>`)
-     +`<h2>${t('hDeco')}</h2><p class="note">${t('decoD')} ${S.level<6?t('opensAt',6):''} ${t('bonusNow',S.decor.length)}</p>`
+        return `<div class="row"><span class="thumb" aria-hidden="true">${u.ic}${u.bd?`<b>${u.bd}</b>`:''}</span><div><b>${tx(u.n)}</b>${pips(lv,u.max)}<p>${tx(u.d)}</p><p class="nn">${mx?t('nowMax',val(k,lv)):t('nowNext',val(k,lv),val(k,lv+1))}</p></div>${mx?'':buy('buyup:'+k,c,S.coins<c)}</div>`; }).join('')
+     +`<h2>${t('hBoard')}</h2>`+(e?`<div class="row"><span class="thumb">${grid(e.cols,e.rows,S.cols,S.rows)}</span><div><b>${t('expandTo',e.cols,e.rows)}</b>${pips(S.exp,EXPS.length)}<p>${t('boardD')}${S.level<e.lvl?' '+t('opensAt',e.lvl):''}</p><p class="nn">${t('nowNext',t('boardV',S.cols,S.rows),t('boardV',e.cols,e.rows))}</p></div>${buy('buyexp',e.cost,S.level<e.lvl||S.coins<e.cost)}</div>`:`<div class="row"><div>${pips(S.exp,EXPS.length)}<p class="note">${t('boardMax')}</p></div></div>`)
+     +`<h2>${t('hDeco')}</h2>${pips(S.decor.length,DECOR.length)}<p class="note">${t('decoD')} ${S.level<6?t('opensAt',6):''} ${t('bonusNow',S.decor.length)}</p>`
      +DECOR.map(([em,n,c],i)=>{ const has=S.decor.includes(i); return `<div class="row"><span class="thumb" aria-hidden="true">${de(i)}</span><div><b>${tx(n)}</b><p>+1% XP</p></div>${has?`<button class="btn" disabled>${t('onStall')}</button>`:buy('buydeco:'+i,c,S.level<6||S.coins<c)}</div>`; }).join('');
   } else if(sheetName==='shop'){
     h=shopHtml();
@@ -1229,7 +1324,7 @@ function renderSheet(){
   } else {
     const tg=(k,[a,b])=>`<div class="row"><div><b>${a}</b><p>${b}</p></div><button class="btn${S.opts[k]?'':' ghosty'}" data-act="opt:${k}" aria-pressed="${S.opts[k]}">${S.opts[k]?t('on'):t('off')}</button></div>`;
     h=`<div class="row"><div><b>${t('lang')}</b><p>${t('langP')}</p></div><div class="seg"><button data-act="lang:pt" aria-pressed="${LANG==='pt'}">Português</button><button data-act="lang:en" aria-pressed="${LANG==='en'}">English</button></div></div>`
-     +tg('sound',t('oSound'))+tg('music',t('oMusic'))
+     +tg('sound',t('oSound'))+tg('music',t('oMusic'))+(Avisos?tg('notif',t('oNotif')):'')
      +(S.opts.dev?tg('noAds',t('oNoAds'))+tg('test',t('oTest'))+`<h2>${t('panel')}</h2><div class="stats" id="stats">${statsHtml()}</div><p class="note">${t('panelNote')}</p>`:'')
      +`<div class="row"><div><b>${t('priv')[0]}</b><p>${t('priv')[1]}</p></div><a class="btn ghosty" href="${PUB.priv}" target="_blank" rel="noopener">${t('privB')}</a></div>`
      +(AdNet&&AdNet.privReq()?`<div class="row"><div><b>${t('adPriv')[0]}</b><p>${t('adPriv')[1]}</p></div><button class="btn ghosty" data-act="adpriv">${t('adPrivB')}</button></div>`:'')
@@ -1238,7 +1333,8 @@ function renderSheet(){
      +`<div class="row"><div><b>${t('reset')}</b><p class="warn">${t('resetP')}</p></div><button class="btn ghosty" data-act="reset">${t('resetB')}</button></div>`;
   }
   if(sheetName==='cfg') h+=`<button class="ver" data-act="ver">${t('version')}</button>`;
-  $('sheetin').innerHTML=`<header><h1>${T[sheetName]}</h1><button class="btn ghosty" data-act="close">${t('close')}</button></header>${h}`;
+  const saldo=sheetName==='up'?`<span class="coins saldo" id="saldo" aria-label="${t('saldo')}: ${fmt(S.coins)}">🪙 ${fmt(S.coins)}</span>`:'';
+  $('sheetin').innerHTML=`<header><h1>${T[sheetName]}</h1>${saldo}<button class="btn ghosty" data-act="close">${t('close')}</button></header>${h}`;
 }
 
 /* ===================== ANIMAÇÕES DAS FERRAMENTAS ===================== */
@@ -1285,6 +1381,7 @@ document.addEventListener('click',e=>{
     else if(k==='lang') setLang(v);
     else if(k==='rtab'){ recTab=v; renderSheet(); }
     else if(k==='gift') claimGift();
+    else if(k==='dayok'){ closeModal(); if(v==='1') claimGift(); else render(); pedirAvisos(); }
     else if(k==='magnet') magnet();
     else if(k==='recharge') recharge();
     else if(k==='adcharge'){ if(S.daily.adCharge<AD_MAX) showAd('rew',()=>{ S.daily.adCharge++; const g=Math.round(AD_CHARGE*bonus()); refill(g); toast(t('adCharge',g)); setTimeout(()=>fxCharge('+'+g),80); }); else toast(t('adLimit')); }
@@ -1296,7 +1393,7 @@ document.addEventListener('click',e=>{
     else if(k==='adpriv'){ if(AdNet) AdNet.privacy(); }
     else if(k==='tripskip') endTrip();
     else if(k==='tripdouble'){ const v=tripBonus; tripBonus=0; if(v) showAd('rew',()=>{ S.coins+=v; toast(t('tripDoubled',v)); }); }
-    else if(k==='arrive'){ closeModal(); render(); maybeInter(); }
+    else if(k==='arrive'){ closeModal(); render(); maybeInter(); pedirAvisos(); }
     else if(k==='deliver'){ if(sel!=null) deliver(sel); }
     else if(k==='enc'){ if(sel!=null) deliverEnc(sel); }
     else if(k==='sell'){ if(sel!=null) sell(sel); }
@@ -1308,9 +1405,10 @@ document.addEventListener('click',e=>{
     else if(k==='claim'){ const m=S.missions[+v]; if(m&&m.p>=m.goal){ S.missions[+v]=newMission(S,+v); S.coins+=m.co; const x=gain(m.xp,0); beep(880); toast(t('missDone',m.co,x)); render(); } }
     else if(k==='chest'){ if(S.daily.chest<CHEST_MAX) showAd('rew',()=>{ S.daily.chest++; S.coins+=Math.round(80*bonus()); S.boost.mag++; Sfx.tocar('premio'); }); }
     else if(k==='buyexp') expand();
-    else if(k==='buyup'){ const c=upCost(v); if(S.up[v]<UPS[v].max&&S.coins>=c){ S.coins-=c; S.up[v]++; beep(820); render(); } }
+    else if(k==='buyup'){ const c=upCost(v); if(S.up[v]<UPS[v].max&&S.coins>=c){ S.coins-=c; S.up[v]++; beep(820); render(); pulsaSaldo(); } }
     else if(k==='buydeco'){ const i=+v; if(!S.decor.includes(i)&&S.level>=6&&S.coins>=DECOR[i][2]){ S.coins-=DECOR[i][2]; S.decor.push(i); beep(820); render(); } }
     else if(k==='ver'&&PUB.dev){ verTaps=(verTaps||0)+1; if(verTaps>=5){ verTaps=0; S.opts.dev=!S.opts.dev; toast(t(S.opts.dev?'devOn':'devOff')); render(); } }
+    else if(k==='opt'&&v==='notif'){ S.opts.notif=!S.opts.notif; if(S.opts.notif&&Avisos) Avisos.pedir(); render(); }
     else if(k==='opt'){ S.opts[v]=!S.opts[v]; if(v==='music'||v==='sound') Musica.ligar(); for(const x of lines()) S.baskets[x].t=Date.now(); render(); }
     else if(k==='travelask'){ closeModal(); travelAsk(); }
     else if(k==='travel'){ closeModal(); travel(); }
@@ -1325,7 +1423,7 @@ document.addEventListener('click',e=>{
     else if(k==='xyes'){ if(!xferNew) return; try{ localStorage.setItem(KEY,JSON.stringify(xferNew)); }catch(e){ toast(t('xferBad')); return; } location.reload(); }
     else if(k==='reset') modal(`<h2>${t('resetQ')}</h2><p>${t('resetQP')}</p><button class="btn" data-act="resetyes">${t('resetYes')}</button><button class="btn ghosty" data-act="mclose">${t('cancel')}</button>`);
     else if(k==='resetyes'){ try{ localStorage.removeItem('quitanda-zen-v1'); }catch(e){} S=fresh(); sel=null; selOrder=null; offer=null; modalQ=[]; closeModal(); sheetName=null; $('sheet').hidden=true; homeOn=true; render(); }
-    else if(k==='lvlok'){ closeModal(); render(); maybeInter(); }
+    else if(k==='lvlok'){ closeModal(); render(); }
     return;
   }
   if(noClick) return;
@@ -1402,7 +1500,7 @@ function sing(){
 }
 function endIntro(){
   if(!introState) return; introState.tms.forEach(clearTimeout); introState=null;
-  $('intro').classList.add('out'); setTimeout(()=>{ $('intro').hidden=true; },520);
+  $('intro').classList.add('out'); setTimeout(()=>{ $('intro').hidden=true; boasVindas(); },520);
 }
 function intro(){
   const el=$('intro'), curta=S.introDay===today(); S.introDay=today(); save();
@@ -1422,7 +1520,7 @@ function voltar(){
   if(!$('intro').hidden){ endIntro(); return; }
   if(!$('over').hidden){
     const ad=$('adclose'); if(ad){ if(!ad.disabled) ad.click(); return; }   // anúncio: só fecha quando a contagem acaba
-    const b=$('card').querySelector('[data-act="mclose"],[data-act="lvlok"],[data-act="arrive"]'); if(b) b.click(); return; }
+    const b=$('card').querySelector('[data-act="mclose"],[data-act="lvlok"],[data-act="arrive"],[data-act^="dayok"]'); if(b) b.click(); return; }
   if(drag) return;
   if(sheetName){ sheetName=null; $('sheet').hidden=true; render(); return; }
   if(!homeOn){ homeOn=true; tip=Math.floor(Math.random()*TIPS.length); sel=null; selOrder=null; render(); return; }
@@ -1435,12 +1533,14 @@ function start(d){
   LANG=detectLang(); S=(d&&d.v===2&&Array.isArray(d.board))?d:load();
   let q=null; try{ q=new URLSearchParams(location.search).get('lang'); }catch(e){}
   if(q==='en'||q==='pt') S.opts.lang=q; LANG=S.opts.lang||LANG; S.opts.lang=LANG;
-  S.iap=S.iap||{n:0,usd:0,once:[]}; if(S.tut==null) S.tut=(S.stats.merges||S.stats.orders)?4:0; if(S.opts.music==null) S.opts.music=true;
+  S.iap=S.iap||{n:0,usd:0,once:[]}; if(S.tut==null) S.tut=(S.stats.merges||S.stats.orders)?4:0; if(S.opts.music==null) S.opts.music=true; if(S.opts.notif==null) S.opts.notif=true;
   if(!S.seen){ S.seen={}; S.board.forEach(x=>{ if(x) S.seen[x.l+x.n]=2; }); }   // Álbum de ingredientes: 1 = novo, 2 = já visto
   S.albumDone=S.albumDone||[];
   if(!PUB.dev){ S.opts.dev=false; S.opts.test=false; }
   applyLang(); render(); setInterval(tick,1000);
-  let q2=null; try{ q2=new URLSearchParams(location.search).get('intro'); }catch(e){} if(q2!=='0') intro();
+  let q2=null; try{ q2=new URLSearchParams(location.search).get('intro'); }catch(e){} if(q2!=='0') intro(); else boasVindas();
+  (()=>{ const C=window.Capacitor, A=C&&C.isNativePlatform&&C.isNativePlatform()&&C.Plugins&&C.Plugins.App;   // no app, pause/resume também avisam
+    if(A&&A.addListener){ A.addListener('pause',saiu); A.addListener('resume',voltou); } })();
 }
 window.claude?.hot?.snapshot?.(()=>S);
 window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});

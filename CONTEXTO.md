@@ -80,6 +80,8 @@ Os itens do tabuleiro com arte ficam em `versao-b-quitanda-zen/itens/<código>.w
 
 **Sons de dinheiro** (Quitanda e Rota, `Sfx.tocar`): moedinhas (A3) a cada pedido entregue, punhado de moedas (B4) no baú e no bônus do álbum, caixa registradora (C4) ao concluir a feira (Quitanda) ou a fase (Rota). Embutidos em base64 no `index.html`; respeitam a opção Som. Gerados por `docs/arte/musica/sons_dinheiro.py`; os MP3 finais estão em `docs/arte/musica/sons/`. O Teto usa o carimbo (F) ao registrar gasto e as moedinhas ao registrar entrada.
 
+**Novidades do dia, avisos e anúncios** (Quitanda, revisão 4.11 do design): na primeira abertura do dia, um aviso animado (`boasVindas()`) mostra o presente do dia, os anúncios com prêmio renovados e os cestos cheios; o botão pega o presente. No app Android, ao sair do jogo, um aviso no celular é agendado para quando os cestos encherem (`Avisos`, plugin `@capacitor/local-notifications`, ícone `res/drawable/ic_stat_quitanda.xml`; opção "Avisos" em Ajustes). Os anúncios de tela cheia ficaram mais espaçados (`INTER_*` no bloco DADOS). Na tela de Melhorias, saldo fixo no topo e bolinhas de nível (`pips`). Pedidos de receita mostram o nome do cliente e um selinho 📖; o aviso de feira concluída lista as receitas descobertas no mercado (`recFeiraHtml()`). O `package-lock.json` do `app-android` ainda não lista o plugin novo (sem internet na sessão): os workflows caem em `npm install` quando o `npm ci` falha; vale rodar `npm install` no `app-android` uma vez e enviar a lista travada atualizada.
+
 **Valor dos pedidos:** cada pedido mostra quantas moedas paga (`orderPay(o)`, a mesma conta que `deliver()` credita). Na Quitanda: itens (`COV`) com o bônus da volta, em dobro no relâmpago dentro do prazo e com +30 da receita ainda não descoberta. Na Rota: `ORDER_COIN` (2) × nível de cada item.
 
 ## Rota das Feiras: arte, álbum e troca de aparelho
@@ -91,6 +93,7 @@ A Versão A usa as mesmas ilustrações dos 12 mercados (`versao-a-rota-das-feir
 **Quitanda Zen (v0.5)**
 - 13 linhas de itens com 8 níveis, quase todos brasileiros; cada mercado usa 4 linhas (2 no primeiro, 3 no segundo).
 - Meta por mercado: 30 + 3 × parada clientes (teto 60). Voltas infinitas, com +10% de XP e moedas por volta.
+- Anúncios de tela cheia: a partir de 10 min de jogo, no mínimo 6 min entre eles, a cada 6 pedidos ou na chegada a um mercado; nunca logo ao abrir o app nem logo depois de um anúncio com prêmio.
 - Cestos: 10 cargas. No primeiro mercado começam cheios e recarregam 1 carga a cada 20 s; a recarga sobe 15 s por parada até 90 s, e nos mercados seguintes os cestos começam vazios.
 - Fusão tripla só por escolha: arrastar passando por cima de um item igual e soltar em outro igual vizinho.
 - Anúncios de tela cheia, "Dobrar" e convites à loja só a partir do segundo mercado.
