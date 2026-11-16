@@ -79,15 +79,16 @@ def para_jogo(cod):
     os.makedirs(JOGO, exist_ok=True)
     q.resize((256, 256), Image.LANCZOS).save(os.path.join(JOGO, cod + '.webp'), quality=88, method=6)
 
-if sys.argv[1:] == ['--todos']:
-    import glob
-    for f in sorted(glob.glob(os.path.join(AQUI, '[a-z][a-z]-[0-9].png'))):
-        para_jogo(os.path.basename(f)[:-4]); print(os.path.basename(f)[:-4], 'ok')
-    sys.exit()
+if __name__ == '__main__':
+    if sys.argv[1:] == ['--todos']:
+        import glob
+        for f in sorted(glob.glob(os.path.join(AQUI, '[a-z][a-z]-[0-9].png'))):
+            para_jogo(os.path.basename(f)[:-4]); print(os.path.basename(f)[:-4], 'ok')
+        sys.exit()
 
-for arg in sys.argv[1:]:
-    cod, caminho = arg.split('=', 1)
-    q = recortar(caminho)
-    q.resize((512, 512), Image.LANCZOS).save(os.path.join(AQUI, cod + '.png'), optimize=True)
-    para_jogo(cod)
-    print(cod, 'ok')
+    for arg in sys.argv[1:]:
+        cod, caminho = arg.split('=', 1)
+        q = recortar(caminho)
+        q.resize((512, 512), Image.LANCZOS).save(os.path.join(AQUI, cod + '.png'), optimize=True)
+        para_jogo(cod)
+        print(cod, 'ok')
