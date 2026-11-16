@@ -1,6 +1,6 @@
 # Contexto do projeto (para retomar o trabalho)
 
-Resumo do estado atual, das decisões tomadas e de como continuar. Atualizado em 12/11/2026.
+Resumo do estado atual, das decisões tomadas e de como continuar. Atualizado em 16/11/2026.
 
 ## O que é
 
@@ -8,8 +8,8 @@ Três jogos mobile em português, todos feitos em HTML5 de arquivo único e empa
 
 | Jogo | Repositório e pasta | Público e proposta | Receita | Estado |
 |---|---|---|---|---|
-| **Quitanda Zen** (Versão B da Feira Viva; nome internacional *Quitanda: Merge Across Brazil*) | `feira-viva` · `versao-b-quitanda-zen/` | Passatempo de juntar itens, sem derrota, viajando por 12 mercados do Brasil em voltas infinitas | Anúncios + compras (simulados) | Protótipo v0.5 |
-| **Rota das Feiras** (Versão A da Feira Viva) | `feira-viva` · `versao-a-rota-das-feiras/` | Puzzle de fusão com turnos contados, fases, estrelas e chefe | Compras (simuladas), sem anúncios | Protótipo de teste v0.1 (só o Ver-o-Peso) |
+| **Quitanda Zen** (Versão B da Feira Viva; nome internacional *Quitanda: Merge Across Brazil*) | `feira-viva` · `versao-b-quitanda-zen/` | Passatempo de juntar itens, sem derrota, viajando por 12 mercados do Brasil em voltas infinitas | Anúncios (AdMob) + compras (simuladas) | v1.1.0 (código 5) em teste fechado na Play Store |
+| **Rota das Feiras** (Versão A da Feira Viva) | `feira-viva` · `versao-a-rota-das-feiras/` | Puzzle de fusão com turnos contados, fases, estrelas e chefe | Compras (simuladas), sem anúncios | Protótipo de teste v0.1 (só o Ver-o-Peso), APK de teste |
 | **Ler Brincando** | `LerBrincando` (raiz) | Alfabetização pelo método fônico, 5 a 7 anos | Nenhuma (sem anúncios, compras ou rastreadores) | v1.3.1 |
 
 A desenvolvedora se chama **Bentevi** (Bentevi Games): a vinheta de abertura da Quitanda e da Rota mostra o bem-te-vi pousando e cantando. O canto é uma gravação real (0,84 s), isolada de um vídeo com filtro de ruído espectral e embutida em base64 nos dois `index.html` (`CANTO`); se o aparelho não decodificar, volta o canto sintetizado (`birdSynth`). O bico e as letras "bem · te · vi" seguem o tempo das notas da gravação (`CALL`). Arquivos em `docs/arte/bentevi-canto.wav` e `.mp3`.
@@ -25,7 +25,10 @@ A desenvolvedora se chama **Bentevi** (Bentevi Games): a vinheta de abertura da 
 | `.github/workflows/android.yml` | Compila os dois APKs a cada push que mexa nos jogos ou nos apps; também por **Actions → Apps Android (APKs de teste) → Run workflow** |
 | `docs/design-de-jogo.md` | Documento de design das duas versões, com as revisões numeradas (seções 3.9, 3.10, 4.8 a 4.10) |
 | `docs/avaliacoes/` | Relatórios de avaliação como usuário novo (um .docx por jogo, inclusive o Ler Brincando) |
-| `docs/arte/` | Lista de arte (104 itens, 12 mercados, 28 personagens), ícones e o canto do bem-te-vi |
+| `docs/arte/` | Lista de arte (`lista-de-arte.md/.csv`: 104 itens, 15 itens da Rota, 12 mercados, 28 personagens, 12 decorações, tudo pronto), prompts do Nano Banana, scripts de recorte, ícones e o canto do bem-te-vi |
+| `versao-*/personagens/`, `versao-b-quitanda-zen/decoracao/` | Arte dos personagens (WebP 192 px) e da decoração da banca (WebP 128 px) usada nos jogos |
+| `docs/expansao/quitanda-sugestao-de-expansao.pdf` | Proposta de 10 mercados novos, com linhas regionais, receitas, personagens e trilhas |
+| `docs/marketing/instagram/` | Material do Instagram da Bentevi (guia em `GUIA.md`) |
 | `docs/arte/icones/` | Artes dos ícones (`quitanda-arte.png`, `rota-arte.png`, `ler-brincando/arte-icone.png`), ícones 512 px da loja e o gerador `gerar_icones_arte.py` |
 | `docs/mockups/` | Telas de sugestão em SVG do início do projeto |
 | `docs/loja-play/quitanda-zen/` | Página da Play Store da Quitanda: textos pt-BR e en-US, capturas, gráfico de destaque, ícone, respostas da Play Console e passo a passo (`LEIAME.md`) |
@@ -81,7 +84,7 @@ Os itens do tabuleiro com arte ficam em `versao-b-quitanda-zen/itens/<código>.w
 
 ## Rota das Feiras: arte, álbum e troca de aparelho
 
-A Versão A usa as mesmas ilustrações dos 12 mercados (`versao-a-rota-das-feiras/mercados/`, campo `img` em `MARKETS`): no mapa (o Ver-o-Peso colorido, os demais em cinza com cadeado), na lista do mapa, no topo da tela do Ver-o-Peso e na tela inicial. Os itens dela são próprios (açaí, peixe, jambu/tucupi, 5 níveis); a arte fica em `versao-a-rota-das-feiras/itens/` e é listada em `ITEM_ART` (por enquanto `pe-1`, `pe-2` e `ac-5`, reaproveitados da Quitanda). A lista de arte tem a seção "Itens da Rota das Feiras" (tipo `item-rota`). O botão **Álbum** da tela inicial mostra os 15 ingredientes (`S.alb`, `S.albDone`); linha completa rende +100 moedas. Em Ajustes, **Trocar de aparelho** gera e restaura um código `RF1-…`, igual ao da Quitanda. O `app-android-rota/scripts/copy-web.js` copia as pastas `mercados/` e `itens/`.
+A Versão A usa as mesmas ilustrações dos 12 mercados (`versao-a-rota-das-feiras/mercados/`, campo `img` em `MARKETS`): no mapa (o Ver-o-Peso colorido, os demais em cinza com cadeado), na lista do mapa, no topo da tela do Ver-o-Peso e na tela inicial. Os itens dela são próprios (açaí, peixe, jambu/tucupi, 5 níveis); a arte dos 15 fica em `versao-a-rota-das-feiras/itens/` e todos estão em `ITEM_ART`. A lista de arte tem a seção "Itens da Rota das Feiras" (tipo `item-rota`). O botão **Álbum** da tela inicial mostra os 15 ingredientes (`S.alb`, `S.albDone`); linha completa rende +100 moedas. Em Ajustes, **Trocar de aparelho** gera e restaura um código `RF1-…`, igual ao da Quitanda. Os clientes dos pedidos são sorteados entre os 28 personagens (`FACES`, com ilustração por `fc()`). O `app-android-rota/scripts/copy-web.js` copia as pastas `mercados/`, `itens/` e `personagens/`.
 
 ## Decisões importantes
 
@@ -107,10 +110,11 @@ A Versão A usa as mesmas ilustrações dos 12 mercados (`versao-a-rota-das-feir
 
 ## Pendências e riscos
 
-1. **Arte dos itens:** os itens ainda são emojis provisórios, alguns pouco fiéis (caju aparece como maçã). A lista de arte e os prompts estão em `docs/arte/`.
+1. **Play Console:** a versão 1.1.0 (código 5) avisou que deixa de fora 19.560 aparelhos. Nada no código explica (só entrou o `@capacitor/app`, sem permissões nem recursos novos); falta ver o motivo em **Catálogo de dispositivos → Excluídos**.
 2. **Publicação da Quitanda** (passo a passo em `docs/loja-play/quitanda-zen/LEIAME.md`):
    - Feito: build de publicação (`PUBLICACAO=1` no `copy-web.js`: sem Loja paga e sem ferramentas de teste), workflow do AAB, política de privacidade, textos, capturas e respostas da Play Console.
-   - Falta: criar a chave de upload e os segredos `QUITANDA_*`; criar os blocos do AdMob e as variáveis `ADMOB_*`; teste fechado de 14 dias.
+   - Feito também: app criado na Play Console com o pacote `com.feiraviva.quitanda` (um app antigo da conta ficou preso a `feiraviva.myapp` e foi deixado de lado), teste interno e teste fechado, ID de publicidade declarado (publicidade e prevenção de fraudes).
+   - Falta: concluir os 14 dias do teste fechado com 12 testadores e pedir a produção; conferir os blocos reais do AdMob (`ADMOB_*`).
    - Depois: integrar Google Play Billing e religar a Loja (`PUB.loja`).
 3. **Rota das Feiras:**
    - Só 7 fases.
@@ -132,3 +136,28 @@ A Versão A usa as mesmas ilustrações dos 12 mercados (`versao-a-rota-das-feir
 
 - Desenvolvimento em branch (`ccr-c071cb1f-ws02kc` na feira-viva; `claude/...` no LerBrincando), com pull request e merge na `main` a cada entrega aprovada pelo dono do projeto.
 - Mudanças de balanceamento e de regra são registradas no `docs/design-de-jogo.md`, em seções de revisão numeradas.
+
+## Arte gerada com o Nano Banana (novembro de 2026)
+
+- Prompts em `docs/arte/prompt-nano-banana.md` e `prompt-nano-banana-2.md` (3D dos itens, personagens, mercados). As grades geradas ficam em `docs/arte/referencias/grade-*.jpg`, e `docs/arte/itens/grades.json` diz o que é cada casa.
+- Itens e decoração: `fatiar_grade.py` corta a grade em casas e `recortar_itens.py` tira o fundo (rembg) e normaliza.
+- Personagens: `fatiar_por_silhueta.py <grade> <colunas> <linhas> <chave>` recorta pela silhueta (não corta cabeças), trata branco ligado à borda e vãos fechados entre braços e objetos como fundo. Ajustes finos (Dona Geralda, Seu Giuseppe) foram feitos tapando vãos internos transparentes.
+- Status da lista: `python docs/arte/atualizar_status.py` (tudo pronto: 12/12 mercados, 104/104 itens, 15/15 da Rota, 28/28 personagens, 12/12 decorações).
+- No jogo: personagens com `pf(c)` (Quitanda: pedidos, Turma da Feira, mapa, chegada, Seu Zé da tela inicial) e decorações com `de(i)` (banca e loja). Os scripts `copy-web.js` copiam `personagens/` e `decoracao/`.
+
+## Ícones sem anel de cor
+
+Os ícones dos três apps (Quitanda, Rota, Ler Brincando) foram refeitos sem o anel colorido em volta: a arte ocupa 78 dp de 108 sobre um fundo desfocado da própria arte.
+
+## Teto (repositório Folga)
+
+App Kotlin de controle de gastos, no repositório `Folga`. Usa `Sons.kt` (SoundPool) com o carimbo ao registrar gasto e as moedinhas ao registrar entrada. APK pelo workflow "Build e testes" (artefato `folga-debug-apk`).
+
+## Sessões do Claude Code sobre estes jogos
+
+| Sessão | Assunto |
+|---|---|
+| Melhorias de consistência do projeto (09/11) | Ler Brincando: sons e consistência |
+| Projeto versão B desenvolvimento (10 a 12/11) | Quitanda v0.5, Rota v0.1, avaliações, ícones, primeiro `CONTEXTO.md` |
+| Versão AAB e descrição Quitanda Zen (12 a 15/11) | AAB, Play Console (pacote, testes, textos da loja, ID de publicidade), compatibilidade com o Moto G54 |
+| Geração de imagens para repositório (13 a 16/11) | Toda a arte (mercados, itens, personagens, decoração), álbum, troca de aparelho, botão voltar, música, sons de dinheiro, Instagram, expansão, ícones, integração da arte nos dois jogos |
