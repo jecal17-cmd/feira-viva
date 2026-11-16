@@ -18,12 +18,24 @@ codigos = json.load(open(os.path.join(AQUI, 'grades.json')))[lote]
 img = Image.open(grade).convert('RGB'); W, H = img.size; cw, ch = W / cols, H / rows
 a = R.mascara(img)
 lab, n = ndimage.label(ndimage.binary_closing(a > 0.5, iterations=2))
-# Fundo de verdade: o branco ligado às bordas da imagem. Branco cercado pelo contorno (aventais, dentes) fica opaco.
-px = np.asarray(img).astype(int); claro = px.min(2) > 236
-cl, _ = ndimage.label(claro); borda = set(np.unique(np.concatenate([cl[0], cl[-1], cl[:, 0], cl[:, -1]]))) - {0}
-fundo = ndimage.binary_dilation(np.isin(cl, list(borda)), iterations=1)
+# Alfa final, região por região:
+#  - branco ligado às bordas da imagem: fundo;
+#  - região clara FECHADA pela figura (vão entre os braços, dentro do carrinho): fundo se o removedor tem quase
+#    certeza; avental, dentes e gato branco ficam opacos, sem meio-termo;
+#  - o resto: figura onde o removedor tem confiança (> 0,35); abaixo disso (sombra no chão, halos) some.
 from PIL import ImageFilter
-alfa_borda = np.asarray(Image.fromarray(((~fundo) * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(1.0))).astype(float) / 255
+px = np.asarray(img).astype(int); sat = px.max(2) - px.min(2)
+claro = (px.min(2) > 225) & (sat < 14)          # rígido: o branco do avental não vaza pelo contorno até o fundo de fora
+cl, cn = ndimage.label(claro)
+borda = set(np.unique(np.concatenate([cl[0], cl[-1], cl[:, 0], cl[:, -1]]))) - {0}
+idx = range(1, cn + 1)
+media = ndimage.mean(a, cl, idx)
+# região fechada é fundo quando o removedor de fundo tem quase certeza (< 0,3): vãos entre braços e objetos ficam
+# entre 0,02 e 0,15; aventais, dentes e o gato branco, acima de 0,35
+fundo_ids = [i for i in idx if i in borda or media[i - 1] < 0.3]
+fig = np.where(claro, ~np.isin(cl, fundo_ids), a > 0.35)
+fig = ndimage.binary_opening(fig, iterations=1)
+alfa_borda = np.asarray(Image.fromarray((fig * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(0.8))).astype(float) / 255
 centros = ndimage.center_of_mass(np.ones_like(lab), lab, range(1, n + 1))
 areas = ndimage.sum(np.ones_like(lab), lab, range(1, n + 1))
 dono = {}
