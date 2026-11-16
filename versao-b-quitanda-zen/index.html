@@ -130,29 +130,29 @@ a.btn{text-decoration:none;display:inline-block;text-align:center}
 .dot{position:absolute;top:4px;right:8px;width:10px;height:10px;border-radius:50%;background:var(--warn)}
 .sheet,.over,.home{position:fixed;inset:0}
 .home{z-index:18;background:var(--bg);overflow:auto;padding-block:calc(12px + env(safe-area-inset-top,0px)) calc(16px + env(safe-area-inset-bottom,0px));padding-inline:16px;display:flex}
-.homein{max-width:420px;width:100%;margin:auto;display:flex;flex-direction:column;gap:12px;align-items:stretch;text-align:center;position:relative}
+.homein{max-width:420px;width:100%;margin:0 auto;display:flex;flex-direction:column;justify-content:center;gap:8px;align-items:stretch;text-align:center;position:relative}
 .logo{font-family:var(--display);font-weight:800;line-height:.9}
-.logo b{display:block;font-size:52px;color:var(--accent);letter-spacing:-1px}
-.logo small{display:block;font-family:var(--text);font-size:13px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:6px}
+.logo b{display:block;font-size:clamp(34px,6.4vh,52px);color:var(--accent);letter-spacing:-1px}
+.logo small{display:block;font-family:var(--text);font-size:13px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:4px}
 .floaty{position:relative;height:0}
-.floaty i{position:absolute;font-style:normal;font-size:26px;animation:bob 3s ease-in-out infinite}
-@keyframes bob{50%{transform:translateY(-8px) rotate(6deg)}}
-.homein{min-height:100%}
-.stall{background:var(--panel);border-radius:20px;overflow:hidden;box-shadow:0 4px 0 var(--line);flex:1 1 auto;display:flex;flex-direction:column}
+.floaty i{position:absolute;font-style:normal;font-size:24px}
+.homein{height:100%}
+.stall{background:var(--panel);border-radius:20px;overflow:hidden;box-shadow:0 4px 0 var(--line);flex:1 1 0;max-height:calc(min(100vw - 32px,420px) * 1.12 + 62px);display:flex;flex-direction:column}
 /* Banca da tela inicial: cena quadrada que ocupa o espaço que sobra; caixotes enchem com os itens descobertos */
-.banca{flex:1 1 auto;min-height:calc(min(100vw - 32px,420px) * 1.12);position:relative;overflow:hidden;background:linear-gradient(#E4F4EB,#CFE8DC 70%)}
+/* A banca ocupa só a altura que sobra (mín. 170 px); a cena mantém a proporção e encolhe junto, encostada embaixo */
+.banca{flex:1 1 0;min-height:170px;max-height:calc(min(100vw - 32px,420px) * 1.12);container-type:size;position:relative;overflow:hidden;background:linear-gradient(#E4F4EB,#CFE8DC 70%)}
 /* Banca da tela inicial vista de cima, inclinada: x em % da largura, y em % da altura (ver bancaHtml) */
-.cena{position:absolute;inset:0}
+.cena{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:min(100cqw,100cqh / 1.12);aspect-ratio:1/1.12}
 .cena>*{position:absolute}
 .cena img{display:block;width:100%;height:auto;pointer-events:none;-webkit-user-drag:none}
-.chao{left:0;right:0;bottom:0;height:25%;background:linear-gradient(#0000 0 30%,#D9876533 30% 31%,#0000 31% 62%,#D9876544 62% 63.5%,#0000 63.5%),repeating-linear-gradient(90deg,#ECA98A 0 9.6%,#D98765 9.6% 10%);box-shadow:inset 0 2px 0 #C97758}
+.chao{left:calc(50% - 50cqw);right:calc(50% - 50cqw);bottom:0;height:25%;background:linear-gradient(#0000 0 30%,#D9876533 30% 31%,#0000 31% 62%,#D9876544 62% 63.5%,#0000 63.5%),repeating-linear-gradient(90deg,#ECA98A 0 9.6%,#D98765 9.6% 10%);box-shadow:inset 0 2px 0 #C97758}
 .poste{top:9%;bottom:30%;width:3%;background:linear-gradient(90deg,#8A5A33,#C08A55 45%,#8A5A33);box-shadow:inset 0 0 0 1px #6E4524}
 .tampo{left:0;right:0;top:31%;height:40%;clip-path:polygon(13% 0,87% 0,97% 100%,3% 100%);
   background:repeating-linear-gradient(#0000 0 15.5%,#5E3A1C22 15.5% 16.5%),linear-gradient(#A26D3B,#D7A56E)}
 .borda{left:12.5%;right:12.5%;top:29.6%;height:2.2%;border-radius:2px;background:linear-gradient(#C99460,#8E5E35);box-shadow:inset 0 0 0 1px #6E4524}
 .frente{left:2%;right:2%;top:71%;bottom:13%;border-radius:2px;background:repeating-linear-gradient(90deg,#B57E4A 0 7.6%,#94623A 7.6% 8%);box-shadow:inset 0 -5px 0 #0002,inset 0 0 0 1px #6E4524}
 .frente::before{content:'';position:absolute;left:-1%;right:-1%;top:-1px;height:16%;border-radius:2px;background:linear-gradient(#DDAA72,#A9743F);box-shadow:inset 0 0 0 1px #6E4524}
-.toldo{left:-1%;right:-1%;top:0;height:14%;z-index:30;background:repeating-linear-gradient(90deg,#E0503C 0 7.14%,#FFF4E2 7.14% 14.28%);box-shadow:inset 0 -2px 0 #0002}
+.toldo{left:calc(50% - 50cqw - 1px);right:calc(50% - 50cqw - 1px);top:0;height:14%;z-index:30;background:repeating-linear-gradient(90deg,#E0503C 0 7.14%,#FFF4E2 7.14% 14.28%);box-shadow:inset 0 -2px 0 #0002}
 .toldo::after{content:'';position:absolute;left:0;right:0;top:100%;height:32%;filter:drop-shadow(0 3px 1px #0002);
   background:radial-gradient(circle at 50% 0,#E0503C 70%,#0000 72%) 0 0/14.28% 100%,radial-gradient(circle at 50% 0,#FFF4E2 70%,#0000 72%) 7.14% 0/14.28% 100%}
 .viga{left:4%;right:4%;top:8%;height:3%;z-index:29;background:linear-gradient(#C99460,#8E5E35);box-shadow:inset 0 0 0 1px #6E4524}
@@ -160,26 +160,22 @@ a.btn{text-decoration:none;display:inline-block;text-align:center}
 .varal img{width:33.4%}
 .it{z-index:10}
 .it img{filter:drop-shadow(0 2px 1px #3B220F55)}
-.it.nv img{animation:brilho 1.6s ease-in-out infinite}
-@keyframes brilho{50%{filter:drop-shadow(0 0 4px #FFE27A) brightness(1.12)}}
-.obj::before{content:'';position:absolute;left:8%;right:8%;bottom:-5%;height:14%;border-radius:50%;background:radial-gradient(#3B220F55,#0000 70%)}
-.obj img{position:relative}
 .vazia{left:18%;right:18%;top:45%;z-index:9;font-size:12px;color:#FFF3E2;text-align:center;font-style:italic;text-shadow:0 1px 1px #0005}
 .pf{width:1.3em;height:1.3em;object-fit:contain;vertical-align:-.3em;pointer-events:none;-webkit-user-drag:none}
 .face .pf,.keeper .pf{width:1.5em;height:1.5em}
-.keeper{display:flex;align-items:center;gap:10px;padding:8px 12px 12px;text-align:left}
-.keeper span{font-size:40px;line-height:1}
-.keeper p{margin:0;background:var(--bg);border-radius:14px 14px 14px 4px;padding:8px 12px;font-size:13px;flex:1}
-.play{font-family:var(--display);font-weight:800;font-size:26px;background:var(--accent);color:var(--on-accent);border-radius:99px;padding:12px;box-shadow:0 5px 0 color-mix(in srgb,var(--accent) 60%,#000)}
+.keeper{display:flex;align-items:center;gap:8px;padding:6px 10px 8px;height:62px;flex:none;text-align:left}
+.keeper span{font-size:30px;line-height:1}
+.keeper p{margin:0;background:var(--bg);border-radius:14px 14px 14px 4px;padding:5px 10px;font-size:12.5px;line-height:1.3;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.play{font-family:var(--display);font-weight:800;font-size:24px;background:var(--accent);color:var(--on-accent);border-radius:99px;padding:9px;box-shadow:0 5px 0 color-mix(in srgb,var(--accent) 60%,#000)}
 .play:active{transform:translateY(3px);box-shadow:0 2px 0 color-mix(in srgb,var(--accent) 60%,#000)}
 .where{background:var(--panel);border-radius:14px;padding:10px 12px;text-align:left;display:flex;flex-direction:column;gap:6px}
 .where small{color:var(--muted)}
-.where.art{background:linear-gradient(to top,rgba(20,24,20,.82),rgba(20,24,20,.35) 55%,rgba(20,24,20,0) 85%),var(--art) center 40%/cover,var(--panel);color:#fff;min-height:132px;justify-content:flex-end;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.where.art{background:linear-gradient(to top,rgba(20,24,20,.82),rgba(20,24,20,.35) 55%,rgba(20,24,20,0) 85%),var(--art) center 40%/cover,var(--panel);color:#fff;min-height:84px;justify-content:flex-end;text-shadow:0 1px 3px rgba(0,0,0,.6)}
 .where.art small{color:rgba(255,255,255,.88)}
 .hnav{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
 .hnav button{background:var(--panel);border-radius:12px;padding:7px 1px;font-weight:800;font-size:10px;position:relative;min-width:0;overflow:hidden;white-space:nowrap}
 .hnav span{display:block;font-size:19px}
-.gift{background:var(--sun);color:#3A2A00;font-weight:800;border-radius:14px;padding:10px}
+.gift{background:var(--sun);color:#3A2A00;font-weight:800;border-radius:14px;padding:8px}
 .sheet{z-index:20;background:var(--bg);overflow:auto;padding-block:calc(14px + env(safe-area-inset-top,0px)) calc(24px + env(safe-area-inset-bottom,0px));
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .sheet>div{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
@@ -308,9 +304,9 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
 .fxe.ring{width:60px;height:60px;border-radius:50%;border:3px solid var(--gold)}
 .fxe.txt{font:800 22px var(--display);color:var(--gold);text-shadow:0 2px 0 var(--panel),0 -1px 0 var(--panel),1px 0 0 var(--panel),-1px 0 0 var(--panel);white-space:nowrap}
 .warn{color:var(--warn)}
-.logo .say{font-family:var(--text);font-weight:600;font-size:13px;color:var(--muted);margin:8px 0 0;line-height:1.3}
+.logo .say{font-family:var(--text);font-weight:600;font-size:12px;color:var(--muted);margin:4px 0 0;line-height:1.3}
 .seg{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
-.seg button{background:var(--panel);border-radius:99px;padding:7px 12px;font-weight:800;font-size:13px;box-shadow:inset 0 0 0 2px var(--line)}
+.seg button{background:var(--panel);border-radius:99px;padding:5px 12px;font-weight:800;font-size:12.5px;box-shadow:inset 0 0 0 2px var(--line)}
 .seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);box-shadow:none}
 .info i{color:var(--muted);font-size:12px}
 </style>
@@ -1255,10 +1251,11 @@ function renderBaskets(){
 }
 // Banca da tela inicial, vista de cima como uma banca inclinada. Cada linha com item descoberto (S.seen) ganha uma
 // fileira no tampo: duas colunas e até 7 fileiras, da frente para o fundo (as do fundo menores, pela perspectiva).
-// Os itens ainda não vistos no Álbum brilham. As decorações ficam no lugar e no tamanho proporcional (1 m ≈ 22% da
-// largura): x e largura em % da largura, base em % da altura; "v" é a folga transparente embaixo da imagem.
-const DECOR_POS={1:{x:0,w:11,b:12,v:.125},2:{x:3,w:27,b:7,v:.102},11:{x:24,w:13,b:2.5,v:.148},3:{x:39,w:14,b:4.5,v:.039},
-  8:{x:58,w:12,b:3.5,v:.039},7:{x:68,w:32,b:6,v:.078},4:{x:14,w:10,b:66.5,v:.062,s:1},6:{x:77,w:9,b:66.5,v:.055,s:1},9:{x:88.5,w:9,t:31}};
+// As duas fileiras da frente deixam a ponta esquerda livre para a balança. As decorações ficam no lugar e no tamanho
+// proporcional (1 m ≈ 22% da largura), sem sombra: x e largura em % da largura, base em % da altura; "v" é a folga
+// transparente embaixo da imagem; "s" fica no tampo; "z" força a camada (o rádio fica na frente do banco).
+const DECOR_POS={1:{x:0,w:10,b:5,v:.125},2:{x:8,w:26,b:1,v:.102},11:{x:34,w:13,b:1,v:.148},3:{x:46,w:13,b:5,v:.039},
+  8:{x:58,w:11,b:4,v:.039},7:{x:69,w:31,b:1.5,v:.078},4:{x:5,w:10,b:29.6,v:.062,s:1},6:{x:17,w:8,b:9.8,v:.055,z:41},9:{x:86,w:9,t:30}};
 function bancaHtml(){
   const has=i=>S.decor.includes(i), ls=Object.keys(LINES).filter(l=>LINES[l].it.some((_,j)=>S.seen[l+(j+1)])).slice(0,14);
   const varal=(i,top)=>has(i)?`<div class="varal" style="top:${top}%">${de(i).repeat(3)}</div>`:'';
@@ -1266,13 +1263,13 @@ function bancaHtml(){
    +'<div class="poste" style="left:8%"></div><div class="poste" style="right:8%"></div><div class="tampo"></div><div class="borda"></div><div class="frente"></div>';
   ls.forEach((l,k)=>{
     const r=k>>1, d=r/6, yb=69-.726*(8.8*r-.2*r*(r-1)), f=(yb-31)/40, L=13-10*f, esq=!(k&1);
-    const a=esq?L+1.5:51, z=esq?49:99-L, its=LINES[l].it.map((_,j)=>j+1).filter(n=>S.seen[l+n]);
+    const m=r<2&&esq?11:0, a=esq?L+1.5+m:51, z=esq?49:99-L, its=LINES[l].it.map((_,j)=>j+1).filter(n=>S.seen[l+n]);
     const w=8.8-2.4*d, passo=Math.min((z-a)/8,w*.8), x0=(a+z)/2-passo*(its.length-1)/2;
     its.forEach((n,i)=>{ h+=`<div class="it${S.seen[l+n]===1?' nv':''}" style="left:${(x0+i*passo-w/2).toFixed(2)}%;width:${w.toFixed(2)}%;bottom:${(100-yb-w*.17).toFixed(2)}%;z-index:${20-r}">${ie(l,n).replace(' class="ii"','')}</div>`; });
   });
   if(!ls.length) h+=`<p class="vazia">${t('bancaVazia')}</p>`;
   for(const [i,p] of Object.entries(DECOR_POS)) if(has(+i))
-    h+=`<div class="${p.t?'':'obj'}" style="left:${p.x}%;width:${p.w}%;${p.t?`top:${p.t}%`:`bottom:${p.b}%`};z-index:${p.t?27:p.s?29:40-Math.round(p.b)}">${de(+i).replace('class="ii"',p.v?`style="margin-bottom:-${(p.v*100).toFixed(1)}%"`:'')}</div>`;
+    h+=`<div class="${p.t?'':'obj'}" style="left:${p.x}%;width:${p.w}%;${p.t?`top:${p.t}%`:`bottom:${p.b}%`};z-index:${p.z||(p.t?27:p.s?25:40-Math.round(p.b))}">${de(+i).replace('class="ii"',p.v?`style="margin-bottom:-${(p.v*100).toFixed(1)}%"`:'')}</div>`;
   return h+varal(5,6)+varal(10,8.5)+(has(0)?'<div class="toldo"></div>':'<div class="viga"></div>')+'</div></div>';
 }
 function renderHome(){
