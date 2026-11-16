@@ -140,32 +140,31 @@ a.btn{text-decoration:none;display:inline-block;text-align:center}
 .homein{min-height:100%}
 .stall{background:var(--panel);border-radius:20px;overflow:hidden;box-shadow:0 4px 0 var(--line);flex:1 1 auto;display:flex;flex-direction:column}
 /* Banca da tela inicial: cena quadrada que ocupa o espaço que sobra; caixotes enchem com os itens descobertos */
-.banca{flex:1 1 auto;min-height:calc(min(100vw - 32px,420px) * .86);position:relative;background:#DDF0E6}
-.cena{position:absolute;bottom:0;left:50%;width:var(--lado,86%);height:var(--lado,100%);transform:translateX(-50%)}
-.chao{left:-100%;right:-100%;bottom:0;height:17%;background:repeating-linear-gradient(90deg,#ECA98A 0 calc(10% / 3 - 1px),#D98765 0 calc(10% / 3)),#ECA98A;box-shadow:inset 0 3px 0 #D98765}
+.banca{flex:1 1 auto;min-height:calc(min(100vw - 32px,420px) * 1.12);position:relative;overflow:hidden;background:linear-gradient(#E4F4EB,#CFE8DC 70%)}
+/* Banca da tela inicial vista de cima, inclinada: x em % da largura, y em % da altura (ver bancaHtml) */
+.cena{position:absolute;inset:0}
 .cena>*{position:absolute}
 .cena img{display:block;width:100%;height:auto;pointer-events:none;-webkit-user-drag:none}
-.cena .madeira{background:linear-gradient(90deg,#9C6A3F,#C08A55 40%,#9C6A3F);border-radius:2px;box-shadow:inset 0 0 0 1px #6E4524}
-.poste{top:8%;bottom:12%;width:3.4%}
-.viga{left:5%;right:5%;top:7%;height:3%}
-.tabua{left:11%;right:11%;height:2.2%;background:linear-gradient(#C99460,#8E5E35)!important}
-.balcao{left:3%;right:3%;top:70%;bottom:7%;border-radius:3px;background:repeating-linear-gradient(90deg,#B57E4A 0 9%,#A06D3E 9% 9.6%);box-shadow:inset 0 -6px 0 #0001,inset 0 0 0 1px #6E4524}
-.balcao::before{content:'';position:absolute;left:-1.5%;right:-1.5%;top:-6%;height:12%;border-radius:3px;background:linear-gradient(#D7A46D,#A9743F);box-shadow:inset 0 0 0 1px #6E4524}
-.toldo{left:1%;right:1%;top:1%;height:16%;border-radius:6px 6px 0 0;
-  background:repeating-linear-gradient(90deg,#E0503C 0 7.14%,#FFF4E2 7.14% 14.28%);box-shadow:inset 0 -2px 0 #0002}
-.toldo::after{content:'';position:absolute;left:0;right:0;top:100%;height:40%;
-  background:radial-gradient(circle at 50% 0,#E0503C 70%,transparent 72%) 0 0/14.28% 100%,radial-gradient(circle at 50% 0,#FFF4E2 70%,transparent 72%) 7.14% 0/14.28% 100%;
-  filter:drop-shadow(0 2px 0 #0002)}
-.varal{left:11%;right:11%;display:flex}
+.chao{left:0;right:0;bottom:0;height:25%;background:linear-gradient(#0000 0 30%,#D9876533 30% 31%,#0000 31% 62%,#D9876544 62% 63.5%,#0000 63.5%),repeating-linear-gradient(90deg,#ECA98A 0 9.6%,#D98765 9.6% 10%);box-shadow:inset 0 2px 0 #C97758}
+.poste{top:9%;bottom:30%;width:3%;background:linear-gradient(90deg,#8A5A33,#C08A55 45%,#8A5A33);box-shadow:inset 0 0 0 1px #6E4524}
+.tampo{left:0;right:0;top:31%;height:40%;clip-path:polygon(13% 0,87% 0,97% 100%,3% 100%);
+  background:repeating-linear-gradient(#0000 0 15.5%,#5E3A1C22 15.5% 16.5%),linear-gradient(#A26D3B,#D7A56E)}
+.borda{left:12.5%;right:12.5%;top:29.6%;height:2.2%;border-radius:2px;background:linear-gradient(#C99460,#8E5E35);box-shadow:inset 0 0 0 1px #6E4524}
+.frente{left:2%;right:2%;top:71%;bottom:13%;border-radius:2px;background:repeating-linear-gradient(90deg,#B57E4A 0 7.6%,#94623A 7.6% 8%);box-shadow:inset 0 -5px 0 #0002,inset 0 0 0 1px #6E4524}
+.frente::before{content:'';position:absolute;left:-1%;right:-1%;top:-1px;height:16%;border-radius:2px;background:linear-gradient(#DDAA72,#A9743F);box-shadow:inset 0 0 0 1px #6E4524}
+.toldo{left:-1%;right:-1%;top:0;height:14%;z-index:30;background:repeating-linear-gradient(90deg,#E0503C 0 7.14%,#FFF4E2 7.14% 14.28%);box-shadow:inset 0 -2px 0 #0002}
+.toldo::after{content:'';position:absolute;left:0;right:0;top:100%;height:32%;filter:drop-shadow(0 3px 1px #0002);
+  background:radial-gradient(circle at 50% 0,#E0503C 70%,#0000 72%) 0 0/14.28% 100%,radial-gradient(circle at 50% 0,#FFF4E2 70%,#0000 72%) 7.14% 0/14.28% 100%}
+.viga{left:4%;right:4%;top:8%;height:3%;z-index:29;background:linear-gradient(#C99460,#8E5E35);box-shadow:inset 0 0 0 1px #6E4524}
+.varal{left:2%;right:2%;display:flex;z-index:28}
 .varal img{width:33.4%}
-.cx{width:13.5%;display:flex;flex-direction:column;align-items:center}
-.cx .pl{display:flex;flex-wrap:wrap-reverse;justify-content:center;width:130%;margin-bottom:-11%;padding-inline:6%;position:relative;z-index:1}
-.cx .pl img{width:40%;margin:0 -7.5% -15%;filter:drop-shadow(0 1px 1px #0003)}
-.cx .pl img.nv{animation:brilho 1.6s ease-in-out infinite}
-@keyframes brilho{50%{filter:drop-shadow(0 0 3px #FFE27A) brightness(1.12)}}
-.cx i{display:block;width:100%;aspect-ratio:2.6;border-radius:2px;position:relative;z-index:2;
-  background:linear-gradient(#0000 46%,#7A4A26 46% 54%,#0000 54%),linear-gradient(#EBCB92,#CFA265);box-shadow:inset 0 0 0 1px #8A5A30,inset 3px 0 #7A4A2655,inset -3px 0 #7A4A2655}
-.vazia{left:14%;right:14%;top:47%;font-size:12px;color:#5E6B63;text-align:center;font-style:italic}
+.it{z-index:10}
+.it img{filter:drop-shadow(0 2px 1px #3B220F55)}
+.it.nv img{animation:brilho 1.6s ease-in-out infinite}
+@keyframes brilho{50%{filter:drop-shadow(0 0 4px #FFE27A) brightness(1.12)}}
+.obj::before{content:'';position:absolute;left:8%;right:8%;bottom:-5%;height:14%;border-radius:50%;background:radial-gradient(#3B220F55,#0000 70%)}
+.obj img{position:relative}
+.vazia{left:18%;right:18%;top:45%;z-index:9;font-size:12px;color:#FFF3E2;text-align:center;font-style:italic;text-shadow:0 1px 1px #0005}
 .pf{width:1.3em;height:1.3em;object-fit:contain;vertical-align:-.3em;pointer-events:none;-webkit-user-drag:none}
 .face .pf,.keeper .pf{width:1.5em;height:1.5em}
 .keeper{display:flex;align-items:center;gap:10px;padding:8px 12px 12px;text-align:left}
@@ -1254,30 +1253,28 @@ function renderBaskets(){
     +`<button class="basket bo" data-act="recharge" aria-label="${t('recAria')}"><span class="em">⚡</span><b>${S.boost.rec}</b><small>${t('recLbl')}</small></button>`
     +`<button class="basket ad bo" data-act="adcharge" aria-label="${t('adAria')}" ${S.daily.adCharge>=AD_MAX?'disabled':''}><span class="em">▶</span><b>+${Math.round(AD_CHARGE*bonus())}</b><small>${S.daily.adCharge}/${AD_MAX}</small></button>`;
 }
-// Banca da tela inicial. Cada linha com algum item descoberto ganha um caixote (balcão, depois prateleiras);
-// o caixote mostra os itens já descobertos da linha (os novos brilham). As decorações ficam no lugar e no
-// tamanho de verdade: posições em % da cena quadrada, larguras proporcionais (balcão ≈ 90 cm = 20% da cena).
-const CAIXOTES=[[19,30],[38,30],[57,30],[76,30],[12.5,43],[27.4,43],[42.3,43],[57.2,43],[72.1,43],[12.5,58],[27.4,58],[42.3,58],[57.2,58]];   // [esquerda, base] em %
-const DECOR_POS={1:'left:0;bottom:4%;width:13%;z-index:3',2:'left:5%;bottom:3%;width:23%',3:'left:36%;bottom:1%;width:15%;z-index:4',
-  4:'left:5%;bottom:30%;width:11%',6:'left:73%;bottom:58%;width:10%',7:'right:-1%;bottom:2%;width:27%;z-index:4',8:'right:23%;bottom:1%;width:13%;z-index:5',
-  9:'right:2.5%;top:24%;width:9%',11:'left:21%;bottom:0;width:12%;z-index:5'};
+// Banca da tela inicial, vista de cima como uma banca inclinada. Cada linha com item descoberto (S.seen) ganha uma
+// fileira no tampo: duas colunas e até 7 fileiras, da frente para o fundo (as do fundo menores, pela perspectiva).
+// Os itens ainda não vistos no Álbum brilham. As decorações ficam no lugar e no tamanho proporcional (1 m ≈ 22% da
+// largura): x e largura em % da largura, base em % da altura; "v" é a folga transparente embaixo da imagem.
+const DECOR_POS={1:{x:0,w:11,b:12,v:.125},2:{x:3,w:27,b:7,v:.102},11:{x:24,w:13,b:2.5,v:.148},3:{x:39,w:14,b:4.5,v:.039},
+  8:{x:58,w:12,b:3.5,v:.039},7:{x:68,w:32,b:6,v:.078},4:{x:14,w:10,b:66.5,v:.062,s:1},6:{x:77,w:9,b:66.5,v:.055,s:1},9:{x:88.5,w:9,t:31}};
 function bancaHtml(){
-  const has=i=>S.decor.includes(i), linhas=Object.keys(LINES).filter(l=>LINES[l].it.some((_,j)=>S.seen[l+(j+1)])).slice(0,CAIXOTES.length);
-  const varal=(i,top)=>has(i)?`<div class="varal" style="top:${top}%;z-index:2">${de(i).repeat(3)}</div>`:'';
-  const tot=Object.keys(S.seen).length;
-  return `<div class="banca" role="img" aria-label="${t('decoAria')}: ${tot} / ${Object.keys(LINES).length*MAX}"><div class="cena"><div class="chao"></div>`
-   +`<div class="madeira poste" style="left:8%"></div><div class="madeira poste" style="right:8%"></div><div class="madeira viga"></div>`
-   +`<div class="madeira tabua" style="top:42%"></div><div class="madeira tabua" style="top:57%"></div>`
-   +(has(0)?'<div class="toldo"></div>':'')+varal(5,8.5)+varal(10,14.5)
-   +linhas.map((l,k)=>{ const [x,b]=CAIXOTES[k], its=LINES[l].it.map((_,j)=>j+1).filter(n=>S.seen[l+n]);
-      return `<div class="cx" style="left:${x}%;bottom:${b}%;${k<4?'width:15%;z-index:3':''}"><div class="pl">${its.map(n=>ie(l,n).replace('class="ii"',S.seen[l+n]===1?'class="nv"':'')).join('')}</div><i></i></div>`; }).join('')
-   +'<div class="balcao"></div>'
-   +Object.entries(DECOR_POS).filter(([i])=>has(+i)).map(([i,st])=>`<div style="${st}">${de(+i)}</div>`).join('')
-   +(linhas.length?'':`<p class="vazia">${t('bancaVazia')}</p>`)
-   +'</div></div>';
+  const has=i=>S.decor.includes(i), ls=Object.keys(LINES).filter(l=>LINES[l].it.some((_,j)=>S.seen[l+(j+1)])).slice(0,14);
+  const varal=(i,top)=>has(i)?`<div class="varal" style="top:${top}%">${de(i).repeat(3)}</div>`:'';
+  let h=`<div class="banca" role="img" aria-label="${t('decoAria')}: ${Object.keys(S.seen).length} / ${Object.keys(LINES).length*MAX}"><div class="cena"><div class="chao"></div>`
+   +'<div class="poste" style="left:8%"></div><div class="poste" style="right:8%"></div><div class="tampo"></div><div class="borda"></div><div class="frente"></div>';
+  ls.forEach((l,k)=>{
+    const r=k>>1, d=r/6, yb=69-.726*(8.8*r-.2*r*(r-1)), f=(yb-31)/40, L=13-10*f, esq=!(k&1);
+    const a=esq?L+1.5:51, z=esq?49:99-L, its=LINES[l].it.map((_,j)=>j+1).filter(n=>S.seen[l+n]);
+    const w=8.8-2.4*d, passo=Math.min((z-a)/8,w*.8), x0=(a+z)/2-passo*(its.length-1)/2;
+    its.forEach((n,i)=>{ h+=`<div class="it${S.seen[l+n]===1?' nv':''}" style="left:${(x0+i*passo-w/2).toFixed(2)}%;width:${w.toFixed(2)}%;bottom:${(100-yb-w*.17).toFixed(2)}%;z-index:${20-r}">${ie(l,n).replace(' class="ii"','')}</div>`; });
+  });
+  if(!ls.length) h+=`<p class="vazia">${t('bancaVazia')}</p>`;
+  for(const [i,p] of Object.entries(DECOR_POS)) if(has(+i))
+    h+=`<div class="${p.t?'':'obj'}" style="left:${p.x}%;width:${p.w}%;${p.t?`top:${p.t}%`:`bottom:${p.b}%`};z-index:${p.t?27:p.s?29:40-Math.round(p.b)}">${de(+i).replace('class="ii"',p.v?`style="margin-bottom:-${(p.v*100).toFixed(1)}%"`:'')}</div>`;
+  return h+varal(5,6)+varal(10,8.5)+(has(0)?'<div class="toldo"></div>':'<div class="viga"></div>')+'</div></div>';
 }
-function ajustaBanca(){ const b=document.querySelector('.banca'); if(b) b.style.setProperty('--lado',Math.min(b.clientWidth,b.clientHeight)+'px'); }
-addEventListener('resize',()=>{ if(homeOn) ajustaBanca(); });
 function renderHome(){
   const f=feira(S.stop), g=goal(S.stop), ls=lines(), gift=S.giftDay!==today(), d=Math.min((S.giftDay===dstr(Date.now()-864e5)?S.streak:0)+1,7), N=t('nav');
   $('homein').innerHTML=`<div class="floaty" aria-hidden="true"><i style="left:4%;top:6px">🍉</i><i style="right:6%;top:0;animation-delay:.8s">🧀</i><i style="left:1%;top:40px;animation-delay:1.5s;font-size:20px">🌽</i><i style="right:1%;top:44px;animation-delay:.4s;font-size:20px">🥖</i></div>
@@ -1290,7 +1287,6 @@ function renderHome(){
      <small>${t('homeLine',S.level,S.stop,lap(S.stop))} · ${S.served>=g?t('ready'):t('clients',S.served,g)}</small></button>
    <div class="hnav">${[['map','🗺️',S.served>=g],['turma','🧑‍🤝‍🧑'],['miss','🎯',S.missions.some(m=>m.p>=m.goal)],...(PUB.loja?[['shop','🛒']]:[]),['help','❓'],['cfg','⚙️']].map(([k,i,dt])=>`<button data-act="nav:${k}"><span>${i}</span>${N[k]}${dt?'<i class="dot"></i>':''}</button>`).join('')}</div>
    <div class="seg" role="group" aria-label="${t('lang')}"><button data-act="lang:pt" aria-pressed="${LANG==='pt'}">🇧🇷 Português</button><button data-act="lang:en" aria-pressed="${LANG==='en'}">🌎 English</button></div>`;
-  ajustaBanca();
 }
 function tick(){
   if(document.visibilityState==='visible') S.stats.playMs+=1000;

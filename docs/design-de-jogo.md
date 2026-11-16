@@ -322,9 +322,9 @@ Pedido da dona do projeto: deixar o jogo mais "livre", avisar quando os cestos e
 
 ### 4.12 Banca da tela inicial (novembro de 2026)
 
-- A banca da tela inicial virou uma cena de feira: parede, piso, postes, duas prateleiras e balcão, ocupando o espaço que sobra na tela (`bancaHtml()`, `ajustaBanca()`).
-- **Começa vazia e enche com o Álbum:** cada linha com pelo menos um item descoberto (`S.seen`) ganha um caixote. Os 4 primeiros vão no balcão, depois a prateleira do meio (5) e a de cima (4). O caixote mostra os itens já descobertos da linha, e os ainda não vistos no Álbum brilham.
-- **Decorações no lugar e no tamanho de verdade** (`DECOR_POS`; o balcão de uns 90 cm vale 20% da cena): toldo listrado em cima, luzinhas e bandeirinhas penduradas, relógio no poste, balança no balcão, rádio na prateleira de cima e, no chão, vasos de ervas, banco, caminha do Mingau, lousa, carrinho de feira e bicicleta. Sem toldo, a banca mostra só a viga de madeira.
+- A banca da tela inicial é uma cena de feira vista de cima, com o tampo inclinado para quem olha, ocupando o espaço que sobra na tela (`bancaHtml()`).
+- **Começa vazia e enche com o Álbum:** cada linha com pelo menos um item descoberto (`S.seen`) ganha uma fileira no tampo, em duas colunas e até 7 fileiras, da frente para o fundo. As fileiras do fundo são menores, pela perspectiva. Não há caixotes: os itens ficam deitados lado a lado, e os ainda não vistos no Álbum brilham.
+- **Decorações no lugar e no tamanho de verdade** (`DECOR_POS`, 1 m ≈ 22% da largura): os objetos de chão (vasos, banco, caminha do Mingau, lousa, carrinho e bicicleta) ficam no piso, à frente do balcão, com sombra; a balança e o rádio ficam na borda de trás do tampo; o relógio fica no poste. O toldo cobre tudo, e as luzinhas e as bandeirinhas ficam penduradas por baixo dele. Sem toldo, aparece só a viga de madeira.
 
 ## 5. Localização e idiomas
 
