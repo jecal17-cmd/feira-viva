@@ -15,8 +15,8 @@ Atualizado por `atualizar_status.py`. ✅ = imagem já no jogo · ⬜ = falta ge
 | Mercados | 12 de 12 | 0 |
 | Itens do tabuleiro | 104 de 104 | 0 |
 | Itens da Rota das Feiras | 15 de 15 | 0 |
-| Personagens | 0 de 28 | 28 |
-| Decoração da banca | 0 de 12 | 12 |
+| Personagens | 23 de 28 | 5 |
+| Decoração da banca | 12 de 12 | 0 |
 
 ## Como gerar
 
@@ -287,32 +287,32 @@ A Versão A tem itens próprios do Ver-o-Peso. Ficam em `versao-a-rota-das-feira
 
 | Arquivo | Nome | Papel (pt) | Papel (en) | Onde aparece | Descrição visual | Arte |
 |---|---|---|---|---|---|---|
-| `personagens/ze.png` | 👨‍🌾 Seu Zé | feirante e seu guia | market vendor and your guide | viaja com o jogador | homem de uns 60 anos, chapéu de palha, camisa xadrez, avental, sorriso largo | ⬜ |
-| `personagens/bia.png` | 👧 Bia | aprendiz da banca | stall apprentice | viaja com o jogador | menina de uns 10 anos, rabo de cavalo, avental pequeno, carregando um caixote | ⬜ |
-| `personagens/mingau.png` | 🐈 Mingau | gato da quitanda | the shop cat | viaja com o jogador | gato branco e gordinho, olhar preguiçoso | ⬜ |
-| `personagens/tonho.png` | 🚚 Tonho | caminhoneiro | truck driver | viaja com o jogador | caminhoneiro de boné, braço na janela de um caminhão colorido | ⬜ |
-| `personagens/naza.png` | 👵 Dona Nazaré | tacacazeira | tacacá soup cook | Ver-o-Peso, Belém | senhora idosa, cabelo grisalho preso, vestido estampado, cuia de tacacá nas mãos | ⬜ |
-| `personagens/raimundo.png` | 🧔 Seu Raimundo | pescador | fisherman | Ver-o-Peso, Belém | pescador de barba e chapéu, segurando um peixe de rio | ⬜ |
-| `personagens/iara.png` | 👩‍🦱 Iara | artesã | artisan | Mercado Adolpho Lisboa, Manaus | mulher jovem de cabelo cacheado tecendo um cesto de palha | ⬜ |
-| `personagens/chico.png` | 🧑‍🌾 Seu Chico | ribeirinho | riverside dweller | Mercado Adolpho Lisboa, Manaus | ribeirinho de chapéu com uma canoa de madeira ao fundo | ⬜ |
-| `personagens/dada.png` | 👩🏾‍🍳 Dona Dadá | baiana de tabuleiro | baiana street-food cook | Feira de São Joaquim, Salvador | baiana de acarajé com turbante e saia rodada brancos, tabuleiro de quitutes | ⬜ |
-| `personagens/jorginho.png` | 🧑🏾‍🎤 Jorginho | percussionista | percussionist | Feira de São Joaquim, Salvador | rapaz sorridente tocando um tambor de mão | ⬜ |
-| `personagens/biu.png` | 👨🏽‍🎨 Mestre Biu | ceramista | master potter | Mercado de São José, Recife | artesão mais velho moldando um bonequinho de barro | ⬜ |
-| `personagens/flor.png` | 👩🏽 Maria Flor | rendeira | lacemaker | Mercado de São José, Recife | mulher com uma almofada de renda de bilro no colo | ⬜ |
-| `personagens/cicero.png` | 👨🏽‍🌾 Seu Cícero | vendedor de frutas | fruit seller | Mercado Central, Fortaleza | vendedor de frutas de chapéu de couro com um carrinho de frutas | ⬜ |
-| `personagens/rosinha.png` | 👧🏽 Rosinha | neta da rendeira | the lacemaker’s granddaughter | Mercado Central, Fortaleza | menina de vestido de chita florida e laço no cabelo | ⬜ |
-| `personagens/keiko.png` | 👩🏻‍🍳 Dona Keiko | cozinheira de sobá | sobá noodle cook | Feira Central, Campo Grande | cozinheira nipo-brasileira de avental com uma tigela de sobá fumegante | ⬜ |
-| `personagens/antenor.png` | 🤠 Seu Antenor | peão pantaneiro | Pantanal cowboy | Feira Central, Campo Grande | peão pantaneiro de chapéu e lenço no pescoço, com uma guampa de tereré | ⬜ |
-| `personagens/giuseppe.png` | 👨🏻‍🍳 Seu Giuseppe | dono da lanchonete | snack bar owner | Mercadão, São Paulo | dono de lanchonete de bigode e avental, com um sanduíche de mortadela enorme | ⬜ |
-| `personagens/paula.png` | 👩🏻‍💼 Paula | sempre apressada | always in a rush | Mercadão, São Paulo | mulher em roupa de escritório, celular na mão, andando apressada | ⬜ |
-| `personagens/geralda.png` | 👵🏽 Dona Geralda | quitandeira mineira | quitandeira from Minas | Mercado Central, Belo Horizonte | senhora mineira de avental com bule de café e pão de queijo | ⬜ |
-| `personagens/tiao.png` | 🧑🏽‍🍳 Tiãozinho | queijeiro | cheesemaker | Mercado Central, Belo Horizonte | rapaz de chapéu segurando uma peça de queijo minas curado | ⬜ |
-| `personagens/jacinto.png` | 👨🏾‍🦳 Seu Jacinto | sanfoneiro | accordion player | Feira de São Cristóvão, Rio de Janeiro | sanfoneiro mais velho de chapéu de couro tocando sanfona | ⬜ |
+| `personagens/ze.png` | 👨‍🌾 Seu Zé | feirante e seu guia | market vendor and your guide | viaja com o jogador | homem de uns 60 anos, chapéu de palha, camisa xadrez, avental, sorriso largo | ✅ |
+| `personagens/bia.png` | 👧 Bia | aprendiz da banca | stall apprentice | viaja com o jogador | menina de uns 10 anos, rabo de cavalo, avental pequeno, carregando um caixote | ✅ |
+| `personagens/mingau.png` | 🐈 Mingau | gato da quitanda | the shop cat | viaja com o jogador | gato branco e gordinho, olhar preguiçoso | ✅ |
+| `personagens/tonho.png` | 🚚 Tonho | caminhoneiro | truck driver | viaja com o jogador | caminhoneiro de boné, braço na janela de um caminhão colorido | ✅ |
+| `personagens/naza.png` | 👵 Dona Nazaré | tacacazeira | tacacá soup cook | Ver-o-Peso, Belém | senhora idosa, cabelo grisalho preso, vestido estampado, cuia de tacacá nas mãos | ✅ |
+| `personagens/raimundo.png` | 🧔 Seu Raimundo | pescador | fisherman | Ver-o-Peso, Belém | pescador de barba e chapéu, segurando um peixe de rio | ✅ |
+| `personagens/iara.png` | 👩‍🦱 Iara | artesã | artisan | Mercado Adolpho Lisboa, Manaus | mulher jovem de cabelo cacheado tecendo um cesto de palha | ✅ |
+| `personagens/chico.png` | 🧑‍🌾 Seu Chico | ribeirinho | riverside dweller | Mercado Adolpho Lisboa, Manaus | ribeirinho de chapéu com uma canoa de madeira ao fundo | ✅ |
+| `personagens/dada.png` | 👩🏾‍🍳 Dona Dadá | baiana de tabuleiro | baiana street-food cook | Feira de São Joaquim, Salvador | baiana de acarajé com turbante e saia rodada brancos, tabuleiro de quitutes | ✅ |
+| `personagens/jorginho.png` | 🧑🏾‍🎤 Jorginho | percussionista | percussionist | Feira de São Joaquim, Salvador | rapaz sorridente tocando um tambor de mão | ✅ |
+| `personagens/biu.png` | 👨🏽‍🎨 Mestre Biu | ceramista | master potter | Mercado de São José, Recife | artesão mais velho moldando um bonequinho de barro | ✅ |
+| `personagens/flor.png` | 👩🏽 Maria Flor | rendeira | lacemaker | Mercado de São José, Recife | mulher com uma almofada de renda de bilro no colo | ✅ |
+| `personagens/cicero.png` | 👨🏽‍🌾 Seu Cícero | vendedor de frutas | fruit seller | Mercado Central, Fortaleza | vendedor de frutas de chapéu de couro com um carrinho de frutas | ✅ |
+| `personagens/rosinha.png` | 👧🏽 Rosinha | neta da rendeira | the lacemaker’s granddaughter | Mercado Central, Fortaleza | menina de vestido de chita florida e laço no cabelo | ✅ |
+| `personagens/keiko.png` | 👩🏻‍🍳 Dona Keiko | cozinheira de sobá | sobá noodle cook | Feira Central, Campo Grande | cozinheira nipo-brasileira de avental com uma tigela de sobá fumegante | ✅ |
+| `personagens/antenor.png` | 🤠 Seu Antenor | peão pantaneiro | Pantanal cowboy | Feira Central, Campo Grande | peão pantaneiro de chapéu e lenço no pescoço, com uma guampa de tereré | ✅ |
+| `personagens/giuseppe.png` | 👨🏻‍🍳 Seu Giuseppe | dono da lanchonete | snack bar owner | Mercadão, São Paulo | dono de lanchonete de bigode e avental, com um sanduíche de mortadela enorme | ✅ |
+| `personagens/paula.png` | 👩🏻‍💼 Paula | sempre apressada | always in a rush | Mercadão, São Paulo | mulher em roupa de escritório, celular na mão, andando apressada | ✅ |
+| `personagens/geralda.png` | 👵🏽 Dona Geralda | quitandeira mineira | quitandeira from Minas | Mercado Central, Belo Horizonte | senhora mineira de avental com bule de café e pão de queijo | ✅ |
+| `personagens/tiao.png` | 🧑🏽‍🍳 Tiãozinho | queijeiro | cheesemaker | Mercado Central, Belo Horizonte | rapaz de chapéu segurando uma peça de queijo minas curado | ✅ |
+| `personagens/jacinto.png` | 👨🏾‍🦳 Seu Jacinto | sanfoneiro | accordion player | Feira de São Cristóvão, Rio de Janeiro | sanfoneiro mais velho de chapéu de couro tocando sanfona | ✅ |
 | `personagens/dandara.png` | 👩🏾 Dandara | cozinheira | cook | Feira de São Cristóvão, Rio de Janeiro | cozinheira de lenço na cabeça mexendo uma panela grande | ⬜ |
-| `personagens/gaudencio.png` | 🧔🏻 Seu Gaudêncio | assador | churrasco grill master | Mercado Público, Porto Alegre | gaúcho de bombacha, lenço e boina, com um espeto de churrasco | ⬜ |
+| `personagens/gaudencio.png` | 🧔🏻 Seu Gaudêncio | assador | churrasco grill master | Mercado Público, Porto Alegre | gaúcho de bombacha, lenço e boina, com um espeto de churrasco | ✅ |
 | `personagens/livia.png` | 👩🏼 Lívia | dona da cuia | keeper of the mate gourd | Mercado Público, Porto Alegre | jovem gaúcha com cuia de chimarrão e garrafa térmica | ⬜ |
 | `personagens/dico.png` | 🧑🏼‍🦰 Dico | pescador | fisherman | Mercado Público, Florianópolis | pescador com uma rede de pesca no ombro | ⬜ |
-| `personagens/zulma.png` | 👩🏼‍🦳 Dona Zulma | florista | florist | Mercado Público, Florianópolis | senhora florista com um balde de flores | ⬜ |
+| `personagens/zulma.png` | 👩🏼‍🦳 Dona Zulma | florista | florist | Mercado Público, Florianópolis | senhora florista com um balde de flores | ✅ |
 | `personagens/halina.png` | 👩🏼‍🍳 Dona Halina | cozinheira | cook | Mercado Municipal, Curitiba | cozinheira de origem polonesa, lenço na cabeça, prato de pierogi | ⬜ |
 | `personagens/estanislau.png` | 👨🏻‍🦳 Seu Estanislau | vendedor do armazém | general store keeper | Mercado Municipal, Curitiba | senhor de avental atrás do balcão do armazém | ⬜ |
 
@@ -324,15 +324,15 @@ Aparecem na banca da tela inicial.
 
 | Arquivo | Português | Inglês | Emoji provisório | Arte |
 |---|---|---|---|---|
-| `decoracao/01-toldo-listrado.png` | Toldo listrado | Striped awning | ⛱️ | ⬜ |
-| `decoracao/02-vasos-de-ervas.png` | Vasos de ervas | Herb pots | 🪴 | ⬜ |
-| `decoracao/03-banco-de-madeira.png` | Banco de madeira | Wooden bench | 🪑 | ⬜ |
-| `decoracao/04-lousa-de-precos.png` | Lousa de preços | Price chalkboard | 📋 | ⬜ |
-| `decoracao/05-balanca-antiga.png` | Balança antiga | Vintage scale | ⚖️ | ⬜ |
-| `decoracao/06-luzinhas.png` | Luzinhas | String lights | ✨ | ⬜ |
-| `decoracao/07-radio-de-pilha.png` | Rádio de pilha | Transistor radio | 📻 | ⬜ |
-| `decoracao/08-bicicleta-de-entrega.png` | Bicicleta de entrega | Delivery bike | 🚲 | ⬜ |
-| `decoracao/09-carrinho-de-feira.png` | Carrinho de feira | Market trolley | 🛒 | ⬜ |
-| `decoracao/10-relogio-de-parede.png` | Relógio de parede | Wall clock | 🕰️ | ⬜ |
-| `decoracao/11-bandeirinhas.png` | Bandeirinhas | Bandeirinhas (festa junina flags) | 🎊 | ⬜ |
-| `decoracao/12-caminha-do-mingau.png` | Caminha do Mingau | Mingau’s cat bed | 🐈 | ⬜ |
+| `decoracao/01-toldo-listrado.png` | Toldo listrado | Striped awning | ⛱️ | ✅ |
+| `decoracao/02-vasos-de-ervas.png` | Vasos de ervas | Herb pots | 🪴 | ✅ |
+| `decoracao/03-banco-de-madeira.png` | Banco de madeira | Wooden bench | 🪑 | ✅ |
+| `decoracao/04-lousa-de-precos.png` | Lousa de preços | Price chalkboard | 📋 | ✅ |
+| `decoracao/05-balanca-antiga.png` | Balança antiga | Vintage scale | ⚖️ | ✅ |
+| `decoracao/06-luzinhas.png` | Luzinhas | String lights | ✨ | ✅ |
+| `decoracao/07-radio-de-pilha.png` | Rádio de pilha | Transistor radio | 📻 | ✅ |
+| `decoracao/08-bicicleta-de-entrega.png` | Bicicleta de entrega | Delivery bike | 🚲 | ✅ |
+| `decoracao/09-carrinho-de-feira.png` | Carrinho de feira | Market trolley | 🛒 | ✅ |
+| `decoracao/10-relogio-de-parede.png` | Relógio de parede | Wall clock | 🕰️ | ✅ |
+| `decoracao/11-bandeirinhas.png` | Bandeirinhas | Bandeirinhas (festa junina flags) | 🎊 | ✅ |
+| `decoracao/12-caminha-do-mingau.png` | Caminha do Mingau | Mingau’s cat bed | 🐈 | ✅ |

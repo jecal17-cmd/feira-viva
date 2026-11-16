@@ -12,17 +12,13 @@ MD, CSV = os.path.join(AQUI, 'lista-de-arte.md'), os.path.join(AQUI, 'lista-de-a
 FALTA = os.path.join(AQUI, 'falta-gerar.md')
 
 # Arte que já está no jogo mas vale gerar de novo (código ou arquivo -> motivo). Apague a linha quando refizer.
-REFAZER = {
-    'itens/fr-8.png': 'o creme saiu marrom, com cara de chocolate; açaí é roxo-escuro (o prompt já pede "deep purple")',
-    'mercados/03-feira-de-sao-joaquim-salvador.png': 'a faixa tem texto embaralhado; peça "no text, no signs"',
-    'mercados/05-mercado-central-fortaleza.png': 'a fachada tem texto embaralhado; peça "no text, no signs"',
-    'mercados/06-feira-central-campo-grande.png': 'toldos e placas com "SOBÁ" escrito à mão, letras tortas',
-}
+REFAZER = {}
 
 ROTA = os.path.normpath(os.path.join(AQUI, '..', '..', 'versao-a-rota-das-feiras'))
 def tem(arquivo):                       # 'itens/fr-1.png' -> versao-b-quitanda-zen/itens/fr-1.webp; 'rota/itens/ac-1.png' -> versao-a-...
     base = os.path.splitext(arquivo)[0]; raiz = JOGO
     if base.startswith('rota/'): base, raiz = base[5:], ROTA
+    if base.startswith(('decoracao/', 'personagens/')) and os.path.exists(os.path.join(AQUI, base + '.png')): return True   # prontas, ainda fora do jogo
     return any(os.path.exists(os.path.join(raiz, base + ext)) for ext in ('.webp', '.png'))
 
 # CSV

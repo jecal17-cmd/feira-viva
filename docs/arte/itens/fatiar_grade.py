@@ -27,6 +27,7 @@ def salvar(cod, q):
     R.normalizar(q.convert('RGBA'), nome).resize((256, 256), Image.LANCZOS).save(os.path.join(jogo, nome + '.webp'), quality=88, method=6)
 
 for k, cod in enumerate(codigos):          # "a+b": a mesma célula serve aos dois destinos
+    if not cod: continue                     # célula ignorada (veio errada)
     x, y = k % cols, k // cols
     cel = im.crop((round(x * cw), round(y * ch), round((x + 1) * cw), round((y + 1) * ch)))
     arq = os.path.join(tmp, cod.replace('/', '_').replace('+', '_') + '.png'); cel.save(arq)

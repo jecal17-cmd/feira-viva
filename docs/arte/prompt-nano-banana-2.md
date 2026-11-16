@@ -160,6 +160,30 @@ Mercado Central in Fortaleza: a large rounded building shaped like a stadium, cr
 Feira Central in Campo Grande at night: a long covered hall with arched roof beams and hanging lamps, rows of stalls with red canopies serving steaming bowls of noodle soup, warm orange glow, people strolling down the central aisle, view down the aisle. Painted 2D illustration in a warm retro travel-poster style: golden late-afternoon light, big soft cumulus clouds, slightly grainy brush texture, flat shapes with soft shading, warm reds, ochres and teal greens, small figures of shoppers and vendors for scale. Wide 16:9 landscape, 2048 x 1152 pixels. Absolutely no text anywhere: no signs, no banners with words, no lettering, no logos, no watermark; any sign or banner is blank or shows only simple shapes.
 ```
 
+## D · Os 5 personagens que faltaram (grade 3 × 2)
+
+Na grade B, as posições 22 a 28 vieram trocadas. Aproveitei a 25 como Seu Gaudêncio e a 28 como Dona Zulma. Este prompt usa o estilo que o modelo de fato produziu nos outros 23 (desenho com contorno), para os 5 combinarem com eles.
+
+```
+A sheet of 5 separate character illustrations arranged in a strict grid of 3 columns by 2 rows, read left to right, top to bottom. Every cell is the same size, with generous empty space between cells so no figure touches another, and contains exactly one character, centered. The last cell of the bottom row stays empty. Square image, 1:1, 2048 x 2048 pixels.
+
+1. Row 1, column 1: a young Afro-Brazilian woman cook in a colorful head scarf and apron, stirring a big cooking pot with a wooden spoon.
+2. Row 1, column 2: a young woman from southern Brazil holding a chimarrão gourd with a metal straw, a thermos under her arm.
+3. Row 1, column 3: a young fisherman in a cap carrying a folded fishing net over his shoulder.
+4. Row 2, column 1: an older woman of Polish descent in a flowered head scarf and apron, holding a plate of pierogi dumplings.
+5. Row 2, column 2: an older man with a gray mustache in a shopkeeper's apron, standing behind a small wooden counter with jars and a scale.
+
+Style for every character: friendly cartoon illustration for a cozy mobile game, clean soft brown outlines, flat warm colors with gentle shading, natural, dignified faces of real Brazilians, no caricature or stereotype; each character shown from the knees or waist up, fully inside its cell. Plain pure white background everywhere. Absolutely no text, no names, no letters, no labels, no watermark, no borders, no grid lines.
+```
+
+| Posição | Destino | Personagem |
+|---|---|---|
+| linha 1, coluna 1 | `personagens/dandara` | Dandara |
+| linha 1, coluna 2 | `personagens/livia` | Lívia |
+| linha 1, coluna 3 | `personagens/dico` | Dico |
+| linha 2, coluna 1 | `personagens/halina` | Dona Halina |
+| linha 2, coluna 2 | `personagens/estanislau` | Seu Estanislau |
+
 ## Depois de gerar
 
 Mande os arquivos. Eu fatio as grades (`docs/arte/itens/fatiar_grade.py GRADE.png 5 4 extra` e `... 6 5 personagens`), tiro o fundo, troco as imagens no jogo e atualizo a lista de arte.
