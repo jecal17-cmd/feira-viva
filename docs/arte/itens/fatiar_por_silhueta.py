@@ -18,6 +18,12 @@ codigos = json.load(open(os.path.join(AQUI, 'grades.json')))[lote]
 img = Image.open(grade).convert('RGB'); W, H = img.size; cw, ch = W / cols, H / rows
 a = R.mascara(img)
 lab, n = ndimage.label(ndimage.binary_closing(a > 0.5, iterations=2))
+# Fundo de verdade: o branco ligado às bordas da imagem. Branco cercado pelo contorno (aventais, dentes) fica opaco.
+px = np.asarray(img).astype(int); claro = px.min(2) > 236
+cl, _ = ndimage.label(claro); borda = set(np.unique(np.concatenate([cl[0], cl[-1], cl[:, 0], cl[:, -1]]))) - {0}
+fundo = ndimage.binary_dilation(np.isin(cl, list(borda)), iterations=1)
+from PIL import ImageFilter
+alfa_borda = np.asarray(Image.fromarray(((~fundo) * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(1.0))).astype(float) / 255
 centros = ndimage.center_of_mass(np.ones_like(lab), lab, range(1, n + 1))
 areas = ndimage.sum(np.ones_like(lab), lab, range(1, n + 1))
 dono = {}
@@ -28,7 +34,7 @@ for i, ((cy, cx), ar) in enumerate(zip(centros, areas), 1):
 for k, cod in enumerate(codigos):
     if not cod or k not in dono: continue
     m = np.isin(lab, dono[k])
-    alfa = np.where(ndimage.binary_dilation(m, iterations=3), a, 0)
+    alfa = np.where(ndimage.binary_dilation(m, iterations=6), alfa_borda, 0)
     out = Image.fromarray(np.dstack([np.asarray(img), (alfa * 255).astype(np.uint8)]), 'RGBA')
     out = out.crop(out.getchannel('A').point(lambda v: 255 if v > 10 else 0).getbbox())
     s = round(max(out.size) * 1.08); q = Image.new('RGBA', (s, s), (0, 0, 0, 0)); q.paste(out, ((s - out.width) // 2, (s - out.height) // 2), out)

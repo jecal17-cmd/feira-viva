@@ -15,7 +15,7 @@ Atualizado por `atualizar_status.py`. ✅ = imagem já no jogo · ⬜ = falta ge
 | Mercados | 12 de 12 | 0 |
 | Itens do tabuleiro | 104 de 104 | 0 |
 | Itens da Rota das Feiras | 15 de 15 | 0 |
-| Personagens | 23 de 28 | 5 |
+| Personagens | 28 de 28 | 0 |
 | Decoração da banca | 12 de 12 | 0 |
 
 ## Como gerar
@@ -308,13 +308,13 @@ A Versão A tem itens próprios do Ver-o-Peso. Ficam em `versao-a-rota-das-feira
 | `personagens/geralda.png` | 👵🏽 Dona Geralda | quitandeira mineira | quitandeira from Minas | Mercado Central, Belo Horizonte | senhora mineira de avental com bule de café e pão de queijo | ✅ |
 | `personagens/tiao.png` | 🧑🏽‍🍳 Tiãozinho | queijeiro | cheesemaker | Mercado Central, Belo Horizonte | rapaz de chapéu segurando uma peça de queijo minas curado | ✅ |
 | `personagens/jacinto.png` | 👨🏾‍🦳 Seu Jacinto | sanfoneiro | accordion player | Feira de São Cristóvão, Rio de Janeiro | sanfoneiro mais velho de chapéu de couro tocando sanfona | ✅ |
-| `personagens/dandara.png` | 👩🏾 Dandara | cozinheira | cook | Feira de São Cristóvão, Rio de Janeiro | cozinheira de lenço na cabeça mexendo uma panela grande | ⬜ |
+| `personagens/dandara.png` | 👩🏾 Dandara | cozinheira | cook | Feira de São Cristóvão, Rio de Janeiro | cozinheira de lenço na cabeça mexendo uma panela grande | ✅ |
 | `personagens/gaudencio.png` | 🧔🏻 Seu Gaudêncio | assador | churrasco grill master | Mercado Público, Porto Alegre | gaúcho de bombacha, lenço e boina, com um espeto de churrasco | ✅ |
-| `personagens/livia.png` | 👩🏼 Lívia | dona da cuia | keeper of the mate gourd | Mercado Público, Porto Alegre | jovem gaúcha com cuia de chimarrão e garrafa térmica | ⬜ |
-| `personagens/dico.png` | 🧑🏼‍🦰 Dico | pescador | fisherman | Mercado Público, Florianópolis | pescador com uma rede de pesca no ombro | ⬜ |
+| `personagens/livia.png` | 👩🏼 Lívia | dona da cuia | keeper of the mate gourd | Mercado Público, Porto Alegre | jovem gaúcha com cuia de chimarrão e garrafa térmica | ✅ |
+| `personagens/dico.png` | 🧑🏼‍🦰 Dico | pescador | fisherman | Mercado Público, Florianópolis | pescador com uma rede de pesca no ombro | ✅ |
 | `personagens/zulma.png` | 👩🏼‍🦳 Dona Zulma | florista | florist | Mercado Público, Florianópolis | senhora florista com um balde de flores | ✅ |
-| `personagens/halina.png` | 👩🏼‍🍳 Dona Halina | cozinheira | cook | Mercado Municipal, Curitiba | cozinheira de origem polonesa, lenço na cabeça, prato de pierogi | ⬜ |
-| `personagens/estanislau.png` | 👨🏻‍🦳 Seu Estanislau | vendedor do armazém | general store keeper | Mercado Municipal, Curitiba | senhor de avental atrás do balcão do armazém | ⬜ |
+| `personagens/halina.png` | 👩🏼‍🍳 Dona Halina | cozinheira | cook | Mercado Municipal, Curitiba | cozinheira de origem polonesa, lenço na cabeça, prato de pierogi | ✅ |
+| `personagens/estanislau.png` | 👨🏻‍🦳 Seu Estanislau | vendedor do armazém | general store keeper | Mercado Municipal, Curitiba | senhor de avental atrás do balcão do armazém | ✅ |
 
 Os nomes dos personagens não são traduzidos. As falas em inglês mantêm expressões regionais (*égua*, *oxente*, *uai*, *bah*, *tchê*) como toque de cultura local.
 
