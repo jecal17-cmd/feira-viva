@@ -322,9 +322,9 @@ Pedido da dona do projeto: deixar o jogo mais "livre", avisar quando os cestos e
 
 ### 4.12 Banca da tela inicial (novembro de 2026)
 
-- A banca da tela inicial é uma cena de feira vista de cima, com o tampo inclinado para quem olha, ocupando o espaço que sobra na tela (`bancaHtml()`).
-- **Começa vazia e enche com o Álbum:** cada linha com pelo menos um item descoberto (`S.seen`) ganha uma fileira no tampo, em duas colunas e até 7 fileiras, da frente para o fundo. As fileiras do fundo são menores, pela perspectiva. Não há caixotes: os itens ficam deitados lado a lado, e os ainda não vistos no Álbum brilham.
-- **Decorações no lugar e no tamanho de verdade** (`DECOR_POS`, 1 m ≈ 22% da largura): os objetos de chão (vasos, banco, caminha do Mingau, lousa, carrinho e bicicleta) ficam no piso, à frente do balcão, com sombra; a balança e o rádio ficam na borda de trás do tampo; o relógio fica no poste. O toldo cobre tudo, e as luzinhas e as bandeirinhas ficam penduradas por baixo dele. Sem toldo, aparece só a viga de madeira.
+- A banca da tela inicial é uma cena de feira vista de cima, com o tampo inclinado para quem olha (`bancaHtml()`). Ela ocupa só a altura que sobra (mínimo de 170 px) e a cena encolhe sem distorcer, para que a tela inicial inteira caiba sem rolar: logo, banca, Seu Zé (até 2 linhas), Jogar, presente, mercado, botões de navegação e idioma.
+- **Começa vazia e enche com o Álbum:** cada linha com pelo menos um item descoberto (`S.seen`) ganha uma fileira no tampo, em duas colunas e até 7 fileiras, da frente para o fundo. As fileiras do fundo são menores, pela perspectiva. Não há caixotes: os itens ficam deitados lado a lado, sem brilho (o aviso de novidade fica no botão do Álbum).
+- **Decorações no lugar e no tamanho de verdade** (`DECOR_POS`, 1 m ≈ 22% da largura), sem sombra: os objetos de chão ficam no piso, à frente do balcão e sem encostar nele, nesta ordem: vasos, banco (com o rádio no assento), caminha do Mingau, lousa, carrinho e bicicleta. A balança fica em cima do tampo, no canto da frente à esquerda, e o relógio fica pregado no poste da direita. O toldo e o chão cobrem a largura toda; as luzinhas e as bandeirinhas ficam penduradas por baixo do toldo. Sem toldo, aparece só a viga de madeira. Os emojis em volta do logo ficam parados.
 
 ## 5. Localização e idiomas
 
