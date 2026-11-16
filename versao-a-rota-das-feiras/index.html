@@ -140,7 +140,8 @@ button.pill{cursor:pointer}
 .order.ready{border-color:var(--accent);background:var(--cell)}
 .order .pay{font:800 10.5px/1 var(--text);color:var(--gold);background:color-mix(in srgb,var(--gold) 14%,transparent);border-radius:99px;padding:2px 6px;margin-top:1px;white-space:nowrap}
 .order.want{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
-.order .who{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.order .pf{width:20px;height:20px;object-fit:contain;vertical-align:-6px;pointer-events:none;-webkit-user-drag:none}
+.who{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .need{display:flex;gap:9px;font-size:24px;line-height:1.1}
 .need span{position:relative}
 .need sub{position:absolute;right:-7px;bottom:-4px;min-width:17px;height:17px;padding:0 3px;border-radius:99px;background:var(--lc,var(--lvl));color:#fff;font:800 11px/17px var(--text);text-align:center;box-shadow:0 0 0 1.5px var(--panel)}
@@ -387,7 +388,9 @@ const MARKETS=[
  {n:'Feira de São Cristóvão',c:'Rio de Janeiro',img:'09-feira-de-sao-cristovao-rio-de-janeiro',uf:'RJ',reg:3,ic:'🪗',lon:-43.2,lat:-22.9},{n:'Mercado Público',c:'Porto Alegre',img:'10-mercado-publico-porto-alegre',uf:'RS',reg:4,ic:'🧉',lon:-51.2,lat:-30},
  {n:'Mercado Público',c:'Florianópolis',img:'11-mercado-publico-florianopolis',uf:'SC',reg:4,ic:'🏝️',lon:-48.55,lat:-27.6},{n:'Mercado Municipal',c:'Curitiba',img:'12-mercado-municipal-curitiba',uf:'PR',reg:4,ic:'🌲',lon:-49.3,lat:-25.4}];
 const REGN=[['Norte','North'],['Nordeste','Northeast'],['Centro-Oeste','Center-West'],['Sudeste','Southeast'],['Sul','South']];
-const FACES=[['👵','Dona Nazaré'],['🧔','Seu Raimundo'],['👩‍🦱','Iara'],['🧑‍🌾','Seu Chico'],['👨‍🌾','Seu Zé'],['👧','Bia'],['🧑‍🍳','Cida'],['👴','Seu Benedito']];
+const FACES=[['ze','Seu Zé'],['bia','Bia'],['mingau','Mingau'],['tonho','Tonho'],['naza','Dona Nazaré'],['raimundo','Seu Raimundo'],['iara','Iara'],['chico','Seu Chico'],['dada','Dona Dadá'],['jorginho','Jorginho'],['biu','Mestre Biu'],['flor','Maria Flor'],['cicero','Seu Cícero'],['rosinha','Rosinha'],['keiko','Dona Keiko'],['antenor','Seu Antenor'],['giuseppe','Seu Giuseppe'],['paula','Paula'],['geralda','Dona Geralda'],['tiao','Tiãozinho'],['jacinto','Seu Jacinto'],['dandara','Dandara'],['gaudencio','Seu Gaudêncio'],['livia','Lívia'],['dico','Dico'],['zulma','Dona Zulma'],['halina','Dona Halina'],['estanislau','Seu Estanislau']];
+const FACE_IDS=new Set(FACES.map(f=>f[0]));
+const fc=x=>FACE_IDS.has(x)?`<img class="pf" src="personagens/${x}.webp" alt="" draggable="false">`:x;
 const TOOLS={hammer:['🔨',['Martelo','Hammer'],['remove um item ou obstáculo','removes an item or obstacle'],120],
  pot:['🫕',['Caldeirão','Cauldron'],['sobe 1 nível de um item (até o nível 4)','raises an item by 1 level (up to level 4)'],150],
  turns:['⏳',['+3 Turnos','+3 Turns'],['dá 3 turnos extras na fase','gives you 3 extra turns in a level'],0]};
@@ -688,7 +691,7 @@ function gameHtml(){
     <div class="sub"><span>${tr(`3 ⭐ se sobrarem ${need3} turnos · 2 ⭐ com ${Math.ceil(P.turns*.25)}`,`3 ⭐ with ${need3} turns left · 2 ⭐ with ${Math.ceil(P.turns*.25)}`)}</span>${tide}</div></div>
    <div class="olab${ordKey?' key':''}">${ordKey?tr('🎯 Pedidos: contam para vencer','🎯 Orders: these count toward winning'):tr('Pedidos extras: não contam para vencer, mas rendem moedas','Extra orders: they don’t count toward winning, but they pay coins')}</div>
    <div class="orders ${ordKey?'key':'extra'}">${P.orders.map(o=>{ const want=cur&&!cur.m&&matches(o,cur), ready=o.items.some(x=>!x.done&&have.has(x.l+x.n));
-      return `<button class="order${want?' want':''}${ready?' ready':''}" data-order="${o.id}" aria-label="${tr(`Pedido de ${o.who}`,`${o.who}’s order`)}: ${o.items.map(x=>item(x.l,x.n)[1]+tr(' nível ',', level ')+x.n).join(tr(' e ',' and '))} · ${orderPay(o)} 🪙"><span class="who">${o.face} ${o.who}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span><span class="pay">🪙 ${orderPay(o)}</span></button>`; }).join('')}
+      return `<button class="order${want?' want':''}${ready?' ready':''}" data-order="${o.id}" aria-label="${tr(`Pedido de ${o.who}`,`${o.who}’s order`)}: ${o.items.map(x=>item(x.l,x.n)[1]+tr(' nível ',', level ')+x.n).join(tr(' e ',' and '))} · ${orderPay(o)} 🪙"><span class="who">${fc(o.face)} ${o.who}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span><span class="pay">🪙 ${orderPay(o)}</span></button>`; }).join('')}
     <button class="order seal${cur&&cur.n===MAX&&!cur.m?' want':''}" data-seal="1" aria-label="${tr('Espaço do Selo: itens de nível 5','Seal slot: level 5 items')}"><span class="who">🏅 ${tr('Selo','Seal')}</span><span style="font-size:12px;line-height:1.5">${Object.keys(LINES).map(k=>`${item(k,5)[0]}${Math.min(3,S.selo5[k]||0)}`).join(' ')}</span><span class="who">${tr('nível 5','level 5')}</span></button></div>
    <div class="wrap" id="wrap"><div class="board" id="board">${P.board.map((x,i)=>{
       const fl=flooded(i)?' flood':'', ar=P.armed?' armed':'', ky=clrKey?' key':'';

@@ -139,7 +139,9 @@ a.btn{text-decoration:none;display:inline-block;text-align:center}
 .stall{background:var(--panel);border-radius:20px;overflow:hidden;box-shadow:0 4px 0 var(--line)}
 .awning{height:30px;background:repeating-linear-gradient(90deg,var(--stripe) 0 28px,#FFF6E8 28px 56px);border-bottom-left-radius:14px 10px;border-bottom-right-radius:14px 10px}
 .shelf{display:flex;justify-content:center;gap:4px;font-size:26px;padding:10px 8px 4px;flex-wrap:wrap}
-.deco{font-size:18px;min-height:8px;letter-spacing:4px}
+.deco{font-size:26px;min-height:8px;letter-spacing:2px}
+.pf{width:1.3em;height:1.3em;object-fit:contain;vertical-align:-.3em;pointer-events:none;-webkit-user-drag:none}
+.face .pf,.keeper .pf{width:1.5em;height:1.5em}
 .keeper{display:flex;align-items:center;gap:10px;padding:8px 12px 12px;text-align:left}
 .keeper span{font-size:40px;line-height:1}
 .keeper p{margin:0;background:var(--bg);border-radius:14px 14px 14px 4px;padding:8px 12px;font-size:13px;flex:1}
@@ -664,6 +666,9 @@ const dstr=t=>new Date(t).toLocaleDateString('sv'), today=()=>dstr(Date.now());
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 // Arte dos itens (pasta itens/, nome = código da lista de arte, ex.: fr-1). Sem arte, fica o emoji.
 const ITEM_ART=new Set(Object.keys(LINES).flatMap(l=>[1,2,3,4,5,6,7,8].map(n=>l+'-'+n)));   // todas as 104 imagens prontas
+const pf=c=>`<img class="pf" src="personagens/${c.id}.webp" alt="" draggable="false">`;
+const DECOR_IMG=["01-toldo-listrado", "02-vasos-de-ervas", "03-banco-de-madeira", "04-lousa-de-precos", "05-balanca-antiga", "06-luzinhas", "07-radio-de-pilha", "08-bicicleta-de-entrega", "09-carrinho-de-feira", "10-relogio-de-parede", "11-bandeirinhas", "12-caminha-do-mingau"];
+const de=i=>`<img class="ii" src="decoracao/${DECOR_IMG[i]}.webp" alt="" draggable="false">`;
 const ie=(l,n)=>ITEM_ART.has(l+'-'+n)?`<img class="ii" src="itens/${l}-${n}.webp" alt="" draggable="false">`:LINES[l].it[n-1][0];
 const item=(l,n)=>{ const x=LINES[l].it[n-1]; return [ie(l,n),LANG==='en'?x[2]:x[1]]; };
 const gloss=(l,n)=>LANG==='en'?GLOSS[l+n]:null;
@@ -994,7 +999,7 @@ function travel(){
   sheetName=null; $('sheet').hidden=true; homeOn=false;
   const loc=CAST.filter(c=>c.at===S.stop%FEIRAS.length);
   const html=`${heroHtml(f)}<h1>${t('welcome',f.c)}</h1><p><b>${f.n}</b>${lap(S.stop)>oldLap?`<br>${t('newLap',lap(S.stop),Math.round((lapBonus()-1)*100))}`:''}</p>
-   <p>${t('tripRew',fmt(rew+sold))}</p><p>${t('meet')}<br>${loc.map(c=>`${c.f} <b>${c.n}</b>, ${tx(c.role)}`).join('<br>')}</p><button class="btn" data-act="arrive">${t('openStall')}</button><button class="btn ghosty" data-act="tripdouble">${t('tripDouble',fmt(rew))}</button>`;
+   <p>${t('tripRew',fmt(rew+sold))}</p><p>${t('meet')}<br>${loc.map(c=>`${pf(c)} <b>${c.n}</b>, ${tx(c.role)}`).join('<br>')}</p><button class="btn" data-act="arrive">${t('openStall')}</button><button class="btn ghosty" data-act="tripdouble">${t('tripDouble',fmt(rew))}</button>`;
   render(); playTrip(old%FEIRAS.length,S.stop%FEIRAS.length,()=>{ beep(520); beep(660,.12); beep(880,.24); modal(html); Musica.ligar(); });
 }
 const PXY=(lon,lat)=>{ const mer=a=>Math.log(Math.tan(Math.PI/4+a*Math.PI/360)), K=638.5/(mer(5.27)-mer(-33.75)); return [.3+(lon+73.99)*612/39.2,.3+(mer(5.27)-mer(lat))*K]; };
@@ -1094,7 +1099,7 @@ function renderOrders(){
   const cur=sel!=null?S.board[sel]:null, have=new Set(S.board.filter(Boolean).map(x=>x.l+x.n)), now=Date.now();
   $('orders').innerHTML=S.orders.map(o=>{
     const c=CAST.find(x=>x.id===o.who), want=cur&&matches(o,cur), ready=o.items.some(x=>!x.done&&have.has(x.l+x.n)), rush=o.rush&&now<o.rush, s=rush?Math.ceil((o.rush-now)/1000):0;
-    return `<button class="order${want?' want':''}${ready?' ready':''}${rush?' rush':''}${selOrder===o.id?' osel':''}" data-order="${o.id}" aria-label="${t('orderAria',c.n,o.items.map(x=>t('itemLv',item(x.l,x.n)[1],x.n)).join(t('and')))} · ${fmt(orderPay(o))} 🪙"><span class="who"><i>${c.f}</i>${rush?`⏱️ ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`:o.rec!=null?t('recipeTag'):curto(c.n)}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span><span class="pay${rush?' x2':''}">🪙 ${fmt(orderPay(o))}</span></button>`;
+    return `<button class="order${want?' want':''}${ready?' ready':''}${rush?' rush':''}${selOrder===o.id?' osel':''}" data-order="${o.id}" aria-label="${t('orderAria',c.n,o.items.map(x=>t('itemLv',item(x.l,x.n)[1],x.n)).join(t('and')))} · ${fmt(orderPay(o))} 🪙"><span class="who"><i>${pf(c)}</i>${rush?`⏱️ ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`:o.rec!=null?t('recipeTag'):curto(c.n)}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span><span class="pay${rush?' x2':''}">🪙 ${fmt(orderPay(o))}</span></button>`;
   }).join('');
 }
 function renderInfo(){
@@ -1103,7 +1108,7 @@ function renderInfo(){
   if(it){ const d=item(it.l,it.n), gl=gloss(it.l,it.n);
     el.innerHTML=`<p><b>${d[0]} ${d[1]}</b> · ${t('itemInfo',lname(it.l),it.n,it.n>=MAX)}${gl?`<br><i>${gl}</i>`:''}</p>${orderFor(it)?`<button class="btn sm" data-act="deliver">${t('deliver')}</button>`:''}${it.n>=encLvl()?`<button class="btn sm" data-act="enc">${t('enc')}</button>`:''}<button class="btn sm ghosty" data-act="sell">${t('sellB',COV[it.n])}</button>`;
   } else if(o){ const c=CAST.find(x=>x.id===o.who), f=S.friends[c.id]||{h:0,lv:0};
-    el.innerHTML=`<p><b>${c.f} ${c.n}</b>, ${tx(c.role)} · ❤️ ${f.lv}<br>${t('asks')}: ${o.items.filter(x=>!x.done).map(x=>`<b>${item(x.l,x.n)[1]}</b> (${t('lvN',x.n)})`).join(' + ')}<br>“${tx(c.q)}”</p><button class="btn sm ghosty" data-act="swap:${o.id}">${t('swap')}</button>`;
+    el.innerHTML=`<p><b>${pf(c)} ${c.n}</b>, ${tx(c.role)} · ❤️ ${f.lv}<br>${t('asks')}: ${o.items.filter(x=>!x.done).map(x=>`<b>${item(x.l,x.n)[1]}</b> (${t('lvN',x.n)})`).join(' + ')}<br>“${tx(c.q)}”</p><button class="btn sm ghosty" data-act="swap:${o.id}">${t('swap')}</button>`;
   } else if(S.tut<4&&(passo=tutPasso(),S.tut<4)){ el.classList.add('coach'); el.innerHTML=`<span class="zs">👨‍🌾</span><p>${t('tut')[passo]}</p>`; return; }
   else if(offer&&Date.now()<offer.until){
     el.innerHTML=`<p>${t('thanks',offer.who.f+' '+offer.who.n,fmt(offer.xp),fmt(offer.co))}</p>${S.stop>=1&&S.daily.adDouble<DOUBLE_MAX?`<button class="btn sm" data-act="double">${t('double')}</button>`:''}`;
@@ -1136,8 +1141,8 @@ function renderHome(){
   $('homein').innerHTML=`<div class="floaty" aria-hidden="true"><i style="left:4%;top:6px">🍉</i><i style="right:6%;top:0;animation-delay:.8s">🧀</i><i style="left:1%;top:40px;animation-delay:1.5s;font-size:20px">🌽</i><i style="right:1%;top:44px;animation-delay:.4s;font-size:20px">🥖</i></div>
    <div class="logo"><b>${t('logo')}</b><small>${t('logoSub')}</small>${t('logoSay')?`<p class="say">${t('logoSay')}</p>`:''}</div>
    <div class="stall"><div class="awning"></div><div class="shelf" aria-hidden="true">${ls.map(k=>LINES[k].it.slice(0,ls.length>3?2:3).map((x,j)=>ie(k,j+1)).join('')).join('')}</div>
-     <div class="deco" aria-label="${t('decoAria')}">${S.decor.map(i=>DECOR[i][0]).join('')}</div>
-     <div class="keeper"><span>👨‍🌾</span><p><b>Seu Zé:</b> ${tx(TIPS[tip])}</p></div></div>
+     <div class="deco" aria-label="${t('decoAria')}">${S.decor.map(i=>de(i)).join('')}</div>
+     <div class="keeper"><span>${pf(CAST[0])}</span><p><b>Seu Zé:</b> ${tx(TIPS[tip])}</p></div></div>
    <button class="play" data-act="play">▶ ${t('play',S.stats.items||S.stats.merges)}</button>
    ${gift?`<button class="gift" data-act="gift">${t('giftBtn',d,20*d)}</button>`:''}
    <button class="where${f.img?' art':''}" data-act="nav:map"${f.img?` style="--art:url('${artUrl(f)}')"`:''}><span><b>${f.img?'':f.ic+' '}${f.n}</b> · ${f.c} (${f.uf})</span><div class="bar"><i style="width:${Math.min(100,S.served/g*100)}%"></i></div>
@@ -1180,12 +1185,12 @@ function renderSheet(){
     const base=(lap(S.stop)-1)*FEIRAS.length, g=goal(S.stop), done=S.served>=g;
     h=`<p class="note">${t('mapNote',lap(S.stop),S.stop,Math.round((lapBonus()-1)*100))}</p>${t('mapGloss')?`<p class="note">${t('mapGloss')}</p>`:''}<div class="map">${mapSvg()}<div class="legend">${REGS.map((r,i)=>`<span><i class="r${i}" style="background:var(--r${i})"></i>${tx([r,REG[r]])}</span>`).join('')}</div></div>`
      +FEIRAS.map((f,i)=>{ const s=base+i, st=s<S.stop?'ok':s===S.stop?'cur':'lock', ls=linesAt(s), loc=CAST.filter(c=>c.at===i);
-        return `<div class="row ${st==='cur'?'cur':st==='lock'?'lock':''}">${f.img?tileHtml(f,st==='lock'?'lock':''):`<span class="mtile">${st==='lock'?'🔒':f.ic}</span>`}<div><b>${i+1}. ${f.n}</b> ${st==='ok'?'⭐':''}<p>${f.c} (${f.uf}) · ${reg(f)}</p><p>${tx(f.txt)}</p><p>${ls.map(k=>ie(k,1)).join(' ')} · ${loc.map(c=>c.f).join(' ')} · ${t('goalN',goal(s))}</p>${st==='cur'?`<div class="bar"><i style="width:${Math.min(100,S.served/g*100)}%"></i></div><p>${t('served',S.served,g)}</p>`:''}</div>${st==='cur'?`<button class="btn" data-act="travelask" ${done?'':'disabled'}>${t('travel')}</button>`:''}</div>`; }).join('');
+        return `<div class="row ${st==='cur'?'cur':st==='lock'?'lock':''}">${f.img?tileHtml(f,st==='lock'?'lock':''):`<span class="mtile">${st==='lock'?'🔒':f.ic}</span>`}<div><b>${i+1}. ${f.n}</b> ${st==='ok'?'⭐':''}<p>${f.c} (${f.uf}) · ${reg(f)}</p><p>${tx(f.txt)}</p><p>${ls.map(k=>ie(k,1)).join(' ')} · ${loc.map(c=>pf(c)).join(' ')} · ${t('goalN',goal(s))}</p>${st==='cur'?`<div class="bar"><i style="width:${Math.min(100,S.served/g*100)}%"></i></div><p>${t('served',S.served,g)}</p>`:''}</div>${st==='cur'?`<button class="btn" data-act="travelask" ${done?'':'disabled'}>${t('travel')}</button>`:''}</div>`; }).join('');
   } else if(sheetName==='turma'){
     const met=c=>c.at<0||S.stop>=c.at;
     h=`<p class="note">${t('turmaNote')}</p>`
      +CAST.map(c=>{ const f=S.friends[c.id]||{h:0,lv:0}, here=c.at<0||c.at===S.stop%FEIRAS.length;
-        return met(c)?`<div class="row${here?' cur':''}"><span class="face">${c.f}</span><div><b>${c.n}</b> · ❤️ ${f.lv}<p>${tx(c.role)} · ${c.at<0?t('withYou'):FEIRAS[c.at].c} · ${t('likes',ie(c.fav,1),lname(c.fav))}</p><p>“${tx(c.q)}”</p><div class="bar"><i style="width:${f.h/needH(f.lv)*100}%"></i></div></div></div>`
+        return met(c)?`<div class="row${here?' cur':''}"><span class="face">${pf(c)}</span><div><b>${c.n}</b> · ❤️ ${f.lv}<p>${tx(c.role)} · ${c.at<0?t('withYou'):FEIRAS[c.at].c} · ${t('likes',ie(c.fav,1),lname(c.fav))}</p><p>“${tx(c.q)}”</p><div class="bar"><i style="width:${f.h/needH(f.lv)*100}%"></i></div></div></div>`
           :`<div class="row lock"><span class="face">❔</span><div><b>???</b><p>${t('meetAt',FEIRAS[c.at].n,FEIRAS[c.at].c)}</p></div></div>`; }).join('');
   } else if(sheetName==='miss'){
     const L=encLvl();
@@ -1216,7 +1221,7 @@ function renderSheet(){
         return `<div class="row"><span class="thumb" aria-hidden="true">${u.ic}${u.bd?`<b>${u.bd}</b>`:''}</span><div><b>${tx(u.n)}</b> · ${t('lvN',lv)}<p>${tx(u.d)}</p><p class="nn">${mx?t('nowMax',val(k,lv)):t('nowNext',val(k,lv),val(k,lv+1))}</p></div>${mx?'':buy('buyup:'+k,c,S.coins<c)}</div>`; }).join('')
      +`<h2>${t('hBoard')}</h2>`+(e?`<div class="row"><span class="thumb">${grid(e.cols,e.rows,S.cols,S.rows)}</span><div><b>${t('expandTo',e.cols,e.rows)}</b><p>${t('boardD')}${S.level<e.lvl?' '+t('opensAt',e.lvl):''}</p><p class="nn">${t('nowNext',t('boardV',S.cols,S.rows),t('boardV',e.cols,e.rows))}</p></div>${buy('buyexp',e.cost,S.level<e.lvl||S.coins<e.cost)}</div>`:`<p class="note">${t('boardMax')}</p>`)
      +`<h2>${t('hDeco')}</h2><p class="note">${t('decoD')} ${S.level<6?t('opensAt',6):''} ${t('bonusNow',S.decor.length)}</p>`
-     +DECOR.map(([em,n,c],i)=>{ const has=S.decor.includes(i); return `<div class="row"><span class="thumb" aria-hidden="true">${em}</span><div><b>${tx(n)}</b><p>+1% XP</p></div>${has?`<button class="btn" disabled>${t('onStall')}</button>`:buy('buydeco:'+i,c,S.level<6||S.coins<c)}</div>`; }).join('');
+     +DECOR.map(([em,n,c],i)=>{ const has=S.decor.includes(i); return `<div class="row"><span class="thumb" aria-hidden="true">${de(i)}</span><div><b>${tx(n)}</b><p>+1% XP</p></div>${has?`<button class="btn" disabled>${t('onStall')}</button>`:buy('buydeco:'+i,c,S.level<6||S.coins<c)}</div>`; }).join('');
   } else if(sheetName==='shop'){
     h=shopHtml();
   } else if(sheetName==='help'){
