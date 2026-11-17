@@ -13,6 +13,6 @@ Gerado por `atualizar_status.py` a partir de `lista-de-arte.csv`; não edite à 
 |---|---|---|
 | Mercados | 12 de 12 | 0 |
 | Itens do tabuleiro | 104 de 104 | 0 |
-| Itens da Rota das Feiras | 15 de 15 | 0 |
+| Itens da Rota das Feiras | 30 de 30 | 0 |
 | Personagens | 28 de 28 | 0 |
 | Decoração da banca | 12 de 12 | 0 |

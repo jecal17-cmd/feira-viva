@@ -1,6 +1,6 @@
 # Contexto do projeto (para retomar o trabalho)
 
-Resumo do estado atual, das decisões tomadas e de como continuar. Atualizado em 16/11/2026 (fim da tarde).
+Resumo do estado atual, das decisões tomadas e de como continuar. Atualizado em 16/11/2026 (noite).
 
 ## O que é
 
@@ -9,7 +9,7 @@ Três jogos mobile em português, todos feitos em HTML5 de arquivo único e empa
 | Jogo | Repositório e pasta | Público e proposta | Receita | Estado |
 |---|---|---|---|---|
 | **Quitanda Zen** (Versão B da Feira Viva; nome internacional *Quitanda: Merge Across Brazil*) | `feira-viva` · `versao-b-quitanda-zen/` | Passatempo de juntar itens, sem derrota, viajando por 12 mercados do Brasil em voltas infinitas | Anúncios (AdMob) + compras (simuladas) | v1.1.0 (código 5) em teste fechado na Play Store |
-| **Rota das Feiras** (Versão A da Feira Viva) | `feira-viva` · `versao-a-rota-das-feiras/` | Puzzle de fusão com turnos contados, fases, estrelas e chefe | Compras (simuladas), sem anúncios | Protótipo de teste v0.1 (só o Ver-o-Peso), APK de teste |
+| **Rota das Feiras** (Versão A da Feira Viva) | `feira-viva` · `versao-a-rota-das-feiras/` | Puzzle de fusão com turnos contados, fases, estrelas e chefe | Compras (simuladas), sem anúncios | Protótipo de teste v0.2 (Ver-o-Peso e Manaus), APK de teste |
 | **Ler Brincando** | `LerBrincando` (raiz) | Alfabetização pelo método fônico, 5 a 7 anos | Nenhuma (sem anúncios, compras ou rastreadores) | v1.3.1 |
 
 A desenvolvedora se chama **Bentevi** (Bentevi Games): a vinheta de abertura da Quitanda e da Rota mostra o bem-te-vi pousando e cantando. O canto é uma gravação real (0,84 s), isolada de um vídeo com filtro de ruído espectral e embutida em base64 nos dois `index.html` (`CANTO`); se o aparelho não decodificar, volta o canto sintetizado (`birdSynth`). O bico e as letras "bem · te · vi" seguem o tempo das notas da gravação (`CALL`). Arquivos em `docs/arte/bentevi-canto.wav` e `.mp3`.
@@ -23,9 +23,9 @@ A desenvolvedora se chama **Bentevi** (Bentevi Games): a vinheta de abertura da 
 | `app-android/` | App Android da Quitanda (Capacitor 8, `com.feiraviva.quitanda`, com AdMob de teste) |
 | `app-android-rota/` | App Android da Rota (Capacitor 8, `com.feiraviva.rota`, sem anúncios) |
 | `.github/workflows/android.yml` | Compila os dois APKs a cada push que mexa nos jogos ou nos apps; também por **Actions → Apps Android (APKs de teste) → Run workflow** |
-| `docs/design-de-jogo.md` | Documento de design das duas versões, com as revisões numeradas (seções 3.9, 3.10, 4.8 a 4.10) |
+| `docs/design-de-jogo.md` | Documento de design das duas versões, com as revisões numeradas (seções 3.9 a 3.12, 4.8 a 4.12) |
 | `docs/avaliacoes/` | Relatórios de avaliação como usuário novo (um .docx por jogo, inclusive o Ler Brincando) |
-| `docs/arte/` | Lista de arte (`lista-de-arte.md/.csv`: 104 itens, 15 itens da Rota, 12 mercados, 28 personagens, 12 decorações, tudo pronto), prompts do Nano Banana, scripts de recorte, ícones e o canto do bem-te-vi |
+| `docs/arte/` | Lista de arte (`lista-de-arte.md/.csv`: 104 itens, 30 itens da Rota, 12 mercados, 28 personagens, 12 decorações, tudo pronto), prompts do Nano Banana, scripts de recorte, ícones e o canto do bem-te-vi |
 | `versao-*/personagens/`, `versao-b-quitanda-zen/decoracao/` | Arte dos personagens (WebP 192 px) e da decoração da banca (WebP 128 px) usada nos jogos |
 | `docs/expansao/quitanda-sugestao-de-expansao.pdf` | Proposta de 10 mercados novos, com linhas regionais, receitas, personagens e trilhas |
 | `docs/marketing/instagram/` | Material do Instagram da Bentevi (guia em `GUIA.md`) |
@@ -78,6 +78,8 @@ Os itens do tabuleiro com arte ficam em `versao-b-quitanda-zen/itens/<código>.w
 
 **Música dos mercados** (Quitanda): cada mercado tem uma trilha calma em loop (`versao-b-quitanda-zen/musica/NN.ogg`, Opus 48 kbps, 30 a 48 s), com um toque discreto da música do lugar: carimbó (Belém), toada de boi (Manaus), ijexá (Salvador), ciranda (Recife), baião com rabeca (Fortaleza), guarânia (Campo Grande), choro (São Paulo), viola caipira (BH), xote (Rio), milonga (Porto Alegre), valsa açoriana (Florianópolis) e polca (Curitiba). São geradas por `docs/arte/musica/trilhas_mercados.py`. O objeto `Musica` toca a do mercado atual, troca com fade ao viajar e, se o arquivo não carregar (jogo aberto direto do disco), volta à melodia procedural antiga. O `copy-web.js` copia a pasta `musica/`.
 
+**Volume** (Quitanda e Rota): em Ajustes, Som e Música têm cada um uma barra de 0 a 100% (`S.opts.vSom`, `S.opts.vMus`, de 0 a 1), além do botão Ligado/Desligado. Os toques, as moedas e o canto do bem-te-vi usam `vSom()`; a música usa `vMus()` e muda na hora (`Musica.volume()`). A música não depende mais do botão Som.
+
 **Instagram:** o material de lançamento da Bentevi (Quitanda Zen em PT/EN e Ler Brincando em PT) está em `docs/marketing/instagram/`, com o guia em `GUIA.md`.
 
 **Sons de dinheiro** (Quitanda e Rota, `Sfx.tocar`): moedinhas (A3) a cada pedido entregue, punhado de moedas (B4) no baú e no bônus do álbum, caixa registradora (C4) ao concluir a feira (Quitanda) ou a fase (Rota). Embutidos em base64 no `index.html`; respeitam a opção Som. Gerados por `docs/arte/musica/sons_dinheiro.py`; os MP3 finais estão em `docs/arte/musica/sons/`. O Teto usa o carimbo (F) ao registrar gasto e as moedinhas ao registrar entrada.
@@ -86,9 +88,13 @@ Os itens do tabuleiro com arte ficam em `versao-b-quitanda-zen/itens/<código>.w
 
 **Valor dos pedidos:** cada pedido mostra quantas moedas paga (`orderPay(o)`, a mesma conta que `deliver()` credita). Na Quitanda: itens (`COV`) com o bônus da volta, em dobro no relâmpago dentro do prazo e com +30 da receita ainda não descoberta. Na Rota: `ORDER_COIN` (2) × nível de cada item.
 
-## Rota das Feiras: arte, álbum e troca de aparelho
+## Rota das Feiras: mercados, arte, álbum e troca de aparelho
 
-A Versão A usa as mesmas ilustrações dos 12 mercados (`versao-a-rota-das-feiras/mercados/`, campo `img` em `MARKETS`): no mapa (o Ver-o-Peso colorido, os demais em cinza com cadeado), na lista do mapa, no topo da tela do Ver-o-Peso e na tela inicial. Os itens dela são próprios (açaí, peixe, jambu/tucupi, 5 níveis); a arte dos 15 fica em `versao-a-rota-das-feiras/itens/` e todos estão em `ITEM_ART`. A lista de arte tem a seção "Itens da Rota das Feiras" (tipo `item-rota`). O botão **Álbum** da tela inicial mostra os 15 ingredientes (`S.alb`, `S.albDone`); linha completa rende +100 moedas. Em Ajustes, **Trocar de aparelho** gera e restaura um código `RF1-…`, igual ao da Quitanda. Os clientes dos pedidos são sorteados entre os 28 personagens (`FACES`, com ilustração por `fc()`). O `app-android-rota/scripts/copy-web.js` copia as pastas `mercados/`, `itens/` e `personagens/`.
+**Dois mercados (v0.2):** Ver-o-Peso (Belém) e Mercado Adolpho Lisboa (Manaus), com 7 fases cada. Manaus abre ao vencer o chefe do Ver-o-Peso. As fases ficam numa lista só (`PHASES`, campo `m` = mercado; as de Manaus são as posições 7 a 13), e o índice da lista é a chave do progresso, por isso os saves antigos continuam valendo. Manaus tem linhas próprias (Peixes do rio, Mandioca, Frutas), o chefe Encontro das Águas (rios sobem nas colunas das pontas) e o Selo Guaraná (+1 turno a cada 10 fusões). `OPEN_M` diz quantos mercados estão abertos; detalhes no `design-de-jogo.md`, seção 3.11.
+
+**Música e banca:** a Rota toca a trilha do mercado atual (`versao-a-rota-das-feiras/musica/01.ogg` e `02.ogg`, cópias das da Quitanda; o `copy-web.js` copia a pasta). A tela inicial mostra a banca da Quitanda (`bancaHtml()`, toldo verde-água, sem decorações), que enche com o Álbum.
+
+A Versão A usa as mesmas ilustrações dos 12 mercados (`versao-a-rota-das-feiras/mercados/`, campo `img` em `MARKETS`): no mapa (os mercados abertos coloridos, os demais em cinza com cadeado), na lista do mapa e no topo da tela de cada mercado. Os itens dela são próprios (5 níveis); a arte dos 30 fica em `versao-a-rota-das-feiras/itens/` e todos estão em `ITEM_ART`. Os 15 de Manaus, por enquanto, são cópias de itens da Quitanda (origem na lista de arte). A lista de arte tem a seção "Itens da Rota das Feiras" (tipo `item-rota`). O botão **Álbum** da tela inicial mostra os 30 ingredientes, agrupados por mercado (`S.alb`, `S.albDone`); linha completa rende +100 moedas. Em Ajustes, **Trocar de aparelho** gera e restaura um código `RF1-…`, igual ao da Quitanda. Os clientes dos pedidos são sorteados entre os 28 personagens (`FACES`, com ilustração por `fc()`). O `app-android-rota/scripts/copy-web.js` copia as pastas `mercados/`, `itens/` e `personagens/`.
 
 ## Decisões importantes
 
@@ -102,8 +108,9 @@ A Versão A usa as mesmas ilustrações dos 12 mercados (`versao-a-rota-das-feir
 - Loja vende só o que economiza tempo (kits, moedas, Recarga, Junta-tudo, remover anúncios). Melhorias, ampliações e decorações são só por moedas do jogo.
 - Tutorial de 3 passos no tabuleiro (juntar, entregar, colher); vinheta inteira só na 1ª abertura do dia; música calma gerada no jogo.
 
-**Rota das Feiras (v0.1)**
+**Rota das Feiras (v0.2)**
 - Ver-o-Peso com 6 fases e o chefe Maré cheia; linhas Açaí, Peixe e Jambu/Tucupi com 5 níveis.
+- Manaus com 6 fases e o chefe Encontro das Águas; linhas Peixes do rio, Mandioca e Frutas; Selo Guaraná.
 - Cada toque no cesto gasta 1 turno; juntar e entregar são de graça. 3 ⭐ com metade dos turnos sobrando.
 - Caixote e mofo; Martelo, Caldeirão e +3 Turnos (máximo 2 ferramentas por fase); Diário com 7 cartões; Selo Força do Açaí.
 - Balanceamento inicial com robô: fases 1 a 5 quase sempre vencidas; fase 6 e chefe entre 55% e 65%.
@@ -122,7 +129,7 @@ A Versão A usa as mesmas ilustrações dos 12 mercados (`versao-a-rota-das-feir
    - Falta: concluir os 14 dias do teste fechado com 12 testadores e pedir a produção; conferir os blocos reais do AdMob (`ADMOB_*`).
    - Depois: integrar Google Play Billing e religar a Loja (`PUB.loja`).
 3. **Rota das Feiras:**
-   - Só 7 fases.
+   - Só 14 fases (2 mercados); a arte dos itens de Manaus é provisória (reaproveitada da Quitanda).
    - Casas do tabuleiro pequenas no celular (26 a 29 px): é o principal ponto do relatório de avaliação ainda não resolvido.
    - Moedas com pouco uso.
 4. **Textos culturais** (Diário, mercados, glosas em inglês) precisam de revisão local e de falante nativo de inglês.
