@@ -178,6 +178,43 @@ A pedido, o protótipo ganhou uma loja com preços de US$ 0,50 a US$ 9,99. As co
 - **Objetivo em destaque:** o painel "Para vencer a fase" mostra só o que libera a próxima fase; os pedidos ganham o rótulo "contam para vencer" ou "extras", os obstáculos pulsam quando limpar é objetivo e o cesto da linha a criar leva um 🎯.
 - **A observar:** neste teste as moedas só compram Martelo e Caldeirão, então os kits grandes de moedas têm pouco uso; vale criar mais usos para moedas antes de publicar.
 
+### 3.11 Segundo mercado: Mercado Adolpho Lisboa, Manaus (novembro de 2026)
+
+Como na Quitanda, a Rota ganhou o segundo mercado. Ele abre ao vencer o chefe do Ver-o-Peso (o progresso continua na mesma lista de fases: o Manaus usa as fases 8 a 14 da lista, então saves antigos seguem valendo).
+
+**Linhas novas (5 níveis cada).** A arte, por enquanto, reaproveita itens 3D da Quitanda (lista em `docs/arte/lista-de-arte.md`).
+
+| Nível | Peixes do rio (`pr`) | Mandioca (`md`) | Frutas (`fr`) |
+|---|---|---|---|
+| 1 | Camarão regional | Mandioca | Castanha-do-pará |
+| 2 | Jaraqui | Farinha do Uarini | Banana pacovã |
+| 3 | Pirarucu | Goma de tapioca | Abacaxi |
+| 4 | Caldeirada de tambaqui | Tapioca | Suco de frutas |
+| 5 | Prato do mercado | Tapioquinha de tucumã | Guaraná |
+
+**Fases:**
+
+| Fase | Objetivos | Turnos | Linhas | Obstáculos |
+|---|---|---|---|---|
+| 1 · Bem-vindo a Manaus | entregar 5 pedidos | 16 | Peixes, Mandioca | 2 caixotes |
+| 2 · Farinha do Uarini | criar Tapioca (nível 4) + limpar 3 obstáculos | 17 | Peixes, Mandioca | 3 caixotes, 1 mofo |
+| 3 · Chegou o guaraná | entregar 6 pedidos | 18 | as três | 3 caixotes, 1 mofo |
+| 4 · Chuva na feira | limpar 5 obstáculos + entregar 4 pedidos | 18 | as três | 2 caixotes, 3 mofos |
+| 5 · Guaraná gelado | criar Guaraná (nível 5) | 22 | as três | 2 caixotes, 2 mofos |
+| 6 · Almoço no Mercadão | entregar 7 pedidos + limpar 3 obstáculos | 27 | as três | 2 caixotes, 3 mofos |
+| Chefe · Encontro das Águas | entregar 6 pedidos | 25 | as três | 2 caixotes, 2 mofos, rios |
+
+- **Chefe Encontro das Águas:** a cada 4 turnos, os rios Negro e Solimões sobem nas duas colunas das pontas do tabuleiro por 2 turnos (itens presos, sem colheita ali). É a mesma regra da Maré cheia, aplicada às colunas.
+- **Selo Guaraná:** 3 itens de nível 5 de cada linha de Manaus + chefe vencido. Efeito: a cada 10 fusões numa fase, +1 turno (o contador aparece no topo da fase). A mochila leva os dois selos do Norte; cada um tem a sua caixa para levar ou não.
+- **Diário:** 7 cartões novos (Mercado Adolpho Lisboa, Jaraqui, Farinha do Uarini, Tucumã, Tambaqui, Guaraná, Encontro das Águas), a validar com pesquisa e revisão local. Completar os cartões de um mercado rende 150 moedas (antes era só o Ver-o-Peso).
+- **Balanceamento:** comparado com um robô simples que joga cada fase 300 vezes, cada fase de Manaus fica perto da fase de mesmo número do Ver-o-Peso (a 6 um pouco mais difícil, o chefe parecido). Ajustar com o painel do teste, que agora separa as fases por mercado.
+
+### 3.12 Música, volume e banca (novembro de 2026)
+
+- **Música:** a Rota toca a mesma trilha da Quitanda para cada mercado (`musica/01.ogg` no Ver-o-Peso, `02.ogg` em Manaus), em loop e com troca suave ao mudar de mercado. Começa no primeiro toque na tela. Liga e desliga em Ajustes.
+- **Volume (Quitanda e Rota):** em Ajustes, Som e Música têm cada um a sua barra de 0 a 100%, além do botão Ligado/Desligado. A música muda de volume na hora; ao soltar a barra do som, toca uma moedinha de amostra. Na Quitanda, a música deixou de depender do botão Som.
+- **Banca da tela inicial (Rota):** no lugar da foto do Ver-o-Peso, a tela inicial mostra a banca da Quitanda (toldo nas cores da Rota, sem decorações). Começa vazia e cada linha com ingrediente descoberto no Álbum vira uma fileira no tampo, em duas colunas.
+
 ## 4. Versão B — Quitanda Zen (passatempo, foco em anúncios)
 
 ### 4.1 Loop

@@ -14,7 +14,7 @@ Atualizado por `atualizar_status.py`. ✅ = imagem já no jogo · ⬜ = falta ge
 |---|---|---|
 | Mercados | 12 de 12 | 0 |
 | Itens do tabuleiro | 104 de 104 | 0 |
-| Itens da Rota das Feiras | 15 de 15 | 0 |
+| Itens da Rota das Feiras | 30 de 30 | 0 |
 | Personagens | 28 de 28 | 0 |
 | Decoração da banca | 12 de 12 | 0 |
 
@@ -249,9 +249,9 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 | 7 | `itens/fl-7.png` | Ipê-amarelo | Ipê-amarelo | tree that bursts into yellow bloom | 🌳 | ✅ |
 | 8 | `itens/fl-8.png` | Buquê tropical | Tropical bouquet |  | 💐 | ✅ |
 
-## Itens da Rota das Feiras (3 linhas × 5 níveis = 15)
+## Itens da Rota das Feiras (6 linhas × 5 níveis = 30)
 
-A Versão A tem itens próprios do Ver-o-Peso. Ficam em `versao-a-rota-das-feiras/itens/`; o código no jogo é o mesmo da coluna *Arquivo* (por exemplo, `ac-1`). Mesmo estilo 3D dos itens da Quitanda. Alguns reaproveitam imagens da Quitanda.
+A Versão A tem itens próprios do Ver-o-Peso e de Manaus. Ficam em `versao-a-rota-das-feiras/itens/`; o código no jogo é o mesmo da coluna *Arquivo* (por exemplo, `ac-1`). Mesmo estilo 3D dos itens da Quitanda. Alguns reaproveitam imagens da Quitanda.
 
 ### Açaí (`ac`)
 
@@ -282,6 +282,40 @@ A Versão A tem itens próprios do Ver-o-Peso. Ficam em `versao-a-rota-das-feira
 | 3 | `rota/itens/jt-3.png` | Caldo de tucupi | Tucupi broth | ✅ |
 | 4 | `rota/itens/jt-4.png` | Tacacá | Tacacá | ✅ |
 | 5 | `rota/itens/jt-5.png` | Pato no tucupi | Pato no tucupi | ✅ |
+
+### Mercado Adolpho Lisboa (Manaus)
+
+Por enquanto, a arte destes 15 itens **reaproveita itens 3D da Quitanda** (coluna *Origem*: o arquivo de `versao-b-quitanda-zen/itens/` copiado com o código novo). Para ter arte própria, gere com o prompt do CSV e substitua o arquivo.
+
+#### Peixes do rio (`pr`)
+
+| Nível | Arquivo | Português | Inglês | Origem | Arte |
+|---|---|---|---|---|---|
+| 1 | `rota/itens/pr-1.png` | Camarão regional | River shrimp | `pe-1` | ✅ |
+| 2 | `rota/itens/pr-2.png` | Jaraqui | Jaraqui | `pe-5` | ✅ |
+| 3 | `rota/itens/pr-3.png` | Pirarucu | Pirarucu | `pe-7` | ✅ |
+| 4 | `rota/itens/pr-4.png` | Caldeirada de tambaqui | Caldeirada de tambaqui | `pe-8` | ✅ |
+| 5 | `rota/itens/pr-5.png` | Prato do mercado | Market lunch plate | `ln-8` | ✅ |
+
+#### Mandioca (`md`)
+
+| Nível | Arquivo | Português | Inglês | Origem | Arte |
+|---|---|---|---|---|---|
+| 1 | `rota/itens/md-1.png` | Mandioca | Cassava root | `ve-6` | ✅ |
+| 2 | `rota/itens/md-2.png` | Farinha do Uarini | Farinha do Uarini | `gr-5` | ✅ |
+| 3 | `rota/itens/md-3.png` | Goma de tapioca | Tapioca starch | `gr-4` | ✅ |
+| 4 | `rota/itens/md-4.png` | Tapioca | Tapioca | `ln-2` | ✅ |
+| 5 | `rota/itens/md-5.png` | Tapioquinha de tucumã | Tapioquinha de tucumã | `ln-7` | ✅ |
+
+#### Frutas (`fr`)
+
+| Nível | Arquivo | Português | Inglês | Origem | Arte |
+|---|---|---|---|---|---|
+| 1 | `rota/itens/fr-1.png` | Castanha-do-pará | Brazil nuts | `gr-2` | ✅ |
+| 2 | `rota/itens/fr-2.png` | Banana pacovã | Pacovã banana | `fr-3` | ✅ |
+| 3 | `rota/itens/fr-3.png` | Abacaxi | Pineapple | `fr-5` | ✅ |
+| 4 | `rota/itens/fr-4.png` | Suco de frutas | Fruit juice | `be-3` | ✅ |
+| 5 | `rota/itens/fr-5.png` | Guaraná | Guaraná | `be-7` | ✅ |
 
 ## Personagens (28)
 
