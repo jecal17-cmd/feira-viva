@@ -1,6 +1,6 @@
 # Contexto do projeto (para retomar o trabalho)
 
-Resumo do estado atual, das decisões tomadas e de como continuar. Atualizado em 16/11/2026 (noite).
+Resumo do estado atual, das decisões tomadas e de como continuar. Atualizado em 19/11/2026 (manhã).
 
 ## O que é
 
@@ -23,7 +23,7 @@ A desenvolvedora se chama **Bentevi** (Bentevi Games): a vinheta de abertura da 
 | `app-android/` | App Android da Quitanda (Capacitor 8, `com.feiraviva.quitanda`, com AdMob de teste) |
 | `app-android-rota/` | App Android da Rota (Capacitor 8, `com.feiraviva.rota`, sem anúncios) |
 | `.github/workflows/android.yml` | Compila os dois APKs a cada push que mexa nos jogos ou nos apps; também por **Actions → Apps Android (APKs de teste) → Run workflow** |
-| `docs/design-de-jogo.md` | Documento de design das duas versões, com as revisões numeradas (seções 3.9 a 3.12, 4.8 a 4.12) |
+| `docs/design-de-jogo.md` | Documento de design das duas versões, com as revisões numeradas (seções 3.9 a 3.13, 4.8 a 4.12) |
 | `docs/avaliacoes/` | Relatórios de avaliação como usuário novo (um .docx por jogo, inclusive o Ler Brincando) |
 | `docs/arte/` | Lista de arte (`lista-de-arte.md/.csv`: 104 itens, 30 itens da Rota, 12 mercados, 28 personagens, 12 decorações, tudo pronto), prompts do Nano Banana, scripts de recorte, ícones e o canto do bem-te-vi |
 | `versao-*/personagens/`, `versao-b-quitanda-zen/decoracao/` | Arte dos personagens (WebP 192 px) e da decoração da banca (WebP 128 px) usada nos jogos |
@@ -96,6 +96,10 @@ Os itens do tabuleiro com arte ficam em `versao-b-quitanda-zen/itens/<código>.w
 
 A Versão A usa as mesmas ilustrações dos 12 mercados (`versao-a-rota-das-feiras/mercados/`, campo `img` em `MARKETS`): no mapa (os mercados abertos coloridos, os demais em cinza com cadeado), na lista do mapa e no topo da tela de cada mercado. Os itens dela são próprios (5 níveis); a arte dos 30 fica em `versao-a-rota-das-feiras/itens/` e todos estão em `ITEM_ART`. Os 15 de Manaus, por enquanto, são cópias de itens da Quitanda (origem na lista de arte). A lista de arte tem a seção "Itens da Rota das Feiras" (tipo `item-rota`). O botão **Álbum** da tela inicial mostra os 30 ingredientes, agrupados por mercado (`S.alb`, `S.albDone`); linha completa rende +100 moedas. Em Ajustes, **Trocar de aparelho** gera e restaura um código `RF1-…`, igual ao da Quitanda. Os clientes dos pedidos são sorteados entre os 28 personagens (`FACES`, com ilustração por `fc()`). O `app-android-rota/scripts/copy-web.js` copia as pastas `mercados/`, `itens/` e `personagens/`.
 
+## Eventos (Natal 2026) nos dois jogos
+
+Bloco `EVENTOS` no `index.html` de cada jogo (mesmo código): lista de eventos com datas (horário de Brasília, relógio do aparelho), botão flutuante com contagem regressiva nas telas iniciais, pop-up do evento e 4 prêmios exclusivos por evento, guardados para sempre em `S.ev.got` (sobrevivem a "Recomeçar do zero"). Primeiro evento: **Natal na Feira, de 10/12/2026 a 26/12/2026** (Panetone, Rabanada, Farofa natalina e Enfeites de Natal). Na Rota as etapas são 4 fases especiais (`PHASES` com `ev` e `evn`); na Quitanda, 4 metas de jogo. **Para criar o Carnaval:** acrescentar um item a `EVENTOS` (e, na Rota, 4 fases). Testar fora das datas: abrir o jogo com `?evento=natal26`. Detalhes na seção 3.13 do `design-de-jogo.md`.
+
 ## Decisões importantes
 
 **Quitanda Zen (v0.5)**
@@ -132,6 +136,7 @@ A Versão A usa as mesmas ilustrações dos 12 mercados (`versao-a-rota-das-feir
    - Só 14 fases (2 mercados); a arte dos itens de Manaus é provisória (reaproveitada da Quitanda).
    - Casas do tabuleiro pequenas no celular (26 a 29 px): é o principal ponto do relatório de avaliação ainda não resolvido.
    - Moedas com pouco uso.
+   - Eventos: os prêmios ainda não são linhas de itens jogáveis (só aparecem na banca, na coleção e, na Quitanda, no Caderno de Receitas, com +1% de XP); arte própria do Natal e revisão dos textos pendentes; as metas da Quitanda não foram medidas com jogadores.
 4. **Textos culturais** (Diário, mercados, glosas em inglês) precisam de revisão local e de falante nativo de inglês.
 5. **Nome e marca:** verificar "Quitanda" e "Bentevi" no INPI e nas lojas.
 6. **Testes reais:** nada foi testado em celular real nem com jogadores; a música não foi ouvida por quem desenvolveu (o canto do bem-te-vi agora é uma gravação enviada pela dona do projeto).
