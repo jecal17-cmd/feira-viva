@@ -107,6 +107,18 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px}
 .it{z-index:10}
 .it img{filter:drop-shadow(0 2px 1px #3B220F55)}
 .vazia{left:18%;right:18%;top:45%;z-index:9;font-size:12px;color:#FFF3E2;text-align:center;font-style:italic;text-shadow:0 1px 1px #0005;margin:0}
+/* Eventos: botão flutuante, pop-up e prêmios na banca */
+.evfab{position:fixed;right:8px;top:calc(8px + env(safe-area-inset-top,0px));z-index:19;display:flex;align-items:center;gap:5px;padding:5px 11px 5px 8px;border:0;border-radius:99px;font:inherit;font-weight:800;font-size:13px;color:#fff;background:var(--evc,#C8372D);box-shadow:0 3px 10px #0005,inset 0 0 0 2px #FFD97A;cursor:pointer;animation:evpulse 2.4s ease-in-out infinite}
+.evfab[hidden]{display:none}.evfab .evi{font-size:19px;line-height:1}.evfab small{font-weight:800;font-size:12px;font-variant-numeric:tabular-nums}
+@keyframes evpulse{50%{transform:scale(1.05)}}
+@media (prefers-reduced-motion:reduce){.evfab{animation:none}}
+.evlist{display:grid;gap:6px;margin:8px 0;text-align:left}
+.evst{display:flex;align-items:center;gap:8px;background:var(--panel);border-radius:12px;padding:8px 10px;font-size:13px}
+.evst>.n{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#fff;font-weight:800;font-size:13px}
+.evst.ok>.n{background:#2E9E5B}.evst.lock{opacity:.55}.evst>div{flex:1;min-width:0}.evst b{display:block}.evst small{opacity:.8}
+.evbar{height:6px;border-radius:9px;background:#0002;margin-top:4px;overflow:hidden}.evbar i{display:block;height:100%;background:var(--accent)}
+.evprize{flex:none;font-size:26px;line-height:1}.evh{margin:10px 0 2px;font-size:14px;text-align:left}
+.evb{position:absolute;left:0;right:0;top:16%;z-index:35;display:flex;justify-content:center;gap:8px;font-size:clamp(16px,6vw,26px);pointer-events:none;filter:drop-shadow(0 1px 1px #0005)}
 /* Controle de volume (Ajustes): barra deslizante de 0 a 100% abaixo da descrição */
 .vbar{display:flex;align-items:center;gap:8px;margin-top:6px}.vbar input{flex:1;min-width:0;accent-color:var(--accent);height:28px}
 .vbar output{font-weight:800;font-size:12px;min-width:38px;text-align:right;font-variant-numeric:tabular-nums}.vbar span{font-size:16px}
@@ -366,7 +378,12 @@ const PHASES=[
  {m:1,name:['Chuva na feira','Rain at the market'],turns:18,lines:['pr','md','fr'],items:9,lv:[2,3],two:.25,crate:2,mold:3,goals:[{t:'clear',n:5},{t:'orders',n:4}]},
  {m:1,name:['Guaraná gelado','Ice-cold guaraná'],turns:22,lines:['pr','md','fr'],items:12,lv:[2,3],two:.2,crate:2,mold:2,goals:[{t:'make',l:'fr',lv:5,n:1}],tut:'guarana'},
  {m:1,name:['Almoço no Mercadão','Lunch at the Mercadão'],turns:27,lines:['pr','md','fr'],items:12,lv:[2,4],two:.3,crate:2,mold:3,goals:[{t:'orders',n:7},{t:'clear',n:3}]},
- {m:1,name:['Chefe: Encontro das Águas','Boss: Meeting of the Waters'],turns:25,lines:['pr','md','fr'],items:12,lv:[2,4],two:.3,crate:2,mold:2,goals:[{t:'orders',n:6}],boss:'rios',tut:'rios'}
+ {m:1,name:['Chefe: Encontro das Águas','Boss: Meeting of the Waters'],turns:25,lines:['pr','md','fr'],items:12,lv:[2,4],two:.3,crate:2,mold:2,goals:[{t:'orders',n:6}],boss:'rios',tut:'rios'},
+ // Evento de Natal (ev = id do evento em EVENTOS, evn = etapa 0 a 3, m:-1 = fora dos mercados). Só abrem enquanto o evento está ativo.
+ {m:-1,ev:'natal26',evn:0,name:['Cesta de Natal','Christmas basket'],turns:17,lines:['ac','pe'],items:8,lv:[2,3],two:.1,crate:2,mold:0,goals:[{t:'orders',n:5}]},
+ {m:-1,ev:'natal26',evn:1,name:['Rabanada dourada','Golden rabanada'],turns:20,lines:['md','fr'],items:9,lv:[2,3],two:.15,crate:2,mold:1,goals:[{t:'make',l:'md',lv:4,n:1},{t:'clear',n:2}]},
+ {m:-1,ev:'natal26',evn:2,name:['Ceia na beira do rio','Dinner by the river'],turns:22,lines:['jt','pr','ac'],items:11,lv:[2,3],two:.2,crate:2,mold:2,goals:[{t:'orders',n:6},{t:'clear',n:3}]},
+ {m:-1,ev:'natal26',evn:3,name:['Grande ceia de Natal','Grand Christmas dinner'],turns:26,lines:['pe','jt','fr'],items:12,lv:[2,4],two:.3,crate:2,mold:3,goals:[{t:'orders',n:7},{t:'clear',n:3}]}
 ];
 const OPEN_M=2;                                                     // mercados jogáveis neste teste: Ver-o-Peso e Manaus
 const mOf=i=>PHASES[i].m||0, phasesOf=m=>PHASES.map((_,i)=>i).filter(i=>mOf(i)===m), firstOf=m=>phasesOf(m)[0], bossOf=m=>phasesOf(m).find(i=>PHASES[i].boss);
@@ -500,8 +517,8 @@ const item=(l,n)=>{ const x=LINES[l].it[n-1]; return [ie(l,n),LANG==='en'?x[2]:x
 const lname=l=>tx(LINES[l].name);
 const gloss=(l,n)=>LANG==='en'?GLOSS[l+n]:null;
 const lc=l=>`hsl(${LINES[l].hue} 55% 46%)`;
-const pnum=i=>phasesOf(mOf(i)).indexOf(i)+1;                                         // número da fase dentro do mercado
-const pname=i=>tx(PHASES[i].name), ptitle=i=>PHASES[i].boss?pname(i):tr(`Fase ${pnum(i)} · `,`Level ${pnum(i)} · `)+pname(i);
+const pnum=i=>PHASES[i].ev?PHASES[i].evn+1:phasesOf(mOf(i)).indexOf(i)+1;                                         // número da fase dentro do mercado
+const pname=i=>tx(PHASES[i].name), ptitle=i=>PHASES[i].ev?pname(i):PHASES[i].boss?pname(i):tr(`Fase ${pnum(i)} · `,`Level ${pnum(i)} · `)+pname(i);
 const tname=k=>tx(TOOLS[k][1]), tdesc=k=>tx(TOOLS[k][2]), cap=s=>s[0].toUpperCase()+s.slice(1);
 const turnsW=n=>n===1?tr('turno','turn'):tr('turnos','turns');
 const isAdj=(x,y)=>{ const d=Math.abs(x-y); return d===COLS||(d===1&&Math.floor(x/COLS)===Math.floor(y/COLS)); };
@@ -526,13 +543,13 @@ function transferModal(){ modal(`<div class="big">📲</div><h2>${tr('Trocar de 
    <button class="btn ghosty" data-act="mclose">${tr('Fechar','Close')}</button>`);
   saveCode().then(c=>{ const el=$('xcode'); if(el) el.value=c; }).catch(()=>{}); }
 const starsIn=d=>Object.values(d.best||{}).reduce((a,b)=>a+(+b||0),0);
-function fresh(){ return {v:1,coins:100,best:{},cards:[],tools:{hammer:3,pot:3,turns:1},iap:{n:0,usd:0,once:[]},selos:[],sealOn:true,sealUse:{0:true,1:true},selo5:{ac:0,pe:0,jt:0},seen:{},diaryDone:false,diaryM:[],lastM:0,
+function fresh(){ return {v:1,coins:100,best:{},cards:[],tools:{hammer:3,pot:3,turns:1},iap:{n:0,usd:0,once:[]},selos:[],sealOn:true,sealUse:{0:true,1:true},selo5:{ac:0,pe:0,jt:0},seen:{},diaryDone:false,diaryM:[],lastM:0,ev:EV_NEW(),
   stats:{ph:{}},opts:{sound:true,music:true,vSom:1,vMus:1,test:false,lang:LANG}}; }
 function load(){ try{ const d=JSON.parse(localStorage.getItem(KEY)); if(d&&d.v===1) return d; }catch(e){} return fresh(); }
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
 const starsOf=i=>S.best[i]||0, totalStars=()=>Object.values(S.best).reduce((a,b)=>a+b,0), starsM=m=>phasesOf(m).reduce((a,i)=>a+starsOf(i),0);
 const mOpen=m=>m<OPEN_M&&unlocked(firstOf(m));
-const unlocked=i=>S.opts.test||i===0||starsOf(i-1)>0;
+const unlocked=i=>PHASES[i].ev?(S.opts.test||PHASES[i].evn===0||starsOf(i-1)>0):(S.opts.test||i===0||starsOf(i-1)>0);
 const phStat=i=>S.stats.ph[i]||(S.stats.ph[i]={tries:0,wins:0,losses:0,stuck:0,left:0});
 function toast(m){ if(quiet) return; const el=$('toast'), inf=screen==='game'&&!sheetName&&document.querySelector('.info'); el.textContent=m; el.hidden=false;
   // Na fase, a mensagem aparece sobre a barra de informações, para não cobrir os pedidos nem o tabuleiro.
@@ -582,6 +599,67 @@ const Musica={ tm:null, i:2, n:0, cur:null, src:null, g:null, buf:{}, falhou:fal
     toca(E[this.i],.022,1.5,'sine'); if(this.n%4===0) toca(E[[0,3,4,3][(this.n/4)%4]]/2,.02,2.6,'triangle'); } };
 // fora da tela, a música (e o resto do áudio) dorme
 document.addEventListener('visibilitychange',()=>{ if(!audio) return; if(document.visibilityState==='visible') audio.resume&&audio.resume(); else audio.suspend&&audio.suspend(); });
+/* ===================== EVENTOS =====================
+Cada evento tem datas (hora de Brasília, lidas pelo relógio do aparelho), um tema e 4 etapas; cada etapa dá um prêmio
+exclusivo (item, receita ou decoração). Os prêmios ficam em S.ev.got e valem para sempre, mesmo depois do evento.
+PARA CRIAR UM EVENTO NOVO (ex.: Carnaval): acrescente um item a EVENTOS com id, from, to, ic, col, name, intro, rewards e as
+etapas (as fases com ev:id e evn:número em PHASES). O jogo escolhe sozinho o evento que estiver no período. Teste: abra o jogo com ?evento=ID para forçar. */
+const Ev=(pt,en)=>LANG==='en'?en:pt;
+const EVENTOS=[
+ {id:'natal26',from:'2026-12-10T00:00:00-03:00',to:'2026-12-26T23:59:59-03:00',ic:'🎄',col:'#C8372D',
+   name:['Natal na Feira','Christmas at the Market'],
+   intro:['As bancas se enfeitaram! Cumpra as 4 etapas na ordem para levar prêmios que só existem no Natal. O que você ganhar fica com você para sempre.','The stalls are decorated! Finish the 4 steps in order to win prizes that only exist at Christmas. What you win is yours forever.'],
+   rewards:[
+    {id:'panetone',k:'item',em:'🍞',name:['Panetone','Panettone'],note:['Pão doce com frutas cristalizadas, de origem italiana e presença certa na ceia brasileira.','A sweet Italian bread with candied fruit, a fixture of Brazilian Christmas dinner.']},
+    {id:'rabanada',k:'rec',em:'🍮',name:['Rabanada','Rabanada'],note:['Receita: fatias de pão molhadas em leite e ovos, fritas e passadas no açúcar com canela.','Recipe: bread slices soaked in milk and egg, fried and rolled in cinnamon sugar.']},
+    {id:'farofa',k:'rec',em:'🥘',name:['Farofa natalina','Christmas farofa'],note:['Receita: farofa com frutas secas e castanhas, que acompanha a ceia.','Recipe: toasted cassava flour with dried fruit and nuts, served with the Christmas dinner.']},
+    {id:'enfeites',k:'deco',em:'🎄',name:['Enfeites de Natal','Christmas decorations'],note:['Decoração: pisca-pisca e árvore enfeitam a sua banca.','Decoration: lights and a tree dress up your stall.']}
+   ]
+ }
+];
+const evForce=(()=>{ try{ return new URLSearchParams(location.search).get('evento'); }catch(e){ return null; } })();
+const evById=id=>EVENTOS.find(e=>e.id===id);
+function evAtivo(){ const n=Date.now(); return EVENTOS.find(e=>e.id===evForce)||EVENTOS.find(e=>n>=Date.parse(e.from)&&n<=Date.parse(e.to))||null; }
+const evTem=(e,r)=>S.ev.got.includes(e.id+':'+r.id);
+function evLeft(e){ const l=Date.parse(e.to)-Date.now(); return e.id===evForce&&l<5*864e5?5*864e5:l; }
+function evCount(ms){ const s=Math.max(0,Math.floor(ms/1000)), d=Math.floor(s/86400), h=Math.floor(s%86400/3600), m=Math.floor(s%3600/60), x=s%60;
+  return d>0?`${d}d ${h}h`:h>0?`${h}h ${String(m).padStart(2,'0')}min`:`${m}:${String(x).padStart(2,'0')}`; }
+function evDar(e,r,mudo){ if(evTem(e,r)) return false; S.ev.got.push(e.id+':'+r.id); save();
+  if(!mudo&&typeof toast==='function') toast(`${e.ic} ${Ev('Prêmio do evento','Event prize')}: ${r.em} ${tx(r.name)}`); return true; }
+/* botão flutuante com o tempo que falta; some quando o evento acaba */
+function evFab(){ const e=evAtivo(); let b=document.getElementById('evfab');
+  if(!e||evHide()){ if(b) b.hidden=true; return; }
+  if(!b){ b=document.createElement('button'); b.id='evfab'; b.className='evfab'; b.dataset.act='evento'; document.body.appendChild(b); }
+  const c=evCount(evLeft(e)), h=`<span class="evi" aria-hidden="true">${e.ic}</span><small>${c}</small>`;
+  b.style.setProperty('--evc',e.col||'#C8372D'); b.setAttribute('aria-label',`${tx(e.name)}: ${Ev('faltam','left')} ${c}`);
+  if(b._h!==h){ b._h=h; b.innerHTML=h; } b.hidden=false; }
+function evTick(){ if(!S||!S.ev) return; evFab(); const e=evAtivo(), cd=document.getElementById('evcd'); if(cd&&e) cd.textContent=evCount(evLeft(e));
+  if(e&&!S.ev.seen[e.id]&&!evBusy()) evPopup(); }                       // na primeira vez que o evento está ativo, o pop-up abre sozinho
+const evRowEtapa=(k,cls,main,sub,extra,r)=>`<div class="evst ${cls}"><span class="n">${cls==='ok'?'✓':k+1}</span><div><b>${main}</b><small>${sub}</small>${extra||''}</div><span class="evprize" title="${tx(r.name)}">${r.em}</span></div>`;
+function evColecao(){ const itens=[]; for(const e of EVENTOS) for(const r of e.rewards) if(evTem(e,r)) itens.push([e,r]);
+  return itens.length?`<h3 class="evh">${Ev('🎁 Seus prêmios de eventos (ficam para sempre)','🎁 Your event prizes (yours forever)')}</h3><div class="evlist">`
+    +itens.map(([e,r])=>`<div class="evst ok"><span class="evprize">${r.em}</span><div><b>${tx(r.name)}</b><small>${e.ic} ${tx(e.name)} · ${tx(r.note)}</small></div></div>`).join('')+'</div>':''; }
+function evPopup(){ const e=evAtivo(), cal=new Date().getTime();
+  if(!e){ const nx=EVENTOS.filter(x=>Date.parse(x.from)>cal).sort((a,b)=>Date.parse(a.from)-Date.parse(b.from))[0], f=d=>new Date(d).toLocaleDateString(LANG==='en'?'en-GB':'pt-BR',{day:'2-digit',month:'2-digit'});
+    modal(`<div class="big">🎁</div><h2>${Ev('Eventos','Events')}</h2><p>${Ev('Nenhum evento ativo agora.','No event is on right now.')}${nx?' '+Ev(`O próximo é <b>${tx(nx.name)}</b>, a partir de ${f(nx.from)}.`,`Next up: <b>${tx(nx.name)}</b>, starting ${f(nx.from)}.`):''}</p>${evColecao()}<button class="btn" data-act="mclose">${Ev('Fechar','Close')}</button>`); return; }
+  S.ev.seen[e.id]=1; save();
+  modal(`<div class="big">${e.ic}</div><h2>${tx(e.name)}</h2><p>⏳ <b id="evcd">${evCount(evLeft(e))}</b> ${Ev('para o evento acabar','until the event ends')}</p><p>${tx(e.intro)}</p>
+   <div class="evlist">${evEtapas(e)}</div>${evColecao()}<button class="btn" data-act="mclose">${Ev('Fechar','Close')}</button>`); }
+const evCfgRow=()=>{ const e=evAtivo(), n=S.ev.got.length;
+  return `<div class="row"><div><b>🎁 ${Ev('Eventos','Events')}</b><p>${e?`${e.ic} ${tx(e.name)}: ${Ev('faltam','left')} ${evCount(evLeft(e))}`:Ev('Nenhum evento ativo agora.','No event is on right now.')} · ${n} ${Ev(n===1?'prêmio guardado':'prêmios guardados',n===1?'prize kept':'prizes kept')}</p></div><button class="btn" data-act="evento">${Ev('Ver','Open')}</button></div>`; };
+const evBancaHtml=()=>{ const em=[]; for(const e of EVENTOS) for(const r of e.rewards) if(evTem(e,r)) em.push(r.em); return em.length?`<div class="evb" aria-hidden="true">${em.slice(0,5).join('')}</div>`:''; };
+const EV_NEW=()=>({got:[],prog:{},seen:{}});
+
+const evHide=()=>screen!=='home'||introState!=null;
+const evBusy=()=>screen==='game'||!$('over').hidden||!$('sheet').hidden||introState!=null;
+/* Rota: as 4 etapas são fases especiais (PHASES com ev:id e evn:0..3), só jogáveis durante o evento. Vencer a fase dá o prêmio. */
+const evFases=e=>PHASES.map((_,i)=>i).filter(i=>PHASES[i].ev===e.id);
+function evEtapas(e){ return evFases(e).map((i,k)=>{ const c=PHASES[i], r=e.rewards[c.evn], ok=starsOf(i)>0, lk=!unlocked(i);
+    return evRowEtapa(k,ok?'ok':lk?'lock':'',`${pname(i)}`,`🎯 ${c.goals.map(goalFull).join(' + ')} · ${c.turns} ${turnsW(c.turns)}`,
+      lk?'':`<button class="btn sm" style="margin-top:6px" data-act="evstart:${i}">${ok?tr('Jogar de novo','Play again'):tr('Jogar','Play')}</button>`,r); }).join(''); }
+function evWin(i){ const e=evById(PHASES[i].ev), r=e&&e.rewards[PHASES[i].evn]; if(!r||!P.evOk) return '';
+  return evDar(e,r,true)?`<p><b>${e.ic} ${tr('Prêmio do evento','Event prize')}: ${r.em} ${tx(r.name)}</b><br>${tr('Fica com você para sempre.','Yours to keep forever.')}</p>`:''; }
+const mkt=i=>{ const c=PHASES[i], e=c.ev&&evById(c.ev); return e?{n:tx(e.name),c:tx(e.name),ic:e.ic}:MARKETS[mOf(i)]; };
 function modal(html){ if(quiet) return; $('card').innerHTML=html; $('over').hidden=false; const b=$('card').querySelector('button:not(:disabled)'); if(b)b.focus(); }
 function closeModal(){ $('over').hidden=true; }
 function setLang(l){ LANG=l; S.opts.lang=l; applyLang(); render(); }
@@ -597,8 +675,8 @@ function startPhase(i){
   for(let k=0;k<c.crate;k++) b[pick(free())]={o:'crate'};
   for(let k=0;k<c.mold;k++){ const e=free().filter(x=>x<COLS*(ROWS-1)&&(c.boss!=='rios'||(x%COLS&&x%COLS<COLS-1))); b[pick(e)]={o:'mold'}; }
   for(let k=0;k<c.items;k++) b[pick(free())]={l:pick(c.lines),n:Math.random()<.65?1:2};
-  const seal=sealOn(0), guar=sealOn(1); curM=mOf(i);
-  P={i,cfg:c,board:b,turns:c.turns+(seal?3:0),seal,guar,merges:0,used:0,goals:c.goals.map(g=>({...g,p:0})),orders:[],nextId:1,tide:0,toolsUsed:0,cont:0,earned:0,armed:null,over:null};
+  const seal=sealOn(0), guar=sealOn(1); if(!c.ev) curM=mOf(i);
+  P={i,cfg:c,board:b,turns:c.turns+(seal?3:0),seal,guar,evOk:!!(c.ev&&evAtivo()),merges:0,used:0,goals:c.goals.map(g=>({...g,p:0})),orders:[],nextId:1,tide:0,toolsUsed:0,cont:0,earned:0,armed:null,over:null};
   while(P.orders.length<3) P.orders.push(newOrder());
   phStat(i).tries++; save(); sel=null; screen='game'; Musica.ligar();
   if(!quiet&&c.tut&&!S.seen[c.tut]){ S.seen[c.tut]=1; const T=TUT[c.tut]; render(); modal(`<div class="big">${T[0]}</div><h2>${tx(T[1])}</h2><p>${tx(T[2])}</p><button class="btn" data-act="mclose">${tr('Entendi','Got it')}</button>`); return; }
@@ -685,14 +763,14 @@ function win(){
   const co=first?30+10*st:10, h=phStat(i); h.wins++; h.left+=left;
   S.best[i]=Math.max(prev,st); S.coins+=co;
   let gift=''; if(st===3&&prev<3){ const k=pick(['hammer','pot']); S.tools[k]++; gift=`<p>${tr('Prêmio por 3 ⭐','3 ⭐ reward')}: +1 ${TOOLS[k][0]} ${tname(k)}</p>`; }
-  const newCard=!S.cards.includes(i); if(newCard) S.cards.push(i);
+  const evR=PHASES[i].ev?evWin(i):'', newCard=!PHASES[i].ev&&!S.cards.includes(i); if(newCard) S.cards.push(i);
   const seal=checkSeal(), c=PHASES[i], nx=PHASES[i+1], nextM=c.boss&&mOf(i)+1<OPEN_M?mOf(i)+1:-1; save();
   if(quiet) return; Sfx.tocar('feira');
   modal(`<div class="bigstars">${[1,2,3].map(k=>`<span${k>st?' class="off" style="opacity:.25"':''}>⭐</span>`).join('')}</div><h1>${tr('Fase concluída!','Level complete!')}</h1>
-   <p>${left} ${tr(left===1?'turno sobrando':'turnos sobrando',left===1?'turn left':'turns left')} · +${co} 🪙${P.earned?` · ${tr('pedidos','orders')}: +${P.earned} 🪙`:''}</p>${gift}
+   <p>${left} ${tr(left===1?'turno sobrando':'turnos sobrando',left===1?'turn left':'turns left')} · +${co} 🪙${P.earned?` · ${tr('pedidos','orders')}: +${P.earned} 🪙`:''}</p>${gift}${evR}
     ${seal>=0?`<p><b>${tr(`🏅 Selo de Domínio conquistado: ${sealName(seal)}!`,`🏅 Mastery Seal earned: ${sealName(seal)}!`)}</b><br>${cap(tx(SELOS[seal][2]))}. ${tr('Ele fica na sua Mochila de Selos.','It goes into your Seal Bag.')}</p>`:''}
     ${nextM>=0&&first?`<p>${tr(`🗺️ Novo mercado aberto: <b>${MARKETS[nextM].n}</b>, em ${MARKETS[nextM].c}!`,`🗺️ New market unlocked: <b>${MARKETS[nextM].n}</b>, in ${MARKETS[nextM].c}!`)}</p>`:''}
-    ${nx&&mOf(i+1)===mOf(i)?`<button class="btn" data-act="phase:${i+1}">${tr('Próxima fase','Next level')}</button>`:''}${nextM>=0?`<button class="btn" data-act="mk:${nextM}">${tr(`Ir para ${MARKETS[nextM].c}`,`Go to ${MARKETS[nextM].c}`)} ${MARKETS[nextM].ic}</button>`:''}<button class="btn ghosty" data-act="go:market">${tr('Voltar ao mercado','Back to the market')}</button>
+    ${nx&&(c.ev?nx.ev===c.ev:!nx.ev&&mOf(i+1)===mOf(i))?`<button class="btn" data-act="phase:${i+1}">${tr('Próxima fase','Next level')}</button>`:''}${nextM>=0?`<button class="btn" data-act="mk:${nextM}">${tr(`Ir para ${MARKETS[nextM].c}`,`Go to ${MARKETS[nextM].c}`)} ${MARKETS[nextM].ic}</button>`:''}<button class="btn ghosty" data-act="go:market">${tr('Voltar ao mercado','Back to the market')}</button>
    ${newCard?`<button class="btn ghosty sm" data-act="card:${i}">${tr('📖 Novo cartão no Diário','📖 New Travel Journal card')}</button>`:''}`);
 }
 function lose(why){
@@ -737,7 +815,7 @@ function shopHtml(){
 }
 
 /* ===================== DESENHO ===================== */
-function render(){
+function render(){ if(S&&S.ev) evFab();
   if(quiet) return;
   const m=$('main'); m.className='main'+(screen==='game'?' game':'');
   if(screen==='home') m.innerHTML=homeHtml();
@@ -767,7 +845,7 @@ function bancaHtml(){
     its.forEach((n,i)=>{ h+=`<div class="it" style="left:${(x0+i*passo-w/2).toFixed(2)}%;width:${w.toFixed(2)}%;bottom:${(100-yb-w*.17).toFixed(2)}%;z-index:${20-r}">${ie(l,n).replace(' class="ii"','')}</div>`; });
   });
   if(!ls.length) h+=`<p class="vazia">${tr('Sua banca está vazia. Jogue para descobrir ingredientes e enchê-la!','Your stall is empty. Play to discover ingredients and fill it up!')}</p>`;
-  return h+'<div class="toldo"></div></div></div>';
+  return h+evBancaHtml()+'<div class="toldo"></div></div></div>';
 }
 function homeHtml(){
   const ts=totalStars(), nc=S.cards.length, man=mOpen(1);
@@ -817,7 +895,7 @@ function gameHtml(){
     :cur?`<p><b>${item(cur.l,cur.n)[0]} ${item(cur.l,cur.n)[1]}</b> · ${lname(cur.l)} ${tr('nível','level')} ${cur.n}${cur.m?` · <span class="warn">${tr('mofado','moldy')}</span>`:''}${flooded(sel)?tr(' · preso pela maré',' · held by the tide'):''}${gl?`<br><i>${gl}</i>`:''}</p>`
     :`<p>${tr('Cada cesto gasta 1 turno. Juntar e entregar são de graça.','Each basket tap costs 1 turn. Merging and delivering are free.')}</p>`;
   const gIcon=g=>goalDone(g)?'✅':g.t==='make'?`<span class="need"><span>${item(g.l,g.lv)[0]}<sub style="--lc:${lc(g.l)}">${g.lv}</sub></span></span>`:goalIcon(g);
-  return `<div class="head"><button class="icon" data-act="pause" aria-label="${tr('Pausar','Pause')}">⏸</button><div class="t"><b>${ptitle(P.i)}</b><small>${MARKETS[mOf(P.i)].n}${P.seal?tr(' · 🏅 +3 turnos',' · 🏅 +3 turns'):''}${P.guar?` · 🥤 ${P.merges%10}/10`:''}</small></div>
+  return `<div class="head"><button class="icon" data-act="pause" aria-label="${tr('Pausar','Pause')}">⏸</button><div class="t"><b>${ptitle(P.i)}</b><small>${mkt(P.i).n}${P.seal?tr(' · 🏅 +3 turnos',' · 🏅 +3 turns'):''}${P.guar?` · 🥤 ${P.merges%10}/10`:''}</small></div>
     <div class="turns${left<=3?' low':''}"><b>${left}</b><small>${turnsW(left)}</small></div></div>
    <div class="win"><h3>${tr('🎯 Para vencer a fase','🎯 To win this level')}</h3>
     <div class="goals">${P.goals.map(g=>`<div class="goal${goalDone(g)?' ok':''}"><span class="e">${gIcon(g)}</span><div>${goalText(g)}<div class="bar"><i style="width:${Math.min(100,g.p/g.n*100)}%"></i></div></div><span class="cnt">${Math.min(g.p,g.n)}/${g.n}</span></div>`).join('')}</div>
@@ -862,12 +940,12 @@ function renderSheet(){
      +SELOS.map(([em,n,d],i)=>`<div class="row${S.selos.includes(i)?' cur':' lock'}"><span class="face">${S.selos.includes(i)?em:'🔒'}</span><div><b>${tx(n)}</b> · ${MARKETS[i].n}<p>${tx(d)}</p></div></div>`).join('');
   } else { T=tr('Ajustes','Settings');
     const rows=PHASES.map((c,i)=>{ const h=phStat(i), done=h.wins+h.losses, rate=done?Math.round(h.losses/done*100):null, al=rate!=null&&done>=3&&(rate>60||rate<10);
-      return (pnum(i)===1?`<tr class="grp"><td colspan="7">${MARKETS[mOf(i)].ic} ${MARKETS[mOf(i)].c}</td></tr>`:'')+`<tr><td>${pnum(i)}${c.boss?' 🌊':''}</td><td>${h.tries}</td><td>${h.wins}</td><td>${h.losses}${h.stuck?` (${h.stuck}🧱)`:''}</td><td class="${al?'alert':''}">${rate==null?'—':rate+'%'}</td><td>${h.wins?(h.left/h.wins).toFixed(1):'—'}</td><td>${starsOf(i)||'—'}</td></tr>`; }).join('');
+      return (pnum(i)===1?`<tr class="grp"><td colspan="7">${mkt(i).ic} ${mkt(i).c}</td></tr>`:'')+`<tr><td>${pnum(i)}${c.boss?' 🌊':''}</td><td>${h.tries}</td><td>${h.wins}</td><td>${h.losses}${h.stuck?` (${h.stuck}🧱)`:''}</td><td class="${al?'alert':''}">${rate==null?'—':rate+'%'}</td><td>${h.wins?(h.left/h.wins).toFixed(1):'—'}</td><td>${starsOf(i)||'—'}</td></tr>`; }).join('');
     const tg=(k,t,d)=>`<div class="row"><div><b>${t}</b><p>${d}</p></div><button class="btn${S.opts[k]?'':' ghosty'}" data-act="opt:${k}" aria-pressed="${S.opts[k]}">${S.opts[k]?tr('Ligado','On'):tr('Desligado','Off')}</button></div>`;
     const vol=(k,v,t,d)=>{ const p=Math.round((S.opts[v]==null?1:S.opts[v])*100);
       return `<div class="row"><div><b>${t}</b><p>${d}</p><div class="vbar"><span aria-hidden="true">🔈</span><input type="range" min="0" max="100" step="5" value="${p}" data-vol="${v}" aria-label="${tr('Volume','Volume')} · ${t}"><output id="vo-${v}">${p}%</output><span aria-hidden="true">🔊</span></div></div><button class="btn${S.opts[k]?'':' ghosty'}" data-act="opt:${k}" aria-pressed="${S.opts[k]}">${S.opts[k]?tr('Ligado','On'):tr('Desligado','Off')}</button></div>`; };
     h=`<div class="row"><div><b>${tr('Idioma','Language')}</b><p>${tr('O jogo também está em inglês.','O jogo também está em português.')}</p></div>${langSeg()}</div>`
-     +vol('sound','vSom',tr('Som','Sound'),tr('Toques ao colher, juntar e entregar. Arraste a barra para ajustar o volume.','Chimes when you pick, merge and deliver. Drag the bar to set the volume.'))
+     +evCfgRow()+vol('sound','vSom',tr('Som','Sound'),tr('Toques ao colher, juntar e entregar. Arraste a barra para ajustar o volume.','Chimes when you pick, merge and deliver. Drag the bar to set the volume.'))
      +vol('music','vMus',tr('Música','Music'),tr('Trilha calma de cada mercado, com um toque da música local. Arraste a barra para ajustar o volume.','A calm tune for each market, with a hint of local music. Drag the bar to set the volume.'))
      +tg('test',tr('Modo teste','Test mode'),tr('Libera todas as fases e oferece +5 turnos ao perder por falta de turnos.','Unlocks every level and offers +5 turns when you run out of turns.'))
      +`<h2>${tr('Painel do teste','Test panel')}</h2><p class="note">${tr('Por fase: tentativas, vitórias, derrotas (🧱 = tabuleiro travado), taxa de derrota, média de turnos sobrando nas vitórias e melhor resultado. Pela heurística do documento de design, taxa de derrota acima de 60% ou abaixo de 10% pede ajuste (em vermelho, a partir de 3 partidas).','Per level: attempts, wins, losses (🧱 = board stuck), loss rate, average turns left on wins and best result. Following the design document’s rule of thumb, a loss rate above 60% or below 10% needs tuning (shown in red after 3 games).')}</p>
@@ -934,9 +1012,11 @@ document.addEventListener('click',e=>{
     if(k==='go'){ closeModal(); sheetName=null; $('sheet').hidden=true; screen=v; P=v==='game'?P:null; render(); $('main').scrollTop=0; Musica.ligar(); }
     else if(k==='mk'){ closeModal(); sheetName=null; $('sheet').hidden=true; curM=+v; S.lastM=curM; screen='market'; P=null; render(); $('main').scrollTop=0; Musica.ligar(); }
     else if(k==='mlocked') toast(tr(`Vença o chefe de ${MARKETS[+v-1].n} para abrir este mercado.`,`Beat the ${MARKETS[+v-1].n} boss to open this market.`));
+    else if(k==='evento') evPopup();
     else if(k==='lang') setLang(v);
-    else if(k==='start'){ const i=+v, c=PHASES[i];
-      modal(`<div class="big">${c.boss?'🌊':MARKETS[mOf(i)].ic}</div><h2>${ptitle(i)}</h2><ul>${c.goals.map(g=>`<li>${goalIcon(g)} ${goalFull(g)}</li>`).join('')}<li>⏳ ${c.turns} ${turnsW(c.turns)}</li>${c.crate?`<li>📦 ${c.crate} ${tr('caixotes','crates')}</li>`:''}${c.mold?`<li>🦠 ${c.mold} ${c.mold>1?tr('focos de mofo','mold patches'):tr('foco de mofo','mold patch')}</li>`:''}</ul>
+    else if(k==='start'||k==='evstart'){ const i=+v, c=PHASES[i];
+      if(k==='evstart'){ if(!evAtivo()||!unlocked(i)){ toast(tr('Este evento não está ativo agora.','This event is not on right now.')); return; } closeModal(); }
+      modal(`<div class="big">${c.boss?'🌊':mkt(i).ic}</div><h2>${ptitle(i)}</h2><ul>${c.goals.map(g=>`<li>${goalIcon(g)} ${goalFull(g)}</li>`).join('')}<li>⏳ ${c.turns} ${turnsW(c.turns)}</li>${c.crate?`<li>📦 ${c.crate} ${tr('caixotes','crates')}</li>`:''}${c.mold?`<li>🦠 ${c.mold} ${c.mold>1?tr('focos de mofo','mold patches'):tr('foco de mofo','mold patch')}</li>`:''}</ul>
        ${sealChecks()}
        <button class="btn" data-act="phase:${i}">${tr('Jogar','Play')}</button><button class="btn ghosty" data-act="mclose">${tr('Voltar','Back')}</button>`); }
     else if(k==='phase'){ closeModal(); startPhase(+v); }
@@ -962,7 +1042,7 @@ document.addEventListener('click',e=>{
     else if(k==='sheetclose'){ sheetName=null; $('sheet').hidden=true; render(); if(screen==='game'&&P&&P.over==='lose') loseModal(); }
     else if(k==='opt'){ S.opts[v]=!S.opts[v]; if(v==='music') Musica.ligar(); render(); }
     else if(k==='reset') modal(`<h2>${tr('Recomeçar do zero?','Start over?')}</h2><p>${tr('Todo o progresso e o painel de teste serão apagados.','All progress and the test panel will be erased.')}</p><button class="btn" data-act="resetyes">${tr('Apagar e recomeçar','Erase and start over')}</button><button class="btn ghosty" data-act="mclose">${tr('Cancelar','Cancel')}</button>`);
-    else if(k==='resetyes'){ const o=S.opts; S=fresh(); S.opts={...S.opts,sound:o.sound,music:o.music,vSom:o.vSom,vMus:o.vMus}; S.alb={}; S.albDone=[]; curM=0; closeModal(); sheetName=null; $('sheet').hidden=true; screen='home'; P=null; render(); Musica.ligar(); }
+    else if(k==='resetyes'){ const o=S.opts, ev0=S.ev; S=fresh(); S.ev=ev0||S.ev; S.opts={...S.opts,sound:o.sound,music:o.music,vSom:o.vSom,vMus:o.vMus}; S.alb={}; S.albDone=[]; curM=0; closeModal(); sheetName=null; $('sheet').hidden=true; screen='home'; P=null; render(); Musica.ligar(); }
     else if(k==='mclose'){ closeModal(); render(); }
     else if(k==='xfer') transferModal();
     else if(k==='xcopy'){ const el=$('xcode'); if(!el||!el.value) return; const ok=()=>toast(tr('Código copiado','Code copied'));
@@ -1074,6 +1154,7 @@ function start(){
   LANG=detectLang(); S=load(); S.alb=S.alb||{}; S.albDone=S.albDone||[]; S.opts=S.opts||{sound:true,test:false}; S.iap=S.iap||{n:0,usd:0,once:[]}; S.tools.turns=S.tools.turns||0;
   if(S.opts.music==null) S.opts.music=true; S.sealUse=S.sealUse||{0:S.sealOn!==false,1:true}; S.diaryM=S.diaryM||(S.diaryDone?[0]:[]); S.lastM=S.lastM||0;
   if(!mOpen(S.lastM)) S.lastM=0; curM=S.lastM;
+  S.ev=S.ev||EV_NEW(); S.ev.got=S.ev.got||[]; S.ev.prog=S.ev.prog||{}; S.ev.seen=S.ev.seen||{}; setInterval(evTick,1000);
   let ql=null; try{ ql=new URLSearchParams(location.search).get('lang'); }catch(e){}
   if(ql==='en'||ql==='pt') S.opts.lang=ql; LANG=S.opts.lang||LANG; S.opts.lang=LANG; applyLang(); render();
   let q=null; try{ q=new URLSearchParams(location.search).get('intro'); }catch(e){} if(q!=='0') intro();

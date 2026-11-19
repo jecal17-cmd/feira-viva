@@ -215,6 +215,28 @@ Como na Quitanda, a Rota ganhou o segundo mercado. Ele abre ao vencer o chefe do
 - **Volume (Quitanda e Rota):** em Ajustes, Som e Música têm cada um a sua barra de 0 a 100%, além do botão Ligado/Desligado. A música muda de volume na hora; ao soltar a barra do som, toca uma moedinha de amostra. Na Quitanda, a música deixou de depender do botão Som.
 - **Banca da tela inicial (Rota):** no lugar da foto do Ver-o-Peso, a tela inicial mostra a banca da Quitanda (toldo nas cores da Rota, sem decorações). Começa vazia e cada linha com ingrediente descoberto no Álbum vira uma fileira no tampo, em duas colunas.
 
+### 3.13 Eventos (novembro de 2026; valem para a Rota e a Quitanda)
+
+Mecânica reutilizável de eventos temporários, com o mesmo código nos dois jogos (bloco `EVENTOS` no `index.html` de cada um).
+
+- **Calendário:** a lista `EVENTOS` fica dentro do app. Cada evento tem `id`, início (`from`), fim (`to`, em horário de Brasília), ícone, cor, nome, texto e 4 prêmios. O jogo escolhe o evento que estiver no período pelo **relógio do aparelho** (quem adiantar o relógio só ganha tempo para si). Para criar o Carnaval: acrescentar um item à lista (e, na Rota, 4 fases com `ev` e `evn` em `PHASES`). Como as datas ficam no app, cada evento novo precisa de uma atualização na loja.
+- **Botão flutuante:** pílula no canto superior direito das telas iniciais, com o ícone do tema e o tempo que falta ("14d 13h", depois "5h 20min", depois "mm:ss"). Some sozinho quando o evento acaba e fica escondido durante as partidas.
+- **Pop-up do evento:** abre ao tocar no botão e, uma vez por evento, sozinho na primeira vez que o jogador chega à tela inicial. Mostra o tempo que falta, as 4 etapas com o prêmio de cada uma e os prêmios já conquistados. Também abre por **Ajustes > Eventos**, mesmo sem evento ativo (mostra a coleção e a data do próximo evento).
+- **Etapas e prêmios exclusivos:** as 4 etapas são feitas na ordem e cada uma libera um prêmio exclusivo. Na **Rota**, são 4 fases especiais (só jogáveis durante o evento; vencer dá o prêmio, e jogar de novo não repete). Na **Quitanda**, que não tem fases, são 4 metas de jogo que contam enquanto o evento está ativo, uma por vez.
+- **Para sempre:** os prêmios ficam em `S.ev.got` (`"idDoEvento:idDoPrêmio"`), valem depois do evento e **sobrevivem a "Recomeçar do zero"**. Quem não conseguiu durante o evento só poderá se o evento voltar (basta repetir as datas).
+- **O que o prêmio faz hoje:** aparece na banca da tela inicial (emojis sobre o tampo) e na coleção do pop-up. Na Quitanda, receitas e itens também entram no Caderno de Receitas (seção "Dos eventos") e **cada prêmio dá +1% de XP**, como as decorações. Não há ainda uma linha nova de itens jogáveis por evento (seria o próximo passo, com arte própria).
+
+**Evento de Natal na Feira (10/12/2026 a 26/12/2026):**
+
+| Etapa | Prêmio | Rota (fase) | Quitanda (meta) |
+|---|---|---|---|
+| 1 | 🍞 Panetone (item) | Cesta de Natal: 5 pedidos, 17 turnos | Atenda 8 pedidos |
+| 2 | 🍮 Rabanada (receita) | Rabanada dourada: criar Tapioca (nível 4) + limpar 2, 20 turnos | Faça 40 fusões |
+| 3 | 🥘 Farofa natalina (receita) | Ceia na beira do rio: 6 pedidos + limpar 3, 22 turnos | Colha 50 itens dos cestos |
+| 4 | 🎄 Enfeites de Natal (decoração) | Grande ceia de Natal: 7 pedidos + limpar 3, 26 turnos | Crie 2 itens de nível 5 ou mais |
+
+Balanceamento da Rota (robô simples, 300 partidas por fase): etapas 1, 3 e 4 com 100%, 93% e 44% de vitória; a etapa 2 (meta de criar item) segue o padrão das outras fases desse tipo, em que o robô vai mal. As metas da Quitanda ainda não foram medidas com jogadores. Os textos dos prêmios precisam de revisão cultural, como os demais.
+
 ## 4. Versão B — Quitanda Zen (passatempo, foco em anúncios)
 
 ### 4.1 Loop

@@ -183,6 +183,18 @@ a.btn{text-decoration:none;display:inline-block;text-align:center}
 h1,h2{font-family:var(--display);font-weight:800;margin:0;text-wrap:balance}
 h1{font-size:26px;line-height:1.1} h2{font-size:18px;margin-top:6px}
 .row{background:var(--panel);border-radius:14px;padding:12px;display:flex;align-items:center;gap:10px}
+/* Eventos: botão flutuante, pop-up e prêmios na banca */
+.evfab{position:fixed;right:8px;top:calc(8px + env(safe-area-inset-top,0px));z-index:19;display:flex;align-items:center;gap:5px;padding:5px 11px 5px 8px;border:0;border-radius:99px;font:inherit;font-weight:800;font-size:13px;color:#fff;background:var(--evc,#C8372D);box-shadow:0 3px 10px #0005,inset 0 0 0 2px #FFD97A;cursor:pointer;animation:evpulse 2.4s ease-in-out infinite}
+.evfab[hidden]{display:none}.evfab .evi{font-size:19px;line-height:1}.evfab small{font-weight:800;font-size:12px;font-variant-numeric:tabular-nums}
+@keyframes evpulse{50%{transform:scale(1.05)}}
+@media (prefers-reduced-motion:reduce){.evfab{animation:none}}
+.evlist{display:grid;gap:6px;margin:8px 0;text-align:left}
+.evst{display:flex;align-items:center;gap:8px;background:var(--panel);border-radius:12px;padding:8px 10px;font-size:13px}
+.evst>.n{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#fff;font-weight:800;font-size:13px}
+.evst.ok>.n{background:#2E9E5B}.evst.lock{opacity:.55}.evst>div{flex:1;min-width:0}.evst b{display:block}.evst small{opacity:.8}
+.evbar{height:6px;border-radius:9px;background:#0002;margin-top:4px;overflow:hidden}.evbar i{display:block;height:100%;background:var(--accent)}
+.evprize{flex:none;font-size:26px;line-height:1}.evh{margin:10px 0 2px;font-size:14px;text-align:left}
+.evb{position:absolute;left:0;right:0;top:16%;z-index:35;display:flex;justify-content:center;gap:8px;font-size:clamp(16px,6vw,26px);pointer-events:none;filter:drop-shadow(0 1px 1px #0005)}
 /* Controle de volume (Ajustes): barra deslizante de 0 a 100% abaixo da descrição */
 .vbar{display:flex;align-items:center;gap:8px;margin-top:6px}.vbar input{flex:1;min-width:0;accent-color:var(--accent);height:28px}.vbar output{font-weight:800;font-size:12px;min-width:38px;text-align:right;font-variant-numeric:tabular-nums}.vbar span{font-size:16px}
 .row>div{flex:1;min-width:0}
@@ -778,7 +790,7 @@ function newMission(s,slot){
 function fresh(coins){
   const now=Date.now(), s={v:2,level:1,xp:0,coins:coins||0,cols:6,rows:7,exp:0,board:Array(42).fill(null),baskets:{},orders:[],nextId:1,
     stop:0,served:0,goalSeen:false,day:today(),daily:{adCharge:0,adDouble:0,chest:0},streak:0,giftDay:'',
-    tut:0,recipes:[],decor:[],friends:{},missions:[null,null,null],missTier:0,enc:{k:0,got:0},boost:{mag:2,rec:1},up:{far:0,cap:0,spd:0},swapAt:0,iap:{n:0,usd:0,once:[]},
+    tut:0,recipes:[],decor:[],ev:EV_NEW(),friends:{},missions:[null,null,null],missTier:0,enc:{k:0,got:0},boost:{mag:2,rec:1},up:{far:0,cap:0,spd:0},swapAt:0,iap:{n:0,usd:0,once:[]},
     stats:{merges:0,items:0,orders:0,rew:0,inter:0,playMs:0,xp:0,first:now,lastInter:0},opts:{sound:true,noAds:false,test:false,lang:LANG}};
   fillBoard(s); linesAt(0).forEach(k=>s.baskets[k]={c:BASE_CAP,t:now});   // no primeiro mercado os cestos começam cheios
   for(let i=0;i<3;i++) s.missions[i]=newMission(s,i);
@@ -862,7 +874,7 @@ const Musica={ tm:null, i:2, n:0, cur:null, src:null, g:null, buf:{}, falhou:fal
     toca(E[this.i],.022,1.5,'sine'); if(this.n%4===0) toca(E[[0,3,4,3][(this.n/4)%4]]/2,.02,2.6,'triangle'); } };
 // fora da tela, a música (e o resto do áudio) dorme
 document.addEventListener('visibilitychange',()=>{ if(!audio||!Musica.src) return; if(document.visibilityState==='visible') audio.resume&&audio.resume(); else audio.suspend&&audio.suspend(); });
-function bump(k,n){ for(const m of S.missions) if(m.t===k) m.p+=n; }
+function bump(k,n){ for(const m of S.missions) if(m.t===k) m.p+=n; evBump(k,n); }
 function fx(i,m){ fxQ.push([i,m]); }
 
 // Álbum de ingredientes: tudo que já passou pelo tabuleiro. Linha completa (8 níveis) rende um bônus.
@@ -890,7 +902,7 @@ function transferModal(){ modal(`<div class="big">📲</div><h2>${t('xfer')[0]}<
    <button class="btn ghosty" data-act="mclose">${t('close')}</button>`);
   saveCode().then(c=>{ const el=$('xcode'); if(el) el.value=c; }).catch(()=>{}); }
 function gain(xp,co){
-  xp=Math.round(xp*(1+S.decor.length/100)*lapBonus()); co=Math.round(co*lapBonus()); S.xp+=xp; S.coins+=co; S.stats.xp+=xp;
+  xp=Math.round(xp*(1+(S.decor.length+S.ev.got.length)/100)*lapBonus());   // cada decoração e cada prêmio de evento dá +1% XP co=Math.round(co*lapBonus()); S.xp+=xp; S.coins+=co; S.stats.xp+=xp;
   const ups=[]; while(S.xp>=need(S.level)){ S.xp-=need(S.level); S.level++; ups.push(S.level); }
   if(ups.length) levelUp(ups); return xp;
 }
@@ -910,6 +922,70 @@ function levelUp(ups){
 }
 let verTaps=0;
 let fxHold=false;   // durante a animação do Junta-tudo, avisos (como o de nível novo) esperam a animação terminar
+/* ===================== EVENTOS =====================
+Cada evento tem datas (hora de Brasília, lidas pelo relógio do aparelho), um tema e 4 etapas; cada etapa dá um prêmio
+exclusivo (item, receita ou decoração). Os prêmios ficam em S.ev.got e valem para sempre, mesmo depois do evento.
+PARA CRIAR UM EVENTO NOVO (ex.: Carnaval): acrescente um item a EVENTOS com id, from, to, ic, col, name, intro, rewards e as
+etapas (goals: 4 metas de MTYPES, na ordem das rewards). O jogo escolhe sozinho o evento que estiver no período. Teste: abra o jogo com ?evento=ID para forçar. */
+const Ev=(pt,en)=>LANG==='en'?en:pt;
+const EVENTOS=[
+ {id:'natal26',from:'2026-12-10T00:00:00-03:00',to:'2026-12-26T23:59:59-03:00',ic:'🎄',col:'#C8372D',
+   name:['Natal na Feira','Christmas at the Market'],
+   intro:['As bancas se enfeitaram! Cumpra as 4 etapas na ordem para levar prêmios que só existem no Natal. O que você ganhar fica com você para sempre.','The stalls are decorated! Finish the 4 steps in order to win prizes that only exist at Christmas. What you win is yours forever.'],
+   goals:[{t:'orders',n:8},{t:'merges',n:40},{t:'spawn',n:50},{t:'big',n:2}],
+   rewards:[
+    {id:'panetone',k:'item',em:'🍞',name:['Panetone','Panettone'],note:['Pão doce com frutas cristalizadas, de origem italiana e presença certa na ceia brasileira.','A sweet Italian bread with candied fruit, a fixture of Brazilian Christmas dinner.']},
+    {id:'rabanada',k:'rec',em:'🍮',name:['Rabanada','Rabanada'],note:['Receita: fatias de pão molhadas em leite e ovos, fritas e passadas no açúcar com canela.','Recipe: bread slices soaked in milk and egg, fried and rolled in cinnamon sugar.']},
+    {id:'farofa',k:'rec',em:'🥘',name:['Farofa natalina','Christmas farofa'],note:['Receita: farofa com frutas secas e castanhas, que acompanha a ceia.','Recipe: toasted cassava flour with dried fruit and nuts, served with the Christmas dinner.']},
+    {id:'enfeites',k:'deco',em:'🎄',name:['Enfeites de Natal','Christmas decorations'],note:['Decoração: pisca-pisca e árvore enfeitam a sua banca.','Decoration: lights and a tree dress up your stall.']}
+   ]
+ }
+];
+const evForce=(()=>{ try{ return new URLSearchParams(location.search).get('evento'); }catch(e){ return null; } })();
+const evById=id=>EVENTOS.find(e=>e.id===id);
+function evAtivo(){ const n=Date.now(); return EVENTOS.find(e=>e.id===evForce)||EVENTOS.find(e=>n>=Date.parse(e.from)&&n<=Date.parse(e.to))||null; }
+const evTem=(e,r)=>S.ev.got.includes(e.id+':'+r.id);
+function evLeft(e){ const l=Date.parse(e.to)-Date.now(); return e.id===evForce&&l<5*864e5?5*864e5:l; }
+function evCount(ms){ const s=Math.max(0,Math.floor(ms/1000)), d=Math.floor(s/86400), h=Math.floor(s%86400/3600), m=Math.floor(s%3600/60), x=s%60;
+  return d>0?`${d}d ${h}h`:h>0?`${h}h ${String(m).padStart(2,'0')}min`:`${m}:${String(x).padStart(2,'0')}`; }
+function evDar(e,r,mudo){ if(evTem(e,r)) return false; S.ev.got.push(e.id+':'+r.id); save();
+  if(!mudo&&typeof toast==='function') toast(`${e.ic} ${Ev('Prêmio do evento','Event prize')}: ${r.em} ${tx(r.name)}`); return true; }
+/* botão flutuante com o tempo que falta; some quando o evento acaba */
+function evFab(){ const e=evAtivo(); let b=document.getElementById('evfab');
+  if(!e||evHide()){ if(b) b.hidden=true; return; }
+  if(!b){ b=document.createElement('button'); b.id='evfab'; b.className='evfab'; b.dataset.act='evento'; document.body.appendChild(b); }
+  const c=evCount(evLeft(e)), h=`<span class="evi" aria-hidden="true">${e.ic}</span><small>${c}</small>`;
+  b.style.setProperty('--evc',e.col||'#C8372D'); b.setAttribute('aria-label',`${tx(e.name)}: ${Ev('faltam','left')} ${c}`);
+  if(b._h!==h){ b._h=h; b.innerHTML=h; } b.hidden=false; }
+function evTick(){ if(!S||!S.ev) return; evFab(); const e=evAtivo(), cd=document.getElementById('evcd'); if(cd&&e) cd.textContent=evCount(evLeft(e));
+  if(e&&!S.ev.seen[e.id]&&!evBusy()) evPopup(); }                       // na primeira vez que o evento está ativo, o pop-up abre sozinho
+const evRowEtapa=(k,cls,main,sub,extra,r)=>`<div class="evst ${cls}"><span class="n">${cls==='ok'?'✓':k+1}</span><div><b>${main}</b><small>${sub}</small>${extra||''}</div><span class="evprize" title="${tx(r.name)}">${r.em}</span></div>`;
+function evColecao(){ const itens=[]; for(const e of EVENTOS) for(const r of e.rewards) if(evTem(e,r)) itens.push([e,r]);
+  return itens.length?`<h3 class="evh">${Ev('🎁 Seus prêmios de eventos (ficam para sempre)','🎁 Your event prizes (yours forever)')}</h3><div class="evlist">`
+    +itens.map(([e,r])=>`<div class="evst ok"><span class="evprize">${r.em}</span><div><b>${tx(r.name)}</b><small>${e.ic} ${tx(e.name)} · ${tx(r.note)}</small></div></div>`).join('')+'</div>':''; }
+function evPopup(){ const e=evAtivo(), cal=new Date().getTime();
+  if(!e){ const nx=EVENTOS.filter(x=>Date.parse(x.from)>cal).sort((a,b)=>Date.parse(a.from)-Date.parse(b.from))[0], f=d=>new Date(d).toLocaleDateString(LANG==='en'?'en-GB':'pt-BR',{day:'2-digit',month:'2-digit'});
+    modal(`<div class="big">🎁</div><h2>${Ev('Eventos','Events')}</h2><p>${Ev('Nenhum evento ativo agora.','No event is on right now.')}${nx?' '+Ev(`O próximo é <b>${tx(nx.name)}</b>, a partir de ${f(nx.from)}.`,`Next up: <b>${tx(nx.name)}</b>, starting ${f(nx.from)}.`):''}</p>${evColecao()}<button class="btn" data-act="mclose">${Ev('Fechar','Close')}</button>`); return; }
+  S.ev.seen[e.id]=1; save();
+  modal(`<div class="big">${e.ic}</div><h2>${tx(e.name)}</h2><p>⏳ <b id="evcd">${evCount(evLeft(e))}</b> ${Ev('para o evento acabar','until the event ends')}</p><p>${tx(e.intro)}</p>
+   <div class="evlist">${evEtapas(e)}</div>${evColecao()}<button class="btn" data-act="mclose">${Ev('Fechar','Close')}</button>`); }
+const evCfgRow=()=>{ const e=evAtivo(), n=S.ev.got.length;
+  return `<div class="row"><div><b>🎁 ${Ev('Eventos','Events')}</b><p>${e?`${e.ic} ${tx(e.name)}: ${Ev('faltam','left')} ${evCount(evLeft(e))}`:Ev('Nenhum evento ativo agora.','No event is on right now.')} · ${n} ${Ev(n===1?'prêmio guardado':'prêmios guardados',n===1?'prize kept':'prizes kept')}</p></div><button class="btn" data-act="evento">${Ev('Ver','Open')}</button></div>`; };
+const evBancaHtml=()=>{ const em=[]; for(const e of EVENTOS) for(const r of e.rewards) if(evTem(e,r)) em.push(r.em); return em.length?`<div class="evb" aria-hidden="true">${em.slice(0,5).join('')}</div>`:''; };
+const EV_NEW=()=>({got:[],prog:{},seen:{}});
+
+const evHide=()=>!homeOn||introState!=null;
+const evBusy=()=>!homeOn||!$('over').hidden||!$('sheet').hidden||introState!=null||!$('trip').hidden;
+/* Quitanda: as metas contam enquanto o evento está ativo, uma etapa por vez (progresso em S.ev.prog[id]) */
+function evBump(k,n){ const e=evAtivo(); if(!e||!e.goals) return; const p=S.ev.prog[e.id]||(S.ev.prog[e.id]=e.goals.map(()=>0));
+  const st=p.findIndex((v,i)=>v<e.goals[i].n); if(st<0) return; const g=e.goals[st]; if(g.t!==k) return;
+  p[st]=Math.min(g.n,p[st]+n); if(p[st]>=g.n) evDar(e,e.rewards[st]); else save(); }
+function evEtapas(e){ const p=S.ev.prog[e.id]||e.goals.map(()=>0), cur=p.findIndex((v,i)=>v<e.goals[i].n);
+  return e.goals.map((g,k)=>{ const done=p[k]>=g.n, now=k===cur, txt=tx(MTYPES[g.t][0]).replace('{n}',g.n);
+    return evRowEtapa(k,done?'ok':now?'':'lock',txt,done?Ev('Concluída','Done'):Ev('Prêmio: ','Prize: ')+tx(e.rewards[k].name),now?`<div class="evbar"><i style="width:${p[k]/g.n*100}%"></i></div><small>${p[k]}/${g.n}</small>`:'',e.rewards[k]); }).join(''); }
+/* receitas e itens de evento aparecem junto das receitas da Quitanda */
+function evRecHtml(){ const r=[]; for(const e of EVENTOS) for(const x of e.rewards) if(evTem(e,x)&&x.k!=='deco') r.push(`<div class="row"><span class="rie" aria-hidden="true">${x.em}</span><div><b>${tx(x.name)}</b><p>${e.ic} ${tx(e.name)} · ${tx(x.note)}</p></div></div>`);
+  return r.length?`<h2>${Ev('🎁 Dos eventos','🎁 From events')}</h2>`+r.join(''):''; }
 function modal(html){ if(fxHold||!$('over').hidden){ modalQ.push(html); return; } $('card').innerHTML=html; $('over').hidden=false; const b=$('card').querySelector('button:not(:disabled)'); if(b)b.focus(); }
 function closeModal(){ $('over').hidden=true; clearInterval(adTimer); if(modalQ.length) modal(modalQ.shift()); }
 /* Anúncios reais (AdMob) quando o jogo roda como app Android; no navegador, anúncios simulados.
@@ -1185,7 +1261,7 @@ function fit(){
   $('board').style.setProperty('--cs',Math.max(22,Math.min(cs,64))+'px');
   $('board').style.gridTemplateColumns=`repeat(${S.cols},var(--cs))`;
 }
-function render(){
+function render(){ if(S&&S.ev) evFab();
   checkDay(); tickBaskets();
   while(S.orders.length<4) S.orders.push(newOrder());
   $('lvl').textContent=t('lvlShort',S.level);
@@ -1275,7 +1351,7 @@ function bancaHtml(){
   if(!ls.length) h+=`<p class="vazia">${t('bancaVazia')}</p>`;
   for(const [i,p] of Object.entries(DECOR_POS)) if(has(+i))
     h+=`<div class="${p.t?'':'obj'}" style="left:${p.x}%;width:${p.w}%;${p.t?`top:${p.t}%`:`bottom:${p.b}%`};z-index:${p.z||(p.t?27:p.s?25:40-Math.round(p.b))}">${de(+i).replace('class="ii"',p.v?`style="margin-bottom:-${(p.v*100).toFixed(1)}%"`:'')}</div>`;
-  return h+varal(5,6)+varal(10,8.5)+(has(0)?'<div class="toldo"></div>':'<div class="viga"></div>')+'</div></div>';
+  return h+evBancaHtml()+varal(5,6)+varal(10,8.5)+(has(0)?'<div class="toldo"></div>':'<div class="viga"></div>')+'</div></div>';
 }
 function renderHome(){
   const f=feira(S.stop), g=goal(S.stop), ls=lines(), gift=S.giftDay!==today(), d=Math.min((S.giftDay===dstr(Date.now()-864e5)?S.streak:0)+1,7), N=t('nav');
@@ -1354,7 +1430,7 @@ function renderSheet(){
     } else h=tabs+(S.level<3?`<p class="note">${t('recLocked')}</p>`
      :`<p class="note">${t('recNote',S.recipes.length,RECIPES.length)}</p>`+RECIPES.map((r,i)=>S.recipes.includes(i)
         ?`<div class="row"><div><b>${tx(r.name)}</b><p>${r.it.map(([l,n])=>item(l,n)[0]+' '+item(l,n)[1]).join(' + ')} · ${tx(r.note)}</p></div></div>`
-        :`<div class="row lock"><div><b>???</b><p>${r.it.every(x=>ls.includes(x[0]))?t('recHere'):t('recOther')} · ${r.it.map(x=>lname(x[0])).join(' + ')}</p></div></div>`).join(''));
+        :`<div class="row lock"><div><b>???</b><p>${r.it.every(x=>ls.includes(x[0]))?t('recHere'):t('recOther')} · ${r.it.map(x=>lname(x[0])).join(' + ')}</p></div></div>`).join('')+evRecHtml());
   } else if(sheetName==='up'){
     const e=EXPS[S.exp], buy=(act,c,dis)=>`<button class="btn buy" data-act="${act}" ${dis?'disabled':''}><span>${t('buy')}</span><small>🪙 ${fmt(c)}</small></button>`;
     const val=(k,lv)=>k==='far'?t('farV',...farOdds(lv).map(x=>Math.round(x*100))):k==='cap'?t('capV',BASE_CAP+CAP_UP*lv):t('spdV',mmss(Math.round(periodAt(lv)/1000)));
@@ -1373,7 +1449,7 @@ function renderSheet(){
     const vol=(k,v,[a,b])=>{ const p=Math.round((S.opts[v]==null?1:S.opts[v])*100);
       return `<div class="row"><div><b>${a}</b><p>${b}</p><div class="vbar"><span aria-hidden="true">🔈</span><input type="range" min="0" max="100" step="5" value="${p}" data-vol="${v}" aria-label="${t('vol')} · ${a}"><output id="vo-${v}">${p}%</output><span aria-hidden="true">🔊</span></div></div><button class="btn${S.opts[k]?'':' ghosty'}" data-act="opt:${k}" aria-pressed="${S.opts[k]}">${S.opts[k]?t('on'):t('off')}</button></div>`; };
     h=`<div class="row"><div><b>${t('lang')}</b><p>${t('langP')}</p></div><div class="seg"><button data-act="lang:pt" aria-pressed="${LANG==='pt'}">Português</button><button data-act="lang:en" aria-pressed="${LANG==='en'}">English</button></div></div>`
-     +vol('sound','vSom',t('oSound'))+vol('music','vMus',t('oMusic'))+(Avisos?tg('notif',t('oNotif')):'')
+     +evCfgRow()+vol('sound','vSom',t('oSound'))+vol('music','vMus',t('oMusic'))+(Avisos?tg('notif',t('oNotif')):'')
      +(S.opts.dev?tg('noAds',t('oNoAds'))+tg('test',t('oTest'))+`<h2>${t('panel')}</h2><div class="stats" id="stats">${statsHtml()}</div><p class="note">${t('panelNote')}</p>`:'')
      +`<div class="row"><div><b>${t('priv')[0]}</b><p>${t('priv')[1]}</p></div><a class="btn ghosty" href="${PUB.priv}" target="_blank" rel="noopener">${t('privB')}</a></div>`
      +(AdNet&&AdNet.privReq()?`<div class="row"><div><b>${t('adPriv')[0]}</b><p>${t('adPriv')[1]}</p></div><button class="btn ghosty" data-act="adpriv">${t('adPrivB')}</button></div>`:'')
@@ -1461,6 +1537,7 @@ document.addEventListener('click',e=>{
     else if(k==='opt'){ S.opts[v]=!S.opts[v]; if(v==='music'||v==='sound') Musica.ligar(); for(const x of lines()) S.baskets[x].t=Date.now(); render(); }
     else if(k==='travelask'){ closeModal(); travelAsk(); }
     else if(k==='travel'){ closeModal(); travel(); }
+    else if(k==='evento') evPopup();
     else if(k==='mclose'){ closeModal(); render(); }
     else if(k==='xfer') transferModal();
     else if(k==='xcopy'){ const el=$('xcode'); if(!el||!el.value) return; const ok=()=>toast(t('xferCopied'));
@@ -1471,7 +1548,7 @@ document.addEventListener('click',e=>{
         .catch(()=>toast(t('xferBad'))); }
     else if(k==='xyes'){ if(!xferNew) return; try{ localStorage.setItem(KEY,JSON.stringify(xferNew)); }catch(e){ toast(t('xferBad')); return; } location.reload(); }
     else if(k==='reset') modal(`<h2>${t('resetQ')}</h2><p>${t('resetQP')}</p><button class="btn" data-act="resetyes">${t('resetYes')}</button><button class="btn ghosty" data-act="mclose">${t('cancel')}</button>`);
-    else if(k==='resetyes'){ try{ localStorage.removeItem('quitanda-zen-v1'); }catch(e){} S=fresh(); sel=null; selOrder=null; offer=null; modalQ=[]; closeModal(); sheetName=null; $('sheet').hidden=true; homeOn=true; render(); }
+    else if(k==='resetyes'){ try{ localStorage.removeItem('quitanda-zen-v1'); }catch(e){} const ev0=S.ev; S=fresh(); S.ev=ev0; sel=null; selOrder=null; offer=null; modalQ=[]; closeModal(); sheetName=null; $('sheet').hidden=true; homeOn=true; render(); }
     else if(k==='lvlok'){ closeModal(); render(); }
     return;
   }
@@ -1588,9 +1665,9 @@ function start(d){
   if(q==='en'||q==='pt') S.opts.lang=q; LANG=S.opts.lang||LANG; S.opts.lang=LANG;
   S.iap=S.iap||{n:0,usd:0,once:[]}; if(S.tut==null) S.tut=(S.stats.merges||S.stats.orders)?4:0; if(S.opts.music==null) S.opts.music=true; if(S.opts.notif==null) S.opts.notif=true;
   if(!S.seen){ S.seen={}; S.board.forEach(x=>{ if(x) S.seen[x.l+x.n]=2; }); }   // Álbum de ingredientes: 1 = novo, 2 = já visto
-  S.albumDone=S.albumDone||[];
+  S.albumDone=S.albumDone||[]; S.ev=S.ev||EV_NEW(); S.ev.got=S.ev.got||[]; S.ev.prog=S.ev.prog||{}; S.ev.seen=S.ev.seen||{};
   if(!PUB.dev){ S.opts.dev=false; S.opts.test=false; }
-  applyLang(); render(); setInterval(tick,1000);
+  applyLang(); render(); setInterval(tick,1000); setInterval(evTick,1000); evTick();
   let q2=null; try{ q2=new URLSearchParams(location.search).get('intro'); }catch(e){} if(q2!=='0') intro(); else boasVindas();
   (()=>{ const C=window.Capacitor, A=C&&C.isNativePlatform&&C.isNativePlatform()&&C.Plugins&&C.Plugins.App;   // no app, pause/resume também avisam
     if(A&&A.addListener){ A.addListener('pause',saiu); A.addListener('resume',voltou); } })();
