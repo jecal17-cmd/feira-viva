@@ -1,13 +1,16 @@
 // Copia o jogo (um único HTML) para a pasta www, que o Capacitor empacota no app.
 //
 // Versão de publicação (AAB da Play Store): rode com PUBLICACAO=1. Aí o script
-//  - esconde a Loja com dinheiro real (ainda não há Google Play Billing) e as ferramentas de teste;
+//  - esconde as ferramentas de teste e, sem COMPRAS=play, também a Loja com dinheiro real;
 //  - troca o texto "protótipo" pela versão (VERSAO, padrão: versionName do package.json);
 //  - usa os blocos de anúncio reais do AdMob, se ADMOB_REWARDED_ID e ADMOB_INTERSTITIAL_ID existirem.
 const fs = require('fs'), path = require('path');
 const src = path.join(__dirname, '..', '..', 'versao-b-quitanda-zen', 'index.html');
 const dst = path.join(__dirname, '..', 'www');
 fs.mkdirSync(dst, { recursive: true });
+// COMPRAS=play liga as compras de verdade pela Google Play (plugin Compras). Só funcionam no app baixado da Play Store
+// (teste interno, fechado ou produção), com os produtos criados na Play Console. Sem isso, as compras são simuladas.
+const play = process.env.COMPRAS === 'play';
 let html = fs.readFileSync(src, 'utf8');
 
 function trocar(regex, novo, nome) {
@@ -17,7 +20,7 @@ function trocar(regex, novo, nome) {
 
 if (process.env.PUBLICACAO === '1') {
   const versao = process.env.VERSAO || require('../package.json').version;
-  trocar(/const PUB=\{loja:true,dev:true,ver:'',/, `const PUB={loja:false,dev:false,ver:'v${versao}',`, 'a constante PUB');
+  trocar(/const PUB=\{loja:true,dev:true,ver:'',/, `const PUB={loja:${play},dev:false,ver:'v${versao}',`, 'a constante PUB');
   const rew = process.env.ADMOB_REWARDED_ID, int = process.env.ADMOB_INTERSTITIAL_ID;
   if (rew && int) {
     trocar(/const ADMOB=\{[^}]*\};/, `const ADMOB={test:false,rew:'${rew}',int:'${int}'};`, 'a constante ADMOB');
@@ -25,7 +28,11 @@ if (process.env.PUBLICACAO === '1') {
   } else {
     console.warn('AVISO: ADMOB_REWARDED_ID e ADMOB_INTERSTITIAL_ID não definidos; o app sai com anúncios de TESTE (sem receita).');
   }
-  console.log(`Versão de publicação v${versao}: loja paga e ferramentas de teste escondidas`);
+  console.log(`Versão de publicação v${versao}: ferramentas de teste escondidas; Loja ${play ? 'com compras pela Google Play' : 'escondida'}`);
+}
+if (play) {
+  trocar(/const PAGAMENTO='simulado';/, "const PAGAMENTO='play';", 'a constante PAGAMENTO');
+  console.log('Compras: Google Play (dinheiro real)');
 }
 
 fs.writeFileSync(path.join(dst, 'index.html'), html);

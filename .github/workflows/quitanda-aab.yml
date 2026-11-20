@@ -8,6 +8,8 @@
 #   QUITANDA_KEY_PASSWORD      senha da chave
 # Variáveis (mesma tela, aba Variables; não são secretas):
 #   ADMOB_APP_ID, ADMOB_REWARDED_ID, ADMOB_INTERSTITIAL_ID  (sem elas, o app sai com anúncios de TESTE)
+#   PLAY_LICENSE_KEY  chave de licença do app (Play Console → Monetizar → Configuração de monetização); opcional,
+#                     faz o app conferir a assinatura de cada compra
 name: Quitanda · AAB para a Play Store
 
 on:
@@ -21,6 +23,10 @@ on:
         description: 'Código da versão (versionCode). Vazio = número desta execução. Precisa ser maior que o do último envio.'
         required: false
         default: ''
+      compras:
+        description: 'Ligar a Loja com compras de verdade pela Google Play (os produtos precisam estar criados e ativos na Play Console)'
+        type: boolean
+        default: false
   push:
     paths:
       - '.github/workflows/quitanda-aab.yml'
@@ -37,6 +43,8 @@ jobs:
       ADMOB_APP_ID: ${{ vars.ADMOB_APP_ID }}
       ADMOB_REWARDED_ID: ${{ vars.ADMOB_REWARDED_ID }}
       ADMOB_INTERSTITIAL_ID: ${{ vars.ADMOB_INTERSTITIAL_ID }}
+      PLAY_LICENSE_KEY: ${{ vars.PLAY_LICENSE_KEY }}
+      COMPRAS: ${{ inputs.compras && 'play' || '' }}
       TEM_CHAVE: ${{ secrets.QUITANDA_KEYSTORE_BASE64 != '' }}
     steps:
       - uses: actions/checkout@v4
@@ -61,6 +69,7 @@ jobs:
         run: |
           if [ "$TEM_CHAVE" != "true" ]; then echo "::warning::Sem a chave de upload (segredo QUITANDA_KEYSTORE_BASE64): o AAB sai SEM assinatura e a Play Console não aceita."; fi
           if [ -z "$ADMOB_APP_ID" ] || [ -z "$ADMOB_REWARDED_ID" ] || [ -z "$ADMOB_INTERSTITIAL_ID" ]; then echo "::warning::IDs do AdMob não definidos (variáveis ADMOB_*): o app usa anúncios de TESTE e não gera receita."; fi
+          if [ "$COMPRAS" = "play" ]; then echo "Loja: compras de verdade pela Google Play"; [ -z "$PLAY_LICENSE_KEY" ] && echo "::warning::Sem a variável PLAY_LICENSE_KEY: o app não confere a assinatura das compras."; else echo "Loja escondida (marque 'compras' para ligar)"; fi
           echo "Versão $VERSION_NAME (código $VERSION_CODE)"
       - name: Preparar a chave de upload
         if: env.TEM_CHAVE == 'true'
