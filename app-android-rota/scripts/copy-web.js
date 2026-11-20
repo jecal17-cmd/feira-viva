@@ -6,8 +6,8 @@ fs.mkdirSync(dst, { recursive: true });
 fs.copyFileSync(src, path.join(dst, 'index.html'));
 const icone = path.join(path.dirname(src), 'icone-192.png');
 if (fs.existsSync(icone)) fs.copyFileSync(icone, path.join(dst, 'icone-192.png'));
-// Arte dos mercados, dos itens e dos personagens; trilhas dos mercados
-for (const pasta of ['mercados', 'itens', 'personagens', 'musica']) {
+// Arte dos mercados, dos itens, dos personagens e dos obstáculos (caixote e mofo); trilhas dos mercados
+for (const pasta of ['mercados', 'itens', 'personagens', 'musica', 'obstaculos']) {
   const arte = path.join(path.dirname(src), pasta);
   if (fs.existsSync(arte)) fs.cpSync(arte, path.join(dst, pasta), { recursive: true });
 }

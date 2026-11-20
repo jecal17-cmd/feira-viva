@@ -79,7 +79,7 @@ Um obstáculo novo é apresentado por região, com mini-tutorial na primeira fas
 
 | Região | Obstáculo | Regra |
 |---|---|---|
-| Todas | Caixote | Célula bloqueada; abre quando ocorre uma fusão em célula adjacente. |
+| Todas | Caixote | Célula bloqueada; abre quando ocorre uma fusão em célula adjacente e deixa o item que guardava. |
 | Norte | Mofo | A cada 3 turnos, um item adjacente a um mofo fica mofado e não funde. Limpa com fusão adjacente. |
 | Nordeste | Sol forte | Células marcadas: item de nível 3 ou mais parado ali por 5 turnos perde 1 nível. |
 | Centro-Oeste | Fila impaciente | Pedidos têm prazo de 6 turnos; se vence, o cliente vai embora e você perde 2 turnos. |
@@ -236,6 +236,11 @@ Mecânica reutilizável de eventos temporários, com o mesmo código nos dois jo
 | 4 | 🎄 Enfeites de Natal (decoração) | Grande ceia de Natal: 7 pedidos + limpar 3, 26 turnos | Crie 2 itens de nível 5 ou mais |
 
 Balanceamento da Rota (robô simples, 300 partidas por fase): etapas 1, 3 e 4 com 100%, 93% e 44% de vitória; a etapa 2 (meta de criar item) segue o padrão das outras fases desse tipo, em que o robô vai mal. As metas da Quitanda ainda não foram medidas com jogadores. Os textos dos prêmios precisam de revisão cultural, como os demais.
+
+### 3.14 Arte e regra do caixote e do mofo (novembro de 2026)
+
+- **Arte:** o caixote e o mofo trocaram os desenhos feitos em CSS por pixel art em 5 quadros (`versao-a-rota-das-feiras/obstaculos/caixa-1..5.webp` e `mofo-1..5.webp`). O quadro 1 é o obstáculo parado no tabuleiro; os seguintes animam a remoção (caixa racha, estoura e vira lascas; a esponja esfrega o mofo até sumir). O item mofado ganha uma camada translúcida do mofo, no lugar do 🦠, e, ao ser limpo, aparece a esponja passando. Originais e o script de recorte em `docs/arte/obstaculos/`.
+- **Regra nova:** todo caixote guarda um item embaixo (nível 1 em 70% das vezes, nível 2 nas demais, de uma das linhas da fase). Ao quebrar, por fusão ao lado ou pelo Martelo, o item fica na casa. O Martelo no mofo continua só removendo. O balanceamento das fases não foi refeito com o robô: o caixote agora dá material de graça, o que deve facilitar um pouco as fases com muitos caixotes.
 
 ## 4. Versão B — Quitanda Zen (passatempo, foco em anúncios)
 
