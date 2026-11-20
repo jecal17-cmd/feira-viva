@@ -541,6 +541,7 @@ const UI={
   recName:'Recarga', magName:'Junta-tudo', recD:'Enche todos os cestos na hora.', magD:'Junta de uma vez todos os pares iguais do tabuleiro.',
   allUp:'+1 nível em cada melhoria de cesto', noAdsInc:'sem anúncios de tela cheia', decoAll:'Todas as decorações', decoAllD:n=>`As ${n} peças que faltam, de uma vez. Cada uma dá +1% de XP.`,
   noAdsName:'Remover anúncios', noAdsD:'Sem anúncios de tela cheia e +25% nos prêmios dos anúncios opcionais.', hasIt:'Você já tem',
+  shopPlay:'O pagamento é feito pela Google Play, no preço da sua moeda. Melhorias, ampliações e decorações não são vendidas: são conquistadas com moedas do jogo.', restore:'Restaurar compras', restoreP:'Trocou de celular ou reinstalou o jogo? “Remover anúncios” e o Kit Boas-vindas voltam sozinhos; se não voltarem, toque abaixo.',
   iapT:'Confirmar compra', iapSim:'Compra simulada: nada será cobrado.', iapConfirm:p=>`Comprar por ${p}`, iapDone:n=>`Compra feita: ${n}`,
   buyRec:'🛒 Comprar Recargas na Loja', toShop:'Faltam moedas? Na Loja há kits de moedas.', openShop:'🛒 Loja', shopAria:c=>`${c} moedas. Abrir a Loja`,
   help:'Ajuda', tripTitle:c=>`Rumo a ${c}`, tripP:(a,b,km,v)=>`${a} → ${b} · ${km} km de ${v}`, bus:'ônibus', plane:'avião', skip:'Pular',
@@ -640,6 +641,7 @@ const UI={
   recName:'Refill', magName:'Merge-all', recD:'Fills every basket instantly.', magD:'Merges every matching pair on the board at once.',
   allUp:'+1 level on every basket upgrade', noAdsInc:'no full-screen ads', decoAll:'All decorations', decoAllD:n=>`The ${n} pieces you’re missing, all at once. Each adds +1% XP.`,
   noAdsName:'Remove ads', noAdsD:'No full-screen ads and +25% on optional ad rewards.', hasIt:'You already have it',
+  shopPlay:'Payment goes through Google Play, priced in your currency. Upgrades, expansions and decorations aren’t sold: you earn them with in-game coins.', restore:'Restore purchases', restoreP:'New phone or reinstalled the game? “Remove ads” and the Welcome kit come back on their own; if they don’t, tap below.',
   iapT:'Confirm purchase', iapSim:'Simulated purchase: nothing will be charged.', iapConfirm:p=>`Buy for ${p}`, iapDone:n=>`Purchased: ${n}`,
   buyRec:'🛒 Buy Refills in the Shop', toShop:'Short on coins? The Shop has coin kits.', openShop:'🛒 Shop', shopAria:c=>`${c} coins. Open the Shop`,
   help:'Help', tripTitle:c=>`Heading to ${c}`, tripP:(a,b,km,v)=>`${a} → ${b} · ${km} km by ${v}`, bus:'bus', plane:'plane', skip:'Skip',
@@ -1172,6 +1174,98 @@ function basketEmpty(k){
    ${S.boost.rec>0?`<button class="btn${ad?' ghosty':''}" data-act="userec">${t('useRec',S.boost.rec)}</button>`:S.stop>=1&&PUB.loja?`<button class="btn ghosty" data-act="shop">${t('buyRec')}</button>`:''}<button class="btn ghosty" data-act="mclose">${t('wait')}</button>`);
 }
 const usd=v=>LANG==='en'?'$'+v.toFixed(2):'US$ '+v.toFixed(2).replace('.',',');
+/* ===================== COMPRAS (mesmo código nos dois jogos) =====================
+   Motor de compras com dinheiro real pela Google Play. O lado nativo é o plugin "Compras"
+   (ComprasPlugin.java, em android/app/src/main/java/com/feiraviva/compras/ dos dois apps; Google Play Billing 8).
+   PAGAMENTO='simulado': a confirmação é do próprio jogo e nada é cobrado (navegador e APKs de teste).
+   PAGAMENTO='play': o copy-web.js troca a linha quando roda com COMPRAS=play. Sem o plugin (navegador), continua simulado.
+   Regras:
+   - cada compra tem um token da Google Play; o jogo guarda os já entregues (S.iap.tok) e nunca entrega duas vezes;
+   - primeiro entrega e salva, depois avisa a Google Play (consumir ou reconhecer). Se o app fechar no meio,
+     a compra volta na próxima abertura e só é concluída (a Google Play devolve o dinheiro do que ficar 3 dias sem conclusão);
+   - consumíveis (moedas, ferramentas, kits) são consumidos e podem ser comprados de novo;
+   - permanentes (remover anúncios, kits de "só 1 vez") são só reconhecidos; numa reinstalação ou em outro aparelho
+     voltam sozinhos, sem repetir as moedas do kit;
+   - pagamento pendente (boleto, Pix por código, dinheiro na loja): o jogo avisa e entrega quando a Google Play confirmar;
+   - o jogo confere as compras ao abrir e sempre que volta para a frente da tela. */
+const PAGAMENTO='simulado';
+const Compras={
+  modo:'simulado', cfg:null, P:null, precos:{}, carregado:false, avisados:{}, ocupado:false,
+  L:(pt,en)=>LANG==='en'?en:pt,
+  // cfg: {prefixo, produtos:[{key,tipo:'consumivel'|'permanente'}], dar(key,restaurar)→nome, salvar(), aviso(texto), pronto(nomes), mudou()}
+  init(cfg){ this.cfg=cfg; const C=window.Capacitor;
+    const P=C&&C.isNativePlatform&&C.isNativePlatform()&&C.Plugins&&C.Plugins.Compras;
+    if(PAGAMENTO!=='play'||!P) return;
+    this.P=P; this.modo='play';
+    P.addListener('compras',ev=>this.recebeu(ev));
+    this.carregar(); this.verificar();
+    document.addEventListener('visibilitychange',()=>{ if(!document.hidden) this.verificar(); });
+  },
+  pid(k){ return this.cfg.prefixo+'_'+k.replace(/-/g,'_'); },                 // ex.: pack-p1 → qz_pack_p1 (ID do produto na Play Console)
+  prod(id){ return this.cfg.produtos.find(p=>this.pid(p.key)===id); },
+  ids(){ return this.cfg.produtos.map(p=>this.pid(p.key)); },
+  async carregar(){
+    try{ const r=await this.P.produtos({ids:this.ids()}); (r.itens||[]).forEach(x=>{ this.precos[x.id]=x.preco; }); }
+    catch(e){ console.warn('Compras: não carregou os preços',e); }
+    this.carregado=true; this.cfg.mudou();
+  },
+  // texto do botão: preço da Google Play na moeda do jogador (ou o US$ de referência no modo simulado)
+  rotulo(k,ref){ if(this.modo!=='play') return ref; return this.precos[this.pid(k)]||(this.carregado?this.L('Indisponível','Unavailable'):'…'); },
+  disponivel(k){ return this.modo!=='play'||!!this.precos[this.pid(k)]; },
+  async comprar(k){
+    if(this.ocupado) return; const id=this.pid(k);
+    if(!this.precos[id]){ this.cfg.aviso(this.L('Este item ainda não está à venda na Google Play.','This item isn’t on sale on Google Play yet.')); this.carregar(); return; }
+    this.ocupado=true;
+    try{ const r=await this.P.comprar({id}); this.codigo(r.codigo); }
+    catch(e){ console.warn('Compras: falha ao abrir a compra',e); this.codigo(6); }
+    finally{ this.ocupado=false; }
+  },
+  async restaurar(){
+    if(this.modo!=='play'){ this.cfg.aviso(this.L('Compras simuladas: não há nada a restaurar.','Simulated purchases: nothing to restore.')); return; }
+    const ok=await this.verificar(); this.cfg.aviso(ok?this.L('Compras conferidas com a Google Play.','Purchases checked with Google Play.'):this.L('A Google Play não respondeu. Tente de novo em instantes.','Google Play didn’t respond. Try again in a moment.'));
+  },
+  // códigos da Google Play (BillingResponseCode)
+  codigo(c){
+    if(c===0||c===1) return;                                            // tudo certo (a compra chega pelo aviso) ou a pessoa cancelou
+    if(c===7){ this.verificar(); this.cfg.aviso(this.L('Você já tem este item: ele foi restaurado.','You already own this item: it has been restored.')); return; }
+    if([-1,2,3,12].includes(c)){ this.cfg.aviso(this.L('A Google Play não está disponível agora. Confira a internet e tente de novo.','Google Play isn’t available right now. Check your connection and try again.')); return; }
+    if(c===4){ this.cfg.aviso(this.L('Este item não está à venda no momento.','This item isn’t on sale right now.')); return; }
+    this.cfg.aviso(this.L('Não foi possível concluir a compra (código ','Couldn’t complete the purchase (code ')+c+'). '+this.L('Nada foi cobrado.','You were not charged.'));
+  },
+  recebeu(ev){ if(ev&&ev.compras&&ev.compras.length) this.processar(ev.compras); else if(ev) this.codigo(ev.codigo); },
+  async verificar(){
+    if(this.modo!=='play') return false;
+    try{ const r=await this.P.pendentes(); this.processar(r.compras||[]); return true; }
+    catch(e){ console.warn('Compras: não conferiu as compras',e); return false; }
+  },
+  processar(lista){
+    const nomes=[]; let mudou=false;
+    for(const c of lista){ const r=this.uma(c); if(r){ mudou=true; nomes.push(...r); } }
+    if(mudou){ this.cfg.salvar(); this.cfg.pronto(nomes); }
+  },
+  // trata uma compra; devolve os nomes entregues agora ([] se só garantiu a posse; null se nada mudou)
+  uma(c){
+    if(c.estado==='pendente'){
+      if(!this.avisados[c.token]){ this.avisados[c.token]=1; this.cfg.aviso(this.L('Pagamento pendente: o item chega assim que a Google Play confirmar.','Payment pending: your item arrives as soon as Google Play confirms it.')); }
+      return null;
+    }
+    if(c.estado!=='comprado') return null;
+    if(c.valida===false){ console.warn('Compras: assinatura inválida, compra ignorada',c.pedido); return null; }
+    const ps=(c.ids||[]).map(id=>this.prod(id)).filter(Boolean); if(!ps.length) return null;
+    const perm=ps.every(p=>p.tipo==='permanente'), tok=S.iap.tok||(S.iap.tok=[]);
+    if(perm&&c.reconhecida){ ps.forEach(p=>this.cfg.dar(p.key,true)); return []; }   // já entregue antes: só garante a posse
+    let nomes=null;
+    if(!tok.includes(c.token)){
+      nomes=[]; for(const p of ps) for(let i=0;i<Math.max(1,c.qtd||1);i++) nomes.push(this.cfg.dar(p.key,false));
+      tok.push(c.token); if(tok.length>200) tok.splice(0,tok.length-200);
+      this.cfg.salvar();                                                  // salva antes de avisar a Google Play
+    }
+    this.P.concluir({token:c.token,consumir:!perm}).then(r=>{ if(r&&r.codigo!==0&&r.codigo!==8) console.warn('Compras: conclusão com código',r.codigo); })
+      .catch(e=>console.warn('Compras: não concluiu',e));
+    return nomes;
+  }
+};
+/* ===================== FIM DAS COMPRAS ===================== */
 const packText=p=>`${fmt(p.coins)} 🪙 · ${p.rec} ⚡ · ${p.mag} 🧲${p.up?' · '+t('allUp'):''}${p.noAds?' · '+t('noAdsInc'):''}`;
 function iapItem(key){
   const [kind,id]=key.split('-');
@@ -1186,18 +1280,25 @@ function iapItem(key){
   if(kind==='noads') return {n:t('noAdsName'),usd:SHOP.noAds,give(){ S.opts.noAds=true; }};
 }
 function iapAsk(key){ const it=iapItem(key); if(!it) return;
+  if(Compras.modo==='play'){ Compras.comprar(key); return; }   // a própria Google Play mostra a confirmação e cobra
   modal(`<div class="big">🛒</div><h2>${t('iapT')}</h2><p><b>${it.n}</b></p><p class="note">${t('iapSim')}</p><button class="btn" data-act="iapok:${key}">${t('iapConfirm',usd(it.usd))}</button><button class="btn ghosty" data-act="mclose">${t('cancel')}</button>`); }
-function iapBuy(key){ const it=iapItem(key); if(!it) return; closeModal(); it.give(); S.iap.n++; S.iap.usd=Math.round((S.iap.usd+it.usd)*100)/100; beep(880); beep(1100,.12); render(); toast(t('iapDone',it.n)); }
+// Entrega o que foi comprado (simulado ou pela Google Play). restaurar: só garante a posse de um permanente já entregue antes.
+function iapDar(key,restaurar){ const it=iapItem(key); if(!it) return '';
+  if(restaurar){ if(key==='noads-0') S.opts.noAds=true; else if(key.startsWith('pack-')){ const id=key.slice(5); if(!S.iap.once.includes(id)) S.iap.once.push(id); } return it.n; }
+  it.give(); S.iap.n++; S.iap.usd=Math.round((S.iap.usd+it.usd)*100)/100; return it.n; }
+function iapFesta(nomes){ if(nomes.length){ beep(880); beep(1100,.12); toast(t('iapDone',nomes.join(', '))); } render(); if(sheetName) renderSheet(); }
+function iapBuy(key){ closeModal(); const n=iapDar(key); if(!n) return; save(); iapFesta([n]); }
 function shopHtml(){
-  const buy=(key,v,dis)=>`<button class="btn buy" data-act="iap:${key}" ${dis?'disabled':''}><span>${usd(v)}</span></button>`;
+  const buy=(key,v,dis)=>`<button class="btn buy" data-act="iap:${key}" ${dis||!Compras.disponivel(key)?'disabled':''}><span>${Compras.rotulo(key,usd(v))}</span></button>`;
   const row=(ic,bd,name,desc,btn,tag)=>`<div class="row"><span class="thumb" aria-hidden="true">${ic}${bd?`<b>${bd}</b>`:''}</span><div><b>${name}</b>${tag?` <span class="tag">${tag}</span>`:''}<p>${desc}</p></div>${btn}</div>`;
   const base=SHOP.coins[0][1]/SHOP.coins[0][2], miss=DECOR.map((_,i)=>i).filter(i=>!S.decor.includes(i)), e=EXPS[S.exp];
   const val=(k,lv)=>k==='far'?t('farV',...farOdds(lv).map(x=>Math.round(x*100))):k==='cap'?t('capV',BASE_CAP+CAP_UP*lv):t('spdV',mmss(Math.round(periodAt(lv)/1000)));
-  return `<p class="note">${t('shopNote')}</p><h2>${t('hPacks')}</h2>`
+  return `<p class="note">${Compras.modo==='play'?t('shopPlay'):t('shopNote')}</p><h2>${t('hPacks')}</h2>`
    +SHOP.packs.map(p=>{ const got=p.once&&S.iap.once.includes(p.id); return row('🎁','',tx(p.n),packText(p)+(p.once?' · '+t('once'):''),got?`<button class="btn" disabled>${t('bought')}</button>`:buy('pack-'+p.id,p.usd),t('savePct',Math.round((1-p.usd/packValue(p))*100))); }).join('')
    +`<h2>${t('hCoins')}</h2>`+SHOP.coins.map(([id,n,v])=>{ const b=Math.round((n/v/base-1)*100); return row('🪙','',t('coinsN',fmt(n)),b>0?t('bonusPct',b):'&nbsp;',buy('coins-'+id,v)); }).join('')
    +`<h2>${t('hItems')}</h2>`+SHOP.items.map(([id,k,n,v])=>row(k==='rec'?'⚡':'🧲','×'+n,`${n} × ${t(k==='rec'?'recName':'magName')}`,t(k==='rec'?'recD':'magD'),buy('item-'+id,v))).join('')
-   +row('🚫','',t('noAdsName'),t('noAdsD'),S.opts.noAds?`<button class="btn" disabled>${t('bought')}</button>`:buy('noads-0',SHOP.noAds));   // melhorias, ampliações e decorações não são vendidas: são conquistas com moedas do jogo
+   +row('🚫','',t('noAdsName'),t('noAdsD'),S.opts.noAds?`<button class="btn" disabled>${t('bought')}</button>`:buy('noads-0',SHOP.noAds))
+   +(Compras.modo==='play'?`<p class="note">${t('restoreP')}</p><button class="btn ghosty" data-act="restaurar">${t('restore')}</button>`:'');   // melhorias, ampliações e decorações não são vendidas: são conquistas com moedas do jogo
 }
 function claimGift(){
   if(S.giftDay===today()) return;
@@ -1515,6 +1616,7 @@ document.addEventListener('click',e=>{
     else if(k==='shop'){ $('toast').hidden=true; closeModal(); sheetName='shop'; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
     else if(k==='iap'&&PUB.loja) iapAsk(v);
     else if(k==='iapok'&&PUB.loja) iapBuy(v);
+    else if(k==='restaurar') Compras.restaurar();
     else if(k==='adpriv'){ if(AdNet) AdNet.privacy(); }
     else if(k==='tripskip') endTrip();
     else if(k==='tripdouble'){ const v=tripBonus; tripBonus=0; if(v) showAd('rew',()=>{ S.coins+=v; toast(t('tripDoubled',v)); }); }
@@ -1667,6 +1769,9 @@ function start(d){
   if(!S.seen){ S.seen={}; S.board.forEach(x=>{ if(x) S.seen[x.l+x.n]=2; }); }   // Álbum de ingredientes: 1 = novo, 2 = já visto
   S.albumDone=S.albumDone||[]; S.ev=S.ev||EV_NEW(); S.ev.got=S.ev.got||[]; S.ev.prog=S.ev.prog||{}; S.ev.seen=S.ev.seen||{};
   if(!PUB.dev){ S.opts.dev=false; S.opts.test=false; }
+  Compras.init({prefixo:'qz', dar:iapDar, salvar:save, aviso:toast, pronto:iapFesta, mudou:()=>{ if(sheetName==='shop') renderSheet(); },
+    produtos:[...SHOP.packs.map(p=>({key:'pack-'+p.id,tipo:p.once?'permanente':'consumivel'})),...SHOP.coins.map(c=>({key:'coins-'+c[0],tipo:'consumivel'})),
+              ...SHOP.items.map(c=>({key:'item-'+c[0],tipo:'consumivel'})),{key:'noads-0',tipo:'permanente'}]});
   applyLang(); render(); setInterval(tick,1000); setInterval(evTick,1000); evTick();
   let q2=null; try{ q2=new URLSearchParams(location.search).get('intro'); }catch(e){} if(q2!=='0') intro(); else boasVindas();
   (()=>{ const C=window.Capacitor, A=C&&C.isNativePlatform&&C.isNativePlatform()&&C.Plugins&&C.Plugins.App;   // no app, pause/resume também avisam

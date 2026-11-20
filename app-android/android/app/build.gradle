@@ -11,6 +11,8 @@ def cfg = { String k -> System.getenv(k) ?: props.getProperty(k) }
 def keystorePath = cfg('QUITANDA_KEYSTORE')
 // ID de app de TESTE do Google (exemplo oficial); a publicação usa o ID real vindo de ADMOB_APP_ID
 def admobAppId = cfg('ADMOB_APP_ID') ?: 'ca-app-pub-3940256099942544~3347511713'
+// Chave de licença do app (Play Console → Monetizar → Configuração de monetização). Opcional: com ela, o app confere a assinatura de cada compra
+def playLicenseKey = cfg('PLAY_LICENSE_KEY') ?: ''
 
 android {
     namespace = "com.feiraviva.quitanda"
@@ -22,6 +24,7 @@ android {
         versionCode((cfg('VERSION_CODE') ?: '1') as int)
         versionName(cfg('VERSION_NAME') ?: '1.0.0')
         resValue 'string', 'admob_app_id', admobAppId
+        resValue 'string', 'play_license_key', playLicenseKey
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -60,6 +63,8 @@ dependencies {
     implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
     implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
     implementation project(':capacitor-android')
+    // Compras com dinheiro real pela Google Play (plugin próprio em com/feiraviva/compras)
+    implementation "com.android.billingclient:billing:8.0.0"
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"

@@ -1,6 +1,6 @@
 # Contexto do projeto (para retomar o trabalho)
 
-Resumo do estado atual, das decisões tomadas e de como continuar. Atualizado em 20/11/2026.
+Resumo do estado atual, das decisões tomadas e de como continuar. Atualizado em 20/11/2026 (motor de compras).
 
 ## O que é
 
@@ -33,7 +33,9 @@ A desenvolvedora se chama **Bentevi** (Bentevi Games): a vinheta de abertura da 
 | `docs/mockups/` | Telas de sugestão em SVG do início do projeto |
 | `docs/loja-play/quitanda-zen/` | Página da Play Store da Quitanda: textos pt-BR e en-US, capturas, gráfico de destaque, ícone, respostas da Play Console e passo a passo (`LEIAME.md`) |
 | `versao-b-quitanda-zen/privacidade.html` | Política de privacidade da Quitanda (pt e en), publicada pelo GitHub Pages |
-| `.github/workflows/quitanda-aab.yml` | Gera o AAB assinado da Quitanda para a Play Store (só manual: **Actions → Quitanda · AAB para a Play Store → Run workflow**) |
+| `.github/workflows/quitanda-aab.yml` | Gera o AAB assinado da Quitanda para a Play Store (só manual: **Actions → Quitanda · AAB para a Play Store → Run workflow**; a opção "compras" liga a Loja com dinheiro real) |
+| `app-android*/android/app/src/main/java/com/feiraviva/compras/ComprasPlugin.java` | Plugin próprio de compras pela Google Play (Play Billing 8.0.0), igual nos dois apps; registrado no `MainActivity` |
+| `docs/loja-play/compras-google-play.md` | Como funciona o motor de compras, IDs e preços dos produtos e o passo a passo na Play Console |
 
 ## Como rodar e testar
 
@@ -122,7 +124,7 @@ Bloco `EVENTOS` no `index.html` de cada jogo (mesmo código): lista de eventos c
 
 **Regras comuns**
 - Português e inglês no mesmo arquivo (idioma do aparelho, botões na tela inicial e em Ajustes). Nomes de mercados, cidades, personagens e pratos típicos ficam em português, com explicação curta em inglês.
-- Todas as compras são **simuladas**: aparece uma confirmação e nada é cobrado. Na Quitanda, os anúncios usam os IDs de **teste** do AdMob.
+- Compras: os dois jogos têm o motor de compras pela Google Play (bloco `COMPRAS` no `index.html` e plugin nativo `ComprasPlugin.java`). Ele só liga com `COMPRAS=play` (no AAB da Quitanda, marcando "compras" no workflow); no navegador e nos APKs de teste as compras continuam **simuladas** (confirmação do jogo, nada é cobrado). Passo a passo e IDs dos produtos em `docs/loja-play/compras-google-play.md`. Na Quitanda, os anúncios usam os IDs de **teste** do AdMob.
 
 ## Pendências e riscos
 
@@ -131,7 +133,7 @@ Bloco `EVENTOS` no `index.html` de cada jogo (mesmo código): lista de eventos c
    - Feito: build de publicação (`PUBLICACAO=1` no `copy-web.js`: sem Loja paga e sem ferramentas de teste), workflow do AAB, política de privacidade, textos, capturas e respostas da Play Console.
    - Feito também: app criado na Play Console com o pacote `com.feiraviva.quitanda` (um app antigo da conta ficou preso a `feiraviva.myapp` e foi deixado de lado), teste interno e teste fechado, ID de publicidade declarado (publicidade e prevenção de fraudes).
    - Falta: concluir os 14 dias do teste fechado com 12 testadores e pedir a produção; conferir os blocos reais do AdMob (`ADMOB_*`).
-   - Depois: integrar Google Play Billing e religar a Loja (`PUB.loja`).
+   - Compras: o motor está pronto (Play Billing 8). Falta na Play Console: perfil de pagamentos, criar e ativar os 14 produtos `qz_*`, gravar a variável `PLAY_LICENSE_KEY` no GitHub, testadores de licença e gerar o AAB com "compras" marcado. Nunca testado com a Google Play de verdade (só com uma simulada no navegador).
 3. **Rota das Feiras:**
    - Só 14 fases (2 mercados); a arte dos itens de Manaus é provisória (reaproveitada da Quitanda).
    - Casas do tabuleiro pequenas no celular (26 a 29 px): é o principal ponto do relatório de avaliação ainda não resolvido.
