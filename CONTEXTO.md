@@ -1,6 +1,6 @@
 # Contexto do projeto (para retomar o trabalho)
 
-Resumo do estado atual, das decisões tomadas e de como continuar. Atualizado em 19/11/2026 (manhã).
+Resumo do estado atual, das decisões tomadas e de como continuar. Atualizado em 20/11/2026.
 
 ## O que é
 
@@ -94,7 +94,7 @@ Os itens do tabuleiro com arte ficam em `versao-b-quitanda-zen/itens/<código>.w
 
 **Música e banca:** a Rota toca a trilha do mercado atual (`versao-a-rota-das-feiras/musica/01.ogg` e `02.ogg`, cópias das da Quitanda; o `copy-web.js` copia a pasta). A tela inicial mostra a banca da Quitanda (`bancaHtml()`, toldo verde-água, sem decorações), que enche com o Álbum.
 
-A Versão A usa as mesmas ilustrações dos 12 mercados (`versao-a-rota-das-feiras/mercados/`, campo `img` em `MARKETS`): no mapa (os mercados abertos coloridos, os demais em cinza com cadeado), na lista do mapa e no topo da tela de cada mercado. Os itens dela são próprios (5 níveis); a arte dos 30 fica em `versao-a-rota-das-feiras/itens/` e todos estão em `ITEM_ART`. Os 15 de Manaus, por enquanto, são cópias de itens da Quitanda (origem na lista de arte). A lista de arte tem a seção "Itens da Rota das Feiras" (tipo `item-rota`). O botão **Álbum** da tela inicial mostra os 30 ingredientes, agrupados por mercado (`S.alb`, `S.albDone`); linha completa rende +100 moedas. Em Ajustes, **Trocar de aparelho** gera e restaura um código `RF1-…`, igual ao da Quitanda. Os clientes dos pedidos são sorteados entre os 28 personagens (`FACES`, com ilustração por `fc()`). O `app-android-rota/scripts/copy-web.js` copia as pastas `mercados/`, `itens/` e `personagens/`.
+A Versão A usa as mesmas ilustrações dos 12 mercados (`versao-a-rota-das-feiras/mercados/`, campo `img` em `MARKETS`): no mapa (os mercados abertos coloridos, os demais em cinza com cadeado), na lista do mapa e no topo da tela de cada mercado. Os itens dela são próprios (5 níveis); a arte dos 30 fica em `versao-a-rota-das-feiras/itens/` e todos estão em `ITEM_ART`. Os 15 de Manaus, por enquanto, são cópias de itens da Quitanda (origem na lista de arte). A lista de arte tem a seção "Itens da Rota das Feiras" (tipo `item-rota`). O botão **Álbum** da tela inicial mostra os 30 ingredientes, agrupados por mercado (`S.alb`, `S.albDone`); linha completa rende +100 moedas. Em Ajustes, **Trocar de aparelho** gera e restaura um código `RF1-…`, igual ao da Quitanda. Caixote e mofo têm arte em pixel art com animação de remoção (`versao-a-rota-das-feiras/obstaculos/`, `fxObs()`); todo caixote guarda um item, que fica na casa ao quebrar (`abrir()`, seção 3.14 do design). Os clientes dos pedidos são sorteados entre os 28 personagens (`FACES`, com ilustração por `fc()`). O `app-android-rota/scripts/copy-web.js` copia as pastas `mercados/`, `itens/` e `personagens/`.
 
 ## Eventos (Natal 2026) nos dois jogos
 
