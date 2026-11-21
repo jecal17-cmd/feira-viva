@@ -10,6 +10,7 @@ on:
       - 'versao-b-quitanda-zen/**'
       - 'app-android/**'
       - 'app-android-rota/**'
+      - 'chave-teste/**'
       - '.github/workflows/android.yml'
   workflow_dispatch:
 
@@ -46,6 +47,14 @@ jobs:
       - name: Compilar o APK
         working-directory: ${{ matrix.dir }}/android
         run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+      - name: Conferir a chave fixa de teste
+        # Todo APK de teste precisa sair com a mesma chave (chave-teste/); assim o celular aceita atualizar por cima
+        run: |
+          apksigner="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)/apksigner"
+          saida=$("$apksigner" verify --print-certs android/app/build/outputs/apk/debug/app-debug.apk)
+          echo "$saida" | grep -qi "SHA-256 digest: bf0aa4c4779cdaa0606c875b5c831080d4dc935c81b25d2763743f3004f088bb" \
+            || { echo "$saida"; echo "::error::O APK não saiu com a chave fixa de teste."; exit 1; }
+          echo "Chave fixa de teste conferida"
       - name: Guardar o APK
         uses: actions/upload-artifact@v4
         with:
