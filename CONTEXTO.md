@@ -41,7 +41,7 @@ A desenvolvedora se chama **Bentevi** (Bentevi Games): a vinheta de abertura da 
 
 - **Navegador:** abrir o `index.html` de cada versão. Parâmetros úteis: `?lang=en` ou `?lang=pt` (idioma) e `?intro=0` (pula a vinheta).
 - **Web publicada (GitHub Pages da `main`):** `https://jecal17-cmd.github.io/feira-viva/versao-b-quitanda-zen/` e `.../versao-a-rota-das-feiras/`.
-- **APKs:** aba **Actions**, execução mais recente de *Apps Android (APKs de teste)*, em **Artifacts**: `quitanda-apk-teste` e `rota-das-feiras-apk-teste` (APK de debug, instala direto no celular).
+- **APKs:** aba **Actions**, execução mais recente de *Apps Android (APKs de teste)*, em **Artifacts**: `quitanda-apk-teste` e `rota-das-feiras-apk-teste` (APK de debug, instala direto no celular). Desde 21/11/2026 os dois saem assinados com a **chave fixa de teste** (`chave-teste/apk-teste.keystore`): o APK novo instala **por cima** do antigo, sem desinstalar. Só a primeira instalação depois dessa mudança exige desinstalar uma vez.
 - **Ferramentas de teste dentro dos jogos:**
   - Quitanda: em **Ajustes**, 5 toques no número da versão mostram o Modo teste, o painel de métricas e "Remover anúncios (simulado)".
   - Rota: em **Ajustes** há o Modo teste (libera fases e oferece +5 turnos) e o painel por fase (tentativas, vitórias, derrotas, taxa de derrota).

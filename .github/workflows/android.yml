@@ -10,6 +10,7 @@ on:
       - 'versao-b-quitanda-zen/**'
       - 'app-android/**'
       - 'app-android-rota/**'
+      - 'chave-teste/**'
       - '.github/workflows/android.yml'
   workflow_dispatch:
 
@@ -46,6 +47,13 @@ jobs:
       - name: Compilar o APK
         working-directory: ${{ matrix.dir }}/android
         run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+      - name: Conferir a chave fixa de teste
+        # Todo APK de teste precisa sair com a mesma chave (chave-teste/); assim o celular aceita atualizar por cima
+        run: |
+          saida=$(keytool -printcert -jarfile android/app/build/outputs/apk/debug/app-debug.apk)
+          echo "$saida" | grep -q "BF:0A:A4:C4:77:9C:DA:A0:60:6C:87:5B:5C:83:10:80:D4:DC:93:5C:81:B2:5D:27:63:74:3F:30:04:F0:88:BB" \
+            || { echo "$saida"; echo "::error::O APK não saiu com a chave fixa de teste."; exit 1; }
+          echo "Chave fixa de teste conferida"
       - name: Guardar o APK
         uses: actions/upload-artifact@v4
         with:

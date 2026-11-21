@@ -33,6 +33,14 @@ android {
         }
     }
     signingConfigs {
+        // Chave FIXA dos APKs de teste (chave-teste/ na raiz do repositório): permite instalar
+        // um APK novo por cima do antigo, sem desinstalar. Não é a chave da Play Store.
+        debug {
+            storeFile rootProject.file('../../chave-teste/apk-teste.keystore')
+            storePassword 'android'
+            keyAlias 'apkteste'
+            keyPassword 'android'
+        }
         release {
             if (keystorePath) {
                 storeFile file(keystorePath)
@@ -43,6 +51,9 @@ android {
         }
     }
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
         release {
             if (keystorePath) signingConfig signingConfigs.release
             minifyEnabled false
