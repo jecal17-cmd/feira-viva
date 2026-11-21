@@ -50,8 +50,9 @@ jobs:
       - name: Conferir a chave fixa de teste
         # Todo APK de teste precisa sair com a mesma chave (chave-teste/); assim o celular aceita atualizar por cima
         run: |
-          saida=$(keytool -printcert -jarfile android/app/build/outputs/apk/debug/app-debug.apk)
-          echo "$saida" | grep -q "BF:0A:A4:C4:77:9C:DA:A0:60:6C:87:5B:5C:83:10:80:D4:DC:93:5C:81:B2:5D:27:63:74:3F:30:04:F0:88:BB" \
+          apksigner="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)/apksigner"
+          saida=$("$apksigner" verify --print-certs android/app/build/outputs/apk/debug/app-debug.apk)
+          echo "$saida" | grep -qi "SHA-256 digest: bf0aa4c4779cdaa0606c875b5c831080d4dc935c81b25d2763743f3004f088bb" \
             || { echo "$saida"; echo "::error::O APK não saiu com a chave fixa de teste."; exit 1; }
           echo "Chave fixa de teste conferida"
       - name: Guardar o APK
