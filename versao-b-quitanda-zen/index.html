@@ -1688,8 +1688,8 @@ const vinheta=(()=>{
     const pouso=caixa(), parado=img('pousado',SB), canta=img('cantando',SB,`left:${9*SB}px;top:${4*SB}px;opacity:0`);
     pouso.append(parado,canta);
     galho.append(voo,freio,pouso); palco.append(galho);
-    const wm=raiz.querySelector('.wm');
-    E={raiz,galho,voo,a1c,a1b,a2c,a2b,freio,pouso,parado,canta,sil:wm?[...wm.querySelectorAll('span')]:[],sub:wm&&wm.querySelector('i'),ws:raiz.querySelector('.wsub')};
+    const wm=raiz.querySelector('.wm,.vn-wm');
+    E={raiz,galho,voo,a1c,a1b,a2c,a2b,freio,pouso,parado,canta,sil:wm?[...wm.querySelectorAll('span')]:[],sub:wm&&wm.querySelector('i'),ws:raiz.querySelector('.wsub,.vn-sub')};
     a1c.style.transformOrigin=a2c.style.transformOrigin=`${PC.x*KC}px ${PC.y*KC}px`;
     a1b.style.transformOrigin=a2b.style.transformOrigin=`${PB.x*KC}px ${PB.y*KC}px`;
     voo.style.transformOrigin=`${PEC.x*KC}px ${PEC.y*KC}px`; freio.style.transformOrigin=`${PEF.x*KP}px ${PEF.y*KP}px`; pouso.style.transformOrigin=`${PE.x*SB}px ${PE.y*SB}px`;
