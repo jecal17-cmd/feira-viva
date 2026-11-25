@@ -27,6 +27,8 @@ O bem-te-vi, o passarinho que canta o próprio nome. A vinheta de 5 s (voo, pous
 
 Área de proteção: espaço livre igual à altura da letra “e” em volta do logotipo. Tamanho mínimo: 24 px de altura.
 
+Arte pronta do pássaro pousado: `../marketing/instagram/bentevi-apps/fonte/assets/bentevi-no-galho.png` (pássaro e galho já montados na posição da vinheta, com os pés agarrando o galho e sem a franja rosa do recorte). Use esta imagem em vez de sobrepor `pousado.png` e `galho.png` à mão.
+
 ## Cores
 
 | Nome | Hex | Uso |

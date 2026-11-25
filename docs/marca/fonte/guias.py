@@ -19,7 +19,7 @@ APPS = {
   simbolo='O bem-te-vi, o passarinho que canta o próprio nome. A vinheta de 5 s (voo, pouso no galho e o canto real “bem-te-vi”) abre todos os apps.',
   cores=MESTRE['cores'],
   fontes=[('Baloo 2', '800 no logotipo e títulos; 500 e 700 em textos', 'OFL, Google Fonts')],
-  img=['pousado.png', 'galho.png'],
+  img=['bentevi-no-galho.png'],
   visual=['Fundo creme liso ou amarelo bem-te-vi; nada de gradientes pesados.', 'O pássaro sempre em 3D, com sombra suave, nunca recolorido ou espelhado de cabeça para baixo.',
           'Cartões brancos com cantos bem arredondados (raio 44 px em peças 1080) e sombra verde suave.',
           'Cada app mantém a própria cor; a Bentevi aparece como assinatura: o pássaro + “Bentevi Apps” no rodapé.'],
@@ -109,7 +109,7 @@ def gerar(id_, a):
     if id_ == 'teto':
         ic = TETOIC(150)
     elif id_ == 'bentevi-apps':
-        ic = '<img src="../assets/pousado.png" style="height:190px;box-shadow:none;border-radius:0;width:auto">'
+        ic = '<img src="../assets/bentevi-no-galho.png" style="height:240px;box-shadow:none;border-radius:0;width:auto">'
     else:
         ic = logo
     sw = ''.join(f'<div class="sw"><div class="cx" style="background:{h};color:{"#fff" if lum(h)<.55 else "#1D2B26"}">{h}</div><b>{n}</b><span>{u}</span></div>' for n, h, u in a['cores'])
@@ -121,10 +121,10 @@ def gerar(id_, a):
     if a.get('arquitetura'):
         arq = '<h2>Arquitetura de marca</h2><p>A Bentevi Apps é a marca-mãe; cada app tem nome, cor e personagem próprios e leva a assinatura “um app Bentevi” (ou “um jogo Bentevi”) com o pássaro.</p><div class="arq">' + ''.join(
             f'<div>{TETOIC(110) if f=="TETO" else f"<img src=../assets/{f}>"}<b>{n}</b><span>{d}</span></div>' for n, f, d in a['arquitetura']) + '</div>'
-    endosso = '' if id_ == 'bentevi-apps' else f'''<h2>Assinatura Bentevi Apps</h2><div class="endo"><img src="../assets/pousado.png"><div><b>um app Bentevi</b> (ou <b>um jogo Bentevi</b>), com o pássaro, no rodapé de peças e na tela Sobre. Toda abertura do app toca a vinheta Bentevi Apps (5 s).
+    endosso = '' if id_ == 'bentevi-apps' else f'''<h2>Assinatura Bentevi Apps</h2><div class="endo"><img src="../assets/pousado-limpo.png"><div><b>um app Bentevi</b> (ou <b>um jogo Bentevi</b>), com o pássaro, no rodapé de peças e na tela Sobre. Toda abertura do app toca a vinheta Bentevi Apps (5 s).
       Cores da marca-mãe: creme #FFF6D9, verde #1D4A3F, ouro #E0A800, amarelo #F7C51E, musgo #557A6E. O {a["nome"]} mantém a própria paleta; a da Bentevi só aparece na assinatura.</div></div>'''
     h = f'''<!doctype html><html><head><meta charset="utf-8"><title>Identidade visual · {a["nome"]}</title><style>{CSS}</style></head><body>
-<section class="capa" style="background:{a["fundo"]}"><div class="topo"><img src="../assets/pousado.png"> Bentevi Apps · Guia de identidade visual</div>
+<section class="capa" style="background:{a["fundo"]}"><div class="topo"><img src="../assets/pousado-limpo.png"> Bentevi Apps · Guia de identidade visual</div>
 <div class="capa-c"><div class="ic">{ic}</div><h1 style="color:{a["cor"]}">{a["nome"]}</h1><div class="sub">{a["sub"]}</div><div class="prom">“{a["promessa"]}”</div></div>
 <div class="rod">Versão 1.0 · novembro de 2026</div></section>
 <section><h2>Essência</h2><p class="lead">{a["essencia"]}</p>{arq}
