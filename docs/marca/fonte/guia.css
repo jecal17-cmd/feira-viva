@@ -1,0 +1,49 @@
+@font-face{font-family:Baloo;src:url(../assets/fontes/baloo-2-latin-500-normal.woff2);font-weight:500}
+@font-face{font-family:Baloo;src:url(../assets/fontes/baloo-2-latin-700-normal.woff2);font-weight:700}
+@font-face{font-family:Baloo;src:url(../assets/fontes/baloo-2-latin-800-normal.woff2);font-weight:800}
+@font-face{font-family:Andika;src:url(../assets/fontes/andika-latin-400-normal.woff2);font-weight:400}
+@font-face{font-family:SG;src:url(../assets/fontes/space_grotesk.ttf);font-weight:300 700}
+@page{size:A4;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:11pt/1.5 Roboto,system-ui,sans-serif;color:#1D2B26;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+section{width:210mm;min-height:297mm;padding:18mm 18mm 14mm;page-break-after:always;position:relative}
+section:last-child{page-break-after:auto}
+h1{font:800 64pt/1 Baloo;letter-spacing:-1px}
+h2{font:800 20pt Baloo;color:#1D4A3F;margin:16px 0 8px}
+p{margin:6px 0}
+.lead{font:700 15pt/1.35 Baloo;color:#1D4A3F}
+.nota{font-size:9.5pt;color:#557A6E}
+.capa{display:flex;flex-direction:column;justify-content:space-between}
+.topo{display:flex;align-items:center;gap:10px;font:800 12pt Baloo;color:#1D4A3F}
+.topo img{height:40px}
+.capa-c{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px}
+.capa-c .ic img,.icg{width:170px;border-radius:22%;box-shadow:0 14px 30px rgba(0,0,0,.2)}
+.sub{font:700 14pt Baloo;color:#557A6E}
+.prom{font:800 22pt Baloo;color:#1D4A3F;margin-top:20px}
+.rod{font:700 10pt Baloo;color:#557A6E}
+.logo{background:#fafaf7;border:1px solid #e6e6df;border-radius:16px;padding:28px;display:flex;flex-direction:column;align-items:center;margin:8px 0 10px}
+.wm{font:800 80pt/1 Baloo;letter-spacing:-2px;color:#1D4A3F;position:relative;display:inline-block}
+.wm .y{color:#E0A800}
+.wm i{position:absolute;left:4%;right:4%;bottom:-4px;height:9px;border-radius:9px;background:#F7C51E}
+.wsub{font:800 16pt Baloo;letter-spacing:9px;color:#557A6E;margin-top:16px;text-transform:uppercase}
+.sws{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.sw .cx{height:70px;border-radius:12px;display:flex;align-items:flex-end;padding:6px 9px;font:600 9.5pt SG;border:1px solid rgba(0,0,0,.08)}
+.sw b{display:block;font:800 11pt Baloo;margin-top:4px}
+.sw span{font-size:8.5pt;color:#556}
+.ft{margin:6px 0 10px}
+.amostra{font-size:22pt;line-height:1.2;color:#1D4A3F}
+.lic{font-size:8.5pt;color:#889}
+.imgs{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap}
+.imgs img{height:110px;max-width:220px;object-fit:contain}
+ul{padding-left:18px}li{margin:4px 0}
+.nao li::marker{content:"✕  ";color:#C62828}
+.telas{display:flex;gap:16px;justify-content:center}
+.cel{width:31%;background:#111;border-radius:22px;padding:7px}
+.cel img{width:100%;display:block;border-radius:16px}
+.duas{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.endo{display:flex;gap:16px;align-items:center;background:#FFF6D9;border-radius:16px;padding:14px 18px;font-size:10pt}
+.endo img{height:70px}
+.arq{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:center}
+.arq img{width:110px;border-radius:22%}
+.arq div{display:flex;flex-direction:column;align-items:center;gap:4px}
+.arq b{font:800 12pt Baloo}.arq span{font-size:9pt;color:#557A6E}

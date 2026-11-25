@@ -1,5 +1,7 @@
 # Bentevi no Instagram · guia de lançamento
 
+> **Atualização (25/11/2026):** a marca agora é **Bentevi Apps** e o perfil cobre os quatro apps. O guia do perfil, a bio nova, as peças da marca, do Teto e da Rota das Feiras e o calendário conjunto estão em `bentevi-apps/GUIA.md`; ele substitui a seção 2 abaixo. Guias de identidade visual: `docs/marca/`.
+
 Material para abrir o perfil da Bentevi com foco no **Quitanda Zen** (nome internacional: *Quitanda: Merge Across Brazil*). Tudo está em português (`pt-BR/`) e inglês (`en-US/`).
 
 ## 1. Antes de postar

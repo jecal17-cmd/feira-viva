@@ -1,0 +1,106 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- Recriação das telas do Teto no tema do app (Material 3, verde #1B6E4F, âmbar #F2A900, Space Grotesk nos números).
+     Valores de exemplo. Abrir com ?t=hoje | explica | ganha | avisos -->
+<style>
+@font-face{font-family:SG;src:url(assets/fontes/space_grotesk.ttf);font-weight:300 700}
+:root{--p:#1B6E4F;--pc:#CDEBDD;--opc:#0B2E21;--sec:#4C6358;--ter:#8A5A00;--err:#B3261E;--bg:#F6FBF7;--card:#E9F2EC;--sv:#404943;--pos:#1B8A4B;--neg:#C62828;--out:#BFC9C2}
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:360px;height:640px;overflow:hidden;background:var(--bg);font-family:Roboto,system-ui,sans-serif;color:#171D1A;font-size:14px}
+.sg{font-family:SG}
+.top{height:56px;display:flex;align-items:center;padding:0 16px;gap:10px}
+.top .nome{font:700 22px SG;letter-spacing:-.5px;color:var(--p)}
+.top .esp{flex:1}
+.ic{width:24px;height:24px;color:var(--sv)}
+.cont{padding:4px 14px;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--card);border-radius:12px;padding:18px 20px}
+.t-m{font:500 16px SG}
+.big{font:700 45px SG;letter-spacing:-.5px;line-height:1.1}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+.bold{font-weight:700}
+.row{display:flex;align-items:center;gap:8px}
+.tb{color:var(--p);font-weight:500;font-size:14px;padding:8px 10px;border-radius:20px}
+.small{font-size:12px;color:var(--sv)}
+.div{height:1px;background:var(--out);margin:6px 0}
+.info{width:18px;height:18px;border-radius:50%;border:1.6px solid var(--sv);display:inline-grid;place-items:center;font:700 11px Roboto;color:var(--sv)}
+.lst .it{display:flex;align-items:center;padding:9px 0;gap:10px;border-bottom:1px solid #D7E2DA}
+.lst .it:last-child{border:0}
+.dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:600 13px SG;background:#fff;color:var(--p)}
+.grow{flex:1}
+.chipb{background:var(--p);color:#fff;border-radius:20px;padding:7px 14px;font-weight:500;font-size:13px}
+.chipo{border:1px solid var(--out);color:var(--p);border-radius:20px;padding:6px 13px;font-weight:500;font-size:13px}
+.nav{position:absolute;bottom:0;left:0;right:0;height:72px;background:#E3EDE6;display:flex;justify-content:space-around;align-items:center}
+.nav div{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11.5px;color:var(--sv)}
+.nav .on b{background:var(--pc);border-radius:16px;padding:4px 20px;display:block}
+.nav .on{font-weight:700;color:#171D1A}
+.nav svg{width:22px;height:22px;display:block}
+.fab{position:absolute;right:16px;bottom:88px;width:56px;height:56px;border-radius:16px;background:var(--pc);display:grid;place-items:center;box-shadow:0 3px 6px rgba(0,0,0,.2);font:400 34px Roboto;color:var(--opc)}
+.scrim{position:absolute;inset:0;background:rgba(0,0,0,.32)}
+.dlg{position:absolute;left:24px;right:24px;top:70px;background:#EEF5F0;border-radius:28px;padding:24px}
+.dlg h2{font:400 22px SG;margin-bottom:14px}
+.lc{display:flex;justify-content:space-between;gap:8px;padding:3px 0;font-size:14px}.lc span:last-child{white-space:nowrap}
+.opt{border:1px solid var(--out);border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:center}
+.opt.sel{background:var(--p);color:#fff;border-color:var(--p);font-weight:700}
+.opt .ck{margin-left:auto;font-weight:700}
+.opt small{display:block;font-weight:400;font-size:12px;opacity:.85;margin-top:2px}
+.prog{height:4px;background:#D3E3D9;border-radius:2px;margin:0 16px}.prog i{display:block;height:4px;width:35%;background:var(--p);border-radius:2px}
+.btn{background:var(--p);color:#fff;border-radius:22px;text-align:center;padding:12px;font-weight:500}
+.tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:8px;background:#fff;color:var(--ter)}
+</style></head>
+<body>
+<script>
+const MARCA=(c='#1B6E4F',s=34)=>`<svg width="${s}" height="${s}" viewBox="0 0 120 120"><path d="M10,64 H26 L60,28 L94,64 H110" fill="none" stroke="${c}" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/><circle cx="60" cy="80" r="18" fill="#F2A900"/><circle cx="60" cy="80" r="12" fill="none" stroke="#C98200" stroke-width="3"/></svg>`;
+const I={
+ casa:'<svg viewBox="0 0 24 24"><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>',
+ cal:'<svg viewBox="0 0 24 24"><path fill="currentColor" d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>',
+ rec:'<svg viewBox="0 0 24 24"><path fill="currentColor" d="M18 17H6v-2h12v2zm0-4H6v-2h12v2zm0-4H6V7h12v2zM3 22l1.5-1.5L6 22l1.5-1.5L9 22l1.5-1.5L12 22l1.5-1.5L15 22l1.5-1.5L18 22l1.5-1.5L21 22V2l-1.5 1.5L18 2l-1.5 1.5L15 2l-1.5 1.5L12 2l-1.5 1.5L9 2 7.5 3.5 6 2 4.5 3.5 3 2v20z"/></svg>',
+ cad:'<svg viewBox="0 0 24 24"><path fill="currentColor" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2z"/></svg>',
+ lis:'<svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>',
+ eng:'<svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>',
+ ajuda:'<svg class="ic" viewBox="0 0 24 24"><path fill="currentColor" d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg>'};
+const TOPO=`<div class="top">${MARCA()}<span class="nome">teto</span><span class="esp"></span>${I.ajuda}${I.eng}</div>`;
+const nav=`<div class="nav">${[['casa','Hoje',1],['cal','Calendário'],['rec','Dívidas'],['cad','Guardado'],['lis','Contas']].map(([i,t,on])=>`<div class="${on?'on':''}"><b>${I[i]}</b>${t}</div>`).join('')}</div><div class="fab">+</div>`;
+const cartao=`<div class="card">
+  <div class="row"><span class="t-m">Teto de hoje</span><span class="info">i</span></div>
+  <div class="big pos">R$ 84,30</div>
+  <div class="bold" style="color:var(--p)">Tranquilo</div>
+  <div class="row"><span class="grow" style="font-size:13.5px">Livre até 05/12: R$ 1.011,60 · 12 dia(s)</span><span class="tb">De onde vem?</span></div>
+  <div class="small">Desde ontem: Corridas Uber +R$ 46,00</div>
+  <div class="div"></div>
+  <div style="font-size:13.5px;line-height:1.4">Você gastou R$ 18,50 hoje. O que sobrar aumenta o teto dos próximos dias.</div>
+</div>`;
+const T={
+hoje:()=>`${TOPO}<div class="cont">${cartao}
+<div class="card" style="padding:14px 18px"><div class="t-m" style="margin-bottom:4px">Próximas saídas</div><div class="lst">
+ <div class="it"><span class="dot">28</span><span class="grow">Internet<div class="small">Débito automático</div></span><b>R$ 99,90</b></div>
+ <div class="it"><span class="dot">02</span><span class="grow">Parcela da moto<div class="small">8 de 24</div></span><b>R$ 412,00</b></div>
+ <div class="it"><span class="dot">05</span><span class="grow">Aluguel</span><b>R$ 1.150,00</b></div>
+</div></div></div>${nav}`,
+explica:()=>`${TOPO}<div class="cont">${cartao}</div>${nav}<div class="scrim"></div>
+<div class="dlg"><h2>De onde vem o teto</h2>
+${[['Saldo nas contas','+R$ 2.340,00'],['Entradas (ritmo do pior mês)','+R$ 1.480,00'],['Contas fixas','−R$ 1.249,90'],['Fatura do cartão','−R$ 688,40'],['Parcelas','−R$ 412,00'],['Planejados: mercado, transporte','−R$ 320,00'],['Colchão (5%)','−R$ 138,10']].map(([a,b])=>`<div class="lc"><span>${a}</span><span class="${b[0]=='+'?'pos':'neg'}">${b}</span></div>`).join('')}
+<div class="div"></div><div class="lc bold"><span>Livre até 05/12</span><span>R$ 1.011,60</span></div>
+<div class="lc"><span>÷ 12 dia(s) = média por dia</span><span>R$ 84,30</span></div>
+<div class="div"></div><div class="lc bold"><span>Teto de hoje</span><span class="pos">R$ 84,30</span></div>
+<div style="text-align:right;margin-top:14px"><span class="tb">Fechar</span></div></div>`,
+ganha:()=>`<div class="top"><span style="font-size:22px;color:var(--sv)">←</span><span class="esp"></span><span class="small">2 de 6</span></div><div class="prog"><i></i></div>
+<div class="cont" style="padding:22px 20px;gap:14px">
+<div style="font:600 26px SG;line-height:1.15">Como você ganha?</div>
+<div class="small" style="font-size:13.5px">O app monta o seu período e o seu teto a partir disso.</div>
+<div class="opt">💼<span>Salário fixo<small>CLT, servidor, aposentadoria</small></span></div>
+<div class="opt sel">🛵<span>Renda que varia<small>Apps, autônomo, MEI, comissão</small></span><span class="ck">✓</span></div>
+<div class="opt">➕<span>Os dois<small>Salário e um extra que varia</small></span></div>
+<div style="font:600 17px SG;margin-top:8px">Num mês ruim, quanto entra no total?</div>
+<div class="opt" style="justify-content:space-between"><span class="small">Valor do pior mês</span><span class="sg" style="font-size:20px;font-weight:600">R$ 2.600,00</span></div>
+<div class="small">O plano usa o mês mais fraco: se vier mais, sobra.</div>
+<div class="btn" style="margin-top:10px">Continuar</div></div>`,
+avisos:()=>`${TOPO}<div class="cont">${cartao}
+<div class="card" style="padding:14px 18px"><div class="row" style="margin-bottom:4px"><span class="t-m grow">Lidos dos avisos</span><span class="tag">3 novos</span></div><div class="lst">
+ <div class="it"><span class="dot" style="background:#000;color:#fff">U</span><span class="grow">Uber · repasse<div class="small">Entrada · 14:32</div></span><b class="pos">+R$ 46,00</b></div>
+ <div class="it"><span class="dot" style="background:#EA1D2C;color:#fff">i</span><span class="grow">iFood · lanche<div class="small">Comer fora · cartão</div></span><b class="neg">−R$ 18,50</b></div>
+ <div class="it"><span class="dot" style="background:#820AD1;color:#fff">N</span><span class="grow">Pix recebido<div class="small">Entrada · 09:10</div></span><b class="pos">+R$ 120,00</b></div>
+</div><div class="row" style="margin-top:8px"><span class="chipb">Confirmar tudo como sugerido</span></div></div></div>${nav}`};
+document.body.innerHTML=T[new URLSearchParams(location.search).get('t')||'hoje']();
+document.fonts.ready.then(()=>document.body.dataset.pronto='1');
+</script>
+</body></html>
