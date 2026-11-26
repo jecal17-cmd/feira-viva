@@ -453,6 +453,21 @@ Pedido da dona do projeto: deixar o jogo mais "livre", avisar quando os cestos e
 - **Detalhes:** a fileira usa a quantidade real de itens descobertos de cada linha (linhas curtas não apertam as outras). Na Quitanda, a folga da balança (2 fileiras da frente, à esquerda) só existe se a balança foi comprada e agora se divide entre as linhas da fileira; o relógio do poste sobe junto com o tampo. Não há mais limite de 14 linhas.
 - **Resultado medido (tela de 360 px):** Quitanda com as 13 linhas, 2 por fileira e itens do mesmo tamanho de antes; Rota com as 9 linhas, 5 fileiras inteiras à vista. Simulado com até 48 linhas: tudo continua dentro da banca (3 a 5 por fileira, itens menores).
 
+### 4.14 Botão voltar e detalhes no álbum (26/11/2026; vale para a Quitanda e a Rota)
+
+- **Botão voltar do Android.** Regra: só sai do app na tela inicial, com dois toques em até 2 s (o primeiro mostra “Toque em voltar de novo para sair”). Em qualquer outra tela, volta um passo:
+  - fecha a camada da frente: vinheta, viagem entre mercados (Quitanda), aviso ou pop-up (pelo botão de fechar, continuar ou cancelar; anúncio simulado só depois da contagem);
+  - painel aberto por cima de outro (por exemplo, Melhorias → Loja, Diário → Loja) volta ao painel anterior (`sheetPilha`, função `empilha`), e só depois fecha;
+  - Quitanda: tabuleiro → tela inicial;
+  - Rota: dentro da fase, o voltar abre a **Pausa** (Continuar, Recomeçar, Sair para o mercado) em vez de abandonar a fase, para não contar derrota por engano; com a pausa aberta, voltar continua a fase. Mercado → mapa → tela inicial. Com ferramenta armada, o voltar só a desarma.
+  - A Rota ganhou o plugin `@capacitor/app` no `app-android-rota/package.json` (antes, o voltar fechava o app em qualquer tela).
+- **Pop-up de detalhes.** Tocar em qualquer quadradinho do álbum abre uma ficha:
+  - **Ingrediente** (Quitanda: Caderno de Receitas → Ingredientes; Rota: Álbum → Ingredientes): arte grande, linha e nível, uma curiosidade (`INFO`, pt e en), a fila de níveis da linha com o atual em destaque (os não vistos aparecem como ❔), o que sai ao juntar dois, onde encontrar (cidades/mercado) e, na Quitanda, as receitas que usam o item (as não descobertas aparecem só como contagem) e os personagens que gostam da linha; na Rota, quantas moedas o item rende num pedido. Itens ainda não descobertos também abrem, com a dica de como chegar a eles, sem revelar o nome.
+  - **Receita** (Quitanda: aba Receitas): os dois ingredientes, a descrição, uma curiosidade (`REC_INFO`) e os mercados onde ela é pedida. Receita não descoberta mostra só as linhas e a dica.
+  - **Personagem** (Quitanda: Turma da Feira; Rota: aba nova **Clientes** do Álbum): retrato, ocupação, mercado de origem, uma ficha que explica a profissão e uma curiosidade (`BIO`, mesmo texto nos dois jogos), a frase e, na Quitanda, a linha preferida e o nível de amizade.
+- **Rota: aba Clientes.** Cada personagem entra no Álbum quando faz o primeiro pedido no tabuleiro (`S.met`; 1 = novo, 2 = visto). Novidades acendem o ponto no botão Álbum e na aba. Saves antigos começam vazios e enchem jogando.
+- **Textos:** 104 curiosidades de ingredientes e 25 de receitas na Quitanda, 45 de ingredientes na Rota e 28 fichas de personagens. Escritos a partir de conhecimento geral; precisam da mesma revisão local e de inglês pedida para os textos culturais (pendência 4 do `CONTEXTO.md`).
+
 ## 5. Localização e idiomas
 
 **Ordem de lançamento.** Português (BR) + inglês no início; espanhol em seguida (público latino-americano); outros idiomas (alemão, francês etc.) só depois que os dados mostrarem de onde vêm jogadores e receita. O inglês é quase obrigatório porque o dinheiro do gênero está concentrado em mercados ocidentais, em especial os EUA.

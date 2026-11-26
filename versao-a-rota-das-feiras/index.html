@@ -82,6 +82,19 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px}
 .ing small{display:block;font-size:10px;line-height:1.2;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ing i{position:absolute;top:3px;left:5px;font:800 10px var(--text);font-style:normal;color:var(--muted)}
 .ing em{position:absolute;top:-5px;right:-3px;background:var(--star);color:#3a2a00;font:800 9px var(--text);font-style:normal;border-radius:99px;padding:1px 5px}
+/* Álbum: abas Ingredientes e Clientes e pop-up de detalhes ao tocar num ingrediente ou cliente */
+.ndot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--warn);vertical-align:2px}
+.alb.cli{grid-template-columns:repeat(4,1fr)}.ing .e .pf{width:34px;height:34px;object-fit:contain;vertical-align:0;pointer-events:none}
+.toque{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s}.toque:active{transform:scale(.96)}
+.info{display:flex;flex-direction:column;gap:10px;text-align:left}
+.ihead{display:flex;align-items:center;gap:12px}.ihead h2{margin:0;font-size:20px;line-height:1.15}.ihead p{color:var(--muted);font-size:13px;margin:2px 0 0}
+.ibig{flex:0 0 auto;width:76px;height:76px;border-radius:18px;background:var(--bg);display:grid;place-items:center;font-size:50px;line-height:1;box-shadow:inset 0 -4px 0 var(--lc,var(--line))}
+.ibig .ii{vertical-align:0}.ibig .pf{width:68px;height:68px;object-fit:contain;vertical-align:0}
+.itxt{font-size:15px;line-height:1.45}.info .q{font-style:italic;color:var(--muted)}
+.cadeia{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1px 2px;font-size:22px;line-height:1.2;background:var(--bg);border-radius:12px;padding:6px 8px}
+.cadeia span{opacity:.7}.cadeia span.on{opacity:1;transform:scale(1.3);margin:0 4px}.cadeia span.no{opacity:.4;filter:grayscale(1);font-size:15px}.cadeia i{font-style:normal;color:var(--muted);font-size:11px}
+.idet{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;margin:0;font-size:13.5px;line-height:1.35}.idet dt{font-weight:800}.idet dd{margin:0;color:var(--muted)}
+@media (prefers-reduced-motion: reduce){.toque{transition:none}}
 .ing.no{opacity:.55} .ing.no .e{filter:grayscale(1)} .ing.new{box-shadow:inset 0 -3px 0 var(--lc),0 0 0 2px var(--star)}
 .xcode{width:100%;font:12px/1.35 ui-monospace,monospace;border-radius:10px;border:2px solid var(--line);padding:8px;background:var(--cell);color:var(--ink);resize:none;word-break:break-all}
 .card h3{margin:4px 0 0;font-size:14px}
@@ -520,6 +533,117 @@ const MARKETS=[
 const REGN=[['Norte','North'],['Nordeste','Northeast'],['Centro-Oeste','Center-West'],['Sudeste','Southeast'],['Sul','South']];
 const FACES=[['ze','Seu Zé'],['bia','Bia'],['mingau','Mingau'],['tonho','Tonho'],['naza','Dona Nazaré'],['raimundo','Seu Raimundo'],['iara','Iara'],['chico','Seu Chico'],['dada','Dona Dadá'],['jorginho','Jorginho'],['biu','Mestre Biu'],['flor','Maria Flor'],['cicero','Seu Cícero'],['rosinha','Rosinha'],['keiko','Dona Keiko'],['antenor','Seu Antenor'],['giuseppe','Seu Giuseppe'],['paula','Paula'],['geralda','Dona Geralda'],['tiao','Tiãozinho'],['jacinto','Seu Jacinto'],['dandara','Dandara'],['gaudencio','Seu Gaudêncio'],['livia','Lívia'],['dico','Dico'],['zulma','Dona Zulma'],['halina','Dona Halina'],['estanislau','Seu Estanislau']];
 const FACE_IDS=new Set(FACES.map(f=>f[0]));
+// Curiosidades dos ingredientes (pop-up do Álbum). Chave: linha + nível. [português, inglês]
+const INFO={
+ ac1:['O açaí nasce em cachos no alto de uma palmeira fininha. O apanhador sobe com a peconha, um laço preso nos pés, para cortar o cacho.','Açaí grows in bunches at the top of a slender palm. Pickers climb with a peconha, a loop tied around their feet, to cut the bunch.'],
+ ac2:['Os frutos são bolinhas roxas, quase pretas, com um caroço grande e uma camada fina de polpa.','The berries are small purple, almost black, balls with a large seed and a thin layer of pulp.'],
+ ac3:['A polpa sai na batedeira, misturada com água. Em Belém, pede-se açaí grosso, médio ou fino, conforme a quantidade de água.','The pulp is pressed in a machine with water. In Belém, you order it thick, medium or thin, depending on how much water it has.'],
+ ac4:['No Pará, o açaí batido é tomado no almoço, sem açúcar, com peixe frito e farinha.','In Pará, blended açaí is eaten at lunch, unsweetened, with fried fish and cassava flour.'],
+ ac5:['Em Belém, a tigela de açaí ganha farinha de tapioca por cima: bolinhas crocantes de goma de mandioca.','In Belém, the açaí bowl is topped with tapioca flakes: crunchy little balls of cassava starch.'],
+ pe1:['No Ver-o-Peso, os barcos chegam de madrugada carregados de peixe, que é vendido ali mesmo, na beira da baía.','At Ver-o-Peso, boats arrive before dawn loaded with fish, sold right there on the bay shore.'],
+ pe2:['O peixeiro escama e limpa o peixe na hora, na frente do freguês, com faca afiada e muita prática.','The fishmonger scales and cleans the fish on the spot, in front of the customer, with a sharp knife and lots of practice.'],
+ pe3:['O filé é a carne sem espinha. Em Belém, o filhote, um peixe grande de rio, é um dos mais pedidos.','A fillet is boneless fish. In Belém, filhote, a large river fish, is one of the favorites.'],
+ pe4:['Na Amazônia, o peixe é assado na brasa ou embrulhado em folha de bananeira, que guarda o caldo e o sabor.','In the Amazon, fish is grilled over coals or wrapped in banana leaves, which keep in the juices and flavor.'],
+ pe5:['O pirarucu de casaca é montado em camadas: pirarucu seco desfiado, farofa, banana frita e ovos. A “casaca” é a cobertura.','Pirarucu de casaca is built in layers: shredded dried pirarucu, farofa, fried banana and eggs. The “casaca”, or coat, is the top layer.'],
+ jt1:['A folha de jambu deixa a boca formigando e um pouco dormente. É a marca registrada da comida paraense.','Jambu leaves make your mouth tingle and go a little numb. They are the signature of food from Pará.'],
+ jt2:['O jambu é vendido em maços na feira e vai cozido no tacacá, no pato no tucupi e até no arroz.','Jambu is sold in bunches at the market and goes, cooked, into tacacá, pato no tucupi and even rice.'],
+ jt3:['O tucupi é o caldo amarelo da mandioca brava. Cru, é venenoso: precisa ferver por horas para ficar seguro.','Tucupi is the yellow juice of bitter cassava. Raw, it’s poisonous: it must boil for hours to become safe.'],
+ jt4:['O tacacá é servido bem quente numa cuia, mesmo no calor de Belém, e tomado no fim da tarde.','Tacacá is served piping hot in a gourd bowl, even in Belém’s heat, usually in the late afternoon.'],
+ jt5:['O pato no tucupi é o prato do Círio de Nazaré, a grande festa religiosa de Belém, em outubro.','Pato no tucupi is the dish of the Círio de Nazaré, Belém’s great religious festival, held in October.'],
+ pr1:['O camarão regional é de água doce e vem dos rios da Amazônia. É pequeno e vai no tacacá e na farofa.','The regional shrimp is a freshwater species from the Amazon rivers. It’s small and goes into tacacá and farofa.'],
+ pr2:['Em Manaus se diz: “Quem come jaraqui não sai mais daqui”. É um peixe pequeno, de cardume, comido frito.','In Manaus they say: “Whoever eats jaraqui never leaves.” It’s a small schooling fish, eaten fried.'],
+ pr3:['Em reservas do Amazonas, comunidades contam os pirarucus nos lagos e pescam só uma parte. Esse manejo salvou o peixe gigante.','In Amazon reserves, communities count the pirarucu in the lakes and fish only part of them. This management saved the giant fish.'],
+ pr4:['Na cheia, o tambaqui come frutas e sementes que caem da floresta na água. Na caldeirada, é cozido com legumes e ovo.','In the flood season, the tambaqui eats fruits and seeds that fall from the forest into the water. In caldeirada, it’s stewed with vegetables and egg.'],
+ pr5:['O prato do mercado é o almoço de quem trabalha ali: peixe frito, arroz, feijão, vinagrete e farinha.','The market lunch plate feeds the people who work there: fried fish, rice, beans, vinaigrette and cassava flour.'],
+ md1:['Existem dois tipos de mandioca: a mansa, ou macaxeira, que se cozinha e come; e a brava, que vira farinha e tucupi.','There are two kinds of cassava: sweet cassava, or macaxeira, which is boiled and eaten; and bitter cassava, which becomes flour and tucupi.'],
+ md2:['A farinha do Uarini tem grãos redondinhos e crocantes, como ovinhas. Ela tem selo de origem do município de Uarini, no Amazonas.','Uarini flour has round, crunchy grains like tiny eggs. It carries a protected origin seal from the town of Uarini, in Amazonas.'],
+ md3:['A goma é o amido que assenta no fundo quando se espreme a mandioca ralada. Seca, vira tapioca e polvilho.','The starch is what settles at the bottom when grated cassava is squeezed. Dried, it becomes tapioca and polvilho.'],
+ md4:['A goma hidratada vai à frigideira quente e vira tapioca em um minuto, sem óleo e sem trigo.','Moist starch goes onto a hot pan and becomes tapioca in a minute, with no oil and no wheat.'],
+ md5:['O tucumã é o fruto alaranjado de uma palmeira. Em Manaus, a tapioquinha de tucumã com queijo coalho é o café da manhã preferido.','Tucumã is the orange fruit of a palm tree. In Manaus, tapioca with tucumã and queijo coalho is the favorite breakfast.'],
+ fr1:['A castanheira pode passar de 50 metros de altura. Cada ouriço que cai do alto guarda de 10 a 25 castanhas.','The Brazil-nut tree can grow taller than 50 meters. Each hard pod that falls from the top holds 10 to 25 nuts.'],
+ fr2:['A banana pacovã é grande e firme. Frita ou cozida, acompanha o peixe e a tapioca no café da manhã.','The pacovã banana is big and firm. Fried or boiled, it goes with fish and tapioca at breakfast.'],
+ fr3:['O abacaxi é nativo da América do Sul. Na Amazônia, chega de barco ao mercado, grande e muito doce.','The pineapple is native to South America. In the Amazon, it arrives at the market by boat, big and very sweet.'],
+ fr4:['No mercado de Manaus, os sucos são de frutas da floresta: cupuaçu, taperebá, graviola e camu-camu.','At the Manaus market, the juices come from forest fruits: cupuaçu, taperebá, soursop and camu-camu.'],
+ fr5:['O guaraná parece um olhinho. Ele vem de Maués, no Amazonas, e seu cultivo foi criado pelo povo Sateré-Mawé.','Guaraná looks like a little eye. It comes from Maués, in Amazonas, and was first cultivated by the Sateré-Mawé people.'],
+ ff1:['O feijão-fradinho tem um olhinho preto na lateral. É a base do acarajé e do abará.','The black-eyed pea has a little black “eye” on its side. It’s the base of acarajé and abará.'],
+ ff2:['O fradinho fica de molho para soltar a casca, que sai esfregando os grãos com as mãos. As baianas fazem isso na véspera.','Black-eyed peas soak until their skins loosen, then are rubbed off by hand. The baianas do this the day before.'],
+ ff3:['A massa do acarajé é o feijão moído com cebola e sal, batido até ficar fofinho e cheio de ar.','Acarajé batter is ground black-eyed peas with onion and salt, whipped until light and airy.'],
+ ff4:['O abará usa a mesma massa do acarajé, mas é cozido no vapor, embrulhado em folha de bananeira.','Abará uses the same batter as acarajé, but it’s steamed, wrapped in a banana leaf.'],
+ ff5:['O acarajé é frito no dendê e recheado com vatapá, camarão e pimenta. A baiana pergunta: “quente ou frio?”, que quer dizer com ou sem pimenta.','Acarajé is fried in dendê oil and filled with vatapá, shrimp and chili. The baiana asks: “hot or cold?”, meaning with or without chili.'],
+ cm1:['O camarão fresco chega de manhã à Feira de São Joaquim, trazido dos barcos da Baía de Todos-os-Santos.','Fresh shrimp reaches the Feira de São Joaquim in the morning, brought by boats from the Bay of All Saints.'],
+ cm2:['O camarão seco é salgado e defumado, e dura sem geladeira. Dá o sabor forte do acarajé e do vatapá.','Dried shrimp is salted and smoked, and keeps without a fridge. It gives acarajé and vatapá their strong flavor.'],
+ cm3:['O vatapá é um creme feito com pão, leite de coco, amendoim, castanha de caju, camarão seco e dendê.','Vatapá is a creamy paste made with bread, coconut milk, peanuts, cashews, dried shrimp and dendê oil.'],
+ cm4:['O bobó de camarão é um purê de aipim com leite de coco e dendê. A receita tem raízes africanas.','Bobó de camarão is a cassava purée with coconut milk and dendê oil. The recipe has African roots.'],
+ cm5:['A moqueca de camarão é cozida na panela de barro com leite de coco, dendê, tomate, cebola e coentro.','Shrimp moqueca is cooked in a clay pot with coconut milk, dendê oil, tomato, onion and cilantro.'],
+ cc1:['O coco verde é colhido jovem, cheio de água. Em Salvador, é aberto a facão na hora de beber.','Green coconuts are picked young and full of water. In Salvador, they’re opened with a machete right before drinking.'],
+ cc2:['O coco seco é o maduro: casca marrom e fibrosa, polpa branca e firme. É dele que sai o coco ralado.','The dry coconut is the ripe one: brown, hairy husk and firm white flesh. Grated coconut comes from it.'],
+ cc3:['O coco ralado vai na cocada, no cuscuz, no bolo e no quindim. Na feira, ainda tem quem rale à mão.','Grated coconut goes into cocada, cuscuz, cake and quindim. At the market, some still grate it by hand.'],
+ cc4:['O leite de coco é feito batendo o coco ralado com água morna e espremendo num pano.','Coconut milk is made by blending grated coconut with warm water and squeezing it through a cloth.'],
+ cc5:['A cocada pode ser branca ou preta, feita com açúcar queimado ou rapadura. É vendida no tabuleiro das baianas.','Cocada can be white or dark, made with burnt sugar or rapadura. It’s sold on the baianas’ trays.']
+};
+// Clientes (aba do Álbum): mercado de origem (índice de MARKETS, -1 = viaja com você), ocupação e frase. Mesmos personagens da Quitanda.
+const QUEM={
+ ze:[-1,['feirante e seu guia','market vendor and your guide'],['Freguês bem atendido sempre volta.','A happy customer always comes back.']],
+ bia:[-1,['aprendiz da banca','stall apprentice'],['Posso ajudar a arrumar as caixas?','Can I help stack the crates?']],
+ mingau:[-1,['gato da quitanda','the shop cat'],['Miau. (Ele quer peixe.)','Miau. (He wants fish.)']],
+ tonho:[-1,['caminhoneiro','truck driver'],['Tô com pressa, a estrada é longa!','In a hurry, it’s a long road!']],
+ naza:[0,['tacacazeira','tacacá soup cook'],['Égua, que fruta bonita!','Égua, what lovely fruit!']],
+ raimundo:[0,['pescador','fisherman'],['O rio deu peixe bom hoje.','The river was generous today.']],
+ iara:[1,['artesã','artisan'],['Cada cesto leva um dia inteiro.','Each basket takes a whole day.']],
+ chico:[1,['ribeirinho','riverside dweller'],['Vim de barco, três horas de rio.','Came by boat, three hours on the river.']],
+ dada:[2,['baiana de tabuleiro','baiana street-food cook'],['Tempero é o segredo, meu bem.','Seasoning is the secret, meu bem.']],
+ jorginho:[2,['percussionista','percussionist'],['Depois da feira tem ensaio!','Band practice after the market!']],
+ biu:[3,['ceramista','master potter'],['Barro bom canta quando seca.','Good clay sings as it dries.']],
+ flor:[3,['rendeira','lacemaker'],['Oxente, que capricho!','Oxente, such fine work!']],
+ cicero:[4,['vendedor de frutas','fruit seller'],['Fruta doce igual a essa, só aqui.','Fruit this sweet? Only here.']],
+ rosinha:[4,['neta da rendeira','the lacemaker’s granddaughter'],['Vovó mandou buscar doce.','Grandma sent me for sweets.']],
+ keiko:[5,['cozinheira de sobá','sobá noodle cook'],['O caldo ferve desde cedo.','The broth’s been simmering since dawn.']],
+ antenor:[5,['peão pantaneiro','Pantanal cowboy'],['Um tereré e a prosa rende.','Share a tereré and the stories flow.']],
+ giuseppe:[6,['dono da lanchonete','snack bar owner'],['Capricha no recheio, hein!','Go big on the filling, eh!']],
+ paula:[6,['sempre apressada','always in a rush'],['Tenho dez minutos de almoço.','I’ve got ten minutes for lunch.']],
+ geralda:[7,['quitandeira mineira','quitandeira from Minas'],['Uai, senta e toma um café.','Uai, sit down and have a coffee.']],
+ tiao:[7,['queijeiro','cheesemaker'],['Queijo bom é queijo curado.','Good cheese is aged cheese.']],
+ jacinto:[8,['sanfoneiro','accordion player'],['Hoje tem forró até tarde.','Forró tonight until late!']],
+ dandara:[8,['cozinheira','cook'],['Minha panela não para.','My pot never rests.']],
+ gaudencio:[9,['assador','churrasco grill master'],['Bah, o fogo já está no ponto.','Bah, the fire is just right.']],
+ livia:[9,['dona da cuia','keeper of the mate gourd'],['Aceita um mate, tchê?','Fancy a mate, tchê?']],
+ dico:[10,['pescador','fisherman'],['O mar hoje tava bom demais.','The sea was wonderful today.']],
+ zulma:[10,['florista','florist'],['Flor fresca alegra a casa.','Fresh flowers brighten a home.']],
+ halina:[11,['cozinheira','cook'],['Receita da minha avó.','My grandmother’s recipe.']],
+ estanislau:[11,['vendedor do armazém','general store keeper'],['Leva um pouco mais, vai esfriar.','Take a little extra, it’s getting cold.']]
+};
+// Fichas dos personagens (pop-up do álbum): o que a profissão faz e uma curiosidade. Mesmo texto nos dois jogos.
+const BIO={
+ ze:['Feirante monta a banca ainda de madrugada, arruma as frutas em pirâmide e conhece cada freguês pelo nome. Seu Zé viaja com você e ensina os segredos de cada mercado.','Market vendors set up their stalls before dawn, stack fruit into pyramids and know every customer by name. Seu Zé travels with you and shares the secrets of each market.'],
+ bia:['Aprendiz é quem começa ajudando: pesa as frutas, dá o troco e aprende a escolher o melhor produto. Muita banca de feira passa de pai para filho assim.','An apprentice starts by helping out: weighing fruit, giving change and learning to pick the best produce. Many market stalls pass from parent to child this way.'],
+ mingau:['Gato de quitanda é tradição: ele afasta ratos dos sacos de grãos e vira o mascote da freguesia. Mingau dorme nas caixas vazias e acorda quando sente cheiro de peixe.','A shop cat is a tradition: it keeps mice away from the grain sacks and becomes everyone’s mascot. Mingau naps in empty crates and wakes up at the smell of fish.'],
+ tonho:['O caminhoneiro leva frutas e verduras da roça até os mercados, muitas vezes rodando a noite inteira. No Brasil, a maior parte da comida viaja de caminhão.','Truck drivers carry fruit and vegetables from the farms to the markets, often driving all night. In Brazil, most food travels by truck.'],
+ naza:['Tacacazeira é quem prepara e vende o tacacá: tucupi quente, goma, jambu e camarão, servidos numa cuia. Em Belém, a fila na banca dela começa no fim da tarde.','A tacacazeira makes and sells tacacá: hot tucupi broth, tapioca starch, jambu and shrimp, served in a gourd bowl. In Belém, the line at her stall starts in the late afternoon.'],
+ raimundo:['O pescador sai de barco antes do sol nascer. No Ver-o-Peso, os barcos descarregam o peixe de madrugada na Pedra do Peixe, e ele já chega vendido.','Fishermen head out by boat before sunrise. At Ver-o-Peso, boats unload their catch before dawn at the Pedra do Peixe, and much of it is sold on arrival.'],
+ iara:['A artesã trança fibras da floresta, como o arumã e a palha de tucumã, em cestos, peneiras e bolsas. Muitas dessas técnicas vêm dos povos indígenas da Amazônia.','The artisan weaves forest fibers, like arumã reed and tucumã palm straw, into baskets, sieves and bags. Many of these techniques come from the Indigenous peoples of the Amazon.'],
+ chico:['Ribeirinho é quem vive à beira dos rios da Amazônia, em casas de madeira sobre palafitas. A vida acompanha a cheia e a vazante, e o barco é o carro da família.','Ribeirinhos live along the Amazon rivers in wooden houses on stilts. Life follows the rise and fall of the water, and the boat is the family car.'],
+ dada:['A baiana de tabuleiro vende acarajé, abará e cocada, vestida de branco, com turbante e colares. O ofício das baianas de acarajé é patrimônio cultural do Brasil.','The baiana de tabuleiro sells acarajé, abará and cocada, dressed in white with a turban and beads. The craft of the acarajé baianas is part of Brazil’s official cultural heritage.'],
+ jorginho:['O percussionista toca tambores como o atabaque, o timbal e o surdo. Em Salvador, os blocos afro ensaiam na rua e o som dos tambores atravessa o Pelourinho.','Percussionists play drums like the atabaque, the timbal and the surdo. In Salvador, Afro-Brazilian carnival groups rehearse in the streets, and the drums echo across the Pelourinho.'],
+ biu:['O ceramista molda o barro com as mãos e queima as peças no forno. Em Pernambuco, os bonecos de barro do Alto do Moura, em Caruaru, ficaram famosos com o Mestre Vitalino.','A potter shapes clay by hand and fires the pieces in a kiln. In Pernambuco, the clay figurines of Alto do Moura, in Caruaru, became famous thanks to Mestre Vitalino.'],
+ flor:['A rendeira faz renda ponto a ponto, com agulha ou bilros. Uma toalha de renda renascença pode levar meses, e o desenho passa de mãe para filha.','A lacemaker builds lace stitch by stitch, with a needle or bobbins. A single renascença lace tablecloth can take months, and the patterns pass from mother to daughter.'],
+ cicero:['O vendedor de frutas sabe quando cada uma está no ponto só pelo cheiro e pelo aperto. No Ceará, a banca dele tem caju, seriguela, cajá e graviola.','A fruit seller can tell when fruit is ripe just by smell and touch. In Ceará, his stall has cashew fruit, seriguela, cajá and soursop.'],
+ rosinha:['Rosinha aprende com a avó a renda de bilro: dezenas de bilros de madeira trocando de lugar sobre uma almofada. No Ceará, esse saber passa de geração em geração.','Rosinha is learning bobbin lace from her grandmother: dozens of wooden bobbins crossing over a cushion. In Ceará, this skill passes from one generation to the next.'],
+ keiko:['A cozinheira de sobá prepara o macarrão em caldo trazido por imigrantes de Okinawa, no Japão. Em Campo Grande, o sobá da Feira Central virou patrimônio cultural da cidade.','The sobá cook makes the noodle soup brought by immigrants from Okinawa, Japan. In Campo Grande, the sobá of the Feira Central became part of the city’s cultural heritage.'],
+ antenor:['O peão pantaneiro cuida do gado a cavalo no Pantanal e conduz comitivas por dias pelos campos alagados. Na pausa, toma tereré, o mate com água gelada.','The Pantanal cowboy herds cattle on horseback and leads drives for days across flooded plains. On breaks, he drinks tereré, yerba mate with ice-cold water.'],
+ giuseppe:['O dono da lanchonete passa o dia na chapa, montando sanduíches e pastéis. Como muitos paulistanos, Seu Giuseppe é neto de imigrantes italianos.','The snack bar owner spends the day at the griddle, building sandwiches and pastéis. Like many people in São Paulo, Seu Giuseppe is the grandson of Italian immigrants.'],
+ paula:['Paula trabalha num escritório no centro de São Paulo e aproveita o almoço para passar no Mercadão. Ela é o retrato do ritmo da maior cidade do Brasil.','Paula works in an office in downtown São Paulo and uses her lunch break to stop by the Mercadão. She is a picture of the pace of Brazil’s largest city.'],
+ geralda:['Em Minas, “quitanda” são os biscoitos, broas, roscas e pães caseiros do café da tarde. A quitandeira é quem faz essas delícias no forno a lenha.','In Minas Gerais, “quitanda” means the homemade biscuits, cornbreads and sweet breads served with afternoon coffee. The quitandeira bakes these treats in a wood-fired oven.'],
+ tiao:['O queijeiro faz o queijo com leite fresco e deixa curar em prateleiras de madeira, virando cada peça todo dia. O modo artesanal de fazer queijo de Minas é patrimônio cultural do Brasil.','The cheesemaker turns fresh milk into cheese and ages it on wooden shelves, flipping each wheel every day. The traditional way of making Minas cheese is part of Brazil’s cultural heritage.'],
+ jacinto:['O sanfoneiro comanda o forró pé de serra, ao lado da zabumba e do triângulo. A Feira de São Cristóvão nasceu do encontro de nordestinos que se mudaram para o Rio.','The accordion player leads traditional forró, together with the zabumba drum and the triangle. The Feira de São Cristóvão began as a gathering of Northeasterners who had moved to Rio.'],
+ dandara:['A cozinheira prepara os pratos do Nordeste na Feira de São Cristóvão: baião de dois, carne de sol e sarapatel. A panela dela começa a ferver logo cedo.','This cook makes Northeastern dishes at the Feira de São Cristóvão: baião de dois, carne de sol and sarapatel. Her pots start bubbling early in the morning.'],
+ gaudencio:['O assador cuida do churrasco gaúcho: carne com sal grosso, assada devagar no fogo de chão ou na churrasqueira. Para ele, o segredo é a paciência com a brasa.','The grill master runs the gaúcho churrasco: meat with coarse salt, roasted slowly over a ground fire or a grill. For him, the secret is patience with the embers.'],
+ livia:['No Sul, quem prepara o chimarrão toma o primeiro gole, o mais amargo, e depois passa a cuia na roda. Lívia cuida da erva, da água quente e da conversa.','In southern Brazil, whoever prepares the chimarrão drinks the first, most bitter sip, then passes the gourd around the circle. Lívia looks after the yerba, the hot water and the conversation.'],
+ dico:['O pescador artesanal de Florianópolis segue uma tradição trazida pelos açorianos. Na época da tainha, os olheiros avisam do alto do morro quando o cardume chega.','The artisanal fishermen of Florianópolis keep a tradition brought by settlers from the Azores. In mullet season, lookouts on the hills signal when a school of fish arrives.'],
+ zulma:['A florista monta buquês, cuida das mudas e sabe qual flor aguenta sol ou sombra. Na banca dela, cada flor tem um significado.','The florist arranges bouquets, looks after the seedlings and knows which flower likes sun or shade. At her stall, every flower has a meaning.'],
+ halina:['Dona Halina cozinha as receitas da avó polonesa, como o pierogi, um pastelzinho cozido. Curitiba recebeu muitos imigrantes da Polônia, da Ucrânia e da Itália.','Dona Halina cooks her Polish grandmother’s recipes, like pierogi, small boiled dumplings. Curitiba welcomed many immigrants from Poland, Ukraine and Italy.'],
+ estanislau:['O vendedor do armazém vende a granel: grãos, farinhas, temperos e conservas pesados na hora. Os antigos armazéns de “secos e molhados” vendiam de tudo um pouco.','The general store keeper sells in bulk: grains, flours, spices and preserves weighed on the spot. The old “secos e molhados” stores sold a bit of everything.']
+};
+
 const fc=x=>FACE_IDS.has(x)?`<img class="pf" src="personagens/${x}.webp" alt="" draggable="false">`:x;
 const TOOLS={hammer:['🔨',['Martelo','Hammer'],['remove um item ou obstáculo','removes an item or obstacle'],120],
  pot:['🫕',['Caldeirão','Cauldron'],['sobe 1 nível de um item (até o nível 4)','raises an item by 1 level (up to level 4)'],150],
@@ -563,7 +687,7 @@ const tname=k=>tx(TOOLS[k][1]), tdesc=k=>tx(TOOLS[k][2]), cap=s=>s[0].toUpperCas
 const turnsW=n=>n===1?tr('turno','turn'):tr('turnos','turns');
 const isAdj=(x,y)=>{ const d=Math.abs(x-y); return d===COLS||(d===1&&Math.floor(x/COLS)===Math.floor(y/COLS)); };
 const nbrs=i=>[i-COLS,i+COLS,i%COLS?i-1:-1,i%COLS<COLS-1?i+1:-1].filter(k=>k>=0&&k<COLS*ROWS);
-let curM=0, S, P=null, screen='home', sel=null, drag=null, noClick=false, popAt=-1, obsQ=[], audio=null, toastTimer=null, quiet=false, lastAct=Date.now(), sheetName=null;
+let albTab='ing', curM=0, S, P=null, screen='home', sel=null, drag=null, noClick=false, popAt=-1, obsQ=[], audio=null, toastTimer=null, quiet=false, lastAct=Date.now(), sheetName=null;
 
 /* Trocar de aparelho: o progresso vira um código de texto (JSON comprimido em base64url, com verificação). */
 const b64u={ enc:u=>{ let s=''; for(let i=0;i<u.length;i+=0x8000) s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000)); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); },
@@ -583,7 +707,7 @@ function transferModal(){ modal(`<div class="big">📲</div><h2>${tr('Trocar de 
    <button class="btn ghosty" data-act="mclose">${tr('Fechar','Close')}</button>`);
   saveCode().then(c=>{ const el=$('xcode'); if(el) el.value=c; }).catch(()=>{}); }
 const starsIn=d=>Object.values(d.best||{}).reduce((a,b)=>a+(+b||0),0);
-function fresh(){ return {v:1,coins:100,best:{},cards:[],tools:{hammer:3,pot:3,turns:1,toldo:0},iap:{n:0,usd:0,once:[]},selos:[],sealOn:true,sealUse:{0:true,1:true,2:true},selo5:{ac:0,pe:0,jt:0},seen:{},diaryDone:false,diaryM:[],lastM:0,ev:EV_NEW(),
+function fresh(){ return {v:1,met:{},coins:100,best:{},cards:[],tools:{hammer:3,pot:3,turns:1,toldo:0},iap:{n:0,usd:0,once:[]},selos:[],sealOn:true,sealUse:{0:true,1:true,2:true},selo5:{ac:0,pe:0,jt:0},seen:{},diaryDone:false,diaryM:[],lastM:0,ev:EV_NEW(),
   stats:{ph:{}},opts:{sound:true,music:true,vSom:1,vMus:1,test:false,lang:LANG}}; }
 function load(){ try{ const d=JSON.parse(localStorage.getItem(KEY)); if(d&&d.v===1) return d; }catch(e){} return fresh(); }
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
@@ -708,6 +832,7 @@ function setLang(l){ LANG=l; S.opts.lang=l; applyLang(); render(); }
 /* ===================== FASE ===================== */
 function newOrder(){
   const c=P.cfg, f=pick(c.dada?FACES.filter(x=>x[0]!=='dada'):FACES), o={id:P.nextId++,face:f[0],who:f[1],items:[]}, k=Math.random()<c.two?2:1;
+  if(S.met&&!S.met[f[0]]) S.met[f[0]]=1;   // o cliente entra no Álbum (aba Clientes)
   for(let j=0;j<k;j++) o.items.push({l:pick(c.lines),n:rint(c.lv[0],c.lv[1]),done:false});
   return o;
 }
@@ -1062,7 +1187,7 @@ function homeHtml(){
    <div class="hero">${bancaHtml()}<b>${tr('Viaje pelos mercados do Brasil','Travel through Brazil’s markets')}</b><p class="note" style="margin:0 auto">${ssa?tr('Puzzle de fusão com turnos contados. Do Ver-o-Peso, em Belém, à Feira de São Joaquim, em Salvador.','A merge puzzle with limited turns. From Ver-o-Peso, in Belém, to Feira de São Joaquim, in Salvador.'):man?tr('Puzzle de fusão com turnos contados. Do Ver-o-Peso, em Belém, ao Mercado Adolpho Lisboa, em Manaus.','A merge puzzle with limited turns. From Ver-o-Peso, in Belém, to Mercado Adolpho Lisboa, in Manaus.'):tr('Puzzle de fusão com turnos contados. Comece pelo Ver-o-Peso, em Belém.','A merge puzzle with limited turns. Start at Ver-o-Peso, in Belém.')}</p>
    <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap"><span class="pill">⭐ ${ts}</span><span class="pill">🪙 ${fmt(S.coins)}</span><span class="pill">📖 ${nc}/${CARDS.length}</span></div></div>
    <button class="btn big" data-act="go:map">▶ ${tr('Jogar','Play')}</button>
-   <div class="hgrid"><button data-act="sheet:diary"><span>📖</span>${tr('Diário','Journal')}</button><button data-act="sheet:selos"><span>🏅</span>${tr('Selos','Seals')}</button><button data-act="sheet:album"><span>🧺</span>${tr('Álbum','Album')}${Object.values(S.alb).includes(1)?'<i class="dot"></i>':''}</button><button data-act="sheet:shop"><span>🛒</span>${tr('Loja','Shop')}</button><button data-act="sheet:cfg"><span>⚙️</span>${tr('Ajustes','Settings')}</button></div>
+   <div class="hgrid"><button data-act="sheet:diary"><span>📖</span>${tr('Diário','Journal')}</button><button data-act="sheet:selos"><span>🏅</span>${tr('Selos','Seals')}</button><button data-act="sheet:album"><span>🧺</span>${tr('Álbum','Album')}${Object.values(S.alb).includes(1)||Object.values(S.met).includes(1)?'<i class="dot"></i>':''}</button><button data-act="sheet:shop"><span>🛒</span>${tr('Loja','Shop')}</button><button data-act="sheet:cfg"><span>⚙️</span>${tr('Ajustes','Settings')}</button></div>
    ${langSeg()}</div>`;
 }
 const PXY=(lon,lat)=>{ const mer=a=>Math.log(Math.tan(Math.PI/4+a*Math.PI/360)), K=638.5/(mer(5.27)-mer(-33.75)); return [.3+(lon+73.99)*612/39.2,.3+(mer(5.27)-mer(lat))*K]; };
@@ -1130,17 +1255,44 @@ function fit(){
   const w=$('wrap').clientWidth,h=$('wrap').clientHeight,g=4, cs=Math.floor(Math.min((w-g*(COLS-1))/COLS,(h-g*(ROWS-1))/ROWS));
   $('board').style.setProperty('--cs',Math.max(24,Math.min(cs,64))+'px'); $('board').style.gridTemplateColumns=`repeat(${COLS},var(--cs))`; popAt=-1;
 }
+/* ===== Detalhes do Álbum (pop-up ao tocar num ingrediente ou cliente) ===== */
+const detRow=(a,b)=>b?`<dt>${a}</dt><dd>${b}</dd>`:'';
+const fechaBtn=()=>`<button class="btn" data-act="mclose">${tr('Fechar','Close')}</button>`;
+// Os níveis da linha em fila, com o atual em destaque; os ainda não vistos aparecem como ❔.
+function cadeia(l,n,vis){ return `<div class="cadeia" aria-hidden="true">`+LINES[l].it.map((_,j)=>vis(j+1)?`<span class="${j+1===n?'on':''}">${ie(l,j+1)}</span>`:`<span class="no">❔</span>`).join('<i>›</i>')+'</div>'; }
+function verIng(l,n){
+  if(!LINES[l]||!LINES[l].it[n-1]) return;
+  const vis=j=>!!S.alb[l+j], m=MARKETS.findIndex((_,k)=>mLines(k).includes(l)), onde=m>=0?`${MARKETS[m].ic} ${MARKETS[m].n} · ${MARKETS[m].c}`:'';
+  const cab=(ic,nome)=>`<div class="ihead"><span class="ibig" style="--lc:${lc(l)}">${ic}</span><div><h2>${nome}</h2><p>${lname(l)} · ${tr(`nível ${n} de ${MAX}`,`level ${n} of ${MAX}`)}</p></div></div>`;
+  if(!vis(n)){ const ant=vis(n-1)?item(l,n-1)[1]:'???';
+    modal(`<div class="info">${cab('❔','???')}<p class="itxt">${n===1?tr('Sai do cesto desta linha: toque no cesto para colher.','Comes from this line’s basket: tap the basket to pick it.'):(vis(n-1)?tr(`Junte dois de ${ant} para descobrir.`,`Merge two ${ant} to discover it.`):tr('Continue juntando os itens desta linha para descobrir.','Keep merging this line’s items to discover it.'))}</p>${cadeia(l,n,vis)}<dl class="idet">${detRow(tr('Onde encontrar','Where to find'),onde)}</dl></div>${fechaBtn()}`); return; }
+  const prox=n>=MAX?tr('É o último nível da linha.','This is the top level of the line.'):vis(n+1)?tr(`Junte dois para fazer ${item(l,n+1)[1]}.`,`Merge two to make ${item(l,n+1)[1]}.`):tr('Junte dois para descobrir o próximo.','Merge two to discover the next one.');
+  modal(`<div class="info">${cab(ie(l,n),item(l,n)[1])}${INFO[l+n]?`<p class="itxt">${tx(INFO[l+n])}</p>`:''}${cadeia(l,n,vis)}<dl class="idet">${detRow(tr('Próximo','Next'),prox)}${detRow(tr('Vale num pedido','Pays in an order'),`🪙 ${ORDER_COIN*n}`)}${detRow(tr('Onde encontrar','Where to find'),onde)}</dl></div>${fechaBtn()}`);
+}
+function verCli(id){
+  const q=QUEM[id], f=FACES.find(x=>x[0]===id); if(!q||!f) return; const M=MARKETS[q[0]];
+  const lugar=q[0]<0?tr('viaja com você','travels with you'):`${M.n} · ${M.c} (${M.uf})`;
+  modal(`<div class="info"><div class="ihead"><span class="ibig">${fc(id)}</span><div><h2>${f[1]}</h2><p>${tx(q[1])}</p><p>${lugar}</p></div></div><p class="itxt">${tx(BIO[id]||'')}</p><p class="q">“${tx(q[2])}”</p></div>${fechaBtn()}`);
+}
 function renderSheet(){
   let h='', T='';
   if(sheetName==='shop'){ T=tr('Loja','Shop'); h=shopHtml(); }
-  else if(sheetName==='album'){ T=tr('Álbum de ingredientes','Ingredient album');
+  else if(sheetName==='album'){ T=tr('Álbum','Album');
+    const nIng=Object.values(S.alb).includes(1), nCli=Object.values(S.met).includes(1);
+    const tabs=`<div class="seg" role="group" style="margin-bottom:8px"><button data-act="atab:ing" aria-pressed="${albTab==='ing'}">🧺 ${tr('Ingredientes','Ingredients')}${nIng&&albTab!=='ing'?' <i class="ndot"></i>':''}</button><button data-act="atab:cli" aria-pressed="${albTab==='cli'}">🙂 ${tr('Clientes','Customers')}${nCli&&albTab!=='cli'?' <i class="ndot"></i>':''}</button></div>`;
+    if(albTab==='cli'){ const got=FACES.filter(f=>S.met[f[0]]).length;
+      h=tabs+`<p class="note">${tr(`${got} de ${FACES.length} clientes conhecidos. Quem faz um pedido no seu tabuleiro entra aqui. Toque em alguém para conhecer melhor.`,`${got} of ${FACES.length} customers met. Anyone who places an order on your board lands here. Tap someone to get to know them.`)}</p><div class="alb cli">`
+       +FACES.map(([id,n])=>S.met[id]?`<div class="ing toque${S.met[id]===1?' new':''}" data-act="vercli:${id}" role="button" tabindex="0" aria-label="${n}"><span class="e">${fc(id)}</span><small>${n}</small>${S.met[id]===1?`<em>${tr('novo','new')}</em>`:''}</div>`
+                     :`<div class="ing no"><span class="e">❔</span><small>???</small></div>`).join('')+'</div>';
+      for(const k in S.met) if(S.met[k]===1) S.met[k]=2; save(); }
+    else {
     const tot=Object.keys(LINES).length*MAX, got=Object.keys(S.alb).length;
-    h=`<p class="note">${tr(`${got} de ${tot} ingredientes descobertos. Tudo o que aparece no seu tabuleiro entra aqui. Complete os ${MAX} níveis de uma linha para ganhar +${ALB_CO} 🪙.`,`${got} of ${tot} ingredients discovered. Everything that shows up on your board lands here. Complete all ${MAX} levels of a line to earn +${ALB_CO} 🪙.`)}</p>`
+    h=tabs+`<p class="note">${tr(`${got} de ${tot} ingredientes descobertos. Tudo o que aparece no seu tabuleiro entra aqui. Complete os ${MAX} níveis de uma linha para ganhar +${ALB_CO} 🪙. Toque num item para ver os detalhes.`,`${got} of ${tot} ingredients discovered. Everything that shows up on your board lands here. Complete all ${MAX} levels of a line to earn +${ALB_CO} 🪙. Tap an item to see its details.`)}</p>`
      +Object.keys(LINES).map((l,q)=>{ const k=LINES[l].it.filter((_,j)=>S.alb[l+(j+1)]).length, mm=MARKETS.findIndex((_,m)=>mLines(m).includes(l));
        return (mLines(mm)[0]===l?`<h2 style="margin-top:8px">${MARKETS[mm].ic} ${MARKETS[mm].n}</h2>`:'')+`<div class="albl"><b>${ie(l,1)} ${lname(l)}</b><span>${S.albDone.includes(l)?'⭐ '+tr('completa','complete'):k+'/'+MAX}</span></div><div class="alb">`+LINES[l].it.map((x,j)=>{ const st=S.alb[l+(j+1)], d=item(l,j+1), gl=gloss(l,j+1);
-         return st?`<div class="ing${st===1?' new':''}" style="--lc:${lc(l)}"${gl?` title="${gl}"`:''}><span class="e">${d[0]}</span><small>${d[1]}</small><i>${j+1}</i>${st===1?`<em>${tr('novo','new')}</em>`:''}</div>`
-                  :`<div class="ing no" style="--lc:${lc(l)}"><span class="e">❔</span><small>???</small><i>${j+1}</i></div>`; }).join('')+'</div>'; }).join('');
-    for(const k in S.alb) if(S.alb[k]===1) S.alb[k]=2; save(); }
+         return st?`<div class="ing toque${st===1?' new':''}" style="--lc:${lc(l)}" data-act="vering:${l+(j+1)}" role="button" tabindex="0" aria-label="${d[1]}"><span class="e">${d[0]}</span><small>${d[1]}</small><i>${j+1}</i>${st===1?`<em>${tr('novo','new')}</em>`:''}</div>`
+                  :`<div class="ing no toque" style="--lc:${lc(l)}" data-act="vering:${l+(j+1)}" role="button" tabindex="0" aria-label="???"><span class="e">❔</span><small>???</small><i>${j+1}</i></div>`; }).join('')+'</div>'; }).join('');
+    for(const k in S.alb) if(S.alb[k]===1) S.alb[k]=2; save(); } }
   else if(sheetName==='diary'){ T=tr('Diário de Viagem','Travel Journal');
     h=`<p class="note">${tr('Cada fase vencida revela um cartão sobre o lugar ou o produto. Complete a coleção de um mercado e ganhe 150 🪙.','Each level you beat reveals a card about the place or the food. Complete a market’s collection to earn 150 🪙.')} ${S.cards.length}/${CARDS.length} ${tr('cartões','cards')}.</p>`
      +MARKETS.slice(0,OPEN_M).map((f,m)=>`<h2>${f.ic} ${f.n}${S.diaryM.includes(m)?' · ⭐':''}</h2><div class="dgrid">`
@@ -1239,6 +1391,7 @@ function fxTurns(r,n){
 }
 
 /* ===================== ENTRADA ===================== */
+document.addEventListener('keydown',e=>{ if((e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('[role="button"][data-act]')){ e.preventDefault(); e.target.click(); } });   // toque pelo teclado nos itens do álbum
 document.addEventListener('click',e=>{
   lastAct=Date.now(); if(introState==null) Musica.ligar();   // a música começa no primeiro toque (o navegador exige um gesto)
   const a=e.target.closest('[data-act]');
@@ -1261,7 +1414,7 @@ document.addEventListener('click',e=>{
       if(v==='turns'){ if(S.tools.turns>0&&P.toolsUsed<MAX_TOOLS&&!P.over){ const r=a.getBoundingClientRect(); S.tools.turns--; P.toolsUsed++; P.turns+=3; beep(820); render(); fxTurns(r); toast(tr('⏳ +3 turnos','⏳ +3 turns')); } }
       else { P.armed=P.armed===v?null:v; sel=null; render(); } }
     else if(k==='cont'){ if(S.tools.turns>0&&P.cont<MAX_CONT){ closeModal(); S.tools.turns--; P.cont++; P.turns+=3; P.over=null; phStat(P.i).losses--; render(); fxTurns(null); toast(tr('⏳ +3 turnos: continue!','⏳ +3 turns: keep going!')); } }
-    else if(k==='shop'){ $('toast').hidden=true; closeModal(); sheetName='shop'; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
+    else if(k==='shop'){ $('toast').hidden=true; closeModal(); empilha('shop'); sheetName='shop'; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
     else if(k==='iap') iapAsk(v);
     else if(k==='iapok') iapBuy(v);
     else if(k==='iapno') closeModal();
@@ -1274,11 +1427,14 @@ document.addEventListener('click',e=>{
     else if(k==='card'){ showCard(+v,false); }
     else if(k==='cardmore'){ showCard(+v,true); }
     else if(k==='sealon'){ S.sealUse[+v||0]=a.checked; S.sealOn=S.sealUse[0]!==false; save(); return; }
-    else if(k==='sheet'){ $('toast').hidden=true; sheetName=v; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
-    else if(k==='sheetclose'){ sheetName=null; $('sheet').hidden=true; render(); if(screen==='game'&&P&&P.over==='lose') loseModal(); }
+    else if(k==='sheet'){ $('toast').hidden=true; empilha(v); if(v==='album'&&!Object.values(S.alb).includes(1)&&Object.values(S.met).includes(1)) albTab='cli'; sheetName=v; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
+    else if(k==='atab'){ albTab=v==='cli'?'cli':'ing'; renderSheet(); }
+    else if(k==='vering') verIng(v.slice(0,2),+v.slice(2));
+    else if(k==='vercli') verCli(v);
+    else if(k==='sheetclose'){ sheetName=null; sheetPilha=[]; $('sheet').hidden=true; render(); if(screen==='game'&&P&&P.over==='lose') loseModal(); }
     else if(k==='opt'){ S.opts[v]=!S.opts[v]; if(v==='music') Musica.ligar(); render(); }
     else if(k==='reset') modal(`<h2>${tr('Recomeçar do zero?','Start over?')}</h2><p>${tr('Todo o progresso e o painel de teste serão apagados.','All progress and the test panel will be erased.')}</p><button class="btn" data-act="resetyes">${tr('Apagar e recomeçar','Erase and start over')}</button><button class="btn ghosty" data-act="mclose">${tr('Cancelar','Cancel')}</button>`);
-    else if(k==='resetyes'){ const o=S.opts, ev0=S.ev; S=fresh(); S.ev=ev0||S.ev; S.opts={...S.opts,sound:o.sound,music:o.music,vSom:o.vSom,vMus:o.vMus}; S.alb={}; S.albDone=[]; curM=0; closeModal(); sheetName=null; $('sheet').hidden=true; screen='home'; P=null; render(); Musica.ligar(); }
+    else if(k==='resetyes'){ const o=S.opts, ev0=S.ev; S=fresh(); S.ev=ev0||S.ev; S.opts={...S.opts,sound:o.sound,music:o.music,vSom:o.vSom,vMus:o.vMus}; S.alb={}; S.albDone=[]; S.met={}; curM=0; closeModal(); sheetName=null; $('sheet').hidden=true; screen='home'; P=null; render(); Musica.ligar(); }
     else if(k==='mclose'){ closeModal(); render(); }
     else if(k==='xfer') transferModal();
     else if(k==='xcopy'){ const el=$('xcode'); if(!el||!el.value) return; const ok=()=>toast(tr('Código copiado','Code copied'));
@@ -1483,9 +1639,31 @@ function intro(){
   introState.tms.push(setTimeout(sing,quieto?300:2050));   // pousou, cantou
 }
 function introTap(){ endIntro(); }
+/* Botão voltar do Android (plugin @capacitor/app): fecha a camada da frente (vinheta, aviso, painel) e volta uma tela
+   por vez: painel anterior (pilha sheetPilha) → fase (abre a pausa) → mercado → mapa → tela inicial. Só sai do app
+   na tela inicial, no segundo toque em até 2 s. */
+let backAt=0, sheetPilha=[];
+// Guarda o painel aberto antes de abrir outro por cima, para o voltar retornar a ele.
+function empilha(novo){ if($('sheet').hidden||!sheetName) sheetPilha=[]; else if(sheetName!==novo) sheetPilha.push(sheetName); }
+function voltar(){
+  const C=window.Capacitor, A=C&&C.Plugins&&C.Plugins.App, clica=q=>{ const b=document.querySelector(q); if(b){ b.click(); return true; } return false; };
+  if(!$('intro').hidden||introState){ endIntro(); return; }
+  if(!$('over').hidden){ clica('#card [data-act="mclose"],#card [data-act="iapno"],#card [data-act="go:market"]'); return; }   // aviso sem saída (raro): fica onde está
+  if(drag) return;
+  if(sheetName&&!$('sheet').hidden){
+    if(sheetPilha.length){ sheetName=sheetPilha.pop(); renderSheet(); $('sheet').scrollTop=0; return; }
+    if(!clica('#sheet [data-act="sheetclose"]')){ sheetName=null; $('sheet').hidden=true; render(); } return; }
+  if(screen==='game'){ if(P&&P.armed){ P.armed=null; render(); return; } if(P&&!P.over) clica('[data-act="pause"]'); else clica('[data-act="go:market"]')||(screen='market',P=null,render()); return; }
+  if(screen==='market'){ clica('[data-act="go:map"]'); return; }
+  if(screen!=='home'){ clica('[data-act="go:home"]'); return; }
+  if(Date.now()-backAt<2000){ save(); if(A&&A.exitApp) A.exitApp(); return; }
+  backAt=Date.now(); toast(tr('Toque em voltar de novo para sair','Press back again to exit'));
+}
+(()=>{ const C=window.Capacitor, A=C&&C.isNativePlatform&&C.isNativePlatform()&&C.Plugins&&C.Plugins.App;
+  if(A&&A.addListener) A.addListener('backButton',voltar); })();
 
 function start(){
-  LANG=detectLang(); S=load(); S.alb=S.alb||{}; S.albDone=S.albDone||[]; S.opts=S.opts||{sound:true,test:false}; S.iap=S.iap||{n:0,usd:0,once:[]}; S.tools.turns=S.tools.turns||0; S.tools.toldo=S.tools.toldo||0;
+  LANG=detectLang(); S=load(); S.alb=S.alb||{}; S.met=S.met||{}; S.albDone=S.albDone||[]; S.opts=S.opts||{sound:true,test:false}; S.iap=S.iap||{n:0,usd:0,once:[]}; S.tools.turns=S.tools.turns||0; S.tools.toldo=S.tools.toldo||0;
   if(S.opts.music==null) S.opts.music=true; S.sealUse=S.sealUse||{0:S.sealOn!==false,1:true}; S.diaryM=S.diaryM||(S.diaryDone?[0]:[]); S.lastM=S.lastM||0;
   if(!mOpen(S.lastM)) S.lastM=0; curM=S.lastM;
   S.ev=S.ev||EV_NEW(); S.ev.got=S.ev.got||[]; S.ev.prog=S.ev.prog||{}; S.ev.seen=S.ev.seen||{}; setInterval(evTick,1000);
