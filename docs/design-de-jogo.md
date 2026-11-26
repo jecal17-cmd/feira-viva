@@ -242,6 +242,61 @@ Balanceamento da Rota (robô simples, 300 partidas por fase): etapas 1, 3 e 4 co
 - **Arte:** o caixote e o mofo trocaram os desenhos feitos em CSS por pixel art em 5 quadros (`versao-a-rota-das-feiras/obstaculos/caixa-1..5.webp` e `mofo-1..5.webp`). O quadro 1 é o obstáculo parado no tabuleiro; os seguintes animam a remoção (caixa racha, estoura e vira lascas; a esponja esfrega o mofo até sumir). O item mofado ganha uma camada translúcida do mofo, no lugar do 🦠, e, ao ser limpo, aparece a esponja passando. Originais e o script de recorte em `docs/arte/obstaculos/`.
 - **Regra nova:** todo caixote guarda um item embaixo (nível 1 em 70% das vezes, nível 2 nas demais, de uma das linhas da fase). Ao quebrar, por fusão ao lado ou pelo Martelo, o item fica na casa. O Martelo no mofo continua só removendo. O balanceamento das fases não foi refeito com o robô: o caixote agora dá material de graça, o que deve facilitar um pouco as fases com muitos caixotes.
 
+### 3.15 Terceiro mercado: Feira de São Joaquim, Salvador (novembro de 2026)
+
+Primeiro mercado do Nordeste. Abre ao vencer o chefe de Manaus. As fases ficam no fim da lista `PHASES` (posições 18 a 24, depois das 4 fases do Natal), então os saves antigos seguem valendo. A regra de desbloqueio passou a olhar a fase anterior **do mesmo mercado** e, na primeira fase, o chefe do mercado anterior (antes olhava a posição anterior da lista, o que quebraria com o evento no meio).
+
+**Ideia central: o sol anda.** O Norte era água (maré, rios). A Bahia é calor e movimento: o sol atravessa o tabuleiro, e o jogador precisa planejar onde deixa os itens grandes.
+
+**Linhas novas (5 níveis, arte 3D própria):**
+
+| Nível | Fradinho (`ff`) | Camarão (`cm`) | Coco (`cc`) |
+|---|---|---|---|
+| 1 | Feijão-fradinho | Camarão fresco | Coco verde |
+| 2 | Fradinho de molho | Camarão seco | Coco seco |
+| 3 | Massa de acarajé | Vatapá | Coco ralado |
+| 4 | Abará | Bobó de camarão | Leite de coco |
+| 5 | Acarajé | Moqueca de camarão | Cocada |
+
+**Regras novas:**
+
+- **☀️ Sol forte** (o obstáculo do Nordeste, seção 3.3): uma faixa de 2 colunas fica ao sol. Um item de **nível 3 ou mais** parado ali soma 1 de calor por turno; com 5, perde 1 nível. O número 🔥 no item mostra quantos turnos faltam. Sair do sol zera o calor; juntar cria um item novo, sem calor. Níveis 1 e 2 não sofrem. Nas fases 5, 6 e no chefe, **o sol anda 1 coluna para a direita a cada 4 turnos** (e volta pela esquerda). Constantes `SUN_HEAT` e `SUN_LV`.
+- **⛱️ Toldo** (ferramenta nova): faz sombra em 4 casas (2 × 2) até o fim da fase; casas com sombra não esquentam, mesmo quando o sol passa. Custa 🪙 100 no mercado (só moedas, nunca dinheiro real), conta no limite de 2 ferramentas por fase e só aparece nas fases com sol. O tutorial da fase 5 dá 2 Toldos. É um uso novo para as moedas, que tinham pouco uso (seção 3.10).
+- **🥥 Engradado de coco:** caixote reforçado. A 1ª fusão ao lado racha (quadro 2 da arte), a 2ª abre; o Martelo abre de uma vez. Dentro vem um Coco seco. Só conta como obstáculo limpo quando abre.
+- **👩🏾‍🍳 Pedido da Dona Dadá:** pedido especial de 2 itens de linhas diferentes, com prazo (⏱️) de 8 turnos. Atender dá **+2 turnos** e moedas em dobro e conta também como pedido comum. Se o prazo acabar, ela vai embora sem castigo. Ela ocupa o lugar do pedido com menos itens entregues e só há uma por vez; aparece a cada 5 a 7 turnos, conforme a fase. Nas fases com a Dadá, ela não aparece como cliente comum.
+- **⛵ Chefe Chegada do saveiro:** a cada 5 turnos, um saveiro passa pela esquerda e deixa 3 engradados de coco nas casas livres mais à esquerda (`SAVEIRO_*`). O sol continua andando e a Dona Dadá aparece a cada 6 turnos.
+- **🌴 Selo Dendê:** 3 itens de nível 5 de cada linha de Salvador + chefe vencido. A 1ª fusão de cada fase sobe 1 nível extra (indicador 🌴 no topo da fase). A mochila leva os três selos.
+
+**Fases:**
+
+| Fase | Objetivo | Turnos | Linhas | Obstáculos e regras |
+|---|---|---|---|---|
+| 1 · Bom dia, Salvador | entregar 5 pedidos | 16 | Fradinho, Camarão | 2 caixotes |
+| 2 · O sol da Bahia | criar Abará (nível 4) | 17 | Fradinho, Camarão | 2 caixotes, sol parado (tutorial) |
+| 3 · Chegou o coco | entregar 6 pedidos | 18 | as três | 1 caixote, 3 engradados, sol parado (tutorial) |
+| 4 · Tabuleiro da baiana | 3 pedidos da Dona Dadá + 5 pedidos | 19 | as três | 2 caixotes, 1 engradado, Dadá a cada 5 turnos (tutorial) |
+| 5 · O sol anda | criar Moqueca de camarão (nível 5) | 23 | as três | 2 caixotes, 2 engradados, sol que anda, Toldo (tutorial) |
+| 6 · Hora do acarajé | entregar 7 pedidos + limpar 4 | 25 | as três | 2 caixotes, 2 engradados, sol que anda, Dadá a cada 7 |
+| Chefe · Chegada do saveiro | 7 pedidos, 2 deles da Dona Dadá | 22 | as três | 1 caixote, 1 engradado, sol que anda, Dadá a cada 6, saveiro |
+
+**Balanceamento.** Um robô simples (entrega, foge do sol, junta e colhe o que os pedidos pedem, sem ferramentas nem selos) jogou cada fase 300 vezes. Para comparar, o mesmo robô jogou os mercados anteriores:
+
+| Fase | Ver-o-Peso | Manaus | Salvador |
+|---|---|---|---|
+| 1 | 100% | 100% | 100% |
+| 2 | 32% | 10% | 40% |
+| 3 | 95% | 97% | 97% |
+| 4 | 32% | 37% | 70% |
+| 5 | 28% | 28% | 26% |
+| 6 | 82% | 60% | 68% |
+| Chefe | 70% | 73% | 70% |
+
+Esse robô vai mal em metas de criar item e de limpar obstáculos (fases 2 e 5), como já se via na seção 3.11; o que vale é a comparação entre mercados. A fase 4 ficou mais fácil de propósito, por ser o tutorial da Dona Dadá. Os engradados do saveiro precisavam de 2 fusões: com 1 só, o chefe ficava com 86% (os cocos de dentro viravam material de graça).
+
+**Diário:** 7 cartões novos (Feira de São Joaquim, Feijão-fradinho, Coco, Baianas de acarajé, Moqueca baiana, Azeite de dendê, Saveiros), a validar com pesquisa e revisão local. Cada cartão agora guarda a fase a que pertence (`ph`), porque as fases do evento ficam no meio da lista.
+
+**Arte e música:** itens 3D próprios, engradado e sol em pixel art (como o caixote e o mofo), toldo e saveiro; prompts em `docs/arte/prompt-nano-banana-salvador.md`. A música é a do mercado 03 da Quitanda (ijexá), em `versao-a-rota-das-feiras/musica/03.ogg`.
+
 ## 4. Versão B — Quitanda Zen (passatempo, foco em anúncios)
 
 ### 4.1 Loop

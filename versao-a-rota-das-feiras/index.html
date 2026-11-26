@@ -152,6 +152,7 @@ h1{font-size:26px;line-height:1.1} h2{font-size:18px}
 .goal{flex:1 1 0;min-width:130px;background:var(--bg);border-radius:12px;padding:5px 8px;font-size:13.5px;font-weight:800;display:flex;align-items:center;gap:8px}
 .goal.ok{opacity:.6}
 .goal .e{font-size:24px;line-height:1}
+.goal .e .pf,.big .pf,li .pf{width:1.25em;height:1.25em;object-fit:contain;vertical-align:middle}
 .goal div{flex:1;min-width:0}
 .goal .bar{height:7px;margin-top:3px}
 .goal .bar i{background:var(--star)}
@@ -201,6 +202,25 @@ button.pill{cursor:pointer}
 .cell.moldy .em{filter:grayscale(.7) opacity(.7)}
 .cell.flood::before{content:"";position:absolute;inset:0;background:color-mix(in srgb,var(--water) 55%,transparent);z-index:1;pointer-events:none}
 .cell.flood::after{content:"🌊";position:absolute;left:4%;top:2%;font-size:calc(var(--cs)*.26);z-index:2}
+/* Salvador: engradado de coco, sol forte, toldo, calor e pedido da Dona Dadá */
+.cell.crate{--ob:url(obstaculos/caixa-1.webp);--obz:128%}
+.cell.engr{--ob:url(obstaculos/engradado-1.webp);--obz:128%;background:var(--ob) center/var(--obz) no-repeat,var(--hole)}
+.cell.engr.cracked{--ob:url(obstaculos/engradado-2.webp)}
+.cell.sun{background:var(--ob,none) center/var(--obz,100%) no-repeat,url(obstaculos/sol-1.webp) center/112% no-repeat,var(--hole)}
+.cell.sun:not(.has):not(.crate):not(.engr){animation:sol 1.5s steps(1) infinite}
+@keyframes sol{0%{background-image:url(obstaculos/sol-1.webp)}33%{background-image:url(obstaculos/sol-2.webp)}66%{background-image:url(obstaculos/sol-3.webp)}}
+.cell.has.sun{background:linear-gradient(color-mix(in srgb,var(--cell) 45%,transparent),color-mix(in srgb,var(--cell) 45%,transparent)),url(obstaculos/sol-1.webp) center/112% no-repeat,var(--hole)}
+.cell.shade{background:var(--ob,none) center/var(--obz,100%) no-repeat,url(obstaculos/sol-4.webp) center/104% no-repeat,var(--hole)}
+.cell.has.shade{background:color-mix(in srgb,#5E7FC4 28%,var(--cell))}
+.cell.has.shade::before{content:"";position:absolute;left:2%;top:2%;width:38%;height:38%;background:url(itens/toldo.webp) center/contain no-repeat;pointer-events:none}
+.cell .heat{position:absolute;left:3%;top:3%;font:800 calc(var(--cs)*.2)/1 var(--text);color:#fff;background:#E0752B;border-radius:99px;padding:2px 4px;z-index:2;pointer-events:none}
+.cell .heat.low{background:#C8321E;animation:hint .9s ease-in-out infinite}
+.order.dada{position:relative;border-color:#C9772B;background:color-mix(in srgb,#F2B33D 16%,var(--panel));box-shadow:0 0 0 2px color-mix(in srgb,#F2B33D 55%,transparent)}
+.order .ttl{position:absolute;top:-8px;right:-4px;font:800 10.5px/1 var(--text);background:#C9772B;color:#fff;border-radius:99px;padding:3px 5px;z-index:1}
+.order .ttl.low{background:#C8321E}
+.sub .tide.sunt{color:#C9772B}
+.saveiro{position:fixed;z-index:60;pointer-events:none;transform:translate(-50%,-80%)}
+.tool .ii,.info .ii{width:1.3em;height:1.3em;object-fit:contain;vertical-align:middle}
 .cell.armed{cursor:crosshair}
 .cell.pop{animation:pop .28s ease-out}
 @keyframes pop{0%{transform:scale(.5)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
@@ -216,7 +236,7 @@ button.pill{cursor:pointer}
 .basket small{font-size:10px;color:var(--muted)}
 .basket.tool{flex:.8 1 0}
 .basket.tool.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
-@media (prefers-reduced-motion: reduce){.cell.pop,.cell.hint,.cell.key,.node .ring{animation:none!important}}
+@media (prefers-reduced-motion: reduce){.cell.pop,.cell.hint,.cell.key,.node .ring,.cell.sun,.cell .heat.low{animation:none!important}}
 /* folhas, cartões, diário */
 .sheet{position:fixed;inset:0;z-index:20;background:var(--bg);overflow:auto;padding-block:calc(14px + env(safe-area-inset-top,0px)) calc(24px + env(safe-area-inset-bottom,0px));
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -294,6 +314,9 @@ function applyLang(){ document.documentElement.lang=LANG==='en'?'en':'pt-BR'; do
 
 /* ===================== DADOS (balanceamento: tudo aqui em cima) ===================== */
 const MAX=5, COLS=6, ROWS=7, KEY='rota-das-feiras-v1', MAX_TOOLS=2, MOLD_EVERY=3, TIDE_EVERY=4, TIDE_LEN=2;
+// Salvador (seção 3.15): sol forte (item de nível 3+ parado no sol por SUN_HEAT turnos perde 1 nível), engradado de coco
+// (2 fusões ao lado para abrir), pedido da Dona Dadá (2 itens, prazo curto, +2 turnos) e o saveiro do chefe.
+const SUN_HEAT=5, SUN_LV=3, SAVEIRO_EVERY=5, SAVEIRO_N=3, SAVEIRO_HP=2, DADA_BONUS=2;
 // Linhas do Ver-o-Peso (documento de design, seção 3.2): [emoji provisório, nome pt, nome en]
 const LINES={
  ac:{name:['Açaí','Açaí'],hue:285,it:[['🍇','Cacho de açaí','Açaí bunch'],['🫐','Fruto','Açaí berries'],['🥣','Polpa','Açaí pulp'],['🥤','Açaí batido','Blended açaí'],['🍧','Tigela de açaí com tapioca','Açaí bowl with tapioca']]},
@@ -302,13 +325,19 @@ const LINES={
  // Mercado Adolpho Lisboa (Manaus). A arte reaproveita itens 3D da Quitanda (lista em docs/arte/lista-de-arte.md).
  pr:{name:['Peixes do rio','River fish'],hue:185,it:[['🦐','Camarão regional','River shrimp'],['🐟','Jaraqui','Jaraqui'],['🎣','Pirarucu','Pirarucu'],['🍲','Caldeirada de tambaqui','Caldeirada de tambaqui'],['🍱','Prato do mercado','Market lunch plate']]},
  md:{name:['Mandioca','Cassava'],hue:38,it:[['🍠','Mandioca','Cassava root'],['🌾','Farinha do Uarini','Farinha do Uarini'],['🥣','Goma de tapioca','Tapioca starch'],['🫓','Tapioca','Tapioca'],['🌮','Tapioquinha de tucumã','Tapioquinha de tucumã']]},
- fr:{name:['Frutas','Fruit'],hue:345,it:[['🌰','Castanha-do-pará','Brazil nuts'],['🍌','Banana pacovã','Pacovã banana'],['🍍','Abacaxi','Pineapple'],['🧃','Suco de frutas','Fruit juice'],['🥤','Guaraná','Guaraná']]}
+ fr:{name:['Frutas','Fruit'],hue:345,it:[['🌰','Castanha-do-pará','Brazil nuts'],['🍌','Banana pacovã','Pacovã banana'],['🍍','Abacaxi','Pineapple'],['🧃','Suco de frutas','Fruit juice'],['🥤','Guaraná','Guaraná']]},
+ // Feira de São Joaquim (Salvador). Arte própria em itens/ (grade em docs/arte/referencias/grade-rota-salvador.jpg).
+ ff:{name:['Fradinho','Black-eyed peas'],hue:44,it:[['🫘','Feijão-fradinho','Black-eyed peas'],['🥣','Fradinho de molho','Soaked black-eyed peas'],['🥄','Massa de acarajé','Acarajé batter'],['🍃','Abará','Abará'],['🧆','Acarajé','Acarajé']]},
+ cm:{name:['Camarão','Shrimp'],hue:8,it:[['🦐','Camarão fresco','Fresh shrimp'],['🍤','Camarão seco','Dried shrimp'],['🍛','Vatapá','Vatapá'],['🥣','Bobó de camarão','Bobó de camarão'],['🍲','Moqueca de camarão','Moqueca de camarão']]},
+ cc:{name:['Coco','Coconut'],hue:150,it:[['🥥','Coco verde','Green coconut'],['🌰','Coco seco','Dry coconut'],['❄️','Coco ralado','Grated coconut'],['🥛','Leite de coco','Coconut milk'],['🍬','Cocada','Cocada']]}
 };
 // Explicações curtas (só em inglês) dos nomes mantidos em português. Chave: linha + nível.
 const GLOSS={ac1:'berries of an Amazonian palm',pe5:'layered dish of shredded salted pirarucu and farofa',jt1:'Amazonian herb that makes your mouth tingle',jt2:'Amazonian herb that makes your mouth tingle',
  jt3:'tangy yellow broth made from wild cassava',jt4:'hot tucupi soup with jambu and dried shrimp',jt5:'duck simmered in tucupi with jambu',
  pr2:'small river fish; locals say whoever eats it never leaves Manaus',pr3:'giant Amazon river fish',pr4:'stew of tambaqui, a large Amazon fish',
- md2:'crunchy, bead-like cassava flour from Uarini, in Amazonas',md5:'tapioca filled with tucumã palm fruit and cheese',fr2:'big, sturdy banana, often eaten fried',fr5:'soda made from an Amazonian berry'};
+ md2:'crunchy, bead-like cassava flour from Uarini, in Amazonas',md5:'tapioca filled with tucumã palm fruit and cheese',fr2:'big, sturdy banana, often eaten fried',fr5:'soda made from an Amazonian berry',
+ ff3:'black-eyed pea dough whipped with onion and salt',ff4:'black-eyed pea dough steamed in a banana leaf',ff5:'black-eyed pea fritter fried in dendê oil, split and filled',
+ cm3:'creamy paste of bread, coconut milk, peanuts, dried shrimp and dendê',cm4:'shrimp in a creamy cassava and coconut purée',cm5:'shrimp stew with coconut milk and dendê oil, cooked in a clay pot',cc5:'chewy coconut candy'};
 // Fases: 7 por mercado (6 normais + chefe), em sequência; m = mercado (índice em MARKETS). O índice global da fase é a
 // chave do progresso (S.best, S.cards, painel), então fases novas entram sempre no fim da lista.
 // goals: orders (entregar pedidos), make (criar item), clear (limpar obstáculos).
@@ -332,9 +361,20 @@ const PHASES=[
  {m:-1,ev:'natal26',evn:0,name:['Cesta de Natal','Christmas basket'],turns:17,lines:['ac','pe'],items:8,lv:[2,3],two:.1,crate:2,mold:0,goals:[{t:'orders',n:5}]},
  {m:-1,ev:'natal26',evn:1,name:['Rabanada dourada','Golden rabanada'],turns:20,lines:['md','fr'],items:9,lv:[2,3],two:.15,crate:2,mold:1,goals:[{t:'make',l:'md',lv:4,n:1},{t:'clear',n:2}]},
  {m:-1,ev:'natal26',evn:2,name:['Ceia na beira do rio','Dinner by the river'],turns:22,lines:['jt','pr','ac'],items:11,lv:[2,3],two:.2,crate:2,mold:2,goals:[{t:'orders',n:6},{t:'clear',n:3}]},
- {m:-1,ev:'natal26',evn:3,name:['Grande ceia de Natal','Grand Christmas dinner'],turns:26,lines:['pe','jt','fr'],items:12,lv:[2,4],two:.3,crate:2,mold:3,goals:[{t:'orders',n:7},{t:'clear',n:3}]}
+ {m:-1,ev:'natal26',evn:3,name:['Grande ceia de Natal','Grand Christmas dinner'],turns:26,lines:['pe','jt','fr'],items:12,lv:[2,4],two:.3,crate:2,mold:3,goals:[{t:'orders',n:7},{t:'clear',n:3}]},
+ // Feira de São Joaquim (Salvador): abre ao vencer o chefe de Manaus. Linhas Fradinho, Camarão e Coco; selo Dendê.
+ // sun: faixa de sol (w colunas a partir da coluna x; step>0 = anda 1 coluna para a direita a cada step turnos).
+ // engr: engradados de coco. dada: pedido da Dona Dadá (a cada every turnos, prazo ttl; first = já começa com um).
+ {m:2,name:['Bom dia, Salvador','Good morning, Salvador'],turns:16,lines:['ff','cm'],items:7,lv:[2,3],two:0,crate:2,mold:0,goals:[{t:'orders',n:5}],tut:'salvador'},
+ {m:2,name:['O sol da Bahia','The Bahia sun'],turns:17,lines:['ff','cm'],items:8,lv:[2,3],two:.15,crate:2,mold:0,sun:{w:2,x:2,step:0},goals:[{t:'make',l:'ff',lv:4,n:1}],tut:'sol'},
+ {m:2,name:['Chegou o coco','Here comes the coconut'],turns:18,lines:['ff','cm','cc'],items:10,lv:[2,3],two:.2,crate:1,engr:3,mold:0,sun:{w:2,x:4,step:0},goals:[{t:'orders',n:6}],tut:'engr'},
+ {m:2,name:['Tabuleiro da baiana','The baiana’s tray'],turns:19,lines:['ff','cm','cc'],items:10,lv:[2,3],two:.2,crate:2,engr:1,mold:0,dada:{every:5,ttl:8,lv:[2,3],first:1},goals:[{t:'dada',n:3},{t:'orders',n:5}],tut:'dada'},
+ {m:2,name:['O sol anda','The sun moves'],turns:23,lines:['ff','cm','cc'],items:12,lv:[2,3],two:.2,crate:2,engr:2,mold:0,sun:{w:2,x:0,step:4},goals:[{t:'make',l:'cm',lv:5,n:1}],tut:'solanda'},
+ {m:2,name:['Hora do acarajé','Acarajé time'],turns:25,lines:['ff','cm','cc'],items:12,lv:[2,4],two:.3,crate:2,engr:2,mold:0,sun:{w:2,x:0,step:4},dada:{every:7,ttl:8,lv:[2,3]},goals:[{t:'orders',n:7},{t:'clear',n:4}],tut:'dende'},
+ {m:2,name:['Chefe: Chegada do saveiro','Boss: The saveiro arrives'],turns:22,lines:['ff','cm','cc'],items:12,lv:[2,4],two:.3,crate:1,engr:1,mold:0,sun:{w:2,x:2,step:4},dada:{every:6,ttl:8,lv:[2,3]},goals:[{t:'orders',n:7},{t:'dada',n:2}],boss:'saveiro',tut:'saveiro'}
 ];
-const OPEN_M=2;                                                     // mercados jogáveis neste teste: Ver-o-Peso e Manaus
+const OPEN_M=3;                                                     // mercados jogáveis neste teste: Ver-o-Peso, Manaus e Salvador
+const BOSS_IC={tide:'🌊',rios:'🌊',saveiro:'⛵'}, bossIc=c=>BOSS_IC[c.boss]||'🌊';
 const mOf=i=>PHASES[i].m||0, phasesOf=m=>PHASES.map((_,i)=>i).filter(i=>mOf(i)===m), firstOf=m=>phasesOf(m)[0], bossOf=m=>phasesOf(m).find(i=>PHASES[i].boss);
 const mLines=m=>[...new Set(phasesOf(m).flatMap(i=>PHASES[i].lines))];
 const TUT={
@@ -354,7 +394,21 @@ const TUT={
  rios:['🌊',['Chefe: Encontro das Águas','Boss: Meeting of the Waters'],['A cada 4 turnos os rios Negro e Solimões sobem nas <b>duas colunas das pontas</b>. Itens ali ficam presos por 2 turnos: não andam, não juntam e não são entregues.',
    'Every 4 turns the Negro and Solimões rivers rise over the <b>two outer columns</b>. Items there are stuck for 2 turns: they can’t move, merge or be delivered.']],
  tide:['🌊',['Chefe: Maré cheia','Boss: High tide'],['A cada 4 turnos a maré sobe na <b>fileira de baixo</b>. Itens ali ficam presos por 2 turnos: não andam, não juntam e não são entregues.',
-   'Every 4 turns the tide floods the <b>bottom row</b>. Items there are stuck for 2 turns: they can’t move, merge or be delivered.']]
+   'Every 4 turns the tide floods the <b>bottom row</b>. Items there are stuck for 2 turns: they can’t move, merge or be delivered.']],
+ salvador:['🥁',['Feira de São Joaquim','Feira de São Joaquim'],['Bem-vindo a Salvador! As linhas aqui são <b>Fradinho</b>, <b>Camarão</b> e, a partir da fase 3, <b>Coco</b>. Prepare-se: o sol da Bahia é forte, e a Dona Dadá vai aparecer com pedidos especiais.',
+   'Welcome to Salvador! The item lines here are <b>Black-eyed peas</b>, <b>Shrimp</b> and, from level 3, <b>Coconut</b>. Get ready: the Bahia sun is strong, and Dona Dadá will show up with special orders.']],
+ sol:['☀️',['Sol forte','Strong sun'],['As casas com <b>☀️ sol</b> esquentam a comida: um item de <b>nível 3 ou mais</b> que fique parado ali 5 turnos <b>perde 1 nível</b>. O número 🔥 mostra quantos turnos faltam. Tire o item do sol ou faça uma fusão com ele. Itens de nível 1 e 2 não sofrem.',
+   'Spaces with <b>☀️ sun</b> heat the food: an item of <b>level 3 or higher</b> that stays there for 5 turns <b>loses 1 level</b>. The 🔥 number shows how many turns are left. Move the item out of the sun or merge it. Level 1 and 2 items are safe.']],
+ engr:['🥥',['Engradado de coco','Coconut crate'],['O engradado é um caixote reforçado: a <b>1ª fusão ao lado racha</b> a madeira e a <b>2ª abre</b>. Dentro sempre vem um <b>Coco seco</b>. O 🔨 Martelo abre de uma vez.',
+   'The coconut crate is a reinforced crate: the <b>1st merge next to it cracks</b> the wood and the <b>2nd opens it</b>. There’s always a <b>Dry coconut</b> inside. The 🔨 Hammer opens it in one go.']],
+ dada:['👩🏾‍🍳',['Pedido da Dona Dadá','Dona Dadá’s order'],['A baiana Dona Dadá pede <b>2 itens de linhas diferentes</b> para o tabuleiro dela e espera só alguns turnos (⏱️). Atenda a tempo e ganhe <b>+2 turnos</b> e moedas em dobro. Se ela for embora, não há castigo: ela volta mais tarde.',
+   'Dona Dadá, a baiana street-food cook, asks for <b>2 items from different lines</b> for her tray and only waits a few turns (⏱️). Serve her in time to get <b>+2 turns</b> and double coins. If she leaves, there’s no penalty: she’ll be back later.']],
+ solanda:['⛱️',['O sol anda','The sun moves'],['Agora a faixa de sol <b>anda 1 coluna para a direita a cada 4 turnos</b>, da manhã para a tarde (e volta pela esquerda). Use o <b>⛱️ Toldo</b>: ele faz sombra em 4 casas (2 × 2) até o fim da fase. Você ganhou 2 Toldos; outros saem por 🪙 100 no mercado.',
+   'Now the strip of sun <b>moves 1 column to the right every 4 turns</b>, from morning to afternoon (and comes back on the left). Use the <b>⛱️ Sunshade</b>: it shades 4 spaces (2 × 2) for the rest of the level. You got 2 Sunshades; more cost 🪙 100 at the market.']],
+ dende:['🌴',['Selo Dendê','Dendê Seal'],['Entregue 3 itens de nível 5 de cada linha de Salvador no espaço <b>🏅 Selo</b> e vença o chefe para ganhar o Selo <b>Dendê</b>: a 1ª fusão de cada fase sobe 1 nível extra.',
+   'Deliver 3 level 5 items of each Salvador line to the <b>🏅 Seal</b> slot and beat the boss to earn the <b>Dendê</b> Seal: the first merge of each level jumps 1 extra level.']],
+ saveiro:['⛵',['Chefe: Chegada do saveiro','Boss: The saveiro arrives'],['A cada 5 turnos um <b>saveiro</b> do Recôncavo atraca pela esquerda e descarrega <b>3 engradados</b> nas casas livres mais à esquerda. Abra-os para ganhar cocos, ou eles tomam o tabuleiro. E o sol continua andando!',
+   'Every 5 turns a <b>saveiro</b> sailboat from the Recôncavo docks on the left and unloads <b>3 coconut crates</b> on the free spaces furthest left. Open them for coconuts, or they’ll take over the board. And the sun keeps moving!']]
 };
 // Diário de Viagem: um cartão por fase. Textos a validar com pesquisa e revisão local antes de publicar.
 const CARDS=[
@@ -414,8 +468,41 @@ const CARDS=[
  {mk:1,em:'🌊',t:['Encontro das Águas','Meeting of the Waters'],p:['Perto de Manaus (AM)','Near Manaus'],
   f:['As águas escuras do rio Negro e as barrentas do Solimões correm lado a lado sem se misturar.','The dark waters of the Rio Negro and the muddy Solimões flow side by side without mixing.'],
   m:['A diferença de temperatura, de velocidade e de sedimentos mantém as duas cores separadas por vários quilômetros. Dali em diante, os rios juntos passam a ser chamados de Amazonas.',
-   'Differences in temperature, speed and sediment keep the two colors apart for several kilometers. From there on, the joined rivers are called the Amazonas.']}
+   'Differences in temperature, speed and sediment keep the two colors apart for several kilometers. From there on, the joined rivers are called the Amazonas.']},
+ // Feira de São Joaquim (Salvador). Textos a validar com pesquisa e revisão local antes de publicar.
+ {mk:2,em:'🥁',t:['Feira de São Joaquim','Feira de São Joaquim'],p:['Salvador (BA)','Salvador, Bahia'],
+  f:['A maior feira livre de Salvador fica na Cidade Baixa, à beira da Baía de Todos-os-Santos.','Salvador’s largest open-air market sits in the Lower City, on the shore of the Bay of All Saints.'],
+  m:['Ela herdou os feirantes da antiga Feira de Água de Meninos, destruída por um incêndio em 1964. Tem de tudo: farinha, frutas, peixe, camarão seco, cerâmica, ervas e artigos religiosos, num labirinto de bancas e boxes.',
+   'It took in the stallholders of the old Água de Meninos market, destroyed by a fire in 1964. You’ll find everything there: cassava flour, fruit, fish, dried shrimp, pottery, herbs and religious goods, in a maze of stalls.']},
+ {mk:2,em:'🫘',t:['Feijão-fradinho','Black-eyed peas'],p:['Feira de São Joaquim, Salvador (BA)','Feira de São Joaquim, Salvador'],
+  f:['O feijão de olhinho preto é a base do acarajé e do abará.','The bean with the little black eye is the base of acarajé and abará.'],
+  m:['Para a massa, o feijão fica de molho, é descascado grão a grão, moído e batido com cebola e sal até ficar fofo. O abará leva a mesma massa, temperada com dendê, cozida no vapor enrolada na folha de bananeira.',
+   'For the batter, the beans are soaked, skinned one by one, ground and whipped with onion and salt until fluffy. Abará uses the same batter, seasoned with dendê and steamed wrapped in a banana leaf.']},
+ {mk:2,em:'🥥',t:['Coco','Coconut'],p:['Litoral da Bahia','Bahia’s coast'],
+  f:['Do coco verde vem a água; do coco seco, a polpa ralada e o leite de coco.','Green coconuts give water; dry ones give grated flesh and coconut milk.'],
+  m:['O leite de coco, tirado da polpa ralada e espremida, é o que deixa a moqueca e o bobó cremosos. A polpa também vira cocada, doce vendido nos tabuleiros e nas praias de Salvador.',
+   'Coconut milk, pressed from the grated flesh, is what makes moqueca and bobó creamy. The flesh also becomes cocada, a candy sold on street trays and beaches all over Salvador.']},
+ {mk:2,em:'👩🏾‍🍳',t:['Baianas de acarajé','The baianas de acarajé'],p:['Ruas de Salvador (BA)','Streets of Salvador'],
+  f:['De saia rodada e turbante, as baianas vendem acarajé, abará e cocada nos tabuleiros.','In wide skirts and head wraps, the baianas sell acarajé, abará and cocada from their trays.'],
+  m:['O ofício das baianas de acarajé, de origem africana, é reconhecido pelo Iphan como Patrimônio Cultural do Brasil. O saber de preparar e vender as comidas passa de mãe para filha há gerações.',
+   'The craft of the baianas de acarajé, of African origin, is recognized by Iphan, Brazil’s heritage agency, as part of the country’s cultural heritage. The know-how of cooking and selling the food passes from mother to daughter.']},
+ {mk:2,em:'🍲',t:['Moqueca baiana','Moqueca baiana'],p:['Cozinha da Bahia','Bahian cooking'],
+  f:['Peixe ou camarão cozido com leite de coco, dendê, tomate, cebola e coentro.','Fish or shrimp cooked with coconut milk, dendê oil, tomato, onion and cilantro.'],
+  m:['É feita e servida na panela de barro, ainda borbulhando, com arroz, farofa de dendê e pirão. O leite de coco e o dendê são o que a diferenciam da moqueca capixaba, do Espírito Santo, que não leva nenhum dos dois.',
+   'It’s cooked and served in a clay pot, still bubbling, with rice, dendê farofa and pirão. Coconut milk and dendê set it apart from the moqueca of Espírito Santo, which uses neither.']},
+ {mk:2,em:'🌴',t:['Azeite de dendê','Dendê oil'],p:['Recôncavo e litoral da Bahia','Bahia’s Recôncavo and coast'],
+  f:['Óleo alaranjado tirado do fruto do dendezeiro, uma palmeira de origem africana.','Orange oil pressed from the fruit of the oil palm, a palm tree of African origin.'],
+  m:['O dendezeiro chegou à Bahia com os africanos escravizados e se adaptou bem ao litoral. O azeite dá cor e sabor ao acarajé, ao vatapá, ao caruru e à moqueca, a base da cozinha afro-baiana.',
+   'The oil palm came to Bahia with enslaved Africans and thrived on the coast. Its oil gives color and flavor to acarajé, vatapá, caruru and moqueca, the base of Afro-Bahian cooking.']},
+ {mk:2,em:'⛵',t:['Saveiros','Saveiros'],p:['Baía de Todos-os-Santos (BA)','Bay of All Saints, Bahia'],
+  f:['Barcos de madeira a vela que levavam a produção do Recôncavo até as feiras de Salvador.','Wooden sailboats that carried produce from the Recôncavo to Salvador’s markets.'],
+  m:['Durante gerações, os saveiros atracaram em Água de Meninos e na rampa do Mercado Modelo carregados de farinha, frutas, cerâmica e lenha. Hoje são poucos, mas ainda aparecem nas regatas e festas da baía.',
+   'For generations, saveiros docked at Água de Meninos and the Mercado Modelo ramp loaded with cassava flour, fruit, pottery and firewood. Few are left today, but they still sail in the bay’s regattas and festivals.']}
 ];
+// Cada cartão pertence a uma fase (ph = índice em PHASES). Os do Ver-o-Peso e de Manaus seguem a posição na lista; os
+// demais mercados seguem a ordem das suas fases (as do evento ficam no meio de PHASES e não têm cartão).
+{ const pos={}; CARDS.forEach((c,k)=>{ const m=c.mk||0; pos[m]=(pos[m]||0); c.ph=phasesOf(m)[pos[m]++]; }); }
+const cardOf=i=>CARDS.find(c=>c.ph===i);
 // Selos de Domínio (seção 3.5). Neste teste só o do Ver-o-Peso pode ser conquistado.
 const SELOS=[['🍇',['Força do Açaí','Açaí Power'],['+3 turnos em toda fase','+3 turns on every level']],['🥤',['Guaraná','Guaraná'],['a cada 10 fusões, +1 turno','+1 turn every 10 merges']],
  ['🌴',['Dendê','Dendê'],['a 1ª fusão de cada fase sobe +1 nível extra','the first merge of each level jumps 1 extra level']],['🥩',['Carne de Sol','Carne de Sol'],['despensa com 2 vagas fora do tabuleiro','a pantry with 2 spaces off the board']],
@@ -436,8 +523,12 @@ const FACE_IDS=new Set(FACES.map(f=>f[0]));
 const fc=x=>FACE_IDS.has(x)?`<img class="pf" src="personagens/${x}.webp" alt="" draggable="false">`:x;
 const TOOLS={hammer:['🔨',['Martelo','Hammer'],['remove um item ou obstáculo','removes an item or obstacle'],120],
  pot:['🫕',['Caldeirão','Cauldron'],['sobe 1 nível de um item (até o nível 4)','raises an item by 1 level (up to level 4)'],150],
- turns:['⏳',['+3 Turnos','+3 Turns'],['dá 3 turnos extras na fase','gives you 3 extra turns in a level'],0]};
-const MAX_CONT=2, ORDER_COIN=2; const orderPay=o=>o.items.reduce((a,x)=>a+ORDER_COIN*x.n,0);                       // continuações por fase ao ficar sem turnos; moedas por nível de item entregue
+ turns:['⏳',['+3 Turnos','+3 Turns'],['dá 3 turnos extras na fase','gives you 3 extra turns in a level'],0],
+ toldo:['⛱️',['Toldo','Sunshade'],['faz sombra em 4 casas (2 × 2) até o fim da fase, nas fases com sol','shades 4 spaces (2 × 2) for the rest of a level with sun'],100]};
+// Ferramentas que aparecem: o Toldo só depois de Salvador aberto (no mercado) e só nas fases com sol (na fase).
+const toolShow=(k,c)=>k!=='toldo'||(c?!!c.sun:mOpen(2)||(S.tools.toldo||0)>0);
+const toolEm=k=>k==='toldo'?'<img class="ii" src="itens/toldo.webp" alt="" draggable="false">':TOOLS[k][0];
+const MAX_CONT=2, ORDER_COIN=2; const orderPay=o=>o.items.reduce((a,x)=>a+ORDER_COIN*x.n,0)*(o.dada?2:1);                       // continuações por fase ao ficar sem turnos; moedas por nível de item entregue
 // Loja: compras com dinheiro real (simuladas neste protótipo), de US$ 0,50 a US$ 9,99. Selos e cartões nunca são vendidos.
 // UNIT é o valor de referência de cada coisa comprada avulsa; serve para calcular a economia dos kits.
 const UNIT={coins:.5/150,hammer:.33,pot:.33,turns:.5};
@@ -492,13 +583,14 @@ function transferModal(){ modal(`<div class="big">📲</div><h2>${tr('Trocar de 
    <button class="btn ghosty" data-act="mclose">${tr('Fechar','Close')}</button>`);
   saveCode().then(c=>{ const el=$('xcode'); if(el) el.value=c; }).catch(()=>{}); }
 const starsIn=d=>Object.values(d.best||{}).reduce((a,b)=>a+(+b||0),0);
-function fresh(){ return {v:1,coins:100,best:{},cards:[],tools:{hammer:3,pot:3,turns:1},iap:{n:0,usd:0,once:[]},selos:[],sealOn:true,sealUse:{0:true,1:true},selo5:{ac:0,pe:0,jt:0},seen:{},diaryDone:false,diaryM:[],lastM:0,ev:EV_NEW(),
+function fresh(){ return {v:1,coins:100,best:{},cards:[],tools:{hammer:3,pot:3,turns:1,toldo:0},iap:{n:0,usd:0,once:[]},selos:[],sealOn:true,sealUse:{0:true,1:true,2:true},selo5:{ac:0,pe:0,jt:0},seen:{},diaryDone:false,diaryM:[],lastM:0,ev:EV_NEW(),
   stats:{ph:{}},opts:{sound:true,music:true,vSom:1,vMus:1,test:false,lang:LANG}}; }
 function load(){ try{ const d=JSON.parse(localStorage.getItem(KEY)); if(d&&d.v===1) return d; }catch(e){} return fresh(); }
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
 const starsOf=i=>S.best[i]||0, totalStars=()=>Object.values(S.best).reduce((a,b)=>a+b,0), starsM=m=>phasesOf(m).reduce((a,i)=>a+starsOf(i),0);
 const mOpen=m=>m<OPEN_M&&unlocked(firstOf(m));
-const unlocked=i=>PHASES[i].ev?(S.opts.test||PHASES[i].evn===0||starsOf(i-1)>0):(S.opts.test||i===0||starsOf(i-1)>0);
+const unlocked=i=>{ if(S.opts.test) return true; if(PHASES[i].ev) return PHASES[i].evn===0||starsOf(i-1)>0;
+  const m=mOf(i), ps=phasesOf(m), k=ps.indexOf(i); return k>0?starsOf(ps[k-1])>0:m===0||starsOf(bossOf(m-1))>0; };
 const phStat=i=>S.stats.ph[i]||(S.stats.ph[i]={tries:0,wins:0,losses:0,stuck:0,left:0});
 function toast(m){ if(quiet) return; const el=$('toast'), inf=screen==='game'&&!sheetName&&document.querySelector('.info'); el.textContent=m; el.hidden=false;
   // Na fase, a mensagem aparece sobre a barra de informações, para não cobrir os pedidos nem o tabuleiro.
@@ -615,40 +707,59 @@ function setLang(l){ LANG=l; S.opts.lang=l; applyLang(); render(); }
 
 /* ===================== FASE ===================== */
 function newOrder(){
-  const c=P.cfg, f=pick(FACES), o={id:P.nextId++,face:f[0],who:f[1],items:[]}, k=Math.random()<c.two?2:1;
+  const c=P.cfg, f=pick(c.dada?FACES.filter(x=>x[0]!=='dada'):FACES), o={id:P.nextId++,face:f[0],who:f[1],items:[]}, k=Math.random()<c.two?2:1;
   for(let j=0;j<k;j++) o.items.push({l:pick(c.lines),n:rint(c.lv[0],c.lv[1]),done:false});
   return o;
 }
+// Pedido da Dona Dadá: 2 itens de linhas diferentes, prazo de ttl turnos; vale +2 turnos e moedas em dobro.
+function newDada(){ const d=P.cfg.dada, ls=P.cfg.lines.slice().sort(()=>Math.random()-.5).slice(0,2);
+  return {id:P.nextId++,face:'dada',who:'Dona Dadá',dada:true,ttl:d.ttl,items:ls.map(l=>({l,n:rint(d.lv[0],d.lv[1]),done:false}))}; }
+function addDada(){ // ocupa o lugar do pedido com menos itens já entregues
+  const dn=o=>o.items.filter(x=>x.done).length, k=P.orders.reduce((b,o,j)=>b<0||dn(o)<dn(P.orders[b])?j:b,-1);
+  P.orders[k]=newDada(); }
 function startPhase(i){
   const c=PHASES[i], b=Array(COLS*ROWS).fill(null), free=()=>{ const e=[]; b.forEach((x,k)=>{ if(!x) e.push(k); }); return e; };
   for(let k=0;k<c.crate;k++) b[pick(free())]={o:'crate',u:{l:pick(c.lines),n:Math.random()<.7?1:2}};   // o caixote guarda um item embaixo
+  for(let k=0;k<(c.engr||0);k++) b[pick(free())]=engr(c,2);
   for(let k=0;k<c.mold;k++){ const e=free().filter(x=>x<COLS*(ROWS-1)&&(c.boss!=='rios'||(x%COLS&&x%COLS<COLS-1))); b[pick(e)]={o:'mold'}; }
   for(let k=0;k<c.items;k++) b[pick(free())]={l:pick(c.lines),n:Math.random()<.65?1:2};
-  const seal=sealOn(0), guar=sealOn(1); if(!c.ev) curM=mOf(i);
-  P={i,cfg:c,board:b,turns:c.turns+(seal?3:0),seal,guar,evOk:!!(c.ev&&evAtivo()),merges:0,used:0,goals:c.goals.map(g=>({...g,p:0})),orders:[],nextId:1,tide:0,toolsUsed:0,cont:0,earned:0,armed:null,over:null};
+  const seal=sealOn(0), guar=sealOn(1), dende=sealOn(2); if(!c.ev) curM=mOf(i);
+  P={i,cfg:c,board:b,turns:c.turns+(seal?3:0),seal,guar,dende,dendeOk:false,evOk:!!(c.ev&&evAtivo()),merges:0,used:0,goals:c.goals.map(g=>({...g,p:0})),orders:[],nextId:1,tide:0,shade:[],toolsUsed:0,cont:0,earned:0,armed:null,over:null};
   while(P.orders.length<3) P.orders.push(newOrder());
+  if(c.dada&&c.dada.first) addDada();
+  if(c.tut==='solanda'&&!S.seen.solanda) S.tools.toldo=(S.tools.toldo||0)+2;          // presente do tutorial do Toldo
   phStat(i).tries++; save(); sel=null; screen='game'; Musica.ligar();
   if(!quiet&&c.tut&&!S.seen[c.tut]){ S.seen[c.tut]=1; const T=TUT[c.tut]; render(); modal(`<div class="big">${T[0]}</div><h2>${tx(T[1])}</h2><p>${tx(T[2])}</p><button class="btn" data-act="mclose">${tr('Entendi','Got it')}</button>`); return; }
   render();
 }
 // Água dos chefes: a maré (Ver-o-Peso) alaga a fileira de baixo; o Encontro das Águas (Manaus), as duas colunas das pontas.
 const flooded=i=>P.tide>0&&(P.cfg.boss==='rios'?(i%COLS===0||i%COLS===COLS-1):i>=COLS*(ROWS-1));
+const waterBoss=c=>c.boss==='tide'||c.boss==='rios';
+// Engradado de coco: caixote reforçado (hp = fusões ao lado que faltam); guarda um Coco seco (ou um item da fase).
+const engr=(c,hp)=>({o:'engr',hp,u:c.lines.includes('cc')&&hp>1?{l:'cc',n:2}:{l:pick(c.lines),n:Math.random()<.7?1:2}});
+// Sol de Salvador: faixa de w colunas a partir de x; com step, anda 1 coluna para a direita a cada step turnos (e volta pela esquerda).
+const sunX=()=>{ const s=P.cfg.sun; return s?(s.x+(s.step?Math.floor(P.used/s.step):0))%COLS:-1; };
+const inSun=i=>{ const s=P.cfg.sun; if(!s) return false; const d=(i%COLS-sunX()+COLS)%COLS; return d<s.w; };
+const sunny=i=>inSun(i)&&!P.shade.includes(i);
+const heatLeft=x=>SUN_HEAT-(x.h||0);
 const sealOn=m=>S.selos.includes(m)&&S.sealUse[m]!==false;
 const isItem=x=>x&&x.l;
 const free=i=>!P.board[i]&&!flooded(i);
 const canMerge=(a,b)=>isItem(a)&&isItem(b)&&a!==b&&a.l===b.l&&a.n===b.n&&a.n<MAX&&!a.m&&!b.m;
 const goalDone=g=>g.p>=g.n;
 // Abre um obstáculo: o caixote quebra e deixa o item que guardava; o mofo é esfregado e some.
-function abrir(k,x,atraso){ P.board[k]=x.o==='crate'&&x.u?{...x.u}:null; if(P.board[k]) popAt=k; obsQ.push({i:k,t:x.o,d:atraso||0}); }
+function abrir(k,x,atraso){ P.board[k]=x.u?{...x.u}:null; if(P.board[k]) popAt=k; obsQ.push({i:k,t:x.o,d:atraso||0}); }
 function progress(t,extra){ for(const g of P.goals) if(g.t===t&&(!extra||extra(g))) g.p++; }
 function merge(from,to,via){
   if(P.over||from===to||flooded(from)||flooded(to)) return false;
   const a=P.board[from], b=P.board[to]; if(!canMerge(a,b)) return false;
   let n=a.n+1;
   if(via!=null&&via>=0&&via!==from&&via!==to&&a.n+2<=MAX&&isAdj(via,to)&&!flooded(via)&&canMerge(a,P.board[via])){ P.board[via]=null; n=a.n+2; }
+  if(P.dende&&!P.dendeOk&&n<MAX){ n++; P.dendeOk=true; toast(tr('🌴 Selo Dendê: +1 nível','🌴 Dendê Seal: +1 level')); }
   P.board[from]=null; P.board[to]={l:a.l,n};
   for(const k of nbrs(to)){ const x=P.board[k]; if(!x) continue;
-    if(x.o){ abrir(k,x); progress('clear'); beep(330); }
+    if(x.o==='engr'&&x.hp>1){ x.hp--; obsQ.push({i:k,t:'racha',d:0}); beep(300); }
+    else if(x.o){ abrir(k,x); progress('clear'); beep(330); }
     else if(x.m){ x.m=false; obsQ.push({i:k,t:'limpo',d:0}); } }
   progress('make',g=>g.l===a.l&&n>=g.lv);
   P.merges++; if(P.guar&&P.merges%10===0){ P.turns++; toast(tr('🥤 Selo Guaraná: +1 turno','🥤 Guaraná Seal: +1 turn')); }
@@ -660,8 +771,24 @@ function spawn(l){
   P.used++; const i=pick(e); P.board[i]={l,n:1}; popAt=i; beep(520);
   if(P.used%MOLD_EVERY===0){ const c=[]; P.board.forEach((x,k)=>{ if(x&&x.o==='mold') for(const j of nbrs(k)){ const y=P.board[j]; if(isItem(y)&&!y.m&&!c.includes(j)) c.push(j); } });
     if(c.length){ P.board[pick(c)].m=true; toast(tr('Um item ficou mofado 🦠','An item got moldy 🦠')); } }
-  if(P.cfg.boss){ if(P.tide>0) P.tide--; else if(P.used%TIDE_EVERY===0){ P.tide=TIDE_LEN; toast(P.cfg.boss==='rios'?tr('Os rios subiram nas pontas! 🌊','The rivers rose at the edges! 🌊'):tr('A maré subiu! 🌊','The tide is in! 🌊')); } }
+  if(waterBoss(P.cfg)){ if(P.tide>0) P.tide--; else if(P.used%TIDE_EVERY===0){ P.tide=TIDE_LEN; toast(P.cfg.boss==='rios'?tr('Os rios subiram nas pontas! 🌊','The rivers rose at the edges! 🌊'):tr('A maré subiu! 🌊','The tide is in! 🌊')); } }
+  salvadorTick();
   sel=null; checkEnd();
+}
+// Um turno em Salvador: o sol anda e esquenta, a Dona Dadá espera (ou chega) e o saveiro descarrega.
+function salvadorTick(){
+  const c=P.cfg;
+  if(c.sun){ if(c.sun.step&&P.used%c.sun.step===0) toast(tr('☀️ O sol andou para a direita','☀️ The sun moved right'));
+    P.board.forEach((x,k)=>{ if(!isItem(x)) return;
+      if(sunny(k)&&x.n>=SUN_LV&&!x.m){ x.h=(x.h||0)+1; if(x.h>=SUN_HEAT){ x.n--; x.h=0; obsQ.push({i:k,t:'calor',d:0}); popAt=k; toast(tr(`☀️ ${item(x.l,x.n+1)[1]} esquentou e caiu para o nível ${x.n}`,`☀️ ${item(x.l,x.n+1)[1]} got too hot and dropped to level ${x.n}`)); } }
+      else if(x.h) x.h=0; }); }
+  if(c.dada){ const d=P.orders.find(o=>o.dada);
+    if(d){ if(--d.ttl<=0){ P.orders[P.orders.indexOf(d)]=newOrder(); toast(tr('👩🏾‍🍳 A Dona Dadá foi atender outro freguês. Ela volta!','👩🏾‍🍳 Dona Dadá went to serve someone else. She’ll be back!')); } }
+    else if(P.used%c.dada.every===0){ addDada(); toast(tr('👩🏾‍🍳 A Dona Dadá chegou com um pedido especial!','👩🏾‍🍳 Dona Dadá is here with a special order!')); } }
+  if(c.boss==='saveiro'&&P.used%SAVEIRO_EVERY===0){
+    const e=P.board.map((x,k)=>k).filter(k=>free(k)).sort((a,b)=>a%COLS-b%COLS||a-b).slice(0,SAVEIRO_N);
+    e.forEach(k=>{ P.board[k]=engr(c,SAVEIRO_HP); }); if(e.length) obsQ.push({t:'saveiro',cells:e,d:0});
+    toast(tr(`⛵ O saveiro descarregou ${e.length} engradados!`,`⛵ The saveiro unloaded ${e.length} crates!`)); }
 }
 const matches=(o,it)=>o.items.find(x=>!x.done&&x.l===it.l&&x.n===it.n);
 function deliver(i,id){
@@ -671,7 +798,9 @@ function deliver(i,id){
   const o=id!=null?P.orders.find(x=>x.id===id):P.orders.find(x=>matches(x,it)), nd=o&&matches(o,it);
   if(!nd){ toast(tr('Esse cliente não pediu esse item.','This customer didn’t order that.')); return; }
   nd.done=true; P.board[i]=null; sel=null; beep(700);
-  if(o.items.every(x=>x.done)){ progress('orders'); const co=orderPay(o); S.coins+=co; P.earned+=co; P.orders[P.orders.indexOf(o)]=newOrder(); Sfx.tocar('pedido'); toast(`${o.face} ${o.who}: +${co} 🪙`); }
+  if(o.items.every(x=>x.done)){ progress('orders'); const co=orderPay(o); S.coins+=co; P.earned+=co; P.orders[P.orders.indexOf(o)]=newOrder(); Sfx.tocar('pedido');
+    if(o.dada){ progress('dada'); P.turns+=DADA_BONUS; P.dadaFx=1; toast(tr(`👩🏾‍🍳 Dona Dadá: +${DADA_BONUS} turnos · +${co} 🪙`,`👩🏾‍🍳 Dona Dadá: +${DADA_BONUS} turns · +${co} 🪙`)); }
+    else toast(`${FACE_IDS.has(o.face)?'':o.face+' '}${o.who}: +${co} 🪙`); }
   checkEnd();
 }
 function deliverSeal(i){
@@ -688,10 +817,13 @@ function checkSeal(){                                                // devolve 
   return -1;
 }
 function useTool(k,i){
-  const x=P.board[i]; if(P.over||!x) return false;
+  const x=P.board[i]; if(P.over||(!x&&k!=='toldo')) return false;
   if(P.toolsUsed>=MAX_TOOLS||!(S.tools[k]>0)){ toast(tr('Sem ferramentas disponíveis nesta fase.','No tools left for this level.')); P.armed=null; return false; }
   if(k==='turns') return false;
-  if(k==='hammer'){ if(x.o){ abrir(i,x,340); progress('clear'); } else P.board[i]=null; }
+  if(k==='toldo'){ if(!P.cfg.sun){ toast(tr('O Toldo só serve nas fases com sol.','The Sunshade only helps in levels with sun.')); P.armed=null; return false; }
+    const c0=Math.min(i%COLS,COLS-2), r0=Math.min(Math.floor(i/COLS),ROWS-2);
+    for(const [a,b] of [[0,0],[1,0],[0,1],[1,1]]){ const j=(r0+b)*COLS+c0+a; if(!P.shade.includes(j)) P.shade.push(j); const y=P.board[j]; if(isItem(y)) y.h=0; } }
+  else if(k==='hammer'){ if(x.o){ abrir(i,x,340); progress('clear'); } else P.board[i]=null; }
   else { if(!isItem(x)||x.n>4||flooded(i)){ toast(tr('O Caldeirão funciona em itens até o nível 4.','The Cauldron works on items up to level 4.')); return false; } x.n++; progress('make',g=>g.l===x.l&&x.n>=g.lv); popAt=i; }
   S.tools[k]--; P.toolsUsed++; P.armed=null; beep(700); checkEnd(); return true;
 }
@@ -714,7 +846,7 @@ function win(){
   const co=first?30+10*st:10, h=phStat(i); h.wins++; h.left+=left;
   S.best[i]=Math.max(prev,st); S.coins+=co;
   let gift=''; if(st===3&&prev<3){ const k=pick(['hammer','pot']); S.tools[k]++; gift=`<p>${tr('Prêmio por 3 ⭐','3 ⭐ reward')}: +1 ${TOOLS[k][0]} ${tname(k)}</p>`; }
-  const evR=PHASES[i].ev?evWin(i):'', newCard=!PHASES[i].ev&&!S.cards.includes(i); if(newCard) S.cards.push(i);
+  const evR=PHASES[i].ev?evWin(i):'', newCard=!!cardOf(i)&&!S.cards.includes(i); if(newCard) S.cards.push(i);
   const seal=checkSeal(), c=PHASES[i], nx=PHASES[i+1], nextM=c.boss&&mOf(i)+1<OPEN_M?mOf(i)+1:-1; save();
   if(quiet) return; Sfx.tocar('feira');
   modal(`<div class="bigstars">${[1,2,3].map(k=>`<span${k>st?' class="off" style="opacity:.25"':''}>⭐</span>`).join('')}</div><h1>${tr('Fase concluída!','Level complete!')}</h1>
@@ -738,9 +870,9 @@ function loseModal(){
    <button class="btn${can?' ghosty':''}" data-act="phase:${P.i}">${tr('Tentar de novo','Try again')}</button><button class="btn ghosty" data-act="go:market">${tr('Voltar ao mercado','Back to the market')}</button>
    <p class="note">${tr('Dica: gaste turnos só com o que falta para o objetivo 🎯 e junte três de uma vez quando puder.','Tip: spend turns only on what the goal 🎯 still needs, and merge three at once when you can.')}</p>`);
 }
-const goalFull=g=>g.t==='orders'?tr(`Entregar ${g.n} pedidos`,`Fill ${g.n} orders`):g.t==='clear'?tr(`Limpar ${g.n} obstáculos`,`Clear ${g.n} obstacles`):tr(`Criar ${item(g.l,g.lv)[1]} (nível ${g.lv})`,`Make ${item(g.l,g.lv)[1]} (level ${g.lv})`);
-function goalText(g){ return g.t==='orders'?tr('Entregar pedidos','Fill orders'):g.t==='clear'?tr('Limpar obstáculos','Clear obstacles'):tr('Criar ','Make ')+item(g.l,g.lv)[1]; }
-function goalIcon(g){ return g.t==='orders'?'🧺':g.t==='clear'?'🧹':item(g.l,g.lv)[0]; }
+const goalFull=g=>g.t==='orders'?tr(`Entregar ${g.n} pedidos`,`Fill ${g.n} orders`):g.t==='dada'?tr(`Atender ${g.n} pedidos da Dona Dadá`,`Serve ${g.n} of Dona Dadá’s orders`):g.t==='clear'?tr(`Limpar ${g.n} obstáculos`,`Clear ${g.n} obstacles`):tr(`Criar ${item(g.l,g.lv)[1]} (nível ${g.lv})`,`Make ${item(g.l,g.lv)[1]} (level ${g.lv})`);
+function goalText(g){ return g.t==='orders'?tr('Entregar pedidos','Fill orders'):g.t==='dada'?tr('Pedidos da Dona Dadá','Dona Dadá’s orders'):g.t==='clear'?tr('Limpar obstáculos','Clear obstacles'):tr('Criar ','Make ')+item(g.l,g.lv)[1]; }
+function goalIcon(g){ return g.t==='orders'?'🧺':g.t==='dada'?fc('dada'):g.t==='clear'?'🧹':item(g.l,g.lv)[0]; }
 /* ---------- Loja (compras simuladas) ---------- */
 const usd=v=>LANG==='en'?'$'+v.toFixed(2):'US$ '+v.toFixed(2).replace('.',',');
 /* ===================== COMPRAS (mesmo código nos dois jogos) =====================
@@ -857,7 +989,7 @@ function shopHtml(){
   const row=(ic,bd,name,desc,btn,tag)=>`<div class="row"><span class="thumb" aria-hidden="true">${ic}${bd?`<b>${bd}</b>`:''}</span><div><b>${name}</b>${tag?` <span class="tag">${tag}</span>`:''}<p>${desc}</p></div>${btn}</div>`;
   const base=SHOP.coins[0][1]/SHOP.coins[0][2];
   return `<p class="note">${Compras.modo==='play'?tr('O pagamento é feito pela Google Play, no preço da sua moeda. Selos de Domínio e cartões do Diário nunca são vendidos.','Payment goes through Google Play, priced in your currency. Mastery Seals and Journal cards are never sold.'):tr('Compras simuladas neste teste: nada é cobrado. No app publicado, o pagamento é feito pela loja do celular, que converte o preço para a sua moeda. Selos de Domínio e cartões do Diário nunca são vendidos.','Purchases are simulated in this test: nothing is charged. In the published app, payment goes through your phone’s store, which converts prices to your currency. Mastery Seals and Journal cards are never sold.')}</p>
-   <p class="note">${tr('Você tem','You have')}: 🪙 ${fmt(S.coins)} · ${Object.keys(TOOLS).map(k=>`${TOOLS[k][0]} ${S.tools[k]||0}`).join(' · ')}</p><h2>${tr('Kits','Bundles')}</h2>`
+   <p class="note">${tr('Você tem','You have')}: 🪙 ${fmt(S.coins)} · ${Object.keys(TOOLS).filter(k=>toolShow(k)).map(k=>`${TOOLS[k][0]} ${S.tools[k]||0}`).join(' · ')}</p><h2>${tr('Kits','Bundles')}</h2>`
    +SHOP.packs.map(p=>{ const got=p.once&&S.iap.once.includes(p.id); return row('🎁','',tx(p.n),packText(p)+(p.once?tr(' · só 1 vez',' · one time only'):''),got?`<button class="btn sm" disabled>${tr('Comprado','Purchased')}</button>`:buy('pack-'+p.id,p.usd),save_(Math.round((1-p.usd/packValue(p))*100))); }).join('')
    +`<h2>${tr('Ferramentas','Tools')}</h2>`+SHOP.items.map(([id,k,n,v])=>{ const sv=Math.round((1-v/(n*UNIT[k]))*100); return row(TOOLS[k][0],'×'+n,`${n} × ${tname(k)}`,cap(tdesc(k))+'.',buy('item-'+id,v),sv>=5?save_(sv):''); }).join('')
    +`<h2>${tr('Moedas','Coins')}</h2><p class="note">${tr('Moedas compram Martelo e Caldeirão no mercado.','Coins buy Hammers and Cauldrons at the market.')}</p>`+SHOP.coins.map(([id,n,v])=>{ const b=Math.round((n/v/base-1)*100); return row('🪙','',coinsW(n),b>0?tr(`+${b}% de bônus`,`+${b}% bonus`):'&nbsp;',buy('coins-'+id,v)); }).join('')
@@ -875,6 +1007,7 @@ function render(){ if(S&&S.ev) evFab();
   if(sheetName) renderSheet();
   if(screen==='game'&&P) noteSeen();
   if(obsQ.length){ const q=obsQ; obsQ=[]; if(screen==='game') requestAnimationFrame(()=>q.forEach(fxObs)); }
+  if(screen==='game'&&P&&P.dadaFx){ P.dadaFx=0; requestAnimationFrame(()=>fxTurns(null,DADA_BONUS)); }
   save();
 }
 const ALB_CO=100;
@@ -899,9 +1032,9 @@ function bancaHtml(){
   return h+evBancaHtml()+'<div class="toldo"></div></div></div>';
 }
 function homeHtml(){
-  const ts=totalStars(), nc=S.cards.length, man=mOpen(1);
+  const ts=totalStars(), nc=S.cards.length, man=mOpen(1), ssa=mOpen(2);
   return `<div class="homein"><div class="logo"><b>Rota das<br>Feiras</b><small>${tr('Feira Viva · versão de teste','Brazil’s market trail · test build')}</small>${LANG==='en'?'<p class="say"><i>rota das feiras</i> (HO-tah dahs FAY-rahs): the trail of street markets</p>':''}</div>
-   <div class="hero">${bancaHtml()}<b>${tr('Viaje pelos mercados do Brasil','Travel through Brazil’s markets')}</b><p class="note" style="margin:0 auto">${man?tr('Puzzle de fusão com turnos contados. Do Ver-o-Peso, em Belém, ao Mercado Adolpho Lisboa, em Manaus.','A merge puzzle with limited turns. From Ver-o-Peso, in Belém, to Mercado Adolpho Lisboa, in Manaus.'):tr('Puzzle de fusão com turnos contados. Comece pelo Ver-o-Peso, em Belém.','A merge puzzle with limited turns. Start at Ver-o-Peso, in Belém.')}</p>
+   <div class="hero">${bancaHtml()}<b>${tr('Viaje pelos mercados do Brasil','Travel through Brazil’s markets')}</b><p class="note" style="margin:0 auto">${ssa?tr('Puzzle de fusão com turnos contados. Do Ver-o-Peso, em Belém, à Feira de São Joaquim, em Salvador.','A merge puzzle with limited turns. From Ver-o-Peso, in Belém, to Feira de São Joaquim, in Salvador.'):man?tr('Puzzle de fusão com turnos contados. Do Ver-o-Peso, em Belém, ao Mercado Adolpho Lisboa, em Manaus.','A merge puzzle with limited turns. From Ver-o-Peso, in Belém, to Mercado Adolpho Lisboa, in Manaus.'):tr('Puzzle de fusão com turnos contados. Comece pelo Ver-o-Peso, em Belém.','A merge puzzle with limited turns. Start at Ver-o-Peso, in Belém.')}</p>
    <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap"><span class="pill">⭐ ${ts}</span><span class="pill">🪙 ${fmt(S.coins)}</span><span class="pill">📖 ${nc}/${CARDS.length}</span></div></div>
    <button class="btn big" data-act="go:map">▶ ${tr('Jogar','Play')}</button>
    <div class="hgrid"><button data-act="sheet:diary"><span>📖</span>${tr('Diário','Journal')}</button><button data-act="sheet:selos"><span>🏅</span>${tr('Selos','Seals')}</button><button data-act="sheet:album"><span>🧺</span>${tr('Álbum','Album')}${Object.values(S.alb).includes(1)?'<i class="dot"></i>':''}</button><button data-act="sheet:shop"><span>🛒</span>${tr('Loja','Shop')}</button><button data-act="sheet:cfg"><span>⚙️</span>${tr('Ajustes','Settings')}</button></div>
@@ -912,7 +1045,7 @@ function mapSvg(){
   const pts=MARKETS.map(f=>PXY(f.lon,f.lat));
   const ufs=Object.entries(UFMAP).map(([k,d])=>`<path class="uf r${REGUF[k]}" d="${d}"><title>${k.toUpperCase()} · ${tx(REGN[REGUF[k]])}</title></path>`).join('');
   const labs=Object.entries(UFLAB).filter(([k])=>k!=='df').map(([k,[x,y,r]])=>`<text class="uflab${r<15?' s':''}" x="${x}" y="${y}">${k.toUpperCase()}</text>`).join('');
-  const cur=[1,0].find(mOpen)||0;                                    // o anel marca o mercado aberto mais adiante
+  const cur=[2,1,0].find(mOpen)||0;                                    // o anel marca o mercado aberto mais adiante
   const nodes=pts.map((p,i)=>{ const ok=mOpen(i); return `<g class="node ${ok?'open':'lock'}" ${ok?`data-act="mk:${i}" role="button" aria-label="${tr(`Abrir ${MARKETS[i].n}`,`Open ${MARKETS[i].n}`)}"`:''} transform="translate(${p[0].toFixed(1)} ${p[1].toFixed(1)})"><title>${MARKETS[i].n}, ${MARKETS[i].c}${ok?'':i<OPEN_M?tr(' (bloqueado)',' (locked)'):tr(' (em breve)',' (coming soon)')}</title>${i===cur?'<circle class="ring" r="18"/>':''}<circle r="18"/><image href="${artUrl(MARKETS[i])}" x="-16" y="-16" width="32" height="32" preserveAspectRatio="xMidYMid slice" clip-path="url(#nclip)"/>${ok?'':'<text class="nlock">🔒</text>'}</g>`; }).join('');
   return `<svg viewBox="-8 -8 647 655" role="img" aria-label="${tr('Mapa do Brasil com os mercados da Rota das Feiras','Map of Brazil with the markets on the trail')}"><defs><clipPath id="nclip"><circle r="16"/></clipPath></defs>${ufs}${labs}<polyline class="route" points="${pts.map(p=>p.join(',')).join(' ')}"/>${nodes}</svg>`;
 }
@@ -920,9 +1053,9 @@ function mapHtml(){
   return `<div class="head"><button class="icon" data-act="go:home" aria-label="${tr('Voltar','Back')}">◀</button><div class="t"><b>Rota das Feiras</b><small>⭐ ${totalStars()} ${tr('estrelas','stars')} · 🪙 ${fmt(S.coins)}</small></div></div>
    ${LANG==='en'?'<p class="note">In Portuguese, a <i>feira</i> is an open-air street market and a <i>mercado</i> is a covered market hall. <i>Mercadão</i> means “big market”.</p>':''}
    <div class="map">${mapSvg()}<div class="legend">${REGN.map((r,i)=>`<span><i style="background:var(--r${i})"></i>${tx(r)}</span>`).join('')}</div></div>
-    ${MARKETS.slice(0,OPEN_M).map((f,m)=>mOpen(m)?`<button class="row${m===([1,0].find(mOpen)||0)?' cur':''}" data-act="mk:${m}">${tileHtml(f)}<div><b>${f.n}</b> · ${f.c} (${f.uf})<p>${starsM(m)}/${phasesOf(m).length*3} ⭐ · ${tr(`${phasesOf(m).length} fases com chefe`,`${phasesOf(m).length} levels with a boss`)}</p></div><span class="btn sm">${tr('Jogar','Play')}</span></button>`
+    ${MARKETS.slice(0,OPEN_M).map((f,m)=>mOpen(m)?`<button class="row${m===([2,1,0].find(mOpen)||0)?' cur':''}" data-act="mk:${m}">${tileHtml(f)}<div><b>${f.n}</b> · ${f.c} (${f.uf})<p>${starsM(m)}/${phasesOf(m).length*3} ⭐ · ${tr(`${phasesOf(m).length} fases com chefe`,`${phasesOf(m).length} levels with a boss`)}</p></div><span class="btn sm">${tr('Jogar','Play')}</span></button>`
       :`<button class="row lock" data-act="mlocked:${m}">${tileHtml(f,'lock')}<div><b>${f.n}</b> · ${f.c} (${f.uf})<p>${tr(`Abre ao vencer o chefe de ${MARKETS[m-1].n}.`,`Opens when you beat the ${MARKETS[m-1].n} boss.`)}</p></div></button>`).join('')}
-    ${MARKETS.slice(OPEN_M).map(f=>`<div class="row lock">${tileHtml(f,'lock')}<div><b>${f.n}</b> · ${f.c} (${f.uf})<p>${tr('Em breve. Neste teste estão abertos o Ver-o-Peso e Manaus.','Coming soon. Ver-o-Peso and Manaus are open in this test.')}</p></div></div>`).join('')}
+    ${MARKETS.slice(OPEN_M).map(f=>`<div class="row lock">${tileHtml(f,'lock')}<div><b>${f.n}</b> · ${f.c} (${f.uf})<p>${tr('Em breve. Neste teste estão abertos o Ver-o-Peso, Manaus e Salvador.','Coming soon. Ver-o-Peso, Manaus and Salvador are open in this test.')}</p></div></div>`).join('')}
    <p class="note">${tr('No jogo completo, sair do Norte vai pedir 30 ⭐ e cada mercado abre ao vencer o chefe do anterior.','In the full game, leaving the North will take 30 ⭐ and each market opens when you beat the previous boss.')}</p>`;
 }
 function marketHtml(){
@@ -930,40 +1063,43 @@ function marketHtml(){
   return `<div class="head"><button class="icon" data-act="go:map" aria-label="${tr('Voltar ao mapa','Back to the map')}">◀</button><div class="t"><b>${f.ic} ${f.n}</b><small>${f.c} (${f.uf}) · ${starsM(m)}/${ps.length*3} ⭐</small></div><button class="pill" data-act="sheet:shop" aria-label="${tr(`${fmt(S.coins)} moedas. Abrir a Loja`,`${fmt(S.coins)} coins. Open the Shop`)}">🪙 ${fmt(S.coins)} ＋</button></div>
     <div class="mbanner"><img src="${artUrl(f)}" alt="${f.n}, ${f.c}"></div>
     ${ps.map(i=>{ const c=PHASES[i], st=starsOf(i), ok=unlocked(i);
-     return `<button class="row${i===next?' cur':''}${ok?'':' lock'}" data-act="${ok?'start:'+i:'locked'}"><span class="face">${ok?(c.boss?'🌊':pnum(i)):'🔒'}</span><div><b>${ptitle(i)}</b>${i===next?` <span class="tag">${tr('próxima','next')}</span>`:''}<p>${ok?`<b>🎯 ${c.goals.map(goalFull).join(' + ')}</b> · ${c.turns} ${turnsW(c.turns)}`:tr(`Abre ao vencer a fase ${pnum(i)-1}`,`Opens when you beat level ${pnum(i)-1}`)}</p></div><span class="stars">${[1,2,3].map(k=>`<span class="${k>st?'off':''}">★</span>`).join('')}</span></button>`; }).join('')}
+     return `<button class="row${i===next?' cur':''}${ok?'':' lock'}" data-act="${ok?'start:'+i:'locked'}"><span class="face">${ok?(c.boss?bossIc(c):pnum(i)):'🔒'}</span><div><b>${ptitle(i)}</b>${i===next?` <span class="tag">${tr('próxima','next')}</span>`:''}<p>${ok?`<b>🎯 ${c.goals.map(goalFull).join(' + ')}</b> · ${c.turns} ${turnsW(c.turns)}`:tr(`Abre ao vencer a fase ${pnum(i)-1}`,`Opens when you beat level ${pnum(i)-1}`)}</p></div><span class="stars">${[1,2,3].map(k=>`<span class="${k>st?'off':''}">★</span>`).join('')}</span></button>`; }).join('')}
     <div class="row"><span class="face">${seal?'🏅':se[0]}</span><div><b>${tr(`Selo de Domínio: ${sealName(m)}`,`Mastery Seal: ${sealName(m)}`)}</b><p>${seal?tr(`Conquistado: ${tx(se[2])}.`,`Earned: ${tx(se[2])}.`):`${tr('Entregue 3 itens de nível 5 de cada linha no espaço 🏅 e vença o chefe.','Deliver 3 level 5 items of each line to the 🏅 slot and beat the boss.')} ${mLines(m).map(k=>`${item(k,5)[0]} ${Math.min(3,S.selo5[k]||0)}/3`).join(' · ')} · ${tr('chefe','boss')} ${starsOf(b)?'✓':'—'}`}</p></div></div>
    <h2>${tr('Ferramentas','Tools')}</h2>
-   ${Object.entries(TOOLS).map(([k,[em,,,c]])=>`<div class="row"><span class="face">${em}</span><div><b>${tname(k)}</b> · ${tr('você tem','you have')} ${S.tools[k]||0}<p>${cap(tdesc(k))}. ${c?tr('Máximo de 2 ferramentas por fase.','Up to 2 tools per level.'):tr('Só na Loja.','Shop only.')}</p></div>${c?`<button class="btn sm" data-act="buy:${k}" ${S.coins<c?'disabled':''}>🪙 ${c}</button>`:`<button class="btn sm" data-act="sheet:shop">🛒 ${tr('Loja','Shop')}</button>`}</div>`).join('')}`;
+   ${Object.entries(TOOLS).filter(([k])=>toolShow(k)).map(([k,[em,,,c]])=>`<div class="row"><span class="face">${toolEm(k)}</span><div><b>${tname(k)}</b> · ${tr('você tem','you have')} ${S.tools[k]||0}<p>${cap(tdesc(k))}. ${c?tr('Máximo de 2 ferramentas por fase.','Up to 2 tools per level.'):tr('Só na Loja.','Shop only.')}</p></div>${c?`<button class="btn sm" data-act="buy:${k}" ${S.coins<c?'disabled':''}>🪙 ${c}</button>`:`<button class="btn sm" data-act="sheet:shop">🛒 ${tr('Loja','Shop')}</button>`}</div>`).join('')}`;
 }
 function gameHtml(){
   const left=P.turns-P.used, c=P.cfg, cur=sel!=null?P.board[sel]:null, have=new Set(P.board.filter(x=>isItem(x)&&!x.m).map(x=>x.l+x.n)), need3=Math.ceil(P.turns*.5);
   // O que falta para vencer ganha destaque: pedidos, obstáculos ou a linha do item a criar.
-  const ordKey=P.goals.some(g=>g.t==='orders'&&!goalDone(g)), clrKey=P.goals.some(g=>g.t==='clear'&&!goalDone(g)), mk=P.goals.find(g=>g.t==='make'&&!goalDone(g));
+  const ordKey=P.goals.some(g=>(g.t==='orders'||g.t==='dada')&&!goalDone(g)), clrKey=P.goals.some(g=>g.t==='clear'&&!goalDone(g)), mk=P.goals.find(g=>g.t==='make'&&!goalDone(g));
   const tl=TIDE_EVERY-P.used%TIDE_EVERY;
-  const rios=c.boss==='rios', tide=c.boss?(P.tide>0?`<span class="tide">🌊 ${rios?tr('Rios cheios','Rivers up'):tr('Maré alta','High tide')}: ${P.tide} ${turnsW(P.tide)}</span>`:`<span class="tide">🌊 ${rios?tr(`Rios sobem em ${tl}`,`Rivers rise in ${tl}`):tr(`Maré sobe em ${tl}`,`Tide rises in ${tl}`)} ${turnsW(tl)}</span>`):'';
+  const rios=c.boss==='rios', tide=waterBoss(c)?(P.tide>0?`<span class="tide">🌊 ${rios?tr('Rios cheios','Rivers up'):tr('Maré alta','High tide')}: ${P.tide} ${turnsW(P.tide)}</span>`:`<span class="tide">🌊 ${rios?tr(`Rios sobem em ${tl}`,`Rivers rise in ${tl}`):tr(`Maré sobe em ${tl}`,`Tide rises in ${tl}`)} ${turnsW(tl)}</span>`):'';
+  const sl=c.sun&&c.sun.step?c.sun.step-P.used%c.sun.step:0, bl=SAVEIRO_EVERY-P.used%SAVEIRO_EVERY;
+  const sol=(sl?`<span class="tide sunt">☀️ ${tr(`Sol anda em ${sl}`,`Sun moves in ${sl}`)} ${turnsW(sl)}</span>`:'')+(c.boss==='saveiro'?`<span class="tide">⛵ ${tr(`Saveiro em ${bl}`,`Saveiro in ${bl}`)} ${turnsW(bl)}</span>`:'');
   const gl=cur&&gloss(cur.l,cur.n);
-  const info=P.armed?`<p>${TOOLS[P.armed][0]} ${tr(`Toque numa casa para usar o <b>${tname(P.armed)}</b>.`,`Tap a space to use the <b>${tname(P.armed)}</b>.`)}</p><button class="btn sm ghosty" data-act="disarm">${tr('Cancelar','Cancel')}</button>`
-    :cur?`<p><b>${item(cur.l,cur.n)[0]} ${item(cur.l,cur.n)[1]}</b> · ${lname(cur.l)} ${tr('nível','level')} ${cur.n}${cur.m?` · <span class="warn">${tr('mofado','moldy')}</span>`:''}${flooded(sel)?tr(' · preso pela maré',' · held by the tide'):''}${gl?`<br><i>${gl}</i>`:''}</p>`
+  const info=P.armed?`<p>${toolEm(P.armed)} ${tr(`Toque numa casa para usar o <b>${tname(P.armed)}</b>.`,`Tap a space to use the <b>${tname(P.armed)}</b>.`)}</p><button class="btn sm ghosty" data-act="disarm">${tr('Cancelar','Cancel')}</button>`
+    :cur?`<p><b>${item(cur.l,cur.n)[0]} ${item(cur.l,cur.n)[1]}</b> · ${lname(cur.l)} ${tr('nível','level')} ${cur.n}${cur.m?` · <span class="warn">${tr('mofado','moldy')}</span>`:''}${flooded(sel)?tr(' · preso pela maré',' · held by the tide'):''}${sunny(sel)&&cur.n>=SUN_LV?` · <span class="warn">☀️ ${tr(`perde 1 nível em ${heatLeft(cur)} ${turnsW(heatLeft(cur))}`,`loses 1 level in ${heatLeft(cur)} ${turnsW(heatLeft(cur))}`)}</span>`:''}${gl?`<br><i>${gl}</i>`:''}</p>`
     :`<p>${tr('Cada cesto gasta 1 turno. Juntar e entregar são de graça.','Each basket tap costs 1 turn. Merging and delivering are free.')}</p>`;
   const gIcon=g=>goalDone(g)?'✅':g.t==='make'?`<span class="need"><span>${item(g.l,g.lv)[0]}<sub style="--lc:${lc(g.l)}">${g.lv}</sub></span></span>`:goalIcon(g);
-  return `<div class="head"><button class="icon" data-act="pause" aria-label="${tr('Pausar','Pause')}">⏸</button><div class="t"><b>${ptitle(P.i)}</b><small>${mkt(P.i).n}${P.seal?tr(' · 🏅 +3 turnos',' · 🏅 +3 turns'):''}${P.guar?` · 🥤 ${P.merges%10}/10`:''}</small></div>
+  return `<div class="head"><button class="icon" data-act="pause" aria-label="${tr('Pausar','Pause')}">⏸</button><div class="t"><b>${ptitle(P.i)}</b><small>${mkt(P.i).n}${P.seal?tr(' · 🏅 +3 turnos',' · 🏅 +3 turns'):''}${P.guar?` · 🥤 ${P.merges%10}/10`:''}${P.dende?` · 🌴 ${P.dendeOk?'✓':tr('1ª fusão +1','1st merge +1')}`:''}</small></div>
     <div class="turns${left<=3?' low':''}"><b>${left}</b><small>${turnsW(left)}</small></div></div>
    <div class="win"><h3>${tr('🎯 Para vencer a fase','🎯 To win this level')}</h3>
     <div class="goals">${P.goals.map(g=>`<div class="goal${goalDone(g)?' ok':''}"><span class="e">${gIcon(g)}</span><div>${goalText(g)}<div class="bar"><i style="width:${Math.min(100,g.p/g.n*100)}%"></i></div></div><span class="cnt">${Math.min(g.p,g.n)}/${g.n}</span></div>`).join('')}</div>
-    <div class="sub"><span>${tr(`3 ⭐ se sobrarem ${need3} turnos · 2 ⭐ com ${Math.ceil(P.turns*.25)}`,`3 ⭐ with ${need3} turns left · 2 ⭐ with ${Math.ceil(P.turns*.25)}`)}</span>${tide}</div></div>
+    <div class="sub"><span>${tr(`3 ⭐ se sobrarem ${need3} turnos · 2 ⭐ com ${Math.ceil(P.turns*.25)}`,`3 ⭐ with ${need3} turns left · 2 ⭐ with ${Math.ceil(P.turns*.25)}`)}</span>${tide}${sol}</div></div>
    <div class="olab${ordKey?' key':''}">${ordKey?tr('🎯 Pedidos: contam para vencer','🎯 Orders: these count toward winning'):tr('Pedidos extras: não contam para vencer, mas rendem moedas','Extra orders: they don’t count toward winning, but they pay coins')}</div>
    <div class="orders ${ordKey?'key':'extra'}">${P.orders.map(o=>{ const want=cur&&!cur.m&&matches(o,cur), ready=o.items.some(x=>!x.done&&have.has(x.l+x.n));
-      return `<button class="order${want?' want':''}${ready?' ready':''}" data-order="${o.id}" aria-label="${tr(`Pedido de ${o.who}`,`${o.who}’s order`)}: ${o.items.map(x=>item(x.l,x.n)[1]+tr(' nível ',', level ')+x.n).join(tr(' e ',' and '))} · ${orderPay(o)} 🪙"><span class="who">${fc(o.face)} ${o.who}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span><span class="pay">🪙 ${orderPay(o)}</span></button>`; }).join('')}
+      return `<button class="order${want?' want':''}${ready?' ready':''}${o.dada?' dada':''}" data-order="${o.id}" aria-label="${tr(`Pedido de ${o.who}`,`${o.who}’s order`)}: ${o.items.map(x=>item(x.l,x.n)[1]+tr(' nível ',', level ')+x.n).join(tr(' e ',' and '))} · ${orderPay(o)} 🪙${o.dada?tr(` · ${o.ttl} turnos para atender · +${DADA_BONUS} turnos`,` · ${o.ttl} turns to serve · +${DADA_BONUS} turns`):''}">${o.dada?`<span class="ttl${o.ttl<=2?' low':''}">⏱️${o.ttl}</span>`:''}<span class="who">${fc(o.face)} ${o.dada?'Dadá':o.who}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span><span class="pay">🪙 ${orderPay(o)}${o.dada?` · ⏳+${DADA_BONUS}`:''}</span></button>`; }).join('')}
     <button class="order seal${cur&&cur.n===MAX&&!cur.m?' want':''}" data-seal="1" aria-label="${tr('Espaço do Selo: itens de nível 5','Seal slot: level 5 items')}"><span class="who">🏅 ${tr('Selo','Seal')}</span><span style="font-size:12px;line-height:1.5">${mLines(mOf(P.i)).map(k=>`${item(k,5)[0]}${Math.min(3,S.selo5[k]||0)}`).join(' ')}</span><span class="who">${tr('nível 5','level 5')}</span></button></div>
    <div class="wrap" id="wrap"><div class="board" id="board">${P.board.map((x,i)=>{
-      const fl=flooded(i)?' flood':'', ar=P.armed?' armed':'', ky=clrKey?' key':'';
-      if(!x) return `<button class="cell${fl}${ar}" data-cell="${i}" aria-label="${tr('Casa vazia','Empty space')}"></button>`;
-      if(x.o==='crate') return `<button class="cell crate${ar}${ky}" data-cell="${i}" aria-label="${tr('Caixote','Crate')}"></button>`;
+      const fl=(flooded(i)?' flood':'')+(inSun(i)?(P.shade.includes(i)?' shade':' sun'):P.shade.includes(i)?' shade':''), ar=P.armed?' armed':'', ky=clrKey?' key':'';
+      if(!x) return `<button class="cell${fl}${ar}" data-cell="${i}" aria-label="${inSun(i)&&!P.shade.includes(i)?tr('Casa vazia no sol','Empty space in the sun'):tr('Casa vazia','Empty space')}"></button>`;
+      if(x.o==='engr') return `<button class="cell engr${x.hp>1?'':' cracked'}${fl}${ar}${ky}" data-cell="${i}" aria-label="${tr('Engradado de coco','Coconut crate')}${x.hp>1?'':tr(', rachado',', cracked')}"></button>`;
+      if(x.o==='crate') return `<button class="cell crate${fl}${ar}${ky}" data-cell="${i}" aria-label="${tr('Caixote','Crate')}"></button>`;
       if(x.o==='mold') return `<button class="cell mold${ar}${ky}" data-cell="${i}" aria-label="${tr('Mofo','Mold')}"></button>`;
-      return `<button class="cell has${x.m?' moldy':''}${fl}${ar}${sel===i?' sel':''}${popAt===i?' pop':''}" style="--lc:${lc(x.l)}" data-cell="${i}" aria-label="${item(x.l,x.n)[1]}${tr(' nível ',', level ')}${x.n}${x.m?tr(', mofado',', moldy'):''}"><span class="em">${item(x.l,x.n)[0]}</span><span class="lv">${x.n}</span></button>`; }).join('')}</div></div>
+      return `<button class="cell has${x.m?' moldy':''}${fl}${ar}${sel===i?' sel':''}${popAt===i?' pop':''}" style="--lc:${lc(x.l)}" data-cell="${i}" aria-label="${item(x.l,x.n)[1]}${tr(' nível ',', level ')}${x.n}${x.m?tr(', mofado',', moldy'):''}${sunny(i)&&x.n>=SUN_LV?tr(`, no sol: perde 1 nível em ${heatLeft(x)}`,`, in the sun: loses 1 level in ${heatLeft(x)}`):''}"><span class="em">${item(x.l,x.n)[0]}</span><span class="lv">${x.n}</span>${sunny(i)&&x.n>=SUN_LV&&!x.m?`<span class="heat${heatLeft(x)<=2?' low':''}">🔥${heatLeft(x)}</span>`:''}</button>`; }).join('')}</div></div>
    <div class="info${P.armed?' armed':''}">${info}</div>
    <div class="dock">${c.lines.map(l=>`<button class="basket" style="--lc:${lc(l)}" data-act="spawn:${l}" aria-label="${tr(`Cesto de ${lname(l)}: gasta 1 turno`,`${lname(l)} basket: costs 1 turn`)}${mk&&mk.l===l?tr('. Linha do objetivo','. Goal line'):''}">${mk&&mk.l===l?'<i class="tgt">🎯</i>':''}<span class="em">${ie(l,1)}</span><b>${lname(l)}</b><small>${tr('−1 turno','−1 turn')}</small></button>`).join('')}
-    ${Object.entries(TOOLS).map(([k,[em]])=>`<button class="basket tool${P.armed===k?' on':''}" data-act="tool:${k}" aria-label="${tname(k)}: ${tr('você tem','you have')} ${S.tools[k]||0}" ${S.tools[k]>0&&P.toolsUsed<MAX_TOOLS?'':'disabled'}><span class="em">${em}</span><b>${S.tools[k]||0}</b><small>${P.toolsUsed}/${MAX_TOOLS}</small></button>`).join('')}</div>`;
+    ${Object.keys(TOOLS).filter(k=>toolShow(k,c)).map(k=>`<button class="basket tool${P.armed===k?' on':''}" data-act="tool:${k}" aria-label="${tname(k)}: ${tr('você tem','you have')} ${S.tools[k]||0}" ${S.tools[k]>0&&P.toolsUsed<MAX_TOOLS?'':'disabled'}><span class="em">${toolEm(k)}</span><b>${S.tools[k]||0}</b><small>${P.toolsUsed}/${MAX_TOOLS}</small></button>`).join('')}</div>`;
 }
 function fit(){
   const w=$('wrap').clientWidth,h=$('wrap').clientHeight,g=4, cs=Math.floor(Math.min((w-g*(COLS-1))/COLS,(h-g*(ROWS-1))/ROWS));
@@ -983,15 +1119,15 @@ function renderSheet(){
   else if(sheetName==='diary'){ T=tr('Diário de Viagem','Travel Journal');
     h=`<p class="note">${tr('Cada fase vencida revela um cartão sobre o lugar ou o produto. Complete a coleção de um mercado e ganhe 150 🪙.','Each level you beat reveals a card about the place or the food. Complete a market’s collection to earn 150 🪙.')} ${S.cards.length}/${CARDS.length} ${tr('cartões','cards')}.</p>`
      +MARKETS.slice(0,OPEN_M).map((f,m)=>`<h2>${f.ic} ${f.n}${S.diaryM.includes(m)?' · ⭐':''}</h2><div class="dgrid">`
-     +CARDS.map((c,i)=>(c.mk||0)!==m?'':S.cards.includes(i)?`<button class="dcard" data-act="card:${i}"><span class="em">${c.em}</span><b>${tx(c.t)}</b><small>${tx(c.p)}</small></button>`
-       :`<div class="dcard lock"><span class="em">${c.em}</span><b>?</b><small>${tr(`Vença a fase ${pnum(i)}`,`Beat level ${pnum(i)}`)}</small></div>`).join('')+'</div>').join('');
+     +CARDS.map(c=>(c.mk||0)!==m?'':S.cards.includes(c.ph)?`<button class="dcard" data-act="card:${c.ph}"><span class="em">${c.em}</span><b>${tx(c.t)}</b><small>${tx(c.p)}</small></button>`
+       :`<div class="dcard lock"><span class="em">${c.em}</span><b>?</b><small>${tr(`Vença a fase ${pnum(c.ph)}`,`Beat level ${pnum(c.ph)}`)}</small></div>`).join('')+'</div>').join('');
   } else if(sheetName==='selos'){ T=tr('Mochila de Selos','Seal Bag');
-    h=`<p class="note">${tr('Selos são conquistados jogando, nunca vendidos. Antes de cada fase você escolhe quais levar. Neste teste podem ser conquistados os Selos do Ver-o-Peso e de Manaus, e a mochila leva os dois.','Seals are earned by playing, never sold. Before each level you choose which ones to bring. In this test you can earn the Ver-o-Peso and Manaus Seals, and the bag holds both.')}</p>`
+    h=`<p class="note">${tr('Selos são conquistados jogando, nunca vendidos. Antes de cada fase você escolhe quais levar. Neste teste podem ser conquistados os Selos do Ver-o-Peso, de Manaus e de Salvador, e a mochila leva os três.','Seals are earned by playing, never sold. Before each level you choose which ones to bring. In this test you can earn the Ver-o-Peso, Manaus and Salvador Seals, and the bag holds all three.')}</p>`
      +sealChecks()
      +SELOS.map(([em,n,d],i)=>`<div class="row${S.selos.includes(i)?' cur':' lock'}"><span class="face">${S.selos.includes(i)?em:'🔒'}</span><div><b>${tx(n)}</b> · ${MARKETS[i].n}<p>${tx(d)}</p></div></div>`).join('');
   } else { T=tr('Ajustes','Settings');
     const rows=PHASES.map((c,i)=>{ const h=phStat(i), done=h.wins+h.losses, rate=done?Math.round(h.losses/done*100):null, al=rate!=null&&done>=3&&(rate>60||rate<10);
-      return (pnum(i)===1?`<tr class="grp"><td colspan="7">${mkt(i).ic} ${mkt(i).c}</td></tr>`:'')+`<tr><td>${pnum(i)}${c.boss?' 🌊':''}</td><td>${h.tries}</td><td>${h.wins}</td><td>${h.losses}${h.stuck?` (${h.stuck}🧱)`:''}</td><td class="${al?'alert':''}">${rate==null?'—':rate+'%'}</td><td>${h.wins?(h.left/h.wins).toFixed(1):'—'}</td><td>${starsOf(i)||'—'}</td></tr>`; }).join('');
+      return (pnum(i)===1?`<tr class="grp"><td colspan="7">${mkt(i).ic} ${mkt(i).c}</td></tr>`:'')+`<tr><td>${pnum(i)}${c.boss?' '+bossIc(c):''}</td><td>${h.tries}</td><td>${h.wins}</td><td>${h.losses}${h.stuck?` (${h.stuck}🧱)`:''}</td><td class="${al?'alert':''}">${rate==null?'—':rate+'%'}</td><td>${h.wins?(h.left/h.wins).toFixed(1):'—'}</td><td>${starsOf(i)||'—'}</td></tr>`; }).join('');
     const tg=(k,t,d)=>`<div class="row"><div><b>${t}</b><p>${d}</p></div><button class="btn${S.opts[k]?'':' ghosty'}" data-act="opt:${k}" aria-pressed="${S.opts[k]}">${S.opts[k]?tr('Ligado','On'):tr('Desligado','Off')}</button></div>`;
     const vol=(k,v,t,d)=>{ const p=Math.round((S.opts[v]==null?1:S.opts[v])*100);
       return `<div class="row"><div><b>${t}</b><p>${d}</p><div class="vbar"><span aria-hidden="true">🔈</span><input type="range" min="0" max="100" step="5" value="${p}" data-vol="${v}" aria-label="${tr('Volume','Volume')} · ${t}"><output id="vo-${v}">${p}%</output><span aria-hidden="true">🔊</span></div></div><button class="btn${S.opts[k]?'':' ghosty'}" data-act="opt:${k}" aria-pressed="${S.opts[k]}">${S.opts[k]?tr('Ligado','On'):tr('Desligado','Off')}</button></div>`; };
@@ -1011,10 +1147,10 @@ function renderSheet(){
 // Caixas para escolher os selos levados nas fases (Mochila de Selos e aviso antes da fase).
 function sealChecks(){ return S.selos.slice().sort().map(m=>`<label class="chk"><input type="checkbox" data-act="sealon:${m}" ${S.sealUse[m]!==false?'checked':''}><span>${SELOS[m][0]} ${tr(`<b>Levar ${sealName(m)}</b>`,`<b>Bring ${sealName(m)}</b>`)} (${tx(SELOS[m][2])})</span></label>`).join(''); }
 function showCard(i,more){
-  const c=CARDS[i];
+  const c=cardOf(i); if(!c) return;
   modal(`<div class="big">${c.em}</div><h2>${tx(c.t)}</h2><p class="place">📍 ${tx(c.p)}</p><p>${tx(c.f)}</p>${more?`<div class="more">${tx(c.m)}</div>`:`<button class="btn ghosty sm" data-act="cardmore:${i}">${tr('Saiba mais','Learn more')}</button>`}<button class="btn" data-act="mclose">${tr('Fechar','Close')}</button>`);
   const m=c.mk||0;
-  if(!S.diaryM.includes(m)&&CARDS.every((x,k)=>(x.mk||0)!==m||S.cards.includes(k))){ S.diaryM.push(m); S.coins+=150; save(); toast(tr(`Coleção de ${MARKETS[m].n} completa: +150 🪙`,`${MARKETS[m].n} collection complete: +150 🪙`)); }
+  if(!S.diaryM.includes(m)&&CARDS.every(x=>(x.mk||0)!==m||S.cards.includes(x.ph))){ S.diaryM.push(m); S.coins+=150; save(); toast(tr(`Coleção de ${MARKETS[m].n} completa: +150 🪙`,`${MARKETS[m].n} collection complete: +150 🪙`)); }
 }
 
 /* ===================== ANIMAÇÕES DAS FERRAMENTAS ===================== */
@@ -1040,15 +1176,25 @@ function fxHammer(r,em,color){
       anim(p,[{transform:T(0,0,1,0)},{transform:T(Math.cos(a)*d,Math.sin(a)*d*.7+s*.5,.5,rint(-200,200)),opacity:0}],650,'cubic-bezier(.2,.6,.4,1)'); } },340);
 }
 // Caixote e mofo: quadros da arte em sequência sobre a casa (caixa quebrando; esponja esfregando o mofo).
-const OBS_FX={crate:['caixa',[2,3,4,5],70,1.5],mold:['mofo',[2,3,4],120,1.3],limpo:['mofo',[3,4],110,1.05]};
-const OBS_PRE=[]; for(const n of ['caixa','mofo']) for(let k=1;k<=5;k++){ const im=new Image(); im.src=`obstaculos/${n}-${k}.webp`; OBS_PRE.push(im); }
+const OBS_FX={crate:['caixa',[2,3,4,5],70,1.5],mold:['mofo',[2,3,4],120,1.3],limpo:['mofo',[3,4],110,1.05],
+ engr:['engradado',[3,4,5],80,1.5],racha:['engradado',[2],260,1.35],calor:['sol',[5],520,1.15]};
+const OBS_PRE=[]; for(const n of ['caixa','mofo','engradado','sol']) for(let k=1;k<=5;k++){ const im=new Image(); im.src=`obstaculos/${n}-${k}.webp`; OBS_PRE.push(im); }
 function fxObs(f){
+  if(f.t==='saveiro') return fxSaveiro(f);
   const c=cellEl(f.i); if(!c) return; const [nome,quadros,ms,esc]=OBS_FX[f.t], r=c.getBoundingClientRect(), [cx,cy]=ctr(r), s=r.width*esc;
   const d=document.createElement('div'); d.className='obsfx'; Object.assign(d.style,{left:cx+'px',top:cy+'px',width:s+'px',height:s+'px'});
   const q=k=>d.style.backgroundImage=`url(obstaculos/${nome}-${quadros[k]}.webp)`;
   setTimeout(()=>{ q(0); document.body.appendChild(d); if(RM()){ setTimeout(()=>d.remove(),250); return; }
     let k=0; const t=setInterval(()=>{ if(++k<quadros.length) q(k); else { clearInterval(t); anim(d,[{opacity:1},{opacity:0}],200); } },ms);
-    if(f.t==='crate'&&!f.d) shake($('board'),3); },f.d);
+    if((f.t==='crate'||f.t==='engr'||f.t==='racha')&&!f.d) shake($('board'),3); },f.d);
+}
+// Chefe de Salvador: o saveiro passa pela esquerda do tabuleiro e os engradados que ele deixou aparecem.
+function fxSaveiro(f){
+  const b=$('board'); if(!b) return; const r=b.getBoundingClientRect(), w=Math.min(150,r.width*.5), y=r.top+r.height*.5;
+  f.cells.forEach((k,j)=>{ const c=cellEl(k); if(c) bump(c,[{transform:'scale(.2)',opacity:0},{transform:'scale(.2)',opacity:0,offset:.55},{transform:'scale(1.15)',opacity:1,offset:.8},{transform:'scale(1)',opacity:1}],1300+j*120); });
+  if(RM()) return; const im=document.createElement('img'); im.src='obstaculos/saveiro.webp'; im.alt=''; im.className='saveiro'; im.style.width=w+'px'; im.style.top=y+'px'; im.style.left=(r.left-w)+'px'; document.body.appendChild(im);
+  anim(im,[{transform:'translate(-50%,-50%)',opacity:0},{transform:`translate(calc(-50% + ${w*.9}px),-50%)`,opacity:1,offset:.3},{transform:`translate(calc(-50% + ${w*1.1}px),-50%) rotate(-2deg)`,opacity:1,offset:.7},{transform:`translate(calc(-50% + ${w*.2}px),-50%)`,opacity:0}],1700,'ease-in-out');
+  setTimeout(()=>im.remove(),1750);
 }
 // Caldeirão: sobe por baixo da casa, borbulha, e o item sai brilhando um nível acima.
 function fxPot(i){
@@ -1058,11 +1204,13 @@ function fxPot(i){
   bump(c,[{transform:'scale(1)',filter:'none'},{transform:'scale(.7)',offset:.35},{transform:'scale(1.28)',filter:'brightness(1.5) drop-shadow(0 0 10px #F7C51E)',offset:.62},{transform:'scale(1)',filter:'none'}],950,250);
   setTimeout(()=>{ beep(990); anim(fxEl('✨',cx+s*.3,cy-s*.3,'',s*.45),[{transform:T(0,0,.3,0),opacity:0},{transform:T(0,0,1.2,40),opacity:1,offset:.4},{transform:T(6,-10,.8,90),opacity:0}],700); floatTxt('+1',cx,cy-s*.35); },780);
 }
+// Toldo: as casas com sombra pulam para dentro do lugar.
+function fxToldo(){ if(RM()) return; P.shade.forEach((k,j)=>bump(cellEl(k),[{transform:'scale(1.25)',filter:'brightness(1.3)'},{transform:'scale(1)',filter:'none'}],420,j*60)); beep(760); }
 // +3 Turnos: a ampulheta gira e voa até o contador, que pulsa.
-function fxTurns(r){
+function fxTurns(r,n){
   const tc=document.querySelector('.turns'); if(!tc||RM()) return; const [x0,y0]=r?ctr(r):[innerWidth/2,innerHeight/2], [x1,y1]=ctr(tc.getBoundingClientRect());
   anim(fxEl('⏳',x0,y0,'',42),[{transform:T(0,0,.6,0),opacity:0},{transform:T(0,-40,1.3,180),opacity:1,offset:.3},{transform:T((x1-x0)*.6,(y1-y0)*.6-60,1.1,360),offset:.65},{transform:T(x1-x0,y1-y0,.4,540),opacity:.2}],900,'ease-in-out');
-  setTimeout(()=>{ bump(tc,[{transform:'scale(1)'},{transform:'scale(1.35)',filter:'brightness(1.4)',offset:.4},{transform:'scale(1)'}],500); floatTxt('+3',x1,y1+34); },860);
+  setTimeout(()=>{ bump(tc,[{transform:'scale(1)'},{transform:'scale(1.35)',filter:'brightness(1.4)',offset:.4},{transform:'scale(1)'}],500); floatTxt('+'+(n||3),x1,y1+34); },860);
 }
 
 /* ===================== ENTRADA ===================== */
@@ -1078,7 +1226,7 @@ document.addEventListener('click',e=>{
     else if(k==='lang') setLang(v);
     else if(k==='start'||k==='evstart'){ const i=+v, c=PHASES[i];
       if(k==='evstart'){ if(!evAtivo()||!unlocked(i)){ toast(tr('Este evento não está ativo agora.','This event is not on right now.')); return; } closeModal(); }
-      modal(`<div class="big">${c.boss?'🌊':mkt(i).ic}</div><h2>${ptitle(i)}</h2><ul>${c.goals.map(g=>`<li>${goalIcon(g)} ${goalFull(g)}</li>`).join('')}<li>⏳ ${c.turns} ${turnsW(c.turns)}</li>${c.crate?`<li>📦 ${c.crate} ${tr('caixotes','crates')}</li>`:''}${c.mold?`<li>🦠 ${c.mold} ${c.mold>1?tr('focos de mofo','mold patches'):tr('foco de mofo','mold patch')}</li>`:''}</ul>
+      modal(`<div class="big">${c.boss?bossIc(c):mkt(i).ic}</div><h2>${ptitle(i)}</h2><ul>${c.goals.map(g=>`<li>${goalIcon(g)} ${goalFull(g)}</li>`).join('')}<li>⏳ ${c.turns} ${turnsW(c.turns)}</li>${c.crate?`<li>📦 ${c.crate} ${tr('caixotes','crates')}</li>`:''}${c.mold?`<li>🦠 ${c.mold} ${c.mold>1?tr('focos de mofo','mold patches'):tr('foco de mofo','mold patch')}</li>`:''}${c.engr?`<li>🥥 ${c.engr} ${c.engr>1?tr('engradados de coco','coconut crates'):tr('engradado de coco','coconut crate')}</li>`:''}${c.sun?`<li>☀️ ${c.sun.step?tr(`Sol que anda a cada ${c.sun.step} turnos`,`Sun that moves every ${c.sun.step} turns`):tr('Sol forte em 2 colunas','Strong sun on 2 columns')}</li>`:''}${c.dada?`<li>${fc('dada')} ${tr('Pedidos da Dona Dadá','Dona Dadá’s orders')}</li>`:''}${c.boss==='saveiro'?`<li>⛵ ${tr(`Saveiro a cada ${SAVEIRO_EVERY} turnos`,`Saveiro every ${SAVEIRO_EVERY} turns`)}</li>`:''}</ul>
        ${sealChecks()}
        <button class="btn" data-act="phase:${i}">${tr('Jogar','Play')}</button><button class="btn ghosty" data-act="mclose">${tr('Voltar','Back')}</button>`); }
     else if(k==='phase'){ closeModal(); startPhase(+v); }
@@ -1097,7 +1245,7 @@ document.addEventListener('click',e=>{
     else if(k==='pause') modal(`<div class="big">⏸</div><h2>${tr('Pausa','Paused')}</h2><button class="btn" data-act="mclose">${tr('Continuar','Resume')}</button><button class="btn ghosty" data-act="phase:${P.i}">${tr('Recomeçar a fase','Restart the level')}</button><button class="btn ghosty" data-act="quit">${tr('Sair para o mercado','Quit to the market')}</button>`);
     else if(k==='quit'){ if(P&&!P.over){ phStat(P.i).losses++; } closeModal(); screen='market'; P=null; render(); Musica.ligar(); }
     else if(k==='plus5'){ closeModal(); P.turns+=5; P.over=null; phStat(P.i).losses--; render(); }
-    else if(k==='buy'){ const c=TOOLS[v][3]; if(S.coins>=c){ S.coins-=c; S.tools[v]++; beep(820); render(); } }
+    else if(k==='buy'){ const c=TOOLS[v][3]; if(S.coins>=c){ S.coins-=c; S.tools[v]=(S.tools[v]||0)+1; beep(820); render(); } }
     else if(k==='card'){ showCard(+v,false); }
     else if(k==='cardmore'){ showCard(+v,true); }
     else if(k==='sealon'){ S.sealUse[+v||0]=a.checked; S.sealOn=S.sealUse[0]!==false; save(); return; }
@@ -1127,7 +1275,7 @@ document.addEventListener('click',e=>{
   const c=e.target.closest('[data-cell]'); if(!c) return;
   const i=+c.dataset.cell, x=P.board[i];
   if(P.armed){ const k=P.armed, r=c.getBoundingClientRect(), em=isItem(x)?item(x.l,x.n)[0]:'', col=isItem(x)?lc(x.l):x&&x.o==='mold'?'#7FA65A':'#C99A63';
-    if(useTool(k,i)){ render(); if(k==='hammer') fxHammer(r,em,col); else fxPot(i); } else render(); return; }
+    if(useTool(k,i)){ render(); if(k==='hammer') fxHammer(r,em,col); else if(k==='pot') fxPot(i); else fxToldo(); } else render(); return; }
   if(sel!=null&&sel!==i){ const s0=P.board[sel];
     if(free(i)&&!flooded(sel)){ P.board[i]=s0; P.board[sel]=null; sel=null; render(); return; }
     if(canMerge(s0,x)&&merge(sel,i)){ sel=null; render(); return; }
@@ -1312,7 +1460,7 @@ function intro(){
 function introTap(){ endIntro(); }
 
 function start(){
-  LANG=detectLang(); S=load(); S.alb=S.alb||{}; S.albDone=S.albDone||[]; S.opts=S.opts||{sound:true,test:false}; S.iap=S.iap||{n:0,usd:0,once:[]}; S.tools.turns=S.tools.turns||0;
+  LANG=detectLang(); S=load(); S.alb=S.alb||{}; S.albDone=S.albDone||[]; S.opts=S.opts||{sound:true,test:false}; S.iap=S.iap||{n:0,usd:0,once:[]}; S.tools.turns=S.tools.turns||0; S.tools.toldo=S.tools.toldo||0;
   if(S.opts.music==null) S.opts.music=true; S.sealUse=S.sealUse||{0:S.sealOn!==false,1:true}; S.diaryM=S.diaryM||(S.diaryDone?[0]:[]); S.lastM=S.lastM||0;
   if(!mOpen(S.lastM)) S.lastM=0; curM=S.lastM;
   S.ev=S.ev||EV_NEW(); S.ev.got=S.ev.got||[]; S.ev.prog=S.ev.prog||{}; S.ev.seen=S.ev.seen||{}; setInterval(evTick,1000);
