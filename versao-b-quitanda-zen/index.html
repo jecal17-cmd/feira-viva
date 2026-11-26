@@ -122,6 +122,18 @@ a.btn{text-decoration:none;display:inline-block;text-align:center}
 .ing small{display:block;font-size:10.5px;line-height:1.2;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ing i{position:absolute;top:3px;left:5px;font:800 10px var(--text);font-style:normal;color:var(--muted)}
 .ing em{position:absolute;top:-5px;right:-3px;background:var(--sun);color:#3a2a00;font:800 9px var(--text);font-style:normal;border-radius:99px;padding:1px 5px}
+/* Pop-up de detalhes (Caderno de Receitas e Turma da Feira): toque num ingrediente, receita ou personagem */
+.toque{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s}.toque:active{transform:scale(.96)}
+.info{display:flex;flex-direction:column;gap:10px;text-align:left}
+.ihead{display:flex;align-items:center;gap:12px}.ihead h2{margin:0;font-size:20px;line-height:1.15}.ihead p{color:var(--muted);font-size:13px;margin:2px 0 0}
+.ibig{flex:0 0 auto;width:76px;height:76px;border-radius:18px;background:var(--bg);display:grid;place-items:center;font-size:50px;line-height:1;box-shadow:inset 0 -4px 0 var(--lc,var(--line))}
+.ibig .ii{vertical-align:0}.ibig .pf{width:68px;height:68px;vertical-align:0}.ibig.duo{font-size:28px;display:flex;justify-content:center;gap:1px}.ibig.duo b{font-size:14px;color:var(--muted)}
+.itxt{font-size:15px;line-height:1.45}.info .q{font-style:italic;color:var(--muted)}
+.cadeia{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:1px 2px;font-size:21px;line-height:1.2;background:var(--bg);border-radius:12px;padding:6px 8px}
+.cadeia span{opacity:.7}.cadeia span.on{opacity:1;transform:scale(1.3);margin:0 3px}.cadeia span.no{opacity:.4;filter:grayscale(1);font-size:15px}.cadeia i{font-style:normal;color:var(--muted);font-size:11px}
+.idet{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;margin:0;font-size:13.5px;line-height:1.35}.idet dt{font-weight:800}.idet dd{margin:0;color:var(--muted)}
+.idet .pf{width:1.4em;height:1.4em}
+@media (prefers-reduced-motion: reduce){.toque{transition:none}}
 .ing.no{opacity:.55} .ing.no .e{filter:grayscale(1)} .ing.new{box-shadow:inset 0 -3px 0 var(--lc),0 0 0 2px var(--sun)}
 .xcode{width:100%;font:12px/1.35 ui-monospace,monospace;border-radius:10px;border:2px solid var(--line);padding:8px;background:var(--cell);color:var(--ink);resize:none;word-break:break-all}
 .card h3{margin:4px 0 0;font-size:14px}
@@ -451,6 +463,172 @@ const RECIPES=[
  {name:['Bolo de cenoura','Bolo de cenoura'],it:[['ve',3],['pa',1]],note:['Massa de cenoura com farinha de trigo.','Brazilian carrot cake.']},
  {name:['Pão doce','Sweet bread'],it:[['pa',2],['do',1]],note:['Pão macio adoçado com rapadura.','Soft bread sweetened with rapadura.']}
 ];
+// Curiosidades dos ingredientes (pop-up do Caderno de Receitas). Chave: linha + nível. [português, inglês]
+const INFO={
+ fr1:['O limão mais vendido no Brasil é o taiti, verde e sem sementes. É ele que vai na caipirinha e no peixe.','Brazil’s best-selling lime is the seedless green Tahiti lime. It goes into caipirinhas and on fish.'],
+ fr2:['O Brasil é o maior produtor de suco de laranja do mundo, e a maior parte vem de São Paulo.','Brazil is the world’s largest producer of orange juice, and most of it comes from São Paulo state.'],
+ fr3:['Banana nasce em cachos, e cada “mão” do cacho tem várias pencas. Prata, nanica, maçã e da terra são as mais comuns na feira.','Bananas grow in bunches made of several “hands”. Prata, nanica, maçã and da terra are the most common kinds at the market.'],
+ fr4:['A manga chegou da Ásia com os portugueses e se deu tão bem que hoje o Vale do São Francisco exporta manga para o mundo todo.','Mangoes came from Asia with the Portuguese and thrived so well that the São Francisco Valley now ships them all over the world.'],
+ fr5:['O abacaxi é nativo da América do Sul. A coroa de folhas pode ser plantada e vira um pé novo.','The pineapple is native to South America. Its leafy crown can be planted to grow a new plant.'],
+ fr6:['A parte suculenta do caju não é o fruto: o fruto de verdade é a castanha, que fica pendurada embaixo.','The juicy part of the cashew is not the real fruit: the true fruit is the nut hanging underneath.'],
+ fr7:['A jabuticaba nasce grudada no tronco da árvore. É nativa da Mata Atlântica e estraga rápido depois de colhida, por isso é fruta de época.','Jabuticabas grow right on the tree trunk. Native to the Atlantic Forest, they spoil quickly after picking, so they are a seasonal treat.'],
+ fr8:['No Pará, o açaí é comido no almoço com peixe frito e farinha. No resto do Brasil virou sobremesa gelada, com banana e granola.','In Pará, açaí is eaten at lunch with fried fish and cassava flour. In the rest of Brazil it became a frozen dessert with banana and granola.'],
+ ve1:['Cheiro-verde é o maço de salsinha com cebolinha. Vai em quase toda comida brasileira, do feijão ao peixe.','Cheiro-verde is a bunch of parsley and green onion. It goes into almost every Brazilian dish, from beans to fish.'],
+ ve2:['Couve cortada bem fininha e refogada no alho é a companheira certa da feijoada.','Collard greens sliced very thin and sautéed with garlic are the classic partner of feijoada.'],
+ ve3:['A cor laranja da cenoura vem do betacaroteno, que o corpo transforma em vitamina A.','The carrot’s orange color comes from beta-carotene, which the body turns into vitamin A.'],
+ ve4:['Para a botânica, o tomate é uma fruta. Ele veio dos Andes e hoje é base do molho, da salada e do vinagrete.','Botanically, the tomato is a fruit. It came from the Andes and is now the base of sauces, salads and vinaigrette.'],
+ ve5:['Milho é a estrela das festas juninas: vira pamonha, curau, canjica, pipoca e milho cozido na palha.','Corn is the star of the June festivals: it becomes pamonha, curau, canjica, popcorn and corn boiled in the husk.'],
+ ve6:['A mandioca é nativa da Amazônia e tem muitos nomes: aipim, macaxeira, maniva. Dela saem farinha, tapioca e tucupi.','Cassava is native to the Amazon and has many names: aipim, macaxeira, maniva. It gives us flour, tapioca and tucupi.'],
+ ve7:['No Nordeste, a abóbora se chama jerimum. Com carne-seca, é prato de domingo.','In the Northeast, pumpkin is called jerimum. Cooked with dried beef, it’s a Sunday dish.'],
+ ve8:['A salada junta o que a banca tem de mais fresco: folhas, tomate, cenoura e um fio de azeite.','A salad brings together the freshest things on the stall: greens, tomato, carrot and a drizzle of oil.'],
+ pe1:['Na Bahia, o camarão também é vendido seco e salgado. Assim ele dura dias e dá sabor ao acarajé e ao vatapá.','In Bahia, shrimp is also sold dried and salted. That way it keeps for days and flavors acarajé and vatapá.'],
+ pe2:['A sardinha anda em cardumes enormes e é um dos peixes mais pescados do Sudeste e do Sul. Frita e crocante, é petisco barato e querido.','Sardines swim in huge schools and are among the most fished species in southern Brazil. Fried until crisp, they are a cheap, beloved snack.'],
+ pe3:['O Brasil tem um litoral enorme e a maior bacia de rios do mundo, a Amazônica. Peixe de mar e de rio não falta na feira.','Brazil has a huge coastline and the world’s largest river basin, the Amazon. Sea and river fish are never in short supply.'],
+ pe4:['O caranguejo-uçá vive no mangue. Em Fortaleza, quinta-feira é dia de comer caranguejo com martelinho.','The uçá crab lives in the mangroves. In Fortaleza, Thursday is crab night, cracked open with a little wooden mallet.'],
+ pe5:['Em Santa Catarina, a pesca da tainha vai de maio a julho. Olheiros no alto do morro avisam quando o cardume chega à praia.','In Santa Catarina, mullet season runs from May to July. Lookouts on the hills shout when a school of fish reaches the beach.'],
+ pe6:['A lagosta é pescada no litoral do Nordeste, sobretudo no Ceará. Na época de reprodução, a pesca é proibida para proteger a espécie.','Lobster is caught along the Northeast coast, especially in Ceará. Fishing is banned during breeding season to protect the species.'],
+ pe7:['O pirarucu é um dos maiores peixes de escama de rio do mundo e pode passar de 2 metros. Ele sobe à superfície para respirar ar.','The pirarucu is one of the largest scaled river fish in the world and can grow longer than 2 meters. It comes up to the surface to breathe air.'],
+ pe8:['A moqueca baiana leva dendê e leite de coco. A capixaba, do Espírito Santo, leva urucum e é feita em panela de barro.','Bahian moqueca uses dendê oil and coconut milk. The capixaba version, from Espírito Santo, uses annatto and is cooked in a clay pot.'],
+ te1:['Quase todo o sal marinho do Brasil vem do Rio Grande do Norte, onde o sol forte seca a água do mar nas salinas.','Almost all of Brazil’s sea salt comes from Rio Grande do Norte, where the strong sun dries seawater in salt pans.'],
+ te2:['Alho e cebola dourando na panela é o cheiro da cozinha brasileira: quase todo refogado começa assim.','Garlic and onion browning in a pan is the smell of Brazilian cooking: almost every dish starts this way.'],
+ te3:['A cebola faz chorar porque, ao ser cortada, solta um gás que irrita os olhos.','Onions make you cry because, when cut, they release a gas that stings the eyes.'],
+ te4:['A malagueta é pequena e muito ardida. Na Bahia, vai no molho do acarajé e da moqueca.','The malagueta is small and very hot. In Bahia, it goes into the sauce for acarajé and moqueca.'],
+ te5:['Em geral, o pimentão verde é o mesmo fruto do vermelho, só que colhido antes de amadurecer.','Usually, a green bell pepper is the same fruit as the red one, just picked before it ripens.'],
+ te6:['O dendê vem do fruto de uma palmeira trazida da África. É ele que dá a cor laranja e o sabor da comida baiana.','Dendê oil comes from the fruit of a palm tree brought from Africa. It gives Bahian food its orange color and flavor.'],
+ te7:['Além das abelhas comuns, o Brasil tem abelhas sem ferrão, como a jataí, que fazem um mel mais líquido e azedinho.','Besides common honeybees, Brazil has stingless bees, like the jataí, which make a runnier, slightly tangy honey.'],
+ te8:['Tomate, cebola e temperos cozidos devagar viram o molho do macarrão de domingo, costume trazido pelos imigrantes italianos.','Tomato, onion and seasoning simmered slowly become the Sunday pasta sauce, a habit brought by Italian immigrants.'],
+ be1:['O Brasil guarda uma das maiores reservas de água doce do planeta. Na feira, um copo d’água fresca é o primeiro pedido do dia.','Brazil holds one of the largest freshwater reserves on the planet. At the market, a glass of cool water is the first order of the day.'],
+ be2:['A água de coco vem do coco verde, ainda jovem. Na praia, é bebida direto da casca, com canudo.','Coconut water comes from young green coconuts. At the beach, people drink it straight from the shell with a straw.'],
+ be3:['Suco natural é feito na hora com a fruta da estação: maracujá, acerola, cajá, goiaba ou caju.','Fresh juice is made to order with the fruit in season: passion fruit, acerola, cajá, guava or cashew fruit.'],
+ be4:['O Brasil é o maior produtor e exportador de café do mundo há mais de 150 anos. O cafezinho é oferecido como gesto de boas-vindas.','Brazil has been the world’s largest coffee producer and exporter for more than 150 years. A cafezinho is offered as a gesture of welcome.'],
+ be5:['O caldo de cana, ou garapa, é moído na hora na máquina da banca. Com limão e um pastel, é o lanche clássico da feira.','Sugarcane juice, or garapa, is pressed to order at the stall. With a squeeze of lime and a pastel, it’s the classic market snack.'],
+ be6:['O chimarrão é erva-mate com água quente, tomado numa cuia com bomba. No Sul, a roda de chimarrão é sinal de amizade.','Chimarrão is yerba mate with hot water, sipped from a gourd through a metal straw. In the South, sharing it in a circle is a sign of friendship.'],
+ be7:['O guaraná é um fruto da Amazônia que parece um olhinho. Ele vem de Maués, no Amazonas, e tem bastante cafeína.','Guaraná is an Amazon fruit that looks like a little eye. It comes from Maués, in Amazonas, and is packed with caffeine.'],
+ be8:['A cajuína é suco de caju clarificado e cozido até ficar dourado. A produção tradicional do Piauí é patrimônio cultural do Brasil.','Cajuína is cashew-fruit juice clarified and cooked until golden. Its traditional production in Piauí is part of Brazil’s cultural heritage.'],
+ ar1:['Com linha, agulha e paciência nascem os bordados e as rendas que enfeitam as bancas de artesanato.','With thread, a needle and patience come the embroidery and lace that decorate the craft stalls.'],
+ ar2:['O novelo é a matéria-prima do crochê e do tricô, feitos à mão por artesãs em todo o Brasil.','A ball of yarn is the raw material for crochet and knitting, made by hand by artisans all over Brazil.'],
+ ar3:['A Fita do Bonfim vem da igreja do Senhor do Bonfim, em Salvador. Amarra-se no pulso com três nós e três pedidos, e não se corta: espera-se que ela arrebente sozinha.','The Bonfim ribbon comes from the Senhor do Bonfim church in Salvador. You tie it on your wrist with three knots and three wishes, and never cut it: you wait for it to break on its own.'],
+ ar4:['A renda de bilro é feita no Ceará e em Florianópolis; a renda renascença, em Pernambuco e na Paraíba. Uma peça grande pode levar meses.','Bobbin lace is made in Ceará and Florianópolis; renascença lace in Pernambuco and Paraíba. A large piece can take months.'],
+ ar5:['O chapéu de palha protege do sol na roça e é obrigatório nas festas juninas. No Nordeste, muitos são trançados com palha de carnaúba.','Straw hats shade farmers from the sun and are a must at June festivals. In the Northeast, many are woven from carnaúba palm straw.'],
+ ar6:['Os cestos trançados são herança dos povos indígenas. Na Amazônia, usa-se o arumã, uma fibra forte e flexível.','Woven baskets are a legacy of Indigenous peoples. In the Amazon, they use arumã, a strong and flexible reed.'],
+ ar7:['Os bonecos de barro de Caruaru, em Pernambuco, retratam a vida do sertão. Ficaram famosos com o Mestre Vitalino.','The clay figurines of Caruaru, in Pernambuco, portray life in the backlands. They became famous thanks to Mestre Vitalino.'],
+ ar8:['A viola caipira tem 10 cordas, em 5 pares. É o som da música caipira e das folias de reis do interior.','The viola caipira has 10 strings in 5 pairs. It’s the sound of country music and of the Folia de Reis processions.'],
+ gr1:['O amendoim é nativo da América do Sul e não pode faltar na festa junina: vira paçoca, pé de moleque e amendoim cozido.','Peanuts are native to South America and a must at June festivals: they become paçoca, pé de moleque and boiled peanuts.'],
+ gr2:['A castanheira pode passar de 50 metros de altura. Cada ouriço que cai do alto guarda de 10 a 25 castanhas.','The Brazil-nut tree can grow taller than 50 meters. Each hard pod that falls from the top holds 10 to 25 nuts.'],
+ gr3:['O milho de pipoca estoura porque a água de dentro do grão vira vapor e rompe a casca. O pipoqueiro de carrinho é figura de toda praça.','Popcorn pops because the water inside each kernel turns to steam and bursts the shell. The popcorn cart is a fixture of every town square.'],
+ gr4:['Arroz com feijão é a dupla do prato brasileiro: juntos, formam uma refeição completa e barata.','Rice and beans are the pair on every Brazilian plate: together they make a complete, affordable meal.'],
+ gr5:['A farinha de mandioca é feita nas casas de farinha. Cada lugar tem a sua: a farinha d’água do Pará, a copioba da Bahia.','Cassava flour is made in “flour houses”. Each region has its own: farinha d’água from Pará, copioba from Bahia.'],
+ gr6:['Cada região tem seu feijão: o preto no Rio e no Sul, o carioca no Sudeste, o de corda no Nordeste.','Each region has its bean: black beans in Rio and the South, carioca beans in the Southeast, cowpeas in the Northeast.'],
+ gr7:['O cuscuz nordestino é feito com flocos de milho no vapor da cuscuzeira e comido no café da manhã, com manteiga ou ovo.','Northeastern cuscuz is made from corn flakes steamed in a special pot and eaten for breakfast with butter or egg.'],
+ gr8:['O baião de dois junta arroz, feijão de corda e queijo coalho na mesma panela. O nome lembra o baião, ritmo de Luiz Gonzaga.','Baião de dois cooks rice, cowpeas and queijo coalho in the same pot. The name recalls baião, the rhythm made famous by Luiz Gonzaga.'],
+ do1:['A rapadura é caldo de cana fervido até endurecer em blocos. Durava semanas sem estragar e alimentava os vaqueiros do sertão.','Rapadura is sugarcane juice boiled until it hardens into blocks. It kept for weeks and fed the cowboys of the backlands.'],
+ do2:['A paçoca doce é amendoim moído com açúcar e farinha. Esfarela na mão e é doce típico de festa junina.','Sweet paçoca is ground peanuts with sugar and flour. It crumbles in your hand and is a classic June festival sweet.'],
+ do3:['O chocolate nasce do cacau. No Brasil, o cacau é plantado principalmente no Pará e no sul da Bahia, na sombra da mata.','Chocolate starts as cacao. In Brazil, cacao grows mostly in Pará and southern Bahia, in the shade of the forest.'],
+ do4:['A cocada é coco ralado cozido com açúcar. Tem a branca e a queimada, mais escura, e é vendida no tabuleiro das baianas.','Cocada is grated coconut cooked with sugar. There’s a white version and a darker toasted one, sold on the baianas’ trays.'],
+ do5:['O quindim é feito de gema, açúcar e coco. Herdou dos doces de convento portugueses o gosto pelas gemas.','Quindim is made with egg yolks, sugar and coconut. Its love of yolks comes from Portuguese convent sweets.'],
+ do6:['O sonho veio de Portugal e virou estrela da padaria brasileira: massa frita, recheio de creme e açúcar por cima.','The sonho came from Portugal and became a star of Brazilian bakeries: fried dough, cream filling and a dusting of sugar.'],
+ do7:['A goiabada é goiaba cozida com açúcar no tacho por horas. A goiabada cascão, com pedaços da fruta, é a mais rústica.','Goiabada is guava cooked with sugar in a copper pot for hours. The rustic “cascão” version keeps chunks of fruit.'],
+ do8:['O bolo de rolo tem camadas fininhas enroladas com goiabada. É patrimônio cultural de Pernambuco.','Bolo de rolo has paper-thin layers rolled up with guava paste. It’s part of Pernambuco’s cultural heritage.'],
+ ca1:['O ovo caipira vem de galinhas criadas soltas no quintal e costuma ter a gema mais alaranjada.','Free-range eggs come from hens that roam the backyard and often have deeper orange yolks.'],
+ ca2:['O Brasil é o maior exportador de carne de frango do mundo. Na mesa, o frango assado de domingo é tradição.','Brazil is the world’s largest exporter of chicken. At home, Sunday roast chicken is a tradition.'],
+ ca3:['O torresmo é pele de porco frita até estufar e ficar crocante. Em Minas, acompanha feijão, couve e tutu.','Torresmo is pork skin fried until it puffs up and turns crunchy. In Minas, it goes with beans, collard greens and tutu.'],
+ ca4:['Cada região tem sua linguiça. A de Maracaju, em Mato Grosso do Sul, é feita com carne bovina picada na faca.','Each region has its own sausage. The one from Maracaju, in Mato Grosso do Sul, is made with knife-chopped beef.'],
+ ca5:['Apesar do nome, a carne de sol seca ao vento, na sombra. No Nordeste, é servida com macaxeira e manteiga de garrafa.','Despite its name, carne de sol is dried by the wind, in the shade. In the Northeast, it’s served with cassava and bottled butter.'],
+ ca6:['No Rio Grande do Sul, a costela fogo de chão assa por horas em espetos fincados no chão, perto das brasas.','In Rio Grande do Sul, “fogo de chão” ribs roast for hours on skewers stuck in the ground beside the embers.'],
+ ca7:['O espetinho é o churrasco de rua: assado na hora numa churrasqueira de carvão, na porta do estádio ou da feira.','The espetinho is street churrasco: grilled to order over charcoal outside the stadium or the market.'],
+ ca8:['A feijoada leva feijão-preto e carnes de porco. Vem com arroz, couve, farofa e laranja, e no Rio é prato de quarta e de sábado.','Feijoada combines black beans with pork. It comes with rice, collard greens, farofa and orange, and in Rio it’s a Wednesday and Saturday dish.'],
+ la1:['Minas Gerais é o estado que mais produz leite no Brasil.','Minas Gerais produces more milk than any other Brazilian state.'],
+ la2:['No Nordeste existe a manteiga de garrafa, líquida e dourada, que vai na carne de sol e no cuscuz.','The Northeast has manteiga de garrafa, a golden liquid butter poured over carne de sol and cuscuz.'],
+ la3:['O queijo minas frescal é branco, macio e levemente salgado. O modo artesanal de fazer queijo de Minas é patrimônio cultural do Brasil.','Fresh queijo minas is white, soft and lightly salty. The traditional way of making Minas cheese is part of Brazil’s cultural heritage.'],
+ la4:['O requeijão cremoso de copo é bem brasileiro. Depois de vazio, o copo vira copo de suco em muitas casas.','Creamy requeijão in a glass jar is very Brazilian. Once empty, the jar becomes a juice glass in many homes.'],
+ la5:['O queijo coalho é assado na brasa, no espeto, e vendido nas praias do Nordeste, às vezes com melaço por cima.','Queijo coalho is grilled on a stick over coals and sold on Northeastern beaches, sometimes drizzled with molasses.'],
+ la6:['O doce de leite é leite com açúcar mexido no tacho por horas, até ficar cor de caramelo. Minas é famosa pelo seu.','Doce de leite is milk and sugar stirred in a pot for hours until caramel-colored. Minas Gerais is famous for it.'],
+ la7:['Romeu e Julieta é queijo com goiabada: o salgado e o doce juntos, como o casal da peça de Shakespeare.','Romeu e Julieta is cheese with guava paste: salty and sweet together, like the couple in Shakespeare’s play.'],
+ la8:['O pudim brasileiro é feito com leite condensado e calda de caramelo. É sobremesa de festa e de almoço de domingo.','Brazilian pudim is made with condensed milk and caramel sauce. It’s the dessert for parties and Sunday lunch.'],
+ ln1:['O pastel de feira é frito na hora, com recheio de carne, queijo ou palmito. Dizem que foi popularizado por imigrantes chineses e japoneses em São Paulo.','The market pastel is fried to order, filled with meat, cheese or palm heart. It’s said to have been popularized by Chinese and Japanese immigrants in São Paulo.'],
+ ln2:['A tapioca é a goma da mandioca espalhada na frigideira quente, sem óleo. É uma herança dos povos indígenas.','Tapioca is cassava starch spread on a hot pan without oil. It’s a legacy of Brazil’s Indigenous peoples.'],
+ ln3:['O sanduíche de mortadela do Mercadão de São Paulo leva uma pilha enorme de mortadela fatiada. É difícil comer sem sujar a mão.','The mortadella sandwich at São Paulo’s Mercadão comes with a towering stack of sliced mortadella. It’s hard to eat without getting messy.'],
+ ln4:['A coxinha tem o formato de uma coxa de frango e é recheada de frango desfiado. É o salgado mais pedido das lanchonetes.','The coxinha is shaped like a chicken drumstick and filled with shredded chicken. It’s the most ordered snack in Brazilian lanchonetes.'],
+ ln5:['O acarajé é bolinho de feijão-fradinho frito no dendê, recheado com vatapá e camarão. A receita veio da África com os iorubás.','Acarajé is a black-eyed pea fritter fried in dendê oil and filled with vatapá and shrimp. The recipe came from Africa with the Yoruba people.'],
+ ln6:['O “X” do X-tudo vem de “cheese”, que em português soa como “xis”. O X-tudo leva de tudo um pouco: ovo, bacon, presunto, milho e batata palha.','The “X” in X-tudo comes from “cheese”, which sounds like “xis” in Portuguese. It has a bit of everything: egg, bacon, ham, corn and shoestring potatoes.'],
+ ln7:['A tapioca recheada pode ser salgada ou doce: queijo coalho, carne de sol, coco, banana com canela.','Filled tapioca can be savory or sweet: queijo coalho, carne de sol, coconut, banana with cinnamon.'],
+ ln8:['Marmita era o nome da panela de metal em que se levava a comida para o trabalho. Hoje é o almoço caseiro que viaja na bolsa.','A marmita used to be the metal pot people carried food to work in. Today it’s the home-cooked lunch that travels in a bag.'],
+ pa1:['O Paraná e o Rio Grande do Sul produzem a maior parte do trigo brasileiro, usado no pão, no macarrão e no bolo.','Paraná and Rio Grande do Sul grow most of Brazil’s wheat, used for bread, pasta and cake.'],
+ pa2:['O pão de forma é assado numa forma retangular com tampa, por isso sai certinho e macio para o sanduíche.','The sandwich loaf bakes in a rectangular pan with a lid, so it comes out even and soft for sandwiches.'],
+ pa3:['O pão francês é brasileiro, apesar do nome. Tem apelido em cada canto: cacetinho no Sul, pão de sal em Minas, carioquinha no Ceará.','Despite its name, pão francês is Brazilian. It has a nickname everywhere: cacetinho in the South, pão de sal in Minas, carioquinha in Ceará.'],
+ pa4:['O pão de queijo é feito com polvilho, da mandioca, e queijo, sem farinha de trigo. É o orgulho de Minas Gerais.','Pão de queijo is made with cassava starch and cheese, with no wheat flour. It’s the pride of Minas Gerais.'],
+ pa5:['A rosca doce é trançada e coberta de coco ou açúcar. Cheirando no forno, chama a família para o café da tarde.','The sweet bread ring is braided and topped with coconut or sugar. Its smell from the oven calls the family to afternoon coffee.'],
+ pa6:['O fubá é farinha de milho. O bolo de fubá, às vezes com erva-doce, é o bolo do café da tarde na roça.','Fubá is cornmeal. Cornmeal cake, sometimes with fennel seed, is the afternoon-coffee cake of the countryside.'],
+ pa7:['O empadão é uma torta salgada recheada de frango, palmito ou legumes. Em Goiás, o empadão goiano é prato típico.','Empadão is a savory pie filled with chicken, palm heart or vegetables. In Goiás, the empadão goiano is a regional classic.'],
+ pa8:['Festa de aniversário no Brasil tem bolo recheado, brigadeiro e o “Parabéns pra você” cantado bem alto.','A Brazilian birthday party means a layered cake, brigadeiros and “Parabéns pra você” sung at the top of your lungs.'],
+ fl1:['Uma muda é a planta ainda pequena, pronta para ir para o vaso ou para a terra. Na feira, muita gente leva ervas para plantar em casa.','A seedling is a young plant ready for a pot or the ground. At the market, many people take home herbs to plant.'],
+ fl2:['A margarida é a flor do “bem-me-quer, mal-me-quer”: tira-se uma pétala de cada vez para descobrir a resposta.','The daisy is the “loves me, loves me not” flower: you pull one petal at a time to find the answer.'],
+ fl3:['O Brasil tem mais de 2 mil espécies de orquídeas nativas. Muitas vivem penduradas nos galhos das árvores.','Brazil has more than 2,000 native orchid species. Many live clinging to tree branches.'],
+ fl4:['O girassol novo acompanha o sol ao longo do dia. Quando a flor amadurece, fica virada para o leste.','A young sunflower follows the sun through the day. When the flower matures, it stays facing east.'],
+ fl5:['A bromélia guarda água entre as folhas, e ali vivem pererecas e insetos. O abacaxi também é uma bromélia.','The bromeliad holds water between its leaves, where tree frogs and insects live. The pineapple is a bromeliad too.'],
+ fl6:['Muitas flores de hibisco duram um dia só: abrem de manhã e murcham à noite. As pétalas secas viram chá.','Many hibiscus flowers last just one day: they open in the morning and wilt at night. The dried petals make tea.'],
+ fl7:['O ipê-amarelo floresce no fim do inverno, depois de perder as folhas. A árvore inteira fica amarela.','The yellow ipê blooms at the end of winter, after dropping its leaves. The whole tree turns yellow.'],
+ fl8:['O buquê tropical junta flores do Brasil, como helicônias, alpínias e antúrios, de cores fortes e que duram muitos dias.','A tropical bouquet brings together Brazilian flowers like heliconias, alpinias and anthuriums, bright and long-lasting.']
+};
+// Curiosidades das receitas, na ordem de RECIPES.
+const REC_INFO=[
+ ['A laranjada era o refresco das lanchonetes antigas, servida bem gelada na jarra.','Laranjada was the classic drink of old-school snack bars, served ice-cold from a jug.'],
+ ['Batido com folhas de hortelã, o suco de abacaxi fica ainda mais refrescante.','Blended with mint leaves, pineapple juice is even more refreshing.'],
+ ['O limão tira o cheiro forte do peixe e deixa a carne firme antes de ir ao fogo.','Lime takes away the strong smell of fish and firms up the flesh before cooking.'],
+ ['Camarão no alho e óleo é petisco de praia, servido ainda chiando na frigideira.','Garlic shrimp is a beach snack, served still sizzling in the pan.'],
+ ['A moqueca vai à mesa na própria panela de barro, acompanhada de arroz e pirão.','Moqueca is served in its own clay pot, with rice and pirão, a fish-broth porridge.'],
+ ['Para quem vive à beira do rio, peixe com arroz e farinha é o almoço de todo dia.','For people living by the river, fish with rice and cassava flour is the everyday lunch.'],
+ ['O nome vem dos tropeiros, que viajavam com mulas levando mercadorias. A comida tinha de durar a viagem sem estragar.','The name comes from the tropeiros, mule-train drivers who carried goods across Brazil. Their food had to last the journey.'],
+ ['Pipoca doce coberta de chocolate é a alegria da porta da escola e do cinema.','Chocolate-coated popcorn is the joy of school gates and movie nights.'],
+ ['O arroz-doce veio de Portugal e ganha canela em pó por cima. É doce de festa junina.','Arroz-doce came from Portugal and is topped with ground cinnamon. It’s a June festival favorite.'],
+ ['Arroz com ovo frito é o socorro de quem chega com fome e quer algo pronto em minutos.','Rice with a fried egg is the rescue meal for anyone who gets home hungry and wants food in minutes.'],
+ ['No Nordeste, a carne de sol com queijo coalho derretido vem com macaxeira e manteiga de garrafa.','In the Northeast, carne de sol with melted queijo coalho comes with cassava and bottled butter.'],
+ ['Mexido devagar no tacho, fica cremoso. Em barra, o mesmo doce se chama bananada.','Stirred slowly in a pot, it turns creamy. In bar form, the same sweet is called bananada.'],
+ ['Na feira de rua, o pastel quentinho pede uma bebida gelada: caldo de cana ou suco da banca ao lado.','At the street market, a hot pastel calls for a cold drink: sugarcane juice or juice from the next stall.'],
+ ['A omelete com tomate e cheiro-verde é o jantar rápido de muita casa brasileira.','An omelette with tomato and cheiro-verde is a quick dinner in many Brazilian homes.'],
+ ['No Brasil, qualquer fruta batida com leite se chama “vitamina”. A de banana é a campeã do café da manhã.','In Brazil, any fruit blended with milk is called a “vitamina”. Banana is the breakfast favorite.'],
+ ['O nome “misto” vem da mistura de presunto e queijo, prensados na chapa até o queijo derreter.','The name “misto” means “mixed”: ham and cheese pressed on the griddle until the cheese melts.'],
+ ['Pão francês na chapa com manteiga e um pingado é o café da manhã de padaria em São Paulo.','Griddled pão francês with butter and a pingado is the classic São Paulo bakery breakfast.'],
+ ['O queijo-quente é o lanche mais simples da chapa: pão, queijo e calor até derreter.','The grilled cheese is the simplest griddle snack: bread, cheese and heat until it melts.'],
+ ['Dizem que o brigadeiro ganhou esse nome numa campanha eleitoral de 1945, em homenagem a um brigadeiro da Aeronáutica. Hoje é o doce de toda festa.','The brigadeiro is said to be named after an Air Force brigadier who ran for president in 1945. Today it’s the sweet at every party.'],
+ ['O pingado é café com um pingo de leite, servido no copo americano, o copinho de vidro das padarias.','A pingado is coffee with a splash of milk, served in the “copo americano”, the ridged glass of Brazilian bakeries.'],
+ ['Frango picado e frito com bastante alho é o “frango a passarinho”, petisco de boteco.','Chicken chopped small and fried with lots of garlic is “frango a passarinho”, a classic bar snack.'],
+ ['Leva canela por cima e não falta na festa junina. No Nordeste, o mesmo creme se chama canjica.','It’s topped with cinnamon and served at every June festival. In the Northeast, the same cream is called canjica.'],
+ ['Peixe assado com legumes num tabuleiro só é prato fácil para o almoço de domingo.','Fish roasted with vegetables in a single tray is an easy Sunday lunch.'],
+ ['O bolo de cenoura com cobertura de chocolate é invenção bem brasileira, feito no liquidificador.','Carrot cake with chocolate frosting is a very Brazilian invention, mixed in the blender.'],
+ ['Pão doce com coco ou creme é a vitrine mais colorida da padaria.','Sweet bread with coconut or custard is the most colorful display in the bakery.']
+];
+// Fichas dos personagens (pop-up do álbum): o que a profissão faz e uma curiosidade. Mesmo texto nos dois jogos.
+const BIO={
+ ze:['Feirante monta a banca ainda de madrugada, arruma as frutas em pirâmide e conhece cada freguês pelo nome. Seu Zé viaja com você e ensina os segredos de cada mercado.','Market vendors set up their stalls before dawn, stack fruit into pyramids and know every customer by name. Seu Zé travels with you and shares the secrets of each market.'],
+ bia:['Aprendiz é quem começa ajudando: pesa as frutas, dá o troco e aprende a escolher o melhor produto. Muita banca de feira passa de pai para filho assim.','An apprentice starts by helping out: weighing fruit, giving change and learning to pick the best produce. Many market stalls pass from parent to child this way.'],
+ mingau:['Gato de quitanda é tradição: ele afasta ratos dos sacos de grãos e vira o mascote da freguesia. Mingau dorme nas caixas vazias e acorda quando sente cheiro de peixe.','A shop cat is a tradition: it keeps mice away from the grain sacks and becomes everyone’s mascot. Mingau naps in empty crates and wakes up at the smell of fish.'],
+ tonho:['O caminhoneiro leva frutas e verduras da roça até os mercados, muitas vezes rodando a noite inteira. No Brasil, a maior parte da comida viaja de caminhão.','Truck drivers carry fruit and vegetables from the farms to the markets, often driving all night. In Brazil, most food travels by truck.'],
+ naza:['Tacacazeira é quem prepara e vende o tacacá: tucupi quente, goma, jambu e camarão, servidos numa cuia. Em Belém, a fila na banca dela começa no fim da tarde.','A tacacazeira makes and sells tacacá: hot tucupi broth, tapioca starch, jambu and shrimp, served in a gourd bowl. In Belém, the line at her stall starts in the late afternoon.'],
+ raimundo:['O pescador sai de barco antes do sol nascer. No Ver-o-Peso, os barcos descarregam o peixe de madrugada na Pedra do Peixe, e ele já chega vendido.','Fishermen head out by boat before sunrise. At Ver-o-Peso, boats unload their catch before dawn at the Pedra do Peixe, and much of it is sold on arrival.'],
+ iara:['A artesã trança fibras da floresta, como o arumã e a palha de tucumã, em cestos, peneiras e bolsas. Muitas dessas técnicas vêm dos povos indígenas da Amazônia.','The artisan weaves forest fibers, like arumã reed and tucumã palm straw, into baskets, sieves and bags. Many of these techniques come from the Indigenous peoples of the Amazon.'],
+ chico:['Ribeirinho é quem vive à beira dos rios da Amazônia, em casas de madeira sobre palafitas. A vida acompanha a cheia e a vazante, e o barco é o carro da família.','Ribeirinhos live along the Amazon rivers in wooden houses on stilts. Life follows the rise and fall of the water, and the boat is the family car.'],
+ dada:['A baiana de tabuleiro vende acarajé, abará e cocada, vestida de branco, com turbante e colares. O ofício das baianas de acarajé é patrimônio cultural do Brasil.','The baiana de tabuleiro sells acarajé, abará and cocada, dressed in white with a turban and beads. The craft of the acarajé baianas is part of Brazil’s official cultural heritage.'],
+ jorginho:['O percussionista toca tambores como o atabaque, o timbal e o surdo. Em Salvador, os blocos afro ensaiam na rua e o som dos tambores atravessa o Pelourinho.','Percussionists play drums like the atabaque, the timbal and the surdo. In Salvador, Afro-Brazilian carnival groups rehearse in the streets, and the drums echo across the Pelourinho.'],
+ biu:['O ceramista molda o barro com as mãos e queima as peças no forno. Em Pernambuco, os bonecos de barro do Alto do Moura, em Caruaru, ficaram famosos com o Mestre Vitalino.','A potter shapes clay by hand and fires the pieces in a kiln. In Pernambuco, the clay figurines of Alto do Moura, in Caruaru, became famous thanks to Mestre Vitalino.'],
+ flor:['A rendeira faz renda ponto a ponto, com agulha ou bilros. Uma toalha de renda renascença pode levar meses, e o desenho passa de mãe para filha.','A lacemaker builds lace stitch by stitch, with a needle or bobbins. A single renascença lace tablecloth can take months, and the patterns pass from mother to daughter.'],
+ cicero:['O vendedor de frutas sabe quando cada uma está no ponto só pelo cheiro e pelo aperto. No Ceará, a banca dele tem caju, seriguela, cajá e graviola.','A fruit seller can tell when fruit is ripe just by smell and touch. In Ceará, his stall has cashew fruit, seriguela, cajá and soursop.'],
+ rosinha:['Rosinha aprende com a avó a renda de bilro: dezenas de bilros de madeira trocando de lugar sobre uma almofada. No Ceará, esse saber passa de geração em geração.','Rosinha is learning bobbin lace from her grandmother: dozens of wooden bobbins crossing over a cushion. In Ceará, this skill passes from one generation to the next.'],
+ keiko:['A cozinheira de sobá prepara o macarrão em caldo trazido por imigrantes de Okinawa, no Japão. Em Campo Grande, o sobá da Feira Central virou patrimônio cultural da cidade.','The sobá cook makes the noodle soup brought by immigrants from Okinawa, Japan. In Campo Grande, the sobá of the Feira Central became part of the city’s cultural heritage.'],
+ antenor:['O peão pantaneiro cuida do gado a cavalo no Pantanal e conduz comitivas por dias pelos campos alagados. Na pausa, toma tereré, o mate com água gelada.','The Pantanal cowboy herds cattle on horseback and leads drives for days across flooded plains. On breaks, he drinks tereré, yerba mate with ice-cold water.'],
+ giuseppe:['O dono da lanchonete passa o dia na chapa, montando sanduíches e pastéis. Como muitos paulistanos, Seu Giuseppe é neto de imigrantes italianos.','The snack bar owner spends the day at the griddle, building sandwiches and pastéis. Like many people in São Paulo, Seu Giuseppe is the grandson of Italian immigrants.'],
+ paula:['Paula trabalha num escritório no centro de São Paulo e aproveita o almoço para passar no Mercadão. Ela é o retrato do ritmo da maior cidade do Brasil.','Paula works in an office in downtown São Paulo and uses her lunch break to stop by the Mercadão. She is a picture of the pace of Brazil’s largest city.'],
+ geralda:['Em Minas, “quitanda” são os biscoitos, broas, roscas e pães caseiros do café da tarde. A quitandeira é quem faz essas delícias no forno a lenha.','In Minas Gerais, “quitanda” means the homemade biscuits, cornbreads and sweet breads served with afternoon coffee. The quitandeira bakes these treats in a wood-fired oven.'],
+ tiao:['O queijeiro faz o queijo com leite fresco e deixa curar em prateleiras de madeira, virando cada peça todo dia. O modo artesanal de fazer queijo de Minas é patrimônio cultural do Brasil.','The cheesemaker turns fresh milk into cheese and ages it on wooden shelves, flipping each wheel every day. The traditional way of making Minas cheese is part of Brazil’s cultural heritage.'],
+ jacinto:['O sanfoneiro comanda o forró pé de serra, ao lado da zabumba e do triângulo. A Feira de São Cristóvão nasceu do encontro de nordestinos que se mudaram para o Rio.','The accordion player leads traditional forró, together with the zabumba drum and the triangle. The Feira de São Cristóvão began as a gathering of Northeasterners who had moved to Rio.'],
+ dandara:['A cozinheira prepara os pratos do Nordeste na Feira de São Cristóvão: baião de dois, carne de sol e sarapatel. A panela dela começa a ferver logo cedo.','This cook makes Northeastern dishes at the Feira de São Cristóvão: baião de dois, carne de sol and sarapatel. Her pots start bubbling early in the morning.'],
+ gaudencio:['O assador cuida do churrasco gaúcho: carne com sal grosso, assada devagar no fogo de chão ou na churrasqueira. Para ele, o segredo é a paciência com a brasa.','The grill master runs the gaúcho churrasco: meat with coarse salt, roasted slowly over a ground fire or a grill. For him, the secret is patience with the embers.'],
+ livia:['No Sul, quem prepara o chimarrão toma o primeiro gole, o mais amargo, e depois passa a cuia na roda. Lívia cuida da erva, da água quente e da conversa.','In southern Brazil, whoever prepares the chimarrão drinks the first, most bitter sip, then passes the gourd around the circle. Lívia looks after the yerba, the hot water and the conversation.'],
+ dico:['O pescador artesanal de Florianópolis segue uma tradição trazida pelos açorianos. Na época da tainha, os olheiros avisam do alto do morro quando o cardume chega.','The artisanal fishermen of Florianópolis keep a tradition brought by settlers from the Azores. In mullet season, lookouts on the hills signal when a school of fish arrives.'],
+ zulma:['A florista monta buquês, cuida das mudas e sabe qual flor aguenta sol ou sombra. Na banca dela, cada flor tem um significado.','The florist arranges bouquets, looks after the seedlings and knows which flower likes sun or shade. At her stall, every flower has a meaning.'],
+ halina:['Dona Halina cozinha as receitas da avó polonesa, como o pierogi, um pastelzinho cozido. Curitiba recebeu muitos imigrantes da Polônia, da Ucrânia e da Itália.','Dona Halina cooks her Polish grandmother’s recipes, like pierogi, small boiled dumplings. Curitiba welcomed many immigrants from Poland, Ukraine and Italy.'],
+ estanislau:['O vendedor do armazém vende a granel: grãos, farinhas, temperos e conservas pesados na hora. Os antigos armazéns de “secos e molhados” vendiam de tudo um pouco.','The general store keeper sells in bulk: grains, flours, spices and preserves weighed on the spot. The old “secos e molhados” stores sold a bit of everything.']
+};
 const DECOR=[['⛱️',['Toldo listrado','Striped awning'],150],['🪴',['Vasos de ervas','Herb pots'],250],['🪑',['Banco de madeira','Wooden bench'],400],['📋',['Lousa de preços','Price chalkboard'],600],['⚖️',['Balança antiga','Vintage scale'],900],['✨',['Luzinhas','String lights'],1300],['📻',['Rádio de pilha','Transistor radio'],1800],['🚲',['Bicicleta de entrega','Delivery bike'],2500],['🛒',['Carrinho de feira','Market trolley'],3400],['🕰️',['Relógio de parede','Wall clock'],4500],['🎊',['Bandeirinhas','Bandeirinhas (festa junina flags)'],6000],['🐈',['Caminha do Mingau','Mingau’s cat bed'],8000]];
 const EXPS=[{cols:6,rows:8,cost:300,lvl:5},{cols:7,rows:8,cost:1500,lvl:12},{cols:7,rows:9,cost:6000,lvl:20}];
 const UPS={far:{ic:'🧺',bd:'2',n:['Cestos fartos','Bountiful baskets'],d:['Cada toque no cesto tem mais chance de já colher o item no nível 2 ou 3, o que poupa fusões.','Each basket tap is more likely to give a level 2 or 3 item, which saves you merges.'],base:80,k:1.7,max:10},
@@ -519,7 +697,7 @@ const UI={
   noMag:'Sem Junta-tudo. Ganhe subindo de nível, viajando e fazendo amizades.', noPair:'Nenhum par para juntar agora.',
   magDone:n=>`Junta-tudo: ${n} ${n>1?'fusões':'fusão'}`, noRec:'Sem Recarga. Ganhe subindo de nível e nos presentes.', fullB:'Cestos cheios',
   friendUp:(n,lv,co,m)=>`Amizade com ${n}: nível ${lv} · +${co} moedas${m?' e 🧲':''}`,
-  notOrdered:'Este cliente não pediu esse item.', rushDone:'Pedido relâmpago: recompensa em dobro', recipeFound:n=>`Receita descoberta: ${n} · +30 XP`, recFeira:n=>n>1?`${n} receitas novas nesta feira`:'Receita nova nesta feira', recFeiraP:(a,b)=>`Caderno de Receitas: ${a} de ${b}.`, tabRec:'Receitas', backExit:'Toque em voltar de novo para sair', tabIng:'Ingredientes', newTag:'novo', lineDone:'completa',
+  notOrdered:'Este cliente não pediu esse item.', rushDone:'Pedido relâmpago: recompensa em dobro', recipeFound:n=>`Receita descoberta: ${n} · +30 XP`, recFeira:n=>n>1?`${n} receitas novas nesta feira`:'Receita nova nesta feira', recFeiraP:(a,b)=>`Caderno de Receitas: ${a} de ${b}.`, tabRec:'Receitas', backExit:'Toque em voltar de novo para sair', nivelDe:(a,b)=>`nível ${a} de ${b}`, ingDica1:'Sai do cesto desta linha: toque no cesto para colher.', ingDica:n=>`Junte dois de ${n} para descobrir.`, ingDicaL:'Continue juntando os itens desta linha para descobrir.', dOnde:'Onde encontrar', dPedida:'Pedida em', dProx:'Próximo', dJunte:n=>`Junte dois para fazer ${n}.`, dJunteNovo:'Junte dois para descobrir o próximo.', dMax:'É o último nível da linha.', dRec:'Receitas', dRecFalta:n=>`${n} a descobrir`, dFas:'Quem adora', dIngr:'Ingredientes', dGosta:'Gosta de', dAmizade:'Amizade', dToque:'Toque num item para ver os detalhes.', dToqueT:'Toque em alguém para conhecer melhor.', dRecDica:'Ainda não descoberta. Entregue esta combinação quando um cliente pedir.', tabIng:'Ingredientes', newTag:'novo', lineDone:'completa',
   ingNote:(a,b,x,c)=>`${a} de ${b} ingredientes descobertos. Tudo o que passa pelo seu tabuleiro entra aqui. Complete os 8 níveis de uma linha para ganhar +${x} XP e +${c} moedas.`,
   albDone:(l,x,c)=>`Linha completa no álbum: ${l} · +${x} XP e +${c} moedas`,
   fairDone:'Feira concluída', fairDoneP:(g,n)=>`Você atendeu ${g} clientes em ${n}.`, nextStop:(ic,n,c,uf)=>`Próxima parada: <b>${ic} ${n}</b>, ${c} (${uf}).`,
@@ -619,7 +797,7 @@ const UI={
   noMag:'No Merge-all left. Earn more by leveling up, traveling and making friends.', noPair:'No pairs to merge right now.',
   magDone:n=>`Merge-all: ${n} merge${n>1?'s':''}`, noRec:'No Refills left. Earn more by leveling up and from gifts.', fullB:'Baskets full',
   friendUp:(n,lv,co,m)=>`Friendship with ${n}: level ${lv} · +${co} coins${m?' and 🧲':''}`,
-  notOrdered:'This customer didn’t order that.', rushDone:'Rush order: double reward', recipeFound:n=>`Recipe discovered: ${n} · +30 XP`, recFeira:n=>n>1?`${n} new recipes at this market`:'New recipe at this market', recFeiraP:(a,b)=>`Recipe Book: ${a} of ${b}.`, tabRec:'Recipes', backExit:'Press back again to exit', tabIng:'Ingredients', newTag:'new', lineDone:'complete',
+  notOrdered:'This customer didn’t order that.', rushDone:'Rush order: double reward', recipeFound:n=>`Recipe discovered: ${n} · +30 XP`, recFeira:n=>n>1?`${n} new recipes at this market`:'New recipe at this market', recFeiraP:(a,b)=>`Recipe Book: ${a} of ${b}.`, tabRec:'Recipes', backExit:'Press back again to exit', nivelDe:(a,b)=>`level ${a} of ${b}`, ingDica1:'Comes from this line’s basket: tap the basket to pick it.', ingDica:n=>`Merge two ${n} to discover it.`, ingDicaL:'Keep merging this line’s items to discover it.', dOnde:'Where to find', dPedida:'Ordered in', dProx:'Next', dJunte:n=>`Merge two to make ${n}.`, dJunteNovo:'Merge two to discover the next one.', dMax:'This is the top level of the line.', dRec:'Recipes', dRecFalta:n=>`${n} to discover`, dFas:'Fans', dIngr:'Ingredients', dGosta:'Likes', dAmizade:'Friendship', dToque:'Tap an item to see its details.', dToqueT:'Tap someone to get to know them.', dRecDica:'Not discovered yet. Deliver this combination when a customer asks for it.', tabIng:'Ingredients', newTag:'new', lineDone:'complete',
   ingNote:(a,b,x,c)=>`${a} of ${b} ingredients discovered. Everything that lands on your board shows up here. Complete all 8 levels of a line to earn +${x} XP and +${c} coins.`,
   albDone:(l,x,c)=>`Album line complete: ${l} · +${x} XP and +${c} coins`,
   fairDone:'Market complete', fairDoneP:(g,n)=>`You served ${g} customers at ${n}.`, nextStop:(ic,n,c,uf)=>`Next stop: <b>${ic} ${n}</b>, ${c} (${uf}).`,
@@ -1470,6 +1648,33 @@ function mapSvg(o={}){
 }
 // Bolinhas de nível: uma cheia para cada nível comprado, vazias até o máximo, e o número (ex.: 3/10)
 const pips=(a,b)=>`<span class="pips${a>=b?' max':''}" role="img" aria-label="${t('lvOf',a,b)}">${'<i class="on"></i>'.repeat(a)}${'<i></i>'.repeat(Math.max(0,b-a))}<em>${a}/${b}</em></span>`;
+/* ===== Detalhes do Caderno de Receitas e da Turma (pop-up ao tocar num ingrediente, receita ou personagem) ===== */
+const detRow=(a,b)=>b?`<dt>${a}</dt><dd>${b}</dd>`:'';
+const unicos=a=>a.filter((x,i)=>a.indexOf(x)===i);
+const fechaBtn=()=>`<button class="btn" data-act="mclose">${t('close')}</button>`;
+// Os níveis da linha em fila, com o atual em destaque; os ainda não vistos aparecem como ❔.
+function cadeia(l,n,vis){ return `<div class="cadeia" aria-hidden="true">`+LINES[l].it.map((_,j)=>vis(j+1)?`<span class="${j+1===n?'on':''}">${ie(l,j+1)}</span>`:`<span class="no">❔</span>`).join('<i>›</i>')+'</div>'; }
+function verIng(l,n){
+  if(!LINES[l]||!LINES[l].it[n-1]) return;
+  const vis=j=>!!S.seen[l+j], nm=item(l,n)[1], onde=unicos(FEIRAS.filter(f=>f.lines.includes(l)).map(f=>f.c)).join(', ');
+  const cab=(ic,nome)=>`<div class="ihead"><span class="ibig" style="--lc:${lc(l)}">${ic}</span><div><h2>${nome}</h2><p>${lname(l)} · ${t('nivelDe',n,MAX)}</p></div></div>`;
+  if(!vis(n)){ modal(`<div class="info">${cab('❔','???')}<p class="itxt">${n===1?t('ingDica1'):(vis(n-1)?t('ingDica',item(l,n-1)[1]):t('ingDicaL'))}</p>${cadeia(l,n,vis)}<dl class="idet">${detRow(t('dOnde'),onde)}</dl></div>${fechaBtn()}`); return; }
+  const rs=RECIPES.map((r,i)=>[r,i]).filter(([r])=>r.it.some(x=>x[0]===l&&x[1]===n)), rk=rs.filter(([,i])=>S.recipes.includes(i)).map(([r])=>tx(r.name)), rf=rs.length-rk.length;
+  const fas=CAST.filter(c=>c.fav===l&&(c.at<0||S.stop>=c.at)).map(c=>`${pf(c)} ${c.n}`).join(', ');
+  const prox=n>=MAX?t('dMax'):vis(n+1)?t('dJunte',item(l,n+1)[1]):t('dJunteNovo');
+  modal(`<div class="info">${cab(ie(l,n),nm)}${INFO[l+n]?`<p class="itxt">${tx(INFO[l+n])}</p>`:''}${cadeia(l,n,vis)}<dl class="idet">${detRow(t('dProx'),prox)}${detRow(t('dOnde'),onde)}${detRow(t('dRec'),rs.length?[...rk,...(rf?[t('dRecFalta',rf)]:[])].join(', '):'')}${detRow(t('dFas'),fas)}</dl></div>${fechaBtn()}`);
+}
+function verRec(i){
+  const r=RECIPES[i]; if(!r) return; const ok=S.recipes.includes(i);
+  const ics=r.it.map(([l,n])=>ok||S.seen[l+n]?ie(l,n):'❔').join('<b>+</b>'), onde=unicos(FEIRAS.filter(f=>r.it.every(x=>f.lines.includes(x[0]))).map(f=>f.c)).join(', ');
+  const ings=r.it.map(([l,n])=>`${ok||S.seen[l+n]?ie(l,n)+' '+item(l,n)[1]:'???'} <small>(${lname(l)}, ${t('nivelDe',n,MAX)})</small>`).join('<br>');
+  modal(`<div class="info"><div class="ihead"><span class="ibig duo">${ics}</span><div><h2>${ok?tx(r.name):'???'}</h2><p>📖 ${r.it.map(x=>lname(x[0])).join(' + ')}</p></div></div><p class="itxt">${ok?tx(r.note)+' '+tx(REC_INFO[i]||''):t('dRecDica')}</p><dl class="idet">${detRow(t('dIngr'),ings)}${detRow(t('dPedida'),onde)}</dl></div>${fechaBtn()}`);
+}
+function verCast(id){
+  const c=CAST.find(x=>x.id===id); if(!c) return; const f=S.friends[c.id]||{h:0,lv:0};
+  const lugar=c.at<0?t('withYou'):`${FEIRAS[c.at].n} · ${FEIRAS[c.at].c} (${FEIRAS[c.at].uf})`;
+  modal(`<div class="info"><div class="ihead"><span class="ibig">${pf(c)}</span><div><h2>${c.n}</h2><p>${tx(c.role)}</p><p>${lugar}</p></div></div><p class="itxt">${tx(BIO[c.id]||'')}</p><p class="q">“${tx(c.q)}”</p><dl class="idet">${detRow(t('dGosta'),`${ie(c.fav,1)} ${lname(c.fav)}`)}${detRow(t('dAmizade'),`❤️ ${f.lv}`)}</dl></div>${fechaBtn()}`);
+}
 function renderSheet(){
   const T=t('T'); let h='';
   if(sheetName==='map'){
@@ -1479,9 +1684,9 @@ function renderSheet(){
         return `<div class="row ${st==='cur'?'cur':st==='lock'?'lock':''}">${f.img?tileHtml(f,st==='lock'?'lock':''):`<span class="mtile">${st==='lock'?'🔒':f.ic}</span>`}<div><b>${i+1}. ${f.n}</b> ${st==='ok'?'⭐':''}<p>${f.c} (${f.uf}) · ${reg(f)}</p><p>${tx(f.txt)}</p><p>${ls.map(k=>ie(k,1)).join(' ')} · ${loc.map(c=>pf(c)).join(' ')} · ${t('goalN',goal(s))}</p>${st==='cur'?`<div class="bar"><i style="width:${Math.min(100,S.served/g*100)}%"></i></div><p>${t('served',S.served,g)}</p>`:''}</div>${st==='cur'?`<button class="btn" data-act="travelask" ${done?'':'disabled'}>${t('travel')}</button>`:''}</div>`; }).join('');
   } else if(sheetName==='turma'){
     const met=c=>c.at<0||S.stop>=c.at;
-    h=`<p class="note">${t('turmaNote')}</p>`
+    h=`<p class="note">${t('turmaNote')} ${t('dToqueT')}</p>`
      +CAST.map(c=>{ const f=S.friends[c.id]||{h:0,lv:0}, here=c.at<0||c.at===S.stop%FEIRAS.length;
-        return met(c)?`<div class="row${here?' cur':''}"><span class="face">${pf(c)}</span><div><b>${c.n}</b> · ❤️ ${f.lv}<p>${tx(c.role)} · ${c.at<0?t('withYou'):FEIRAS[c.at].c} · ${t('likes',ie(c.fav,1),lname(c.fav))}</p><p>“${tx(c.q)}”</p><div class="bar"><i style="width:${f.h/needH(f.lv)*100}%"></i></div></div></div>`
+        return met(c)?`<div class="row toque${here?' cur':''}" data-act="vercast:${c.id}" role="button" tabindex="0"><span class="face">${pf(c)}</span><div><b>${c.n}</b> · ❤️ ${f.lv}<p>${tx(c.role)} · ${c.at<0?t('withYou'):FEIRAS[c.at].c} · ${t('likes',ie(c.fav,1),lname(c.fav))}</p><p>“${tx(c.q)}”</p><div class="bar"><i style="width:${f.h/needH(f.lv)*100}%"></i></div></div></div>`
           :`<div class="row lock"><span class="face">❔</span><div><b>???</b><p>${t('meetAt',FEIRAS[c.at].n,FEIRAS[c.at].c)}</p></div></div>`; }).join('');
   } else if(sheetName==='miss'){
     const L=encLvl();
@@ -1494,16 +1699,16 @@ function renderSheet(){
     const tabs=`<div class="seg" role="group"><button data-act="rtab:rec" aria-pressed="${recTab==='rec'}">📖 ${t('tabRec')}</button><button data-act="rtab:ing" aria-pressed="${recTab==='ing'}">🧺 ${t('tabIng')}${nova?' <i class="ndot"></i>':''}</button></div>`;
     if(recTab==='ing'){
       const tot=Object.keys(LINES).length*MAX, got=Object.keys(S.seen).length;
-      h=tabs+`<p class="note">${t('ingNote',got,tot,ALB_XP,ALB_CO)}</p>`+Object.keys(LINES).map(l=>{ const k=LINES[l].it.filter((_,j)=>S.seen[l+(j+1)]).length;
+      h=tabs+`<p class="note">${t('ingNote',got,tot,ALB_XP,ALB_CO)} ${t('dToque')}</p>`+Object.keys(LINES).map(l=>{ const k=LINES[l].it.filter((_,j)=>S.seen[l+(j+1)]).length;
         return `<div class="albl"><b>${ie(l,1)} ${lname(l)}</b><span>${S.albumDone.includes(l)?'⭐ '+t('lineDone'):k+'/'+MAX}</span></div><div class="alb">`+LINES[l].it.map((x,j)=>{ const st=S.seen[l+(j+1)], d=item(l,j+1), gl=gloss(l,j+1);
-          return st?`<div class="ing${st===1?' new':''}" style="--lc:${lc(l)}"${gl?` title="${gl}"`:''}><span class="e">${d[0]}</span><small>${d[1]}</small><i>${j+1}</i>${st===1?`<em>${t('newTag')}</em>`:''}</div>`
-                   :`<div class="ing no" style="--lc:${lc(l)}"><span class="e">❔</span><small>???</small><i>${j+1}</i></div>`; }).join('')+'</div>'; }).join('');
+          return st?`<div class="ing toque${st===1?' new':''}" style="--lc:${lc(l)}" data-act="vering:${l+(j+1)}" role="button" tabindex="0" aria-label="${d[1]}"><span class="e">${d[0]}</span><small>${d[1]}</small><i>${j+1}</i>${st===1?`<em>${t('newTag')}</em>`:''}</div>`
+                   :`<div class="ing no toque" style="--lc:${lc(l)}" data-act="vering:${l+(j+1)}" role="button" tabindex="0" aria-label="???"><span class="e">❔</span><small>???</small><i>${j+1}</i></div>`; }).join('')+'</div>'; }).join('');
       for(const k in S.seen) if(S.seen[k]===1) S.seen[k]=2;
       save(); const nd=document.querySelector('#nav [data-act="nav:rec"] .dot'); if(nd) nd.remove();
     } else h=tabs+(S.level<3?`<p class="note">${t('recLocked')}</p>`
-     :`<p class="note">${t('recNote',S.recipes.length,RECIPES.length)}</p>`+RECIPES.map((r,i)=>S.recipes.includes(i)
-        ?`<div class="row"><div><b>${tx(r.name)}</b><p>${r.it.map(([l,n])=>item(l,n)[0]+' '+item(l,n)[1]).join(' + ')} · ${tx(r.note)}</p></div></div>`
-        :`<div class="row lock"><div><b>???</b><p>${r.it.every(x=>ls.includes(x[0]))?t('recHere'):t('recOther')} · ${r.it.map(x=>lname(x[0])).join(' + ')}</p></div></div>`).join('')+evRecHtml());
+     :`<p class="note">${t('recNote',S.recipes.length,RECIPES.length)} ${t('dToque')}</p>`+RECIPES.map((r,i)=>S.recipes.includes(i)
+        ?`<div class="row toque" data-act="verrec:${i}" role="button" tabindex="0"><div><b>${tx(r.name)}</b><p>${r.it.map(([l,n])=>item(l,n)[0]+' '+item(l,n)[1]).join(' + ')} · ${tx(r.note)}</p></div></div>`
+        :`<div class="row lock toque" data-act="verrec:${i}" role="button" tabindex="0"><div><b>???</b><p>${r.it.every(x=>ls.includes(x[0]))?t('recHere'):t('recOther')} · ${r.it.map(x=>lname(x[0])).join(' + ')}</p></div></div>`).join('')+evRecHtml());
   } else if(sheetName==='up'){
     const e=EXPS[S.exp], buy=(act,c,dis)=>`<button class="btn buy" data-act="${act}" ${dis?'disabled':''}><span>${t('buy')}</span><small>🪙 ${fmt(c)}</small></button>`;
     const val=(k,lv)=>k==='far'?t('farV',...farOdds(lv).map(x=>Math.round(x*100))):k==='cap'?t('capV',BASE_CAP+CAP_UP*lv):t('spdV',mmss(Math.round(periodAt(lv)/1000)));
@@ -1584,8 +1789,8 @@ document.addEventListener('click',e=>{
     else if(k==='recharge') recharge();
     else if(k==='adcharge'){ if(S.daily.adCharge<AD_MAX) showAd('rew',()=>{ S.daily.adCharge++; const g=Math.round(AD_CHARGE*bonus()); refill(g); toast(t('adCharge',g)); setTimeout(()=>fxCharge('+'+g),80); }); else toast(t('adLimit')); }
     else if(k==='userec'){ closeModal(); recharge(); }
-    else if(k==='shop'&&!PUB.loja){ $('toast').hidden=true; closeModal(); sheetName='up'; $('sheet').hidden=false; renderSheet(); }
-    else if(k==='shop'){ $('toast').hidden=true; closeModal(); sheetName='shop'; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
+    else if(k==='shop'&&!PUB.loja){ $('toast').hidden=true; closeModal(); empilha('up'); sheetName='up'; $('sheet').hidden=false; renderSheet(); }
+    else if(k==='shop'){ $('toast').hidden=true; closeModal(); empilha('shop'); sheetName='shop'; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
     else if(k==='iap'&&PUB.loja) iapAsk(v);
     else if(k==='iapok'&&PUB.loja) iapBuy(v);
     else if(k==='restaurar') Compras.restaurar();
@@ -1599,8 +1804,11 @@ document.addEventListener('click',e=>{
     else if(k==='sort') sortBoard();
     else if(k==='swap') swapOrder(+v);
     else if(k==='double'){ const o=offer; if(o&&S.daily.adDouble<DOUBLE_MAX){ offer=null; showAd('rew',()=>{ S.daily.adDouble++; const x=gain(o.xp*bonus(),Math.round(o.co*bonus())); toast(t('doubled',x)); }); } }
-    else if(k==='nav'){ $('toast').hidden=true; sheetName=v==='shop'&&!PUB.loja?'up':v; if(v==='rec'&&Object.values(S.seen).includes(1)) recTab='ing'; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
-    else if(k==='close'){ sheetName=null; $('sheet').hidden=true; render(); }
+    else if(k==='nav'){ $('toast').hidden=true; empilha(v==='shop'&&!PUB.loja?'up':v); sheetName=v==='shop'&&!PUB.loja?'up':v; if(v==='rec'&&Object.values(S.seen).includes(1)) recTab='ing'; $('sheet').hidden=false; renderSheet(); $('sheet').scrollTop=0; }
+    else if(k==='close'){ sheetName=null; sheetPilha=[]; $('sheet').hidden=true; render(); }
+    else if(k==='vering') verIng(v.slice(0,2),+v.slice(2));
+    else if(k==='verrec') verRec(+v);
+    else if(k==='vercast') verCast(v);
     else if(k==='claim'){ const m=S.missions[+v]; if(m&&m.p>=m.goal){ S.missions[+v]=newMission(S,+v); S.coins+=m.co; const x=gain(m.xp,0); beep(880); toast(t('missDone',m.co,x)); render(); } }
     else if(k==='chest'){ if(S.daily.chest<CHEST_MAX) showAd('rew',()=>{ S.daily.chest++; S.coins+=Math.round(80*bonus()); S.boost.mag++; Sfx.tocar('premio'); }); }
     else if(k==='buyexp') expand();
@@ -1813,21 +2021,28 @@ function intro(){
   introState.tms.push(setTimeout(sing,quieto?300:2050));   // pousou, cantou
 }
 function introTap(){ endIntro(); }
-/* Botão voltar do Android: fecha a camada da frente (vinheta, aviso, painel), volta do tabuleiro para a tela
-   inicial e, na tela inicial, sai do app no segundo toque em até 2 s. */
-let backAt=0;
+/* Botão voltar do Android: fecha a camada da frente (vinheta, viagem, aviso, painel), volta para o painel de onde
+   a pessoa veio (pilha sheetPilha), volta do tabuleiro para a tela inicial e só sai do app na tela inicial, no
+   segundo toque em até 2 s. Nunca sai de outra tela. */
+let backAt=0, sheetPilha=[];
+// Guarda o painel aberto antes de abrir outro por cima, para o voltar retornar a ele.
+function empilha(novo){ if($('sheet').hidden||!sheetName) sheetPilha=[]; else if(sheetName!==novo) sheetPilha.push(sheetName); }
 function voltar(){
   const C=window.Capacitor, P=C&&C.Plugins&&C.Plugins.App;
   if(!$('intro').hidden){ endIntro(); return; }
+  if(!$('trip').hidden){ endTrip(); return; }
   if(!$('over').hidden){
     const ad=$('adclose'); if(ad){ if(!ad.disabled) ad.click(); return; }   // anúncio: só fecha quando a contagem acaba
-    const b=$('card').querySelector('[data-act="mclose"],[data-act="lvlok"],[data-act="arrive"],[data-act^="dayok"]'); if(b) b.click(); return; }
+    const b=$('card').querySelector('[data-act="mclose"],[data-act="lvlok"],[data-act="arrive"],[data-act^="dayok"],[data-act="iapno"]'); if(b) b.click(); return; }
   if(drag) return;
-  if(sheetName){ sheetName=null; $('sheet').hidden=true; render(); return; }
+  if(sheetName&&!$('sheet').hidden){
+    if(sheetPilha.length){ sheetName=sheetPilha.pop(); renderSheet(); $('sheet').scrollTop=0; return; }
+    sheetName=null; $('sheet').hidden=true; render(); return; }
   if(!homeOn){ homeOn=true; tip=Math.floor(Math.random()*TIPS.length); sel=null; selOrder=null; render(); return; }
   if(Date.now()-backAt<2000){ save(); if(P&&P.exitApp) P.exitApp(); return; }
   backAt=Date.now(); toast(t('backExit'));
 }
+document.addEventListener('keydown',e=>{ if((e.key==='Enter'||e.key===' ')&&e.target.matches&&e.target.matches('[role="button"][data-act]')){ e.preventDefault(); e.target.click(); } });   // toque pelo teclado nos itens do álbum
 (()=>{ const C=window.Capacitor, P=C&&C.isNativePlatform&&C.isNativePlatform()&&C.Plugins&&C.Plugins.App;
   if(P&&P.addListener) P.addListener('backButton',voltar); })();
 function start(d){
