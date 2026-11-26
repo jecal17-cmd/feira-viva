@@ -213,7 +213,7 @@ Como na Quitanda, a Rota ganhou o segundo mercado. Ele abre ao vencer o chefe do
 
 - **Música:** a Rota toca a mesma trilha da Quitanda para cada mercado (`musica/01.ogg` no Ver-o-Peso, `02.ogg` em Manaus), em loop e com troca suave ao mudar de mercado. Começa no primeiro toque na tela. Liga e desliga em Ajustes.
 - **Volume (Quitanda e Rota):** em Ajustes, Som e Música têm cada um a sua barra de 0 a 100%, além do botão Ligado/Desligado. A música muda de volume na hora; ao soltar a barra do som, toca uma moedinha de amostra. Na Quitanda, a música deixou de depender do botão Som.
-- **Banca da tela inicial (Rota):** no lugar da foto do Ver-o-Peso, a tela inicial mostra a banca da Quitanda (toldo nas cores da Rota, sem decorações). Começa vazia e cada linha com ingrediente descoberto no Álbum vira uma fileira no tampo, em duas colunas.
+- **Banca da tela inicial (Rota):** no lugar da foto do Ver-o-Peso, a tela inicial mostra a banca da Quitanda (toldo nas cores da Rota, sem decorações). Começa vazia e cada linha com ingrediente descoberto no Álbum vira uma fileira no tampo, em duas colunas. Desde 26/11/2026 as fileiras se repartem entre a frente e o fundo do tampo conforme a quantidade (até 7 fileiras, 14 linhas): com Salvador são 5, mais juntas e com itens um pouco menores, e nenhuma fica escondida atrás do toldo (antes o espaço era fixo e a 5ª fileira sumia).
 
 ### 3.13 Eventos (novembro de 2026; valem para a Rota e a Quitanda)
 

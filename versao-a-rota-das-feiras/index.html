@@ -1020,12 +1020,15 @@ const langSeg=()=>`<div class="seg" role="group" aria-label="${tr('Idioma','Lang
 // Banca da tela inicial, como a da Quitanda: começa vazia e cada linha com ingrediente descoberto no Álbum (S.alb) vira
 // uma fileira no tampo, em duas colunas e da frente para o fundo (as do fundo menores, pela perspectiva). Sem decorações.
 function bancaHtml(){
-  const ls=Object.keys(LINES).filter(l=>LINES[l].it.some((_,j)=>S.alb[l+(j+1)])), tot=Object.keys(LINES).length*MAX;
+  // Até 14 linhas (7 fileiras). As fileiras se repartem entre a frente (69%) e o fundo do tampo (34%): com mais
+  // mercados abertos elas ficam mais juntas e os itens menores, para nenhuma ficar escondida atrás do toldo.
+  const ls=Object.keys(LINES).filter(l=>LINES[l].it.some((_,j)=>S.alb[l+(j+1)])).slice(0,14), tot=Object.keys(LINES).length*MAX;
+  const n=Math.ceil(ls.length/2), passoY=n>1?Math.min(12,35/(n-1)):12, W0=Math.min(12,passoY*1.2);
   let h=`<div class="banca" role="img" aria-label="${tr(`Sua banca: ${Object.keys(S.alb).length} de ${tot} ingredientes`,`Your stall: ${Object.keys(S.alb).length} of ${tot} ingredients`)}"><div class="cena"><div class="chao"></div>`
    +'<div class="poste" style="left:8%"></div><div class="poste" style="right:8%"></div><div class="tampo"></div><div class="borda"></div><div class="frente"></div>';
   ls.forEach((l,k)=>{
-    const r=k>>1, yb=69-12*r, f=(yb-31)/40, L=13-10*f, esq=!(k&1), a=esq?L+1.5:51, z=esq?49:99-L, its=LINES[l].it.map((_,j)=>j+1).filter(n=>S.alb[l+n]);
-    const w=12-1.5*r, passo=Math.min((z-a)/5.4,w*.75), x0=(a+z)/2-passo*(its.length-1)/2;
+    const r=k>>1, yb=69-passoY*r, f=(yb-31)/40, L=13-10*f, esq=!(k&1), a=esq?L+1.5:51, z=esq?49:99-L, its=LINES[l].it.map((_,j)=>j+1).filter(n=>S.alb[l+n]);
+    const w=W0*(1-.25*r/Math.max(n-1,1)), passo=Math.min((z-a)/5.4,w*.75), x0=(a+z)/2-passo*(its.length-1)/2;
     its.forEach((n,i)=>{ h+=`<div class="it" style="left:${(x0+i*passo-w/2).toFixed(2)}%;width:${w.toFixed(2)}%;bottom:${(100-yb-w*.17).toFixed(2)}%;z-index:${20-r}">${ie(l,n).replace(' class="ii"','')}</div>`; });
   });
   if(!ls.length) h+=`<p class="vazia">${tr('Sua banca está vazia. Jogue para descobrir ingredientes e enchê-la!','Your stall is empty. Play to discover ingredients and fill it up!')}</p>`;
