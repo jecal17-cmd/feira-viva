@@ -1,6 +1,6 @@
 # Contexto do projeto (para retomar o trabalho)
 
-Resumo do estado atual, das decisões tomadas e de como continuar. Atualizado em 20/11/2026 (motor de compras).
+Resumo do estado atual, das decisões tomadas e de como continuar. Atualizado em 25/11/2026 (Rota das Feiras: 3º mercado, Salvador).
 
 ## O que é
 
@@ -9,7 +9,7 @@ Três jogos mobile em português, todos feitos em HTML5 de arquivo único e empa
 | Jogo | Repositório e pasta | Público e proposta | Receita | Estado |
 |---|---|---|---|---|
 | **Quitanda Zen** (Versão B da Feira Viva; nome internacional *Quitanda: Merge Across Brazil*) | `feira-viva` · `versao-b-quitanda-zen/` | Passatempo de juntar itens, sem derrota, viajando por 12 mercados do Brasil em voltas infinitas | Anúncios (AdMob) + compras (simuladas) | v1.1.0 (código 5) em teste fechado na Play Store |
-| **Rota das Feiras** (Versão A da Feira Viva) | `feira-viva` · `versao-a-rota-das-feiras/` | Puzzle de fusão com turnos contados, fases, estrelas e chefe | Compras (simuladas), sem anúncios | Protótipo de teste v0.2 (Ver-o-Peso e Manaus), APK de teste |
+| **Rota das Feiras** (Versão A da Feira Viva) | `feira-viva` · `versao-a-rota-das-feiras/` | Puzzle de fusão com turnos contados, fases, estrelas e chefe | Compras (simuladas), sem anúncios | Protótipo de teste v0.3 (Ver-o-Peso, Manaus e Salvador), APK de teste |
 | **Ler Brincando** | `LerBrincando` (raiz) | Alfabetização pelo método fônico, 5 a 7 anos | Nenhuma (sem anúncios, compras ou rastreadores) | v1.3.1 |
 
 A desenvolvedora se chama **Bentevi Apps** (antes, Bentevi Games). Desde 25/11/2026 a vinheta de abertura é a mesma em todos os apps (Quitanda, Rota, Ler Brincando e Teto): o bem-te-vi chega voando e batendo as asas, freia, pousa no galho e canta; embaixo do nome aparece "apps". A arte veio do Nano Banana e o código fica em `vinheta.montar`/`vinheta.quadro` (bloco `VINHETA_IMG` + motor, antes de `let introState`); fontes, recortes, prompts e o vídeo em `docs/arte/vinheta/`. O canto é uma gravação real (0,84 s), isolada de um vídeo com filtro de ruído espectral e embutida em base64 nos dois `index.html` (`CANTO`); se o aparelho não decodificar, volta o canto sintetizado (`birdSynth`). O bico e as letras "bem · te · vi" seguem o tempo das notas da gravação (`CALL`). Arquivos em `docs/arte/bentevi-canto.wav` e `.mp3`.
@@ -25,7 +25,7 @@ A desenvolvedora se chama **Bentevi Apps** (antes, Bentevi Games). Desde 25/11/2
 | `.github/workflows/android.yml` | Compila os dois APKs a cada push que mexa nos jogos ou nos apps; também por **Actions → Apps Android (APKs de teste) → Run workflow** |
 | `docs/design-de-jogo.md` | Documento de design das duas versões, com as revisões numeradas (seções 3.9 a 3.13, 4.8 a 4.12) |
 | `docs/avaliacoes/` | Relatórios de avaliação como usuário novo (um .docx por jogo, inclusive o Ler Brincando) |
-| `docs/arte/` | Lista de arte (`lista-de-arte.md/.csv`: 104 itens, 30 itens da Rota, 12 mercados, 28 personagens, 12 decorações, tudo pronto), prompts do Nano Banana, scripts de recorte, ícones e o canto do bem-te-vi |
+| `docs/arte/` | Lista de arte (`lista-de-arte.md/.csv`: 104 itens, 45 itens da Rota, 12 mercados, 28 personagens, 12 decorações, tudo pronto), prompts do Nano Banana, scripts de recorte, ícones e o canto do bem-te-vi |
 | `versao-*/personagens/`, `versao-b-quitanda-zen/decoracao/` | Arte dos personagens (WebP 192 px) e da decoração da banca (WebP 128 px) usada nos jogos |
 | `docs/expansao/quitanda-sugestao-de-expansao.pdf` | Proposta de 10 mercados novos, com linhas regionais, receitas, personagens e trilhas |
 | `docs/marketing/instagram/` | Material do Instagram da Bentevi (guia em `GUIA.md`) |
@@ -94,7 +94,9 @@ Os itens do tabuleiro com arte ficam em `versao-b-quitanda-zen/itens/<código>.w
 
 **Dois mercados (v0.2):** Ver-o-Peso (Belém) e Mercado Adolpho Lisboa (Manaus), com 7 fases cada. Manaus abre ao vencer o chefe do Ver-o-Peso. As fases ficam numa lista só (`PHASES`, campo `m` = mercado; as de Manaus são as posições 7 a 13), e o índice da lista é a chave do progresso, por isso os saves antigos continuam valendo. Manaus tem linhas próprias (Peixes do rio, Mandioca, Frutas), o chefe Encontro das Águas (rios sobem nas colunas das pontas) e o Selo Guaraná (+1 turno a cada 10 fusões). `OPEN_M` diz quantos mercados estão abertos; detalhes no `design-de-jogo.md`, seção 3.11.
 
-**Música e banca:** a Rota toca a trilha do mercado atual (`versao-a-rota-das-feiras/musica/01.ogg` e `02.ogg`, cópias das da Quitanda; o `copy-web.js` copia a pasta). A tela inicial mostra a banca da Quitanda (`bancaHtml()`, toldo verde-água, sem decorações), que enche com o Álbum.
+**Terceiro mercado (v0.3): Feira de São Joaquim (Salvador)**, aberto ao vencer o chefe de Manaus. Fases nas posições 18 a 24 de `PHASES` (depois das 4 do Natal); `unlocked()` agora olha a fase anterior do mesmo mercado e, na primeira, o chefe do mercado anterior. Linhas Fradinho (`ff`), Camarão (`cm`) e Coco (`cc`), com arte 3D própria. Regras novas: **sol forte** (faixa de 2 colunas; item de nível 3+ parado ali 5 turnos perde 1 nível; nas fases 5, 6 e chefe o sol anda 1 coluna a cada 4 turnos; `cfg.sun`, `inSun`, `sunny`, `salvadorTick`), **Toldo** (ferramenta de 🪙 100, sombra 2 × 2 na fase; `P.shade`), **engradado de coco** (`o:'engr'`, 2 fusões para abrir), **pedido da Dona Dadá** (`cfg.dada`, 2 itens, prazo de 8 turnos, +2 turnos e moedas em dobro; meta `dada`) e o chefe **Chegada do saveiro** (3 engradados a cada 5 turnos pela esquerda). Selo Dendê: a 1ª fusão da fase sobe +1 nível. Os cartões do Diário guardam a fase em `ph` (`cardOf(i)`). Detalhes e balanceamento no `design-de-jogo.md`, seção 3.15; prompts da arte em `docs/arte/prompt-nano-banana-salvador.md`.
+
+**Música e banca:** a Rota toca a trilha do mercado atual (`versao-a-rota-das-feiras/musica/01.ogg`, `02.ogg` e `03.ogg`, cópias das da Quitanda; o `copy-web.js` copia a pasta). A tela inicial mostra a banca da Quitanda (`bancaHtml()`, toldo verde-água, sem decorações), que enche com o Álbum.
 
 A Versão A usa as mesmas ilustrações dos 12 mercados (`versao-a-rota-das-feiras/mercados/`, campo `img` em `MARKETS`): no mapa (os mercados abertos coloridos, os demais em cinza com cadeado), na lista do mapa e no topo da tela de cada mercado. Os itens dela são próprios (5 níveis); a arte dos 30 fica em `versao-a-rota-das-feiras/itens/` e todos estão em `ITEM_ART`. Os 15 de Manaus, por enquanto, são cópias de itens da Quitanda (origem na lista de arte). A lista de arte tem a seção "Itens da Rota das Feiras" (tipo `item-rota`). O botão **Álbum** da tela inicial mostra os 30 ingredientes, agrupados por mercado (`S.alb`, `S.albDone`); linha completa rende +100 moedas. Em Ajustes, **Trocar de aparelho** gera e restaura um código `RF1-…`, igual ao da Quitanda. Caixote e mofo têm arte em pixel art com animação de remoção (`versao-a-rota-das-feiras/obstaculos/`, `fxObs()`); todo caixote guarda um item, que fica na casa ao quebrar (`abrir()`, seção 3.14 do design). Os clientes dos pedidos são sorteados entre os 28 personagens (`FACES`, com ilustração por `fc()`). O `app-android-rota/scripts/copy-web.js` copia as pastas `mercados/`, `itens/` e `personagens/`.
 
@@ -114,9 +116,10 @@ Bloco `EVENTOS` no `index.html` de cada jogo (mesmo código): lista de eventos c
 - Loja vende só o que economiza tempo (kits, moedas, Recarga, Junta-tudo, remover anúncios). Melhorias, ampliações e decorações são só por moedas do jogo.
 - Tutorial de 3 passos no tabuleiro (juntar, entregar, colher); vinheta inteira só na 1ª abertura do dia; música calma gerada no jogo.
 
-**Rota das Feiras (v0.2)**
+**Rota das Feiras (v0.3)**
 - Ver-o-Peso com 6 fases e o chefe Maré cheia; linhas Açaí, Peixe e Jambu/Tucupi com 5 níveis.
 - Manaus com 6 fases e o chefe Encontro das Águas; linhas Peixes do rio, Mandioca e Frutas; Selo Guaraná.
+- Salvador com 6 fases e o chefe Chegada do saveiro; linhas Fradinho, Camarão e Coco; sol forte (que anda), Toldo, engradado de coco, pedido da Dona Dadá; Selo Dendê.
 - Cada toque no cesto gasta 1 turno; juntar e entregar são de graça. 3 ⭐ com metade dos turnos sobrando.
 - Caixote e mofo; Martelo, Caldeirão e +3 Turnos (máximo 2 ferramentas por fase); Diário com 7 cartões; Selo Força do Açaí.
 - Balanceamento inicial com robô: fases 1 a 5 quase sempre vencidas; fase 6 e chefe entre 55% e 65%.
@@ -135,7 +138,8 @@ Bloco `EVENTOS` no `index.html` de cada jogo (mesmo código): lista de eventos c
    - Falta: concluir os 14 dias do teste fechado com 12 testadores e pedir a produção; conferir os blocos reais do AdMob (`ADMOB_*`).
    - Compras: o motor está pronto (Play Billing 8). Falta na Play Console: perfil de pagamentos, criar e ativar os 14 produtos `qz_*`, gravar a variável `PLAY_LICENSE_KEY` no GitHub, testadores de licença e gerar o AAB com "compras" marcado. Nunca testado com a Google Play de verdade (só com uma simulada no navegador).
 3. **Rota das Feiras:**
-   - Só 14 fases (2 mercados); a arte dos itens de Manaus é provisória (reaproveitada da Quitanda).
+   - 21 fases (3 mercados); a arte dos itens de Manaus é provisória (reaproveitada da Quitanda); a de Salvador é própria.
+   - Salvador não foi testado com jogadores: vigiar se o sol que anda e o pedido da Dona Dadá ficam claros sem ler o tutorial.
    - Casas do tabuleiro pequenas no celular (26 a 29 px): é o principal ponto do relatório de avaliação ainda não resolvido.
    - Moedas com pouco uso.
    - Eventos: os prêmios ainda não são linhas de itens jogáveis (só aparecem na banca, na coleção e, na Quitanda, no Caderno de Receitas, com +1% de XP); arte própria do Natal e revisão dos textos pendentes; as metas da Quitanda não foram medidas com jogadores.
@@ -162,7 +166,7 @@ Bloco `EVENTOS` no `index.html` de cada jogo (mesmo código): lista de eventos c
 - Itens e decoração: `fatiar_grade.py` corta a grade em casas e `recortar_itens.py` tira o fundo (rembg) e normaliza. Sem o rembg instalado, o script usa `mascara_fundo_branco` (branco ligado à borda e vãos grandes de branco puro viram fundo).
 - **Arte toda no estilo novo (16/11, fim da tarde):** tudo o que tinha entrado antes de 16/11 foi refeito com `prompt-nano-banana-3.md`: 52 itens da Quitanda em 4 grades (`grade-refazer-1..4.jpg`, lotes `refazer-1..4` no `grades.json`; a sardinha e o peixe também servem de `pe-1` e `pe-2` da Rota) e 9 mercados (todos menos 03, 05 e 06, que já eram de hoje), nas pastas `mercados/` dos dois jogos. O saleiro (`te-1`) foi recortado sem tirar os brancos internos.
 - Personagens: `fatiar_por_silhueta.py <grade> <colunas> <linhas> <chave>` recorta pela silhueta (não corta cabeças), trata branco ligado à borda e vãos fechados entre braços e objetos como fundo. Ajustes finos (Dona Geralda, Seu Giuseppe) foram feitos tapando vãos internos transparentes.
-- Status da lista: `python docs/arte/atualizar_status.py` (tudo pronto: 12/12 mercados, 104/104 itens, 15/15 da Rota, 28/28 personagens, 12/12 decorações).
+- Status da lista: `python docs/arte/atualizar_status.py` (tudo pronto: 12/12 mercados, 104/104 itens, 45/45 da Rota, 28/28 personagens, 12/12 decorações).
 - No jogo: personagens com `pf(c)` (Quitanda: pedidos, Turma da Feira, mapa, chegada, Seu Zé da tela inicial) e decorações com `de(i)` (banca e loja). Os scripts `copy-web.js` copiam `personagens/` e `decoracao/`.
 
 ## Ícones sem anel de cor

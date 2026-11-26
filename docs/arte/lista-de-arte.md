@@ -14,7 +14,7 @@ Atualizado por `atualizar_status.py`. ✅ = imagem já no jogo · ⬜ = falta ge
 |---|---|---|
 | Mercados | 12 de 12 | 0 |
 | Itens do tabuleiro | 104 de 104 | 0 |
-| Itens da Rota das Feiras | 30 de 30 | 0 |
+| Itens da Rota das Feiras | 45 de 45 | 0 |
 | Personagens | 28 de 28 | 0 |
 | Decoração da banca | 12 de 12 | 0 |
 
@@ -249,9 +249,9 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 | 7 | `itens/fl-7.png` | Ipê-amarelo | Ipê-amarelo | tree that bursts into yellow bloom | 🌳 | ✅ |
 | 8 | `itens/fl-8.png` | Buquê tropical | Tropical bouquet |  | 💐 | ✅ |
 
-## Itens da Rota das Feiras (6 linhas × 5 níveis = 30)
+## Itens da Rota das Feiras (9 linhas × 5 níveis = 45)
 
-A Versão A tem itens próprios do Ver-o-Peso e de Manaus. Ficam em `versao-a-rota-das-feiras/itens/`; o código no jogo é o mesmo da coluna *Arquivo* (por exemplo, `ac-1`). Mesmo estilo 3D dos itens da Quitanda. Alguns reaproveitam imagens da Quitanda.
+A Versão A tem itens próprios do Ver-o-Peso, de Manaus e de Salvador. Ficam em `versao-a-rota-das-feiras/itens/`; o código no jogo é o mesmo da coluna *Arquivo* (por exemplo, `ac-1`). Mesmo estilo 3D dos itens da Quitanda. Alguns reaproveitam imagens da Quitanda.
 
 ### Açaí (`ac`)
 
@@ -316,6 +316,40 @@ Por enquanto, a arte destes 15 itens **reaproveita itens 3D da Quitanda** (colun
 | 3 | `rota/itens/fr-3.png` | Abacaxi | Pineapple | `fr-5` | ✅ |
 | 4 | `rota/itens/fr-4.png` | Suco de frutas | Fruit juice | `be-3` | ✅ |
 | 5 | `rota/itens/fr-5.png` | Guaraná | Guaraná | `be-7` | ✅ |
+
+### Feira de São Joaquim (Salvador)
+
+Arte própria, gerada numa grade 4 × 4 com o Nano Banana (`referencias/grade-rota-salvador.jpg`, lote `rota-salvador` em `itens/grades.json`). A 16ª casa é o ícone do Toldo (`versao-a-rota-das-feiras/itens/toldo.webp`). O engradado de coco, o sol, o toldo visto de cima e o saveiro do chefe ficam em `versao-a-rota-das-feiras/obstaculos/` (originais em `docs/arte/obstaculos/`, recorte com `recortar_obstaculos.py`).
+
+#### Fradinho (`ff`)
+
+| Nível | Arquivo | Português | Inglês | Arte |
+|---|---|---|---|---|
+| 1 | `rota/itens/ff-1.png` | Feijão-fradinho | Black-eyed peas | ✅ |
+| 2 | `rota/itens/ff-2.png` | Fradinho de molho | Soaked black-eyed peas | ✅ |
+| 3 | `rota/itens/ff-3.png` | Massa de acarajé | Acarajé batter | ✅ |
+| 4 | `rota/itens/ff-4.png` | Abará | Abará | ✅ |
+| 5 | `rota/itens/ff-5.png` | Acarajé | Acarajé | ✅ |
+
+#### Camarão (`cm`)
+
+| Nível | Arquivo | Português | Inglês | Arte |
+|---|---|---|---|---|
+| 1 | `rota/itens/cm-1.png` | Camarão fresco | Fresh shrimp | ✅ |
+| 2 | `rota/itens/cm-2.png` | Camarão seco | Dried shrimp | ✅ |
+| 3 | `rota/itens/cm-3.png` | Vatapá | Vatapá | ✅ |
+| 4 | `rota/itens/cm-4.png` | Bobó de camarão | Bobó de camarão | ✅ |
+| 5 | `rota/itens/cm-5.png` | Moqueca de camarão | Moqueca de camarão | ✅ |
+
+#### Coco (`cc`)
+
+| Nível | Arquivo | Português | Inglês | Arte |
+|---|---|---|---|---|
+| 1 | `rota/itens/cc-1.png` | Coco verde | Green coconut | ✅ |
+| 2 | `rota/itens/cc-2.png` | Coco seco | Dry coconut | ✅ |
+| 3 | `rota/itens/cc-3.png` | Coco ralado | Grated coconut | ✅ |
+| 4 | `rota/itens/cc-4.png` | Leite de coco | Coconut milk | ✅ |
+| 5 | `rota/itens/cc-5.png` | Cocada | Cocada | ✅ |
 
 ## Personagens (28)
 

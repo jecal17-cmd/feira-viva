@@ -272,5 +272,23 @@
   "gr-6",
   "gr-7",
   "gr-8"
+ ],
+ "rota-salvador": [
+  "rota/ff-1",
+  "rota/ff-2",
+  "rota/ff-3",
+  "rota/ff-4",
+  "rota/ff-5",
+  "rota/cm-1",
+  "rota/cm-2",
+  "rota/cm-3",
+  "rota/cm-4",
+  "rota/cm-5",
+  "rota/cc-1",
+  "rota/cc-2",
+  "rota/cc-3",
+  "rota/cc-4",
+  "rota/cc-5",
+  "rota/toldo"
  ]
 }
