@@ -154,6 +154,7 @@ Bloco `EVENTOS` no `index.html` de cada jogo (mesmo código): lista de eventos c
 - APK: **Actions → App Android → Run workflow** (não roda sozinho a cada push).
 - As etiquetas de instrução e a tela "Conheça o mapa" são só visuais: para a Lili falar esses textos, é preciso incluí-los no Banco de Áudio e rodar `gerar_audios`.
 - O manual completo é o `LEIAME.md` do próprio repositório.
+- **Identidade visual própria (prompts prontos, 21/11/2026):** `docs/arte/ler-brincando/prompt-nano-banana-ler-brincando.md` traz 29 grades para o Nano Banana 2 Lite (Lili em 9 poses, 12 avatares, 8 emblemas dos mundos, enfeites e lojinha, 12 medalhas, 16 ícones da interface e as 363 palavras em 23 grades, na ordem de ensino), todas com a arte do ícone (`referencia-lili.png`) como referência de estilo, para trocar o OpenMoji. `grades.json` diz o destino de cada casa; `gerar_prompts.py <data.json do LerBrincando>` refaz tudo quando entrarem palavras novas. Falta gerar as imagens e ligá-las no jogo (repositório LerBrincando).
 
 ## Como o trabalho foi conduzido
 
