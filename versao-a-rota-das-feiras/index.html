@@ -1019,14 +1019,39 @@ function noteSeen(){
 const langSeg=()=>`<div class="seg" role="group" aria-label="${tr('Idioma','Language')}"><button data-act="lang:pt" aria-pressed="${LANG==='pt'}">🇧🇷 Português</button><button data-act="lang:en" aria-pressed="${LANG==='en'}">🌎 English</button></div>`;
 // Banca da tela inicial, como a da Quitanda: começa vazia e cada linha com ingrediente descoberto no Álbum (S.alb) vira
 // uma fileira no tampo, em duas colunas e da frente para o fundo (as do fundo menores, pela perspectiva). Sem decorações.
+// Arranjo dinâmico da banca (igual nos dois jogos): com qualquer número de linhas, escolhe quantas ficam lado a lado
+// em cada fileira (2 a 6) e quão fundo é o tampo (topo entre 31% e 23% da cena) para tudo caber com os maiores itens
+// possíveis. Prefere o visual de sempre (2 por fileira, tampo raso) e só muda quando isso ganha bastante tamanho.
+// qtd = nº de itens de cada linha; hw = altura/largura da cena; teto = onde acaba o toldo (% da altura);
+// res = folga à esquerda nas 2 fileiras da frente (balança); passoMax = distância máxima entre fileiras. Devolve o topo do tampo (T) e o lugar de cada linha.
+function arranjoBanca(qtd,{hw,teto,wMax=12,res=0,passoMax=12}){
+  const N=qtd.length, FR=69, ESC=.27, CURV=.15; let best=null;
+  if(!N) return {T:31,linhas:[]};
+  for(const T of [31,29,27,25,23]) for(let por=2;por<=Math.min(6,Math.max(2,N));por++){
+    const n=Math.ceil(N/por), dt=n>1?1/(n-1):0, span=Math.min(FR-T-3,passoMax*(n-1)), linhas=[];   // poucas fileiras ficam juntas, na frente
+    const yb=r=>{ const t=r*dt; return FR-span*(t*(1+CURV)-CURV*t*t); };
+    let w=n>1?Math.min(wMax,1.2*(yb(0)-yb(1))*hw):wMax;                 // fileiras não se cobrem demais
+    for(let k=0;k<N;k++){
+      const r=Math.floor(k/por), c=k%por, y=yb(r), L=13-10*(y-T)/(71-T), rs=r<2?res:0, larg=(97-2*L-rs-2*(por-1))/por;
+      const a=L+1.5+rs+c*(larg+2), z=a+larg, s=1-ESC*r*dt, m=Math.max(1,qtd[k]);
+      w=Math.min(w,(z-a)/((m-1)*.4+1)/s,(y-teto)/(1/hw-.17)/s);          // cabe na largura e não entra no toldo
+      linhas.push({r,y,a,z,s,m});
+    }
+    const nota=w*(1-.08*(por-2))*(1-.02*(31-T));                   // cada coluna a mais ou tampo mais fundo precisa compensar
+    if(!best||nota>best.nota) best={nota,T,w,linhas};
+  }
+  return {T:best.T,linhas:best.linhas.map(o=>{ const wi=best.w*o.s, passo=o.m>1?Math.min((o.z-o.a-wi)/(o.m-1),wi*.8):0;
+    return {wi,passo,x0:(o.a+o.z)/2-passo*(o.m-1)/2,y:o.y,z:Math.max(1,20-o.r)}; })};
+}
+function tampoHtml(T){ const d=T===31?'':` style="top:${T}%;height:${71-T}%"`;
+  return `<div class="tampo"${d}></div><div class="borda"${T===31?'':` style="top:${T-1.4}%"`}></div>`; }
 function bancaHtml(){
   const ls=Object.keys(LINES).filter(l=>LINES[l].it.some((_,j)=>S.alb[l+(j+1)])), tot=Object.keys(LINES).length*MAX;
+  const its=ls.map(l=>LINES[l].it.map((_,j)=>j+1).filter(n=>S.alb[l+n])), A=arranjoBanca(its.map(v=>v.length),{hw:.85,teto:19});
   let h=`<div class="banca" role="img" aria-label="${tr(`Sua banca: ${Object.keys(S.alb).length} de ${tot} ingredientes`,`Your stall: ${Object.keys(S.alb).length} of ${tot} ingredients`)}"><div class="cena"><div class="chao"></div>`
-   +'<div class="poste" style="left:8%"></div><div class="poste" style="right:8%"></div><div class="tampo"></div><div class="borda"></div><div class="frente"></div>';
-  ls.forEach((l,k)=>{
-    const r=k>>1, yb=69-12*r, f=(yb-31)/40, L=13-10*f, esq=!(k&1), a=esq?L+1.5:51, z=esq?49:99-L, its=LINES[l].it.map((_,j)=>j+1).filter(n=>S.alb[l+n]);
-    const w=12-1.5*r, passo=Math.min((z-a)/5.4,w*.75), x0=(a+z)/2-passo*(its.length-1)/2;
-    its.forEach((n,i)=>{ h+=`<div class="it" style="left:${(x0+i*passo-w/2).toFixed(2)}%;width:${w.toFixed(2)}%;bottom:${(100-yb-w*.17).toFixed(2)}%;z-index:${20-r}">${ie(l,n).replace(' class="ii"','')}</div>`; });
+   +'<div class="poste" style="left:8%"></div><div class="poste" style="right:8%"></div>'+tampoHtml(A.T)+'<div class="frente"></div>';
+  ls.forEach((l,k)=>{ const o=A.linhas[k];
+    its[k].forEach((n,i)=>{ h+=`<div class="it" style="left:${(o.x0+i*o.passo-o.wi/2).toFixed(2)}%;width:${o.wi.toFixed(2)}%;bottom:${(100-o.y-o.wi*.17).toFixed(2)}%;z-index:${o.z}">${ie(l,n).replace(' class="ii"','')}</div>`; });
   });
   if(!ls.length) h+=`<p class="vazia">${tr('Sua banca está vazia. Jogue para descobrir ingredientes e enchê-la!','Your stall is empty. Play to discover ingredients and fill it up!')}</p>`;
   return h+evBancaHtml()+'<div class="toldo"></div></div></div>';

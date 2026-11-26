@@ -1378,27 +1378,52 @@ function renderBaskets(){
     +`<button class="basket bo" data-act="recharge" aria-label="${t('recAria')}"><span class="em">⚡</span><b>${S.boost.rec}</b><small>${t('recLbl')}</small></button>`
     +`<button class="basket ad bo" data-act="adcharge" aria-label="${t('adAria')}" ${S.daily.adCharge>=AD_MAX?'disabled':''}><span class="em">▶</span><b>+${Math.round(AD_CHARGE*bonus())}</b><small>${S.daily.adCharge}/${AD_MAX}</small></button>`;
 }
-// Banca da tela inicial, vista de cima como uma banca inclinada. Cada linha com item descoberto (S.seen) ganha uma
-// fileira no tampo: duas colunas e até 7 fileiras, da frente para o fundo (as do fundo menores, pela perspectiva).
-// As duas fileiras da frente deixam a ponta esquerda livre para a balança. As decorações ficam no lugar e no tamanho
+// Banca da tela inicial, vista de cima como uma banca inclinada. Cada linha com item descoberto (S.seen) ocupa um
+// lugar no tampo, da frente para o fundo (as do fundo menores, pela perspectiva); arranjoBanca decide quantas por
+// fileira e a fundura do tampo. Com a balança, as duas fileiras da frente deixam a ponta esquerda livre. As decorações ficam no lugar e no tamanho
 // proporcional (1 m ≈ 22% da largura), sem sombra: x e largura em % da largura, base em % da altura; "v" é a folga
 // transparente embaixo da imagem; "s" fica no tampo; "z" força a camada (o rádio fica na frente do banco).
 const DECOR_POS={1:{x:0,w:10,b:5,v:.125},2:{x:8,w:26,b:1,v:.102},11:{x:34,w:13,b:1,v:.148},3:{x:46,w:13,b:5,v:.039},
   8:{x:58,w:11,b:4,v:.039},7:{x:69,w:31,b:1.5,v:.078},4:{x:5,w:10,b:29.6,v:.062,s:1},6:{x:17,w:8,b:9.8,v:.055,z:41},9:{x:86,w:9,t:30}};
+// Arranjo dinâmico da banca (igual nos dois jogos): com qualquer número de linhas, escolhe quantas ficam lado a lado
+// em cada fileira (2 a 6) e quão fundo é o tampo (topo entre 31% e 23% da cena) para tudo caber com os maiores itens
+// possíveis. Prefere o visual de sempre (2 por fileira, tampo raso) e só muda quando isso ganha bastante tamanho.
+// qtd = nº de itens de cada linha; hw = altura/largura da cena; teto = onde acaba o toldo (% da altura);
+// res = folga à esquerda nas 2 fileiras da frente (balança); passoMax = distância máxima entre fileiras. Devolve o topo do tampo (T) e o lugar de cada linha.
+function arranjoBanca(qtd,{hw,teto,wMax=12,res=0,passoMax=12}){
+  const N=qtd.length, FR=69, ESC=.27, CURV=.15; let best=null;
+  if(!N) return {T:31,linhas:[]};
+  for(const T of [31,29,27,25,23]) for(let por=2;por<=Math.min(6,Math.max(2,N));por++){
+    const n=Math.ceil(N/por), dt=n>1?1/(n-1):0, span=Math.min(FR-T-3,passoMax*(n-1)), linhas=[];   // poucas fileiras ficam juntas, na frente
+    const yb=r=>{ const t=r*dt; return FR-span*(t*(1+CURV)-CURV*t*t); };
+    let w=n>1?Math.min(wMax,1.2*(yb(0)-yb(1))*hw):wMax;                 // fileiras não se cobrem demais
+    for(let k=0;k<N;k++){
+      const r=Math.floor(k/por), c=k%por, y=yb(r), L=13-10*(y-T)/(71-T), rs=r<2?res:0, larg=(97-2*L-rs-2*(por-1))/por;
+      const a=L+1.5+rs+c*(larg+2), z=a+larg, s=1-ESC*r*dt, m=Math.max(1,qtd[k]);
+      w=Math.min(w,(z-a)/((m-1)*.4+1)/s,(y-teto)/(1/hw-.17)/s);          // cabe na largura e não entra no toldo
+      linhas.push({r,y,a,z,s,m});
+    }
+    const nota=w*(1-.08*(por-2))*(1-.02*(31-T));                   // cada coluna a mais ou tampo mais fundo precisa compensar
+    if(!best||nota>best.nota) best={nota,T,w,linhas};
+  }
+  return {T:best.T,linhas:best.linhas.map(o=>{ const wi=best.w*o.s, passo=o.m>1?Math.min((o.z-o.a-wi)/(o.m-1),wi*.8):0;
+    return {wi,passo,x0:(o.a+o.z)/2-passo*(o.m-1)/2,y:o.y,z:Math.max(1,20-o.r)}; })};
+}
+function tampoHtml(T){ const d=T===31?'':` style="top:${T}%;height:${71-T}%"`;
+  return `<div class="tampo"${d}></div><div class="borda"${T===31?'':` style="top:${T-1.4}%"`}></div>`; }
 function bancaHtml(){
-  const has=i=>S.decor.includes(i), ls=Object.keys(LINES).filter(l=>LINES[l].it.some((_,j)=>S.seen[l+(j+1)])).slice(0,14);
+  const has=i=>S.decor.includes(i), ls=Object.keys(LINES).filter(l=>LINES[l].it.some((_,j)=>S.seen[l+(j+1)]));
+  const its=ls.map(l=>LINES[l].it.map((_,j)=>j+1).filter(n=>S.seen[l+n]));
+  const A=arranjoBanca(its.map(v=>v.length),{hw:1.12,teto:has(5)||has(10)?24:19,res:has(4)?11:0,passoMax:8}), T=A.T;
   const varal=(i,top)=>has(i)?`<div class="varal" style="top:${top}%">${de(i).repeat(3)}</div>`:'';
   let h=`<div class="banca" role="img" aria-label="${t('decoAria')}: ${Object.keys(S.seen).length} / ${Object.keys(LINES).length*MAX}"><div class="cena"><div class="chao"></div>`
-   +'<div class="poste" style="left:8%"></div><div class="poste" style="right:8%"></div><div class="tampo"></div><div class="borda"></div><div class="frente"></div>';
-  ls.forEach((l,k)=>{
-    const r=k>>1, d=r/6, yb=69-.726*(8.8*r-.2*r*(r-1)), f=(yb-31)/40, L=13-10*f, esq=!(k&1);
-    const m=r<2&&esq?11:0, a=esq?L+1.5+m:51, z=esq?49:99-L, its=LINES[l].it.map((_,j)=>j+1).filter(n=>S.seen[l+n]);
-    const w=8.8-2.4*d, passo=Math.min((z-a)/8,w*.8), x0=(a+z)/2-passo*(its.length-1)/2;
-    its.forEach((n,i)=>{ h+=`<div class="it${S.seen[l+n]===1?' nv':''}" style="left:${(x0+i*passo-w/2).toFixed(2)}%;width:${w.toFixed(2)}%;bottom:${(100-yb-w*.17).toFixed(2)}%;z-index:${20-r}">${ie(l,n).replace(' class="ii"','')}</div>`; });
+   +'<div class="poste" style="left:8%"></div><div class="poste" style="right:8%"></div>'+tampoHtml(T)+'<div class="frente"></div>';
+  ls.forEach((l,k)=>{ const o=A.linhas[k];
+    its[k].forEach((n,i)=>{ h+=`<div class="it${S.seen[l+n]===1?' nv':''}" style="left:${(o.x0+i*o.passo-o.wi/2).toFixed(2)}%;width:${o.wi.toFixed(2)}%;bottom:${(100-o.y-o.wi*.17).toFixed(2)}%;z-index:${o.z}">${ie(l,n).replace(' class="ii"','')}</div>`; });
   });
   if(!ls.length) h+=`<p class="vazia">${t('bancaVazia')}</p>`;
   for(const [i,p] of Object.entries(DECOR_POS)) if(has(+i))
-    h+=`<div class="${p.t?'':'obj'}" style="left:${p.x}%;width:${p.w}%;${p.t?`top:${p.t}%`:`bottom:${p.b}%`};z-index:${p.z||(p.t?27:p.s?25:40-Math.round(p.b))}">${de(+i).replace('class="ii"',p.v?`style="margin-bottom:-${(p.v*100).toFixed(1)}%"`:'')}</div>`;
+    h+=`<div class="${p.t?'':'obj'}" style="left:${p.x}%;width:${p.w}%;${p.t?`top:${p.t-(31-T)}%`:`bottom:${p.b}%`};z-index:${p.z||(p.t?27:p.s?25:40-Math.round(p.b))}">${de(+i).replace('class="ii"',p.v?`style="margin-bottom:-${(p.v*100).toFixed(1)}%"`:'')}</div>`;
   return h+evBancaHtml()+varal(5,6)+varal(10,8.5)+(has(0)?'<div class="toldo"></div>':'<div class="viga"></div>')+'</div></div>';
 }
 function renderHome(){

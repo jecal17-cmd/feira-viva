@@ -213,7 +213,7 @@ Como na Quitanda, a Rota ganhou o segundo mercado. Ele abre ao vencer o chefe do
 
 - **Música:** a Rota toca a mesma trilha da Quitanda para cada mercado (`musica/01.ogg` no Ver-o-Peso, `02.ogg` em Manaus), em loop e com troca suave ao mudar de mercado. Começa no primeiro toque na tela. Liga e desliga em Ajustes.
 - **Volume (Quitanda e Rota):** em Ajustes, Som e Música têm cada um a sua barra de 0 a 100%, além do botão Ligado/Desligado. A música muda de volume na hora; ao soltar a barra do som, toca uma moedinha de amostra. Na Quitanda, a música deixou de depender do botão Som.
-- **Banca da tela inicial (Rota):** no lugar da foto do Ver-o-Peso, a tela inicial mostra a banca da Quitanda (toldo nas cores da Rota, sem decorações). Começa vazia e cada linha com ingrediente descoberto no Álbum vira uma fileira no tampo, em duas colunas.
+- **Banca da tela inicial (Rota):** no lugar da foto do Ver-o-Peso, a tela inicial mostra a banca da Quitanda (toldo nas cores da Rota, sem decorações). Começa vazia e cada linha com ingrediente descoberto no Álbum vira uma fileira no tampo, em duas colunas. Desde 26/11/2026 o arranjo é dinâmico, igual ao da Quitanda (seção 4.13); antes o espaço entre fileiras era fixo e, com Salvador, a 5ª fileira sumia atrás do toldo.
 
 ### 3.13 Eventos (novembro de 2026; valem para a Rota e a Quitanda)
 
@@ -442,8 +442,16 @@ Pedido da dona do projeto: deixar o jogo mais "livre", avisar quando os cestos e
 ### 4.12 Banca da tela inicial (novembro de 2026)
 
 - A banca da tela inicial é uma cena de feira vista de cima, com o tampo inclinado para quem olha (`bancaHtml()`). Ela ocupa só a altura que sobra (mínimo de 170 px) e a cena encolhe sem distorcer, para que a tela inicial inteira caiba sem rolar: logo, banca, Seu Zé (até 2 linhas), Jogar, presente, mercado, botões de navegação e idioma.
-- **Começa vazia e enche com o Álbum:** cada linha com pelo menos um item descoberto (`S.seen`) ganha uma fileira no tampo, em duas colunas e até 7 fileiras, da frente para o fundo. As fileiras do fundo são menores, pela perspectiva. Não há caixotes: os itens ficam deitados lado a lado, sem brilho (o aviso de novidade fica no botão do Álbum).
+- **Começa vazia e enche com o Álbum:** cada linha com pelo menos um item descoberto (`S.seen`) ganha um lugar no tampo, da frente para o fundo (arranjo dinâmico desde 26/11/2026, seção 4.13). As fileiras do fundo são menores, pela perspectiva. Não há caixotes: os itens ficam deitados lado a lado, sem brilho (o aviso de novidade fica no botão do Álbum).
 - **Decorações no lugar e no tamanho de verdade** (`DECOR_POS`, 1 m ≈ 22% da largura), sem sombra: os objetos de chão ficam no piso, à frente do balcão e sem encostar nele, nesta ordem: vasos, banco (com o rádio no assento), caminha do Mingau, lousa, carrinho e bicicleta. A balança fica em cima do tampo, no canto da frente à esquerda, e o relógio fica pregado no poste da direita. O toldo e o chão cobrem a largura toda; as luzinhas e as bandeirinhas ficam penduradas por baixo do toldo. Sem toldo, aparece só a viga de madeira. Os emojis em volta do logo ficam parados.
+
+### 4.13 Banca dinâmica (26/11/2026; vale para a Quitanda e a Rota)
+
+- **Problema:** o lugar de cada fileira era fixo (Quitanda: 2 por fileira, até 7 fileiras; Rota: 2 por fileira, 4 fileiras). Com o 3º mercado da Rota (9 linhas, 5 fileiras), a fileira do coco ficou atrás do toldo, e qualquer linha nova nos dois jogos teria o mesmo destino.
+- **Regra nova (`arranjoBanca`, mesmo código nos dois `index.html`):** a cada vez que a tela inicial é desenhada, o jogo testa de 2 a 6 linhas lado a lado por fileira e 5 funduras de tampo (topo em 31%, 29%, 27%, 25% ou 23% da cena) e fica com a combinação que deixa os itens maiores, respeitando três limites: cada linha cabe na sua parte do tampo (os itens podem se sobrepor até 60%), uma fileira não cobre demais a de trás, e os itens do fundo não entram no toldo nem nas bandeirinhas.
+- **Preferência pelo visual de sempre:** cada linha a mais por fileira custa 8% e cada ponto de fundura a mais custa 2%; só mudam quando o ganho de tamanho compensa. Poucas linhas ficam juntas na frente (distância máxima entre fileiras: 8% da altura na Quitanda, 12% na Rota), com itens maiores; conforme o Álbum enche, as fileiras se espalham, o tampo se aprofunda e, se preciso, entram mais linhas por fileira.
+- **Detalhes:** a fileira usa a quantidade real de itens descobertos de cada linha (linhas curtas não apertam as outras). Na Quitanda, a folga da balança (2 fileiras da frente, à esquerda) só existe se a balança foi comprada e agora se divide entre as linhas da fileira; o relógio do poste sobe junto com o tampo. Não há mais limite de 14 linhas.
+- **Resultado medido (tela de 360 px):** Quitanda com as 13 linhas, 2 por fileira e itens do mesmo tamanho de antes; Rota com as 9 linhas, 5 fileiras inteiras à vista. Simulado com até 48 linhas: tudo continua dentro da banca (3 a 5 por fileira, itens menores).
 
 ## 5. Localização e idiomas
 
