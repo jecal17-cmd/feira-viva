@@ -163,9 +163,9 @@ a.btn{text-decoration:none;display:inline-block;text-align:center}
 .borda{left:12.5%;right:12.5%;top:29.6%;height:2.2%;border-radius:2px;background:linear-gradient(#C99460,#8E5E35);box-shadow:inset 0 0 0 1px #6E4524}
 .frente{left:2%;right:2%;top:71%;bottom:13%;border-radius:2px;background:repeating-linear-gradient(90deg,#B57E4A 0 7.6%,#94623A 7.6% 8%);box-shadow:inset 0 -5px 0 #0002,inset 0 0 0 1px #6E4524}
 .frente::before{content:'';position:absolute;left:-1%;right:-1%;top:-1px;height:16%;border-radius:2px;background:linear-gradient(#DDAA72,#A9743F);box-shadow:inset 0 0 0 1px #6E4524}
-.toldo{left:calc(50% - 50cqw - 1px);right:calc(50% - 50cqw - 1px);top:0;height:14%;z-index:30;background:repeating-linear-gradient(90deg,#E0503C 0 7.14%,#FFF4E2 7.14% 14.28%);box-shadow:inset 0 -2px 0 #0002}
+.toldo{left:calc(50% - 50cqw - 1px);right:calc(50% - 50cqw - 1px);top:0;height:14%;z-index:30;background:linear-gradient(90deg,#E0503C 50%,#FFF4E2 50%) 0 0/calc(100%/7) 100%;box-shadow:inset 0 -2px 0 #0002}
 .toldo::after{content:'';position:absolute;left:0;right:0;top:100%;height:32%;filter:drop-shadow(0 3px 1px #0002);
-  background:radial-gradient(circle at 50% 0,#E0503C 70%,#0000 72%) 0 0/14.28% 100%,radial-gradient(circle at 50% 0,#FFF4E2 70%,#0000 72%) 7.14% 0/14.28% 100%}
+  background:radial-gradient(25% 100% at 25% 0,#E0503C 96%,#0000 100%) 0 0/calc(100%/7) 100%,radial-gradient(25% 100% at 75% 0,#FFF4E2 96%,#0000 100%) 0 0/calc(100%/7) 100%}  /* listras e franjas no mesmo ladrilho (1/7 da largura): uma franja por listra, sempre alinhadas */
 .viga{left:4%;right:4%;top:8%;height:3%;z-index:29;background:linear-gradient(#C99460,#8E5E35);box-shadow:inset 0 0 0 1px #6E4524}
 .varal{left:2%;right:2%;display:flex;z-index:28}
 .varal img{width:33.4%}
