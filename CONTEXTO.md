@@ -1,6 +1,6 @@
 # Contexto do projeto (para retomar o trabalho)
 
-Resumo do estado atual, das decisões tomadas e de como continuar. Atualizado em 26/11/2026 (Rota das Feiras: 4º mercado, Recife, e arte própria de Manaus).
+Resumo do estado atual, das decisões tomadas e de como continuar. Atualizado em 27/11/2026 (revisão de usabilidade nos dois jogos: tabuleiro maior no celular pequeno).
 
 ## O que é
 
@@ -90,6 +90,8 @@ Os itens do tabuleiro com arte ficam em `versao-b-quitanda-zen/itens/<código>.w
 
 **Novidades do dia, avisos e anúncios** (Quitanda, revisão 4.11 do design): na primeira abertura do dia, um aviso animado (`boasVindas()`) mostra o presente do dia, os anúncios com prêmio renovados e os cestos cheios; o botão pega o presente. No app Android, ao sair do jogo, um aviso no celular é agendado para quando os cestos encherem (`Avisos`, plugin `@capacitor/local-notifications`, ícone `res/drawable/ic_stat_quitanda.xml`; opção "Avisos" em Ajustes). Os anúncios de tela cheia ficaram mais espaçados (`INTER_*` no bloco DADOS). Na tela de Melhorias, saldo fixo no topo e bolinhas de nível (`pips`). Pedidos de receita mostram o nome do cliente e um selinho 📖; o aviso de feira concluída lista as receitas descobertas no mercado (`recFeiraHtml()`). O `package-lock.json` do `app-android` ainda não lista o plugin novo (sem internet na sessão): os workflows caem em `npm install` quando o `npm ci` falha; vale rodar `npm install` no `app-android` uma vez e enviar a lista travada atualizada. O mesmo vale para o `app-android-rota`, que ganhou o `@capacitor/app` em 26/11/2026.
 
+**Celular de tela baixa (27/11/2026, Quitanda e Rota):** em telas de até ~780 dp de altura (`@media (max-height:780px)`), o tabuleiro ganha espaço com topo, pedidos, cestos e menu mais enxutos; a barra de informação ficou em linha e com altura fixa, para o tabuleiro não mudar de tamanho ao tocar num item. Na Rota, o espaço do Selo só aparece a partir da fase que o explica (`SEAL_TUT`) e os cestos usam nomes curtos (`CURTO`). Na Quitanda, o painel do mapa se chama "Mapa das Feiras" (antes "Rota das Feiras", o nome do outro jogo). Detalhes e medidas nas seções 3.17 e 4.15 do `design-de-jogo.md`.
+
 **Valor dos pedidos:** cada pedido mostra quantas moedas paga (`orderPay(o)`, a mesma conta que `deliver()` credita). Na Quitanda: itens (`COV`) com o bônus da volta, em dobro no relâmpago dentro do prazo e com +30 da receita ainda não descoberta. Na Rota: `ORDER_COIN` (2) × nível de cada item.
 
 ## Rota das Feiras: mercados, arte, álbum e troca de aparelho
@@ -145,7 +147,7 @@ Bloco `EVENTOS` no `index.html` de cada jogo (mesmo código): lista de eventos c
 3. **Rota das Feiras:**
    - 28 fases (4 mercados), todas com arte própria.
    - Salvador e Recife não foram testados com jogadores: vigiar se o sol que anda, o pedido da Dona Dadá, a roda de ciranda e a encomenda "um de cada vez" da Maria Flor ficam claros sem ler o tutorial. O chefe do Recife é o mais difícil até agora (43% no robô).
-   - Casas do tabuleiro pequenas no celular (26 a 29 px): é o principal ponto do relatório de avaliação ainda não resolvido.
+   - Casas do tabuleiro no celular pequeno: resolvido em 27/11 com o layout enxuto para telas de até ~780 dp de altura (360 × 640: de 24–31 px para 36–43 px; seção 3.17 do design). Em 320 × 568 ainda ficam entre 25 e 32 px.
    - Moedas com pouco uso (o Toldo de Salvador, só por moedas, é o primeiro uso novo).
    - Eventos: os prêmios ainda não são linhas de itens jogáveis (só aparecem na banca, na coleção e, na Quitanda, no Caderno de Receitas, com +1% de XP); arte própria do Natal e revisão dos textos pendentes; as metas da Quitanda não foram medidas com jogadores.
 4. **Textos culturais** (Diário, mercados, glosas em inglês e as curiosidades e fichas do álbum) precisam de revisão local e de falante nativo de inglês.
@@ -192,3 +194,4 @@ App Kotlin de controle de gastos, no repositório `Folga`. Usa `Sons.kt` (SoundP
 | Versão AAB e descrição Quitanda Zen (12 a 15/11) | AAB, Play Console (pacote, testes, textos da loja, ID de publicidade), compatibilidade com o Moto G54 |
 | Geração de imagens para repositório (13 a 16/11) | Toda a arte (mercados, itens, personagens, decoração), álbum, troca de aparelho, botão voltar, música, sons de dinheiro, Instagram, expansão, ícones, integração da arte nos dois jogos |
 | Rota: 4º mercado, Recife (26/11) | Mercado de São José (ciranda, Maria Flor, Galo da Madrugada, Despensa), arte própria de Recife e Manaus, robô de balanceamento |
+| Avaliação e melhorias dos dois apps (27/11) | Análise de usabilidade com robô em vários tamanhos de tela; tabuleiro maior no celular pequeno, barra de informação estável, textos desatualizados, Selo escondido no início da Rota |

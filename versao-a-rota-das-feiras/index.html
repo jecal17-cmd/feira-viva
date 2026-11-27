@@ -281,6 +281,38 @@ button.pill{cursor:pointer}
 .basket small{font-size:10px;color:var(--muted)}
 .basket.tool{flex:.8 1 0}
 .basket.tool.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+/* Barra de informação da fase: em linha (texto e botão lado a lado), altura que não muda ao tocar num item,
+   para o tabuleiro não mudar de tamanho a cada toque. O .info do pop-up do álbum é outro e fica em coluna. */
+.main.game>.info{flex-direction:row;flex-wrap:nowrap;height:46px;min-height:0;overflow:hidden}
+.main.game>.info p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.main.game>.info .btn{flex:none}
+/* Celular de tela baixa (até ~780 dp de altura, como 360 × 640 e 360 × 720): topo, pedidos e cestos mais enxutos,
+   para as casas do tabuleiro passarem de ~26 px para perto de 40 px (revisão 3.17 do design). */
+@media (max-height:780px){
+  .main.game{gap:4px;padding-block:6px}
+  .main.game .head .t b{font-size:16px}
+  .main.game .turns{padding:2px 10px;border-radius:12px}
+  .main.game .turns b{font-size:21px}
+  .main.game .win{padding:4px 7px 5px;gap:3px;border-width:2px}
+  .main.game .win h3{display:none}
+  .main.game .goal{padding:3px 7px;font-size:12.5px;gap:6px}
+  .main.game .goal .e{font-size:20px}
+  .main.game .goal .cnt{font-size:16px}
+  .main.game .goal .bar{height:5px;margin-top:2px}
+  .main.game .sub{font-size:11px;row-gap:0;column-gap:8px}
+  .main.game .olab{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:-2px}
+  .main.game .order{min-height:0;padding:3px 2px;gap:1px;border-radius:12px}
+  .main.game .order .need{font-size:20px}
+  .main.game>.info{height:40px;padding:3px 8px}
+  .main.game>.info p{font-size:11.5px;line-height:1.15}
+  .main.game .basket{padding:2px 2px 3px}
+  .main.game .basket .em{font-size:18px;line-height:1.1}
+  .main.game .basket:not(.tool) small{display:none}
+  .banca{height:clamp(140px,27vh,330px)}
+  .homein{gap:9px}
+  .logo b{font-size:40px}
+  .hgrid button{padding:7px 4px}
+}
 @media (prefers-reduced-motion: reduce){.cell.pop,.cell.hint,.cell.key,.node .ring,.cell.sun,.cell .heat.low,.cell.logo,.cell.gira{animation:none!important}}
 /* folhas, cartões, diário */
 .sheet{position:fixed;inset:0;z-index:20;background:var(--bg);overflow:auto;padding-block:calc(14px + env(safe-area-inset-top,0px)) calc(24px + env(safe-area-inset-bottom,0px));
@@ -441,6 +473,7 @@ const PHASES=[
 ];
 const OPEN_M=4;                                                     // mercados jogáveis neste teste: Ver-o-Peso, Manaus, Salvador e Recife
 const BOSS_IC={tide:'🌊',rios:'🌊',saveiro:'⛵',galo:'🐓'}, bossIc=c=>BOSS_IC[c.boss]||'🌊';
+const SEAL_TUT=PHASES.findIndex(c=>c.tut==='seal');
 const mOf=i=>PHASES[i].m||0, phasesOf=m=>PHASES.map((_,i)=>i).filter(i=>mOf(i)===m), firstOf=m=>phasesOf(m)[0], bossOf=m=>phasesOf(m).find(i=>PHASES[i].boss);
 const mLines=m=>[...new Set(phasesOf(m).flatMap(i=>PHASES[i].lines))];
 const TUT={
@@ -791,6 +824,9 @@ const artUrl=f=>f.img?`mercados/${f.img}.webp`:'';
 const tileHtml=(f,cls='')=>`<span class="mtile${cls?' '+cls:''}" aria-hidden="true">${f.img?`<img src="${artUrl(f)}" alt="" onerror="this.replaceWith('${f.ic}')">`:f.ic}</span>`;
 const item=(l,n)=>{ const x=LINES[l].it[n-1]; return [ie(l,n),LANG==='en'?x[2]:x[1]]; };
 const lname=l=>tx(LINES[l].name);
+// Nome curto da linha para os cestos (no celular pequeno "Carne de sol" virava "Carne ..."); o nome inteiro fica no rótulo de acessibilidade.
+const CURTO={jt:['Jambu','Jambu'],pr:['Peixes','Fish'],ff:['Fradinho','Peas'],cs:['Carne','Carne'],qc:['Queijo','Queijo'],cn:['Cana','Cane']};
+const lcurto=l=>tx(CURTO[l]||LINES[l].name);
 const gloss=(l,n)=>LANG==='en'?GLOSS[l+n]:null;
 const lc=l=>`hsl(${LINES[l].hue} 55% 46%)`;
 const pnum=i=>PHASES[i].ev?PHASES[i].evn+1:phasesOf(mOf(i)).indexOf(i)+1;                                         // número da fase dentro do mercado
@@ -1326,10 +1362,12 @@ function bancaHtml(){
   if(!ls.length) h+=`<p class="vazia">${tr('Sua banca está vazia. Jogue para descobrir ingredientes e enchê-la!','Your stall is empty. Play to discover ingredients and fill it up!')}</p>`;
   return h+evBancaHtml()+'<div class="toldo"></div></div></div>';
 }
+// "ao Mercado ..., em Manaus" / "à Feira de São Joaquim, em Salvador": artigo pelo começo do nome.
+const dePara=f=>`${/^(Feira|Rota)/.test(f.n)?'à':'ao'} ${f.n}, em ${f.c}`;
 function homeHtml(){
-  const ts=totalStars(), nc=S.cards.length, man=mOpen(1), ssa=mOpen(2);
+  const ts=totalStars(), nc=S.cards.length, ult=[3,2,1].find(mOpen)||0;   // o mercado aberto mais adiante
   return `<div class="homein"><div class="logo"><b>Rota das<br>Feiras</b><small>${tr('Feira Viva · versão de teste','Brazil’s market trail · test build')}</small>${LANG==='en'?'<p class="say"><i>rota das feiras</i> (HO-tah dahs FAY-rahs): the trail of street markets</p>':''}</div>
-   <div class="hero">${bancaHtml()}<b>${tr('Viaje pelos mercados do Brasil','Travel through Brazil’s markets')}</b><p class="note" style="margin:0 auto">${ssa?tr('Puzzle de fusão com turnos contados. Do Ver-o-Peso, em Belém, à Feira de São Joaquim, em Salvador.','A merge puzzle with limited turns. From Ver-o-Peso, in Belém, to Feira de São Joaquim, in Salvador.'):man?tr('Puzzle de fusão com turnos contados. Do Ver-o-Peso, em Belém, ao Mercado Adolpho Lisboa, em Manaus.','A merge puzzle with limited turns. From Ver-o-Peso, in Belém, to Mercado Adolpho Lisboa, in Manaus.'):tr('Puzzle de fusão com turnos contados. Comece pelo Ver-o-Peso, em Belém.','A merge puzzle with limited turns. Start at Ver-o-Peso, in Belém.')}</p>
+   <div class="hero">${bancaHtml()}<b>${tr('Viaje pelos mercados do Brasil','Travel through Brazil’s markets')}</b><p class="note" style="margin:0 auto">${ult?tr(`Puzzle de fusão com turnos contados. Do Ver-o-Peso, em Belém, ${dePara(MARKETS[ult])}.`,`A merge puzzle with limited turns. From Ver-o-Peso, in Belém, to ${MARKETS[ult].n}, in ${MARKETS[ult].c}.`):tr('Puzzle de fusão com turnos contados. Comece pelo Ver-o-Peso, em Belém.','A merge puzzle with limited turns. Start at Ver-o-Peso, in Belém.')}</p>
    <div style="display:flex;justify-content:center;gap:8px;flex-wrap:wrap"><span class="pill">⭐ ${ts}</span><span class="pill">🪙 ${fmt(S.coins)}</span><span class="pill">📖 ${nc}/${CARDS.length}</span></div></div>
    <button class="btn big" data-act="go:map">▶ ${tr('Jogar','Play')}</button>
    <div class="hgrid"><button data-act="sheet:diary"><span>📖</span>${tr('Diário','Journal')}</button><button data-act="sheet:selos"><span>🏅</span>${tr('Selos','Seals')}</button><button data-act="sheet:album"><span>🧺</span>${tr('Álbum','Album')}${Object.values(S.alb).includes(1)||Object.values(S.met).includes(1)?'<i class="dot"></i>':''}</button><button data-act="sheet:shop"><span>🛒</span>${tr('Loja','Shop')}</button><button data-act="sheet:cfg"><span>⚙️</span>${tr('Ajustes','Settings')}</button></div>
@@ -1371,6 +1409,8 @@ function gameHtml(){
   const cl=CIRANDA_EVERY-P.used%CIRANDA_EVERY, gl0=GALO_EVERY-P.used%GALO_EVERY, galo=c.boss==='galo', bordaS=galo?new Set(BORDA):null;
   const fl0=c.flor&&!P.orders.some(o=>o.flor)?Math.max(1,P.florAt-P.used):0;
   const dcur=dsel!=null&&P.desp?P.desp[dsel]:null;
+  // O espaço do Selo só aparece a partir da fase que o explica (Pirarucu de casaca); antes era um quadro sem sentido.
+  const selo=P.i>=SEAL_TUT||unlocked(SEAL_TUT);
   // O que falta para vencer ganha destaque: pedidos, obstáculos ou a linha do item a criar.
   const ordKey=P.goals.some(g=>(g.t==='orders'||g.t==='dada'||g.t==='flor')&&!goalDone(g)), clrKey=P.goals.some(g=>g.t==='clear'&&!goalDone(g)), mk=P.goals.find(g=>g.t==='make'&&!goalDone(g));
   const tl=TIDE_EVERY-P.used%TIDE_EVERY;
@@ -1392,11 +1432,11 @@ function gameHtml(){
    <div class="win"><h3>${tr('🎯 Para vencer a fase','🎯 To win this level')}</h3>
     <div class="goals">${P.goals.map(g=>`<div class="goal${goalDone(g)?' ok':''}"><span class="e">${gIcon(g)}</span><div>${goalText(g)}<div class="bar"><i style="width:${Math.min(100,g.p/g.n*100)}%"></i></div></div><span class="cnt">${Math.min(g.p,g.n)}/${g.n}</span></div>`).join('')}</div>
     <div class="sub"><span>${tr(`3 ⭐ se sobrarem ${need3} turnos · 2 ⭐ com ${Math.ceil(P.turns*.25)}`,`3 ⭐ with ${need3} turns left · 2 ⭐ with ${Math.ceil(P.turns*.25)}`)}</span>${tide}${sol}</div></div>
-   <div class="olab${ordKey?' key':''}">${ordKey?tr('🎯 Pedidos: contam para vencer','🎯 Orders: these count toward winning'):tr('Pedidos extras: não contam para vencer, mas rendem moedas','Extra orders: they don’t count toward winning, but they pay coins')}</div>
-   <div class="orders ${ordKey?'key':'extra'}">${P.orders.map(o=>{ const want=cur&&!cur.m&&matches(o,cur), ready=o.items.some(x=>!x.done&&have.has(x.l+x.n));
+   <div class="olab${ordKey?' key':''}">${ordKey?tr('🎯 Pedidos: contam para vencer','🎯 Orders: these count toward winning'):tr('Pedidos extras: só rendem moedas, não contam para vencer','Extra orders: coins only, they don’t count toward winning')}</div>
+   <div class="orders ${ordKey?'key':'extra'}" style="grid-template-columns:repeat(${Math.max(3,P.orders.length+(selo?1:0))},1fr)">${P.orders.map(o=>{ const want=cur&&!cur.m&&matches(o,cur), ready=o.items.some(x=>!x.done&&have.has(x.l+x.n));
       const fq=o.flor?o.items.indexOf(florNow(o)):-1, oculto=j=>o.flor&&j>fq;
       return `<button class="order${want?' want':''}${ready?' ready':''}${o.dada?' dada':''}${o.flor?' flor':''}" data-order="${o.id}" aria-label="${o.flor?tr(`Encomenda da Maria Flor, item ${fq+1} de 3`,`Maria Flor’s order, item ${fq+1} of 3`):tr(`Pedido de ${o.who}`,`${o.who}’s order`)}: ${o.items.filter((x,j)=>!oculto(j)&&!x.done).map(x=>item(x.l,x.n)[1]+tr(' nível ',', level ')+x.n).join(tr(' e ',' and '))}${o.flor?tr(` · +${FLOR_BONUS} turno por item`,` · +${FLOR_BONUS} turn per item`):''} · ${orderPay(o)} 🪙${o.dada?tr(` · ${o.ttl} turnos para atender · +${DADA_BONUS} turnos`,` · ${o.ttl} turns to serve · +${DADA_BONUS} turns`):''}">${o.dada?`<span class="ttl${o.ttl<=2?' low':''}">⏱️${o.ttl}</span>`:''}${o.flor?`<span class="ttl flr">${fq+1}/3</span>`:''}<span class="who">${fc(o.face)} ${o.dada?'Dadá':o.flor?'Flor':o.who}</span><span class="need">${o.items.map((x,j)=>oculto(j)?`<span class="no">❔</span>`:`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span><span class="pay">🪙 ${orderPay(o)}${o.dada?` · ⏳+${DADA_BONUS}`:o.flor?` · ⏳+${FLOR_BONUS}`:''}</span></button>`; }).join('')}
-    <button class="order seal${cur&&cur.n===MAX&&!cur.m?' want':''}" data-seal="1" aria-label="${tr('Espaço do Selo: itens de nível 5','Seal slot: level 5 items')}"><span class="who">🏅 ${tr('Selo','Seal')}</span><span style="font-size:12px;line-height:1.5">${mLines(mOf(P.i)).map(k=>`${item(k,5)[0]}${Math.min(3,S.selo5[k]||0)}`).join(' ')}</span><span class="who">${tr('nível 5','level 5')}</span></button></div>
+    ${selo?`<button class="order seal${cur&&cur.n===MAX&&!cur.m?' want':''}" data-seal="1" aria-label="${tr('Espaço do Selo: itens de nível 5','Seal slot: level 5 items')}"><span class="who">🏅 ${tr('Selo','Seal')}</span><span style="font-size:12px;line-height:1.5">${mLines(mOf(P.i)).map(k=>`${item(k,5)[0]}${Math.min(3,S.selo5[k]||0)}`).join(' ')}</span><span class="who">${tr('nível 5','level 5')}</span></button>`:''}</div>
    <div class="wrap" id="wrap"><div class="board" id="board">${P.board.map((x,i)=>{
       const fl=(flooded(i)?' flood':'')+(inSun(i)?(P.shade.includes(i)?' shade':' sun'):P.shade.includes(i)?' shade':'')
         +(rodaS[i]?' roda'+(rodaS[i]<0?' ccw':'')+(cl===1?' logo':''):'')+(rodaC[i]?' rodac '+(rodaC[i]>0?'cw':'ccw'):'')+(bordaS&&bordaS.has(i)?' borda'+(gl0===1?' logo':''):'')+(girou.has(i)?' gira':''), ar=P.armed?' armed':'', ky=clrKey?' key':'';
@@ -1406,7 +1446,7 @@ function gameHtml(){
       if(x.o==='mold') return `<button class="cell mold${ar}${ky}" data-cell="${i}" aria-label="${tr('Mofo','Mold')}"></button>`;
       return `<button class="cell has${x.m?' moldy':''}${fl}${ar}${sel===i?' sel':''}${popAt===i?' pop':''}" style="--lc:${lc(x.l)}" data-cell="${i}" aria-label="${item(x.l,x.n)[1]}${tr(' nível ',', level ')}${x.n}${x.m?tr(', mofado',', moldy'):''}${sunny(i)&&x.n>=SUN_LV?tr(`, no sol: perde 1 nível em ${heatLeft(x)}`,`, in the sun: loses 1 level in ${heatLeft(x)}`):''}"><span class="em">${item(x.l,x.n)[0]}</span><span class="lv">${x.n}</span>${sunny(i)&&x.n>=SUN_LV&&!x.m?`<span class="heat${heatLeft(x)<=2?' low':''}">🔥${heatLeft(x)}</span>`:''}</button>`; }).join('')}</div></div>
    <div class="info${P.armed?' armed':''}${desp?' hasdesp':''}">${info}${desp}</div>
-   <div class="dock">${c.lines.map(l=>`<button class="basket" style="--lc:${lc(l)}" data-act="spawn:${l}" aria-label="${tr(`Cesto de ${lname(l)}: gasta 1 turno`,`${lname(l)} basket: costs 1 turn`)}${mk&&mk.l===l?tr('. Linha do objetivo','. Goal line'):''}">${mk&&mk.l===l?'<i class="tgt">🎯</i>':''}<span class="em">${ie(l,1)}</span><b>${lname(l)}</b><small>${tr('−1 turno','−1 turn')}</small></button>`).join('')}
+   <div class="dock">${c.lines.map(l=>`<button class="basket" style="--lc:${lc(l)}" data-act="spawn:${l}" aria-label="${tr(`Cesto de ${lname(l)}: gasta 1 turno`,`${lname(l)} basket: costs 1 turn`)}${mk&&mk.l===l?tr('. Linha do objetivo','. Goal line'):''}">${mk&&mk.l===l?'<i class="tgt">🎯</i>':''}<span class="em">${ie(l,1)}</span><b>${lcurto(l)}</b><small>${tr('−1 turno','−1 turn')}</small></button>`).join('')}
     ${Object.keys(TOOLS).filter(k=>toolShow(k,c)).map(k=>`<button class="basket tool${P.armed===k?' on':''}" data-act="tool:${k}" aria-label="${tname(k)}: ${tr('você tem','you have')} ${S.tools[k]||0}" ${S.tools[k]>0&&P.toolsUsed<MAX_TOOLS?'':'disabled'}><span class="em">${toolEm(k)}</span><b>${S.tools[k]||0}</b><small>${P.toolsUsed}/${MAX_TOOLS}</small></button>`).join('')}</div>`;
 }
 function fit(){
@@ -1457,7 +1497,7 @@ function renderSheet(){
      +CARDS.map(c=>(c.mk||0)!==m?'':S.cards.includes(c.ph)?`<button class="dcard" data-act="card:${c.ph}"><span class="em">${c.em}</span><b>${tx(c.t)}</b><small>${tx(c.p)}</small></button>`
        :`<div class="dcard lock"><span class="em">${c.em}</span><b>?</b><small>${tr(`Vença a fase ${pnum(c.ph)}`,`Beat level ${pnum(c.ph)}`)}</small></div>`).join('')+'</div>').join('');
   } else if(sheetName==='selos'){ T=tr('Mochila de Selos','Seal Bag');
-    h=`<p class="note">${tr('Selos são conquistados jogando, nunca vendidos. Antes de cada fase você escolhe quais levar. Neste teste podem ser conquistados os Selos do Ver-o-Peso, de Manaus e de Salvador, e a mochila leva os três.','Seals are earned by playing, never sold. Before each level you choose which ones to bring. In this test you can earn the Ver-o-Peso, Manaus and Salvador Seals, and the bag holds all three.')}</p>`
+    h=`<p class="note">${tr(`Selos são conquistados jogando, nunca vendidos. Antes de cada fase você escolhe quais levar. Neste teste podem ser conquistados os Selos dos ${OPEN_M} mercados abertos, e a mochila leva todos.`,`Seals are earned by playing, never sold. Before each level you choose which ones to bring. In this test you can earn the Seals of the ${OPEN_M} open markets, and the bag holds all of them.`)}</p>`
      +sealChecks()
      +SELOS.map(([em,n,d],i)=>`<div class="row${S.selos.includes(i)?' cur':' lock'}"><span class="face">${S.selos.includes(i)?em:'🔒'}</span><div><b>${tx(n)}</b> · ${MARKETS[i].n}<p>${tx(d)}</p></div></div>`).join('');
   } else { T=tr('Ajustes','Settings');

@@ -69,6 +69,8 @@ button:disabled{opacity:.45;cursor:default}
 .encb.want{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
 .strip{display:flex;align-items:center;gap:8px;background:var(--panel);border-radius:12px;padding:5px 10px;font-size:12px;text-align:left;min-height:28px}
 .strip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.strip .cnt{flex:none;font-weight:800;font-variant-numeric:tabular-nums}
+@media (max-width:400px){.strip .cid{display:none}}
 .strip .bar{flex:1;min-width:40px;height:8px}
 .strip.go{background:var(--sun);color:#3A2A00;font-weight:800;justify-content:center;animation:pulse 1.2s infinite}
 @keyframes pulse{50%{transform:scale(1.02)}}
@@ -115,6 +117,28 @@ a.btn{text-decoration:none;display:inline-block;text-align:center}
 .nav{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
 .nav button{background:var(--panel);border-radius:12px;padding:6px 2px;font-weight:800;font-size:11px;min-width:0;position:relative;line-height:1.2}
 .nav button span{display:block;font-size:17px}
+/* Barra de informação do tabuleiro: em linha (Seu Zé ao lado do texto, botões ao lado ou logo abaixo) e com altura
+   mínima que já cabe texto + botões, para o tabuleiro não mudar de tamanho a cada toque. O .info dos pop-ups é outro. */
+#info{flex-direction:row;align-content:center;min-height:62px;text-align:left;row-gap:4px}
+#info p{flex:1 1 110px}
+/* Celular de tela baixa (até ~780 dp, como 360 × 640 e 360 × 720): pedidos, cestos e menu mais enxutos, para as casas
+   do tabuleiro passarem de ~29 px para perto de 40 px (revisão 4.15 do design). */
+@media (max-height:780px){
+  .app{gap:4px;padding-block:6px}
+  .order{min-height:0;padding:3px 3px 5px;gap:1px;border-radius:14px}
+  .order .need{font-size:22px}
+  .strip{min-height:24px;padding:3px 8px}
+  .encb{padding:2px 7px}
+  #info{min-height:54px;padding:3px 8px}
+  #info p{font-size:11.5px;line-height:1.2}
+  .coach .zs{font-size:20px}
+  .basket{padding:2px 2px 3px}
+  .basket .em{font-size:18px;line-height:1.1}
+  .basket.bo .em{font-size:17px;line-height:1.25}
+  .basket b{font-size:13px}
+  .nav button{padding:4px 2px}
+  .nav button span{font-size:15px}
+}
 .albl{display:flex;justify-content:space-between;align-items:center;margin:12px 2px 6px;font-size:14px} .albl span{color:var(--muted);font-size:12px;font-weight:800}
 .alb{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .ing{background:var(--panel);border-radius:12px;padding:6px 3px 5px;text-align:center;position:relative;box-shadow:inset 0 -3px 0 var(--lc);min-width:0}
@@ -176,7 +200,7 @@ a.btn{text-decoration:none;display:inline-block;text-align:center}
 .face .pf,.keeper .pf{width:1.5em;height:1.5em}
 .keeper{display:flex;align-items:center;gap:8px;padding:6px 10px 8px;height:62px;flex:none;text-align:left}
 .keeper span{font-size:30px;line-height:1}
-.keeper p{margin:0;background:var(--bg);border-radius:14px 14px 14px 4px;padding:5px 10px;font-size:12.5px;line-height:1.3;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.keeper p{margin:0;background:var(--bg);border-radius:14px 14px 14px 4px;padding:0;border:solid var(--bg);border-width:5px 10px;font-size:12.5px;line-height:1.3;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .play{font-family:var(--display);font-weight:800;font-size:24px;background:var(--accent);color:var(--on-accent);border-radius:99px;padding:9px;box-shadow:0 5px 0 color-mix(in srgb,var(--accent) 60%,#000)}
 .play:active{transform:translateY(3px);box-shadow:0 2px 0 color-mix(in srgb,var(--accent) 60%,#000)}
 .where{background:var(--panel);border-radius:14px;padding:10px 12px;text-align:left;display:flex;flex-direction:column;gap:6px}
@@ -653,14 +677,14 @@ const SHOP={
 };
 const decoUsd=c=>c<=600?.5:c<=2500?.99:1.99;                       // preço de cada decoração, pela faixa do preço em moedas
 const packValue=p=>p.coins*UNIT.coins+p.rec*UNIT.rec+p.mag*UNIT.mag+(p.noAds?UNIT.noAds:0);
-const TIPS=[['Arraste um item por cima de dois iguais que estejam lado a lado: os três se juntam e sobem 2 níveis.','Drag an item across two matching neighbors: all three merge and jump 2 levels.'],['Toque num pedido com borda verde para entregar direto.','Tap a green-bordered order to deliver it right away.'],['Fusões em sequência rendem XP extra de combo.','Quick merges in a row earn bonus combo XP.'],['Pedido com ⏱️ paga em dobro se você for rápido.','⏱️ orders pay double if you’re quick.'],['Concluiu a feira? Viaje pelo mapa para conhecer gente nova.','Finished a market? Travel the map to meet new friends.'],['Sem espaço? Venda um item ou use Organizar.','Out of space? Sell an item or tap Sort.']];
+const TIPS=[['Arraste um item sobre dois iguais lado a lado: os três sobem 2 níveis.','Drag an item across two matching neighbors: all three merge and jump 2 levels.'],['Toque num pedido com borda verde para entregar direto.','Tap a green-bordered order to deliver it right away.'],['Fusões em sequência rendem XP extra de combo.','Quick merges in a row earn bonus combo XP.'],['Pedido com ⏱️ paga em dobro se você for rápido.','⏱️ orders pay double if you’re quick.'],['Concluiu a feira? Viaje pelo mapa para conhecer gente nova.','Finished a market? Travel the map to meet new friends.'],['Sem espaço? Venda um item ou use Organizar.','Out of space? Sell an item or tap Sort.']];
 
 /* ===================== TEXTOS DA INTERFACE ===================== */
 const UI={
  pt:{
   tut:['Junte dois itens iguais: arraste um até o outro (os dois que piscam).','Agora entregue: toque no pedido com borda verde.','Junte até formar o que um cliente pede; aí o pedido fica com borda verde.','Acabaram os iguais? Toque num cesto para colher mais itens.','Pronto, a banca é sua! O ❓ lá em cima explica o resto.'],
   encTip:'Novidade: itens de nível alto podem ir para a 📦 Encomenda. Entregue 5 e ganhe um prêmio grande!', asks:'Pede', tapSkip:'toque para pular',
-  travelBonus:'itens de nível 5 ou mais valem o dobro', oMusic:['Música','Trilha calma de cada mercado, com um toque da música local. Arraste a barra para ajustar o volume.'], version:'Quitanda Zen · '+(PUB.ver||'protótipo v0.5'), devOn:'Ferramentas de teste visíveis.', devOff:'Ferramentas de teste escondidas.',
+  travelBonus:'itens de nível 5 ou mais valem o dobro', oMusic:['Música','Trilha calma de cada mercado, com um toque da música local. Arraste a barra para ajustar o volume.'], version:'Quitanda Zen · '+(PUB.ver||'versão de teste'), devOn:'Ferramentas de teste visíveis.', devOff:'Ferramentas de teste escondidas.',
   shopNote:'Compras simuladas neste teste: nada é cobrado. No app publicado, o pagamento é feito pela loja do celular, que converte o preço para a sua moeda.',
   hPacks:'Pacotes', hCoins:'Moedas', hItems:'Itens', bonusPct:p=>`+${p}% de bônus`, savePct:p=>`Economia de ${p}%`, once:'Só 1 vez', bought:'Comprado',
   recName:'Recarga', magName:'Junta-tudo', recD:'Enche todos os cestos na hora.', magD:'Junta de uma vez todos os pares iguais do tabuleiro.',
@@ -731,8 +755,8 @@ const UI={
   nTitle:'Cestos cheios! 🧺', nBody:'Sua banca está pronta: venha colher, juntar e entregar.', decoAria:'Sua banca', bancaVazia:'Banca vazia: cada item que você descobrir aparece aqui.',
   homeLine:(l,s,p)=>`Nível ${l} · ⭐ ${s} feiras concluídas · ${'Volta '+p}`, ready:'pronto para viajar',
   st:['Tempo de jogo','XP por minuto','Fusões','Itens colhidos','Pedidos atendidos','Feiras concluídas','Anúncios com recompensa','Anúncios de tela cheia','Compras simuladas'], waiting:'aguardando',
-  mapAria:'Mapa do Brasil com a Rota das Feiras',
-  T:{shop:'Loja',help:'Como jogar',map:'Rota das Feiras',turma:'Turma da Feira',miss:'Missões',rec:'Caderno de Receitas',up:'Melhorias',cfg:'Ajustes'},
+  mapAria:'Mapa do Brasil com as feiras da viagem',
+  T:{shop:'Loja',help:'Como jogar',map:'Mapa das Feiras',turma:'Turma da Feira',miss:'Missões',rec:'Caderno de Receitas',up:'Melhorias',cfg:'Ajustes'},
   mapNote:(p,s,b)=>`Volta ${p} pelo Brasil · ⭐ ${s} feiras concluídas${b?` · bônus de +${b}% em XP e moedas`:''}. A rota recomeça ao fim de cada volta, sempre com um bônus maior.`, mapGloss:'',
   goalN:g=>`meta: ${g} clientes`, served:(a,b)=>`${a}/${b} clientes atendidos`, travel:'Viajar',
   turmaNote:'Cada pedido atendido rende ❤️. A cada nível de amizade você ganha moedas, e a cada dois níveis um 🧲 Junta-tudo. A amizade não tem limite.',
@@ -760,7 +784,7 @@ const UI={
  en:{
   tut:['Merge two matching items: drag one onto the other (the two that are blinking).','Now deliver: tap the green-bordered order.','Keep merging until you make what a customer wants; the order then turns green.','Out of matches? Tap a basket to pick more items.','All set, the stall is yours! The ❓ at the top explains the rest.'],
   encTip:'New: high-level items can go to the 📦 Bulk order. Deliver 5 for a big reward!', asks:'Wants', tapSkip:'tap to skip',
-  travelBonus:'items of level 5 or higher are worth double', oMusic:['Music','A calm tune for each market, with a hint of local music. Drag the bar to set the volume.'], version:'Quitanda · '+(PUB.ver||'prototype v0.5'), devOn:'Test tools visible.', devOff:'Test tools hidden.',
+  travelBonus:'items of level 5 or higher are worth double', oMusic:['Music','A calm tune for each market, with a hint of local music. Drag the bar to set the volume.'], version:'Quitanda · '+(PUB.ver||'test build'), devOn:'Test tools visible.', devOff:'Test tools hidden.',
   shopNote:'Purchases are simulated in this test: nothing is charged. In the published app, payment goes through your phone’s store, which converts prices to your currency.',
   hPacks:'Bundles', hCoins:'Coins', hItems:'Items', bonusPct:p=>`+${p}% bonus`, savePct:p=>`Save ${p}%`, once:'One time only', bought:'Purchased',
   recName:'Refill', magName:'Merge-all', recD:'Fills every basket instantly.', magD:'Merges every matching pair on the board at once.',
@@ -1499,7 +1523,7 @@ function render(){ if(S&&S.ev) evFab();
   const curIt=sel!=null?S.board[sel]:null, EL=encLvl();
   $('stripbox').className='striprow';
   $('stripbox').innerHTML=(done?`<button class="strip go" data-act="travelask"><span>${t('goTravel',feira(S.stop+1).c)}</span></button>`
-    :`<button class="strip" data-act="nav:map" aria-label="${t('openMap')}">${tileHtml(f,'xs')}<span>${f.n} · ${f.c}</span><div class="bar"><i style="width:${S.served/g*100}%"></i></div><span>${t('clients',S.served,g)}</span></button>`)
+    :`<button class="strip" data-act="nav:map" aria-label="${t('openMap')} · ${f.n} · ${t('clients',S.served,g)}">${tileHtml(f,'xs')}<span>${f.n}<span class="cid"> · ${f.c}</span></span><div class="bar"><i style="width:${S.served/g*100}%"></i></div><span class="cnt">👥 ${S.served}/${g}</span></button>`)
     +`<button class="encb${curIt&&curIt.n>=EL?' want':''}${S.encHint===1?' chama':''}" data-enc="1" aria-label="${t('encAria',ENC_N,EL)}">📦 ${S.enc.got}/${ENC_N} <small>${t('levelPlus',EL)}</small></button>`;
   $('board').innerHTML=S.board.map((x,i)=>x
     ?`<button class="cell has${sel===i?' sel':''}${popAt===i?' pop':''}" style="--lc:${lc(x.l)}" data-cell="${i}" aria-label="${t('cellAria',item(x.l,x.n)[1],x.n)}"><span class="em">${item(x.l,x.n)[0]}</span><span class="lv">${x.n}</span></button>`
