@@ -1,6 +1,6 @@
 # Contexto do projeto (para retomar o trabalho)
 
-Resumo do estado atual, das decisões tomadas e de como continuar. Atualizado em 27/11/2026 (revisão de usabilidade nos dois jogos: tabuleiro maior no celular pequeno).
+Resumo do estado atual, das decisões tomadas e de como continuar. Atualizado em 27/11/2026 (revisão de usabilidade nos dois jogos: tabuleiro maior no celular pequeno; site da Bentevi Apps com o `app-ads.txt` do AdMob).
 
 ## O que é
 
@@ -142,7 +142,7 @@ Bloco `EVENTOS` no `index.html` de cada jogo (mesmo código): lista de eventos c
 2. **Publicação da Quitanda** (passo a passo em `docs/loja-play/quitanda-zen/LEIAME.md`):
    - Feito: build de publicação (`PUBLICACAO=1` no `copy-web.js`: sem Loja paga e sem ferramentas de teste), workflow do AAB, política de privacidade, textos, capturas e respostas da Play Console.
    - Feito também: app criado na Play Console com o pacote `com.feiraviva.quitanda` (um app antigo da conta ficou preso a `feiraviva.myapp` e foi deixado de lado), teste interno e teste fechado, ID de publicidade declarado (publicidade e prevenção de fraudes).
-   - Falta: concluir os 14 dias do teste fechado com 12 testadores e pedir a produção; conferir os blocos reais do AdMob (`ADMOB_*`).
+   - Falta: concluir os 14 dias do teste fechado com 12 testadores e pedir a produção; conferir os blocos reais do AdMob (`ADMOB_*`). O `app-ads.txt` já está no ar em `https://jecal17-cmd.github.io/app-ads.txt` (repositório `jecal17-cmd.github.io`, site da Bentevi Apps); falta pôr `https://jecal17-cmd.github.io` no campo **Site** da Play Console e, com o app em produção, ligar o app do AdMob à Google Play (detalhes no `LEIAME.md` da loja, seção 2).
    - Compras: o motor está pronto (Play Billing 8). Falta na Play Console: perfil de pagamentos, criar e ativar os 14 produtos `qz_*`, gravar a variável `PLAY_LICENSE_KEY` no GitHub, testadores de licença e gerar o AAB com "compras" marcado. Nunca testado com a Google Play de verdade (só com uma simulada no navegador).
 3. **Rota das Feiras:**
    - 28 fases (4 mercados), todas com arte própria.

@@ -41,7 +41,7 @@ A descrição completa está nos arquivos `descricao-completa.txt`.
 | Tags sugeridas | Juntar (Merge), Casual, Relaxante, Simulação de loja, Offline |
 | Gratuito ou pago | Gratuito (não dá para mudar depois) |
 | E-mail de contato | jecal17@gmail.com (o mesmo da política de privacidade) |
-| Site | opcional; pode ser `https://jecal17-cmd.github.io/feira-viva/` |
+| Site | `https://jecal17-cmd.github.io` (exatamente assim, sem `/feira-viva` e sem barra no fim: é onde o AdMob procura o `app-ads.txt`) |
 | Idioma padrão | Português (Brasil) – pt-BR; adicionar a tradução Inglês (Estados Unidos) – en-US |
 
 ## Conteúdo do app (Política → Conteúdo do app)
@@ -120,7 +120,11 @@ Em **GitHub → Settings → Secrets and variables → Actions → New repositor
 | `ADMOB_INTERSTITIAL_ID` | `ca-app-pub-1234567890123456/2222222222` |
 
 4. No AdMob, em **Privacidade e mensagens**, crie a mensagem de consentimento do GDPR (o jogo já chama esse formulário) e publique.
-5. Mais tarde, o AdMob vai pedir o arquivo `app-ads.txt` no site da desenvolvedora (o mesmo informado na Play). Ele precisa ficar na raiz do domínio, por exemplo num repositório `jecal17-cmd.github.io`. Os anúncios funcionam sem ele, mas podem render menos.
+5. **app-ads.txt (feito em 27/11/2026):** o arquivo está publicado em `https://jecal17-cmd.github.io/app-ads.txt`, no repositório `jecal17-cmd/jecal17-cmd.github.io` (site da Bentevi Apps, GitHub Pages), com a linha `google.com, pub-2704936083968260, DIRECT, f08c47fec0942fa0`. Para o AdMob validar:
+   - na Play Console, o campo **Site** da página da loja tem que ser `https://jecal17-cmd.github.io`;
+   - no AdMob, o app precisa estar ligado à Google Play (**Configurações do app → Adicionar loja de apps**), o que só dá para fazer com o app público em produção;
+   - depois, esperar pelo menos 24 h e conferir o status em **Apps → app-ads.txt**.
+   Os anúncios funcionam sem ele, mas podem render menos. Um app novo da Bentevi com AdMob usa a mesma linha (é por conta, não por app).
 
 Sem essas variáveis, o AAB sai com os anúncios de **teste** do Google: funciona, mas não gera receita. Serve para o teste interno.
 
