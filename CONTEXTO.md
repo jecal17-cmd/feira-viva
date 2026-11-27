@@ -23,7 +23,7 @@ A desenvolvedora se chama **Bentevi Apps** (antes, Bentevi Games). Desde 25/11/2
 | `app-android/` | App Android da Quitanda (Capacitor 8, `com.feiraviva.quitanda`, com AdMob de teste) |
 | `app-android-rota/` | App Android da Rota (Capacitor 8, `com.feiraviva.rota`, sem anúncios) |
 | `.github/workflows/android.yml` | Compila os dois APKs a cada push que mexa nos jogos ou nos apps; também por **Actions → Apps Android (APKs de teste) → Run workflow** |
-| `docs/design-de-jogo.md` | Documento de design das duas versões, com as revisões numeradas (seções 3.9 a 3.15, 4.8 a 4.12) |
+| `docs/design-de-jogo.md` | Documento de design das duas versões, com as revisões numeradas (seções 3.9 a 3.16, 4.8 a 4.14) |
 | `docs/avaliacoes/` | Relatórios de avaliação como usuário novo (um .docx por jogo, inclusive o Ler Brincando) |
 | `docs/arte/` | Lista de arte (`lista-de-arte.md/.csv`: 104 itens, 60 itens da Rota, 12 mercados, 28 personagens, 12 decorações, tudo pronto), prompts do Nano Banana, scripts de recorte, ícones e o canto do bem-te-vi |
 | `versao-*/personagens/`, `versao-b-quitanda-zen/decoracao/` | Arte dos personagens (WebP 192 px) e da decoração da banca (WebP 128 px) usada nos jogos |
@@ -172,7 +172,7 @@ Bloco `EVENTOS` no `index.html` de cada jogo (mesmo código): lista de eventos c
 - Itens e decoração: `fatiar_grade.py` corta a grade em casas e `recortar_itens.py` tira o fundo (rembg) e normaliza. Sem o rembg instalado, o script usa `mascara_fundo_branco` (branco ligado à borda e vãos grandes de branco puro viram fundo).
 - **Arte toda no estilo novo (16/11, fim da tarde):** tudo o que tinha entrado antes de 16/11 foi refeito com `prompt-nano-banana-3.md`: 52 itens da Quitanda em 4 grades (`grade-refazer-1..4.jpg`, lotes `refazer-1..4` no `grades.json`; a sardinha e o peixe também servem de `pe-1` e `pe-2` da Rota) e 9 mercados (todos menos 03, 05 e 06, que já eram de hoje), nas pastas `mercados/` dos dois jogos. O saleiro (`te-1`) foi recortado sem tirar os brancos internos.
 - Personagens: `fatiar_por_silhueta.py <grade> <colunas> <linhas> <chave>` recorta pela silhueta (não corta cabeças), trata branco ligado à borda e vãos fechados entre braços e objetos como fundo. Ajustes finos (Dona Geralda, Seu Giuseppe) foram feitos tapando vãos internos transparentes.
-- Status da lista: `python docs/arte/atualizar_status.py` (tudo pronto: 12/12 mercados, 104/104 itens, 45/45 da Rota, 28/28 personagens, 12/12 decorações).
+- Status da lista: `python docs/arte/atualizar_status.py` (tudo pronto: 12/12 mercados, 104/104 itens, 60/60 da Rota, 28/28 personagens, 12/12 decorações).
 - No jogo: personagens com `pf(c)` (Quitanda: pedidos, Turma da Feira, mapa, chegada, Seu Zé da tela inicial) e decorações com `de(i)` (banca e loja). Os scripts `copy-web.js` copiam `personagens/` e `decoracao/`.
 
 ## Ícones sem anel de cor
