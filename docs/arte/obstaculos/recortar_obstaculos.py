@@ -1,6 +1,7 @@
 """Recorta as tiras de 5 quadros do mofo e da caixa (fundo branco) em WebP transparentes.
 
-Uso: python docs/arte/obstaculos/recortar_obstaculos.py [nomes...]   (sem nomes: mofo, caixa, engradado e sol)
+Uso: python docs/arte/obstaculos/recortar_obstaculos.py [nomes...]   (sem nomes: mofo, caixa, engradado, sol e saveiro;
+     os de Recife, quando chegarem: ciranda e galo)
 Entrada: docs/arte/obstaculos/{mofo,caixa,engradado,sol}-original.jpg (2320x464, 5 quadros de 464 px)
 Saída:   versao-a-rota-das-feiras/obstaculos/{nome}-1..5.webp (192 px)
          e o saveiro do chefe de Salvador (saveiro-original.jpg -> saveiro.webp, 360 px de largura)
@@ -46,11 +47,24 @@ SAIDA.mkdir(parents=True, exist_ok=True)
 nomes = sys.argv[1:] or ['mofo', 'caixa', 'engradado', 'sol', 'saveiro']
 for nome in nomes:
     tira = Image.open(AQUI / f'{nome}-original.jpg')
-    if nome == 'saveiro':                        # uma figura só: recorta e corta as sobras
+    if nome == 'ciranda':                        # ladrilhos opacos com espaçamento irregular: acha cada um pelas colunas não brancas
+        a = np.asarray(tira.convert('RGB')).astype(int); escuro = a.min(2) < 225
+        col = escuro.sum(0) > 40; lin = np.where(escuro.sum(1) > 40)[0]; xs, on = [], False
+        for x, v in enumerate(list(col) + [False]):
+            if v and not on: x0, on = x, True
+            elif not v and on: xs.append((x0, x)); on = False
+        xs = [q for q in xs if q[1] - q[0] > 200][:5]; m = 8           # m: tira a borda marrom do ladrilho
+        for k, (x0, x1) in enumerate(xs):
+            q = tira.crop((x0 + m, lin.min() + m, x1 - m, lin.max() - m)).resize((TAM, TAM), Image.LANCZOS)
+            q.save(SAIDA / f'ciranda-{k + 1}.webp', quality=88, method=6); print(f'ciranda-{k + 1}.webp')
+            if k < 2:                                # versão espelhada para as rodas que giram ao contrário
+                q.transpose(Image.FLIP_LEFT_RIGHT).save(SAIDA / f'ciranda-{k + 1}i.webp', quality=88, method=6); print(f'ciranda-{k + 1}i.webp')
+        continue
+    if nome in ('saveiro', 'galo'):              # uma figura só (saveiro de Salvador, Galo de Recife): recorta e corta as sobras
         q = recortar(tira, miolos=False, limiar=238); q = q.crop(q.getbbox())
-        q.resize((360, round(360 * q.height / q.width)), Image.LANCZOS).save(SAIDA / 'saveiro.webp', quality=88, method=6)
-        print('saveiro.webp'); continue
+        q.resize((360, round(360 * q.height / q.width)), Image.LANCZOS).save(SAIDA / f'{nome}.webp', quality=88, method=6)
+        print(f'{nome}.webp'); continue
     for k in range(5):
-        q = recortar(tira.crop((k * LADO, 0, (k + 1) * LADO, LADO)), miolos=nome != 'sol', limiar=236 if nome == 'sol' else 175)
+        q = recortar(tira.crop((k * LADO, 0, (k + 1) * LADO, LADO)), miolos=nome not in ('sol', 'ciranda'), limiar=236 if nome in ('sol', 'ciranda') else 175)
         q.resize((TAM, TAM), Image.LANCZOS).save(SAIDA / f'{nome}-{k + 1}.webp', quality=88, method=6)
         print(f'{nome}-{k + 1}.webp')

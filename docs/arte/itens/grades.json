@@ -290,5 +290,41 @@
   "rota/cc-4",
   "rota/cc-5",
   "rota/toldo"
+ ],
+ "rota-recife": [
+  "rota/cs-1",
+  "rota/cs-2",
+  "rota/cs-3",
+  "rota/cs-4",
+  "rota/cs-5",
+  "rota/qc-1",
+  "rota/qc-2",
+  "rota/qc-3",
+  "rota/qc-4",
+  "rota/qc-5",
+  "rota/cn-1",
+  "rota/cn-2",
+  "rota/cn-3",
+  "rota/cn-4",
+  "rota/cn-5",
+  "rota/despensa"
+ ],
+ "rota-manaus": [
+  "rota/pr-1",
+  "rota/pr-2",
+  "rota/pr-3",
+  "rota/pr-4",
+  "rota/pr-5",
+  "rota/md-1",
+  "rota/md-2",
+  "rota/md-3",
+  "rota/md-4",
+  "rota/md-5",
+  "rota/fr-1",
+  "rota/fr-2",
+  "rota/fr-3",
+  "rota/fr-4",
+  "rota/fr-5",
+  "rota/frevo"
  ]
 }

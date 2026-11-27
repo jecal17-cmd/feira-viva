@@ -14,7 +14,7 @@ Atualizado por `atualizar_status.py`. ✅ = imagem já no jogo · ⬜ = falta ge
 |---|---|---|
 | Mercados | 12 de 12 | 0 |
 | Itens do tabuleiro | 104 de 104 | 0 |
-| Itens da Rota das Feiras | 45 de 45 | 0 |
+| Itens da Rota das Feiras | 60 de 60 | 0 |
 | Personagens | 28 de 28 | 0 |
 | Decoração da banca | 12 de 12 | 0 |
 
@@ -249,9 +249,9 @@ Na versão em inglês, os nomes tipicamente brasileiros ficam em português e ga
 | 7 | `itens/fl-7.png` | Ipê-amarelo | Ipê-amarelo | tree that bursts into yellow bloom | 🌳 | ✅ |
 | 8 | `itens/fl-8.png` | Buquê tropical | Tropical bouquet |  | 💐 | ✅ |
 
-## Itens da Rota das Feiras (9 linhas × 5 níveis = 45)
+## Itens da Rota das Feiras (12 linhas × 5 níveis = 60)
 
-A Versão A tem itens próprios do Ver-o-Peso, de Manaus e de Salvador. Ficam em `versao-a-rota-das-feiras/itens/`; o código no jogo é o mesmo da coluna *Arquivo* (por exemplo, `ac-1`). Mesmo estilo 3D dos itens da Quitanda. Alguns reaproveitam imagens da Quitanda.
+A Versão A tem itens próprios do Ver-o-Peso, de Manaus, de Salvador e de Recife. Ficam em `versao-a-rota-das-feiras/itens/`; o código no jogo é o mesmo da coluna *Arquivo* (por exemplo, `ac-1`). Mesmo estilo 3D dos itens da Quitanda. Alguns reaproveitam imagens da Quitanda.
 
 ### Açaí (`ac`)
 
@@ -285,7 +285,7 @@ A Versão A tem itens próprios do Ver-o-Peso, de Manaus e de Salvador. Ficam em
 
 ### Mercado Adolpho Lisboa (Manaus)
 
-Por enquanto, a arte destes 15 itens **reaproveita itens 3D da Quitanda** (coluna *Origem*: o arquivo de `versao-b-quitanda-zen/itens/` copiado com o código novo). Para ter arte própria, gere com o prompt do CSV e substitua o arquivo.
+Arte própria desde 26/11/2026, gerada numa grade 4 × 4 com o Nano Banana (`referencias/grade-rota-manaus.jpg`, lote `rota-manaus` em `itens/grades.json`, prompt em `prompt-nano-banana-recife.md`). A coluna *Origem* diz de qual item da Quitanda vinha a arte provisória usada antes. A 16ª casa da grade é a sombrinha de frevo (`itens/frevo.webp`), guardada para Recife.
 
 #### Peixes do rio (`pr`)
 
@@ -350,6 +350,40 @@ Arte própria, gerada numa grade 4 × 4 com o Nano Banana (`referencias/grade-ro
 | 3 | `rota/itens/cc-3.png` | Coco ralado | Grated coconut | ✅ |
 | 4 | `rota/itens/cc-4.png` | Leite de coco | Coconut milk | ✅ |
 | 5 | `rota/itens/cc-5.png` | Cocada | Cocada | ✅ |
+
+### Mercado de São José (Recife)
+
+Arte própria, gerada numa grade 4 × 4 com o Nano Banana (`referencias/grade-rota-recife.jpg`, lote `rota-recife` em `itens/grades.json`, prompt em `prompt-nano-banana-recife.md`). A 16ª casa é o ícone da Despensa do Selo Carne de Sol (`itens/despensa.webp`). A casa da roda de ciranda e o Galo da Madrugada do chefe ficam em `versao-a-rota-das-feiras/obstaculos/` (originais em `docs/arte/obstaculos/`). Três itens que pegaram pedaços da casa vizinha foram limpos com `itens/limpar_fragmentos.py`.
+
+#### Carne de sol (`cs`)
+
+| Nível | Arquivo | Português | Inglês | Arte |
+|---|---|---|---|---|
+| 1 | `rota/itens/cs-1.png` | Sal grosso | Coarse salt | ✅ |
+| 2 | `rota/itens/cs-2.png` | Carne de sol | Carne de sol | ✅ |
+| 3 | `rota/itens/cs-3.png` | Espetinho de carne de sol | Carne de sol skewer | ✅ |
+| 4 | `rota/itens/cs-4.png` | Feijão-verde | Fresh green beans | ✅ |
+| 5 | `rota/itens/cs-5.png` | Baião de dois | Baião de dois | ✅ |
+
+#### Queijo coalho (`qc`)
+
+| Nível | Arquivo | Português | Inglês | Arte |
+|---|---|---|---|---|
+| 1 | `rota/itens/qc-1.png` | Leite | Milk | ✅ |
+| 2 | `rota/itens/qc-2.png` | Manteiga de garrafa | Bottled butter | ✅ |
+| 3 | `rota/itens/qc-3.png` | Queijo coalho | Queijo coalho | ✅ |
+| 4 | `rota/itens/qc-4.png` | Requeijão | Requeijão | ✅ |
+| 5 | `rota/itens/qc-5.png` | Cartola | Cartola | ✅ |
+
+#### Cana (`cn`)
+
+| Nível | Arquivo | Português | Inglês | Arte |
+|---|---|---|---|---|
+| 1 | `rota/itens/cn-1.png` | Caldo de cana | Sugarcane juice | ✅ |
+| 2 | `rota/itens/cn-2.png` | Rapadura | Rapadura | ✅ |
+| 3 | `rota/itens/cn-3.png` | Mel de engenho | Cane molasses | ✅ |
+| 4 | `rota/itens/cn-4.png` | Goiabada | Guava paste | ✅ |
+| 5 | `rota/itens/cn-5.png` | Bolo de rolo | Bolo de rolo | ✅ |
 
 ## Personagens (28)
 
