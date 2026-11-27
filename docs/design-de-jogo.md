@@ -351,6 +351,17 @@ O robô vai mal nas metas de criar item (fases 2 e 5), como nos outros mercados.
 
 **Arte e música:** itens 3D próprios (grade do Nano Banana) e, na mesma leva, a arte própria dos 15 itens de Manaus, que até então eram cópias da Quitanda. A casa da roda de ciranda (pixel art em quadros, como o sol), o ícone da Despensa e o Galo da Madrugada (ilustração pintada, como o saveiro). Prompts em `docs/arte/prompt-nano-banana-recife.md`. A música é a do mercado 04 da Quitanda (ciranda), em `versao-a-rota-das-feiras/musica/04.ogg`.
 
+### 3.17 Revisão de usabilidade no celular pequeno (27/11/2026)
+
+Avaliação com robô (Playwright) em telas de 320 × 568, 360 × 640, 360 × 720 e 390 × 844, em português e inglês, claro e escuro, e mais de 11 mil toques aleatórios pelas fases dos 4 mercados, sem nenhum erro de script.
+
+- **Tabuleiro maior em tela baixa.** Em telas de até ~780 dp de altura, a fase usa um layout enxuto: sem o título "Para vencer a fase" (o 🎯 já indica), objetivos, contadores e pedidos mais baixos, rótulo dos pedidos em uma linha e cestos sem o "−1 turno" (a regra continua na barra de informação). Casas medidas, antes → depois: 360 × 640, fase 1: 31 → 43 px; Recife fase 5: 26 → 40 px; Recife fase 6 (3 avisos de regra): 24 → 36 px; 360 × 720: 37 → 51 px. Telas altas não mudam.
+- **Barra de informação com altura fixa.** Texto e botão (Cancelar ferramenta, Despensa) ficam lado a lado, e a barra não muda de altura ao tocar num item; antes ela ficava em coluna por herdar o estilo do pop-up do álbum.
+- **Espaço do Selo só a partir da fase 5 do Ver-o-Peso** (a que explica o Selo), ou quando essa fase já está aberta. Antes aparecia desde a fase 1 como um quadro tracejado sem explicação; nas fases 1 a 4 os 3 pedidos ocupam a largura toda.
+- **Textos desatualizados:** a tela inicial dizia que a rota ia até Salvador (agora fala do mercado aberto mais adiante, hoje Recife) e a Mochila de Selos citava só 3 mercados (agora usa `OPEN_M`). "Pedidos extras" virou uma frase curta que cabe numa linha.
+- **Nomes curtos nos cestos** (`CURTO`): Carne, Queijo, Cana, Jambu, Peixes, Fradinho; o nome inteiro continua no rótulo de acessibilidade.
+- **Tela inicial em 360 × 640:** banca um pouco menor em tela baixa, para Jogar, os 5 atalhos e o idioma caberem sem rolar também em inglês.
+
 ## 4. Versão B — Quitanda Zen (passatempo, foco em anúncios)
 
 ### 4.1 Loop
@@ -521,6 +532,17 @@ Pedido da dona do projeto: deixar o jogo mais "livre", avisar quando os cestos e
   - **Personagem** (Quitanda: Turma da Feira; Rota: aba nova **Clientes** do Álbum): retrato, ocupação, mercado de origem, uma ficha que explica a profissão e uma curiosidade (`BIO`, mesmo texto nos dois jogos), a frase e, na Quitanda, a linha preferida e o nível de amizade.
 - **Rota: aba Clientes.** Cada personagem entra no Álbum quando faz o primeiro pedido no tabuleiro (`S.met`; 1 = novo, 2 = visto). Novidades acendem o ponto no botão Álbum e na aba. Saves antigos começam vazios e enchem jogando.
 - **Textos:** 104 curiosidades de ingredientes e 25 de receitas na Quitanda, 45 de ingredientes na Rota e 28 fichas de personagens. Escritos a partir de conhecimento geral; precisam da mesma revisão local e de inglês pedida para os textos culturais (pendência 4 do `CONTEXTO.md`).
+
+### 4.15 Revisão de usabilidade no celular pequeno (27/11/2026)
+
+Mesma avaliação com robô da seção 3.17 (telas de 320 a 390 dp, pt e en, claro e escuro, 4.200 toques aleatórios sem erro).
+
+- **Tabuleiro maior em tela baixa.** Em telas de até ~780 dp de altura, pedidos, faixa do mercado, cestos e menu ficam mais baixos. Casas, antes → depois: 360 × 640: 30 → 39 px; 360 × 720: 41 → 53 px. Telas altas não mudam.
+- **Barra de informação em linha e com altura mínima.** O Seu Zé do tutorial fica ao lado do texto, e os botões (Entregar, Vender, Organizar) ao lado do texto. Antes a barra ficava em coluna (herdava o estilo dos pop-ups) e mudava de altura a cada toque, o que fazia o tabuleiro encolher e crescer.
+- **Faixa do mercado:** a contagem de clientes (👥 0/30) nunca é cortada; em tela estreita sai a cidade. Antes aparecia "Ver-o-Pes… 0/30 c…".
+- **Dica do Seu Zé na tela inicial:** a terceira linha aparecia cortada pela metade embaixo do balão; a borda agora não deixa o texto vazar, e a dica da fusão tripla ficou curta o bastante para caber.
+- **Mapa:** o painel se chamava "Rota das Feiras", o nome do outro jogo da Bentevi. Agora é "Mapa das Feiras" (em inglês segue "Market Trail").
+- **Ajustes:** fora da versão de publicação, o rodapé mostra "versão de teste" no lugar de "protótipo v0.5".
 
 ## 5. Localização e idiomas
 
