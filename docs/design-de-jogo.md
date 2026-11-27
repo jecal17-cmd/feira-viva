@@ -51,7 +51,7 @@ Duas versões do mesmo jogo de merge com tema de feiras brasileiras. Compartilha
 | Norte | Ver-o-Peso (Belém) | Açaí, Peixe, Jambu/Tucupi | Força do Açaí: +3 turnos em toda fase |
 | Norte | Mercado Adolpho Lisboa (Manaus) | Guaraná, Pirarucu, Cupuaçu | Guaraná: a cada 10 fusões, +1 turno |
 | Nordeste | Feira de São Joaquim (Salvador) | Feijão-fradinho, Camarão, Coco | Dendê: a 1ª fusão de cada fase sobe +1 nível extra |
-| Nordeste | Mercado de São José (Recife) | Carne de sol, Macaxeira, Queijo coalho | Carne de Sol: Despensa com 2 vagas para guardar itens fora do tabuleiro |
+| Nordeste | Mercado de São José (Recife) | Carne de sol, Queijo coalho, Cana (implementado: seção 3.16) | Carne de Sol: Despensa com 2 vagas para guardar itens fora do tabuleiro |
 | Nordeste | Mercado Central de Fortaleza | Caju, Tapioca, Rapadura | Cajuína: ignora o 1º obstáculo de cada fase |
 | Centro-Oeste | Feira Central de Campo Grande | Sobá, Chipa, Tereré | Sobá: pedidos ganham +50% de prazo |
 | Sudeste | Mercadão de São Paulo | Mortadela, Pastel, Frutas | Mortadela: 25% de chance de gerar item nível 2 grátis ao entregar pedido |
@@ -182,7 +182,7 @@ A pedido, o protótipo ganhou uma loja com preços de US$ 0,50 a US$ 9,99. As co
 
 Como na Quitanda, a Rota ganhou o segundo mercado. Ele abre ao vencer o chefe do Ver-o-Peso (o progresso continua na mesma lista de fases: o Manaus usa as fases 8 a 14 da lista, então saves antigos seguem valendo).
 
-**Linhas novas (5 níveis cada).** A arte, por enquanto, reaproveita itens 3D da Quitanda (lista em `docs/arte/lista-de-arte.md`).
+**Linhas novas (5 níveis cada).** A arte própria entrou em 26/11/2026 (antes reaproveitava itens 3D da Quitanda; lista em `docs/arte/lista-de-arte.md`).
 
 | Nível | Peixes do rio (`pr`) | Mandioca (`md`) | Frutas (`fr`) |
 |---|---|---|---|
@@ -296,6 +296,60 @@ Esse robô vai mal em metas de criar item e de limpar obstáculos (fases 2 e 5),
 **Diário:** 7 cartões novos (Feira de São Joaquim, Feijão-fradinho, Coco, Baianas de acarajé, Moqueca baiana, Azeite de dendê, Saveiros), a validar com pesquisa e revisão local. Cada cartão agora guarda a fase a que pertence (`ph`), porque as fases do evento ficam no meio da lista.
 
 **Arte e música:** itens 3D próprios, engradado e sol em pixel art (como o caixote e o mofo), toldo e saveiro; prompts em `docs/arte/prompt-nano-banana-salvador.md`. A música é a do mercado 03 da Quitanda (ijexá), em `versao-a-rota-das-feiras/musica/03.ogg`.
+
+### 3.16 Quarto mercado: Mercado de São José, Recife (26/11/2026)
+
+Segundo mercado do Nordeste. Abre ao vencer o chefe de Salvador. As fases ficam no fim da lista `PHASES` (posições 25 a 31), então os saves antigos seguem valendo. `OPEN_M` passou para 4.
+
+**Ideia central: em Pernambuco, tudo dança.** O Norte era água (maré, rios), a Bahia era calor (o sol que anda). Recife é movimento: o tabuleiro gira com a ciranda e com o Galo da Madrugada, e o jogador aprende a usar o giro a favor (trazer vizinhos para perto) ou a se proteger dele.
+
+**Linhas novas (5 níveis, arte 3D própria).** A tabela da seção 3.2 previa Macaxeira, mas Manaus já tem a linha Mandioca; a terceira linha virou **Cana**, que conta a história dos engenhos da Zona da Mata e chega ao bolo de rolo.
+
+| Nível | Carne de sol (`cs`) | Queijo coalho (`qc`) | Cana (`cn`) |
+|---|---|---|---|
+| 1 | Sal grosso | Leite | Caldo de cana |
+| 2 | Carne de sol | Manteiga de garrafa | Rapadura |
+| 3 | Espetinho de carne de sol | Queijo coalho | Mel de engenho |
+| 4 | Feijão-verde | Requeijão | Goiabada |
+| 5 | Baião de dois | Cartola | Bolo de rolo |
+
+**Regras novas:**
+
+- **💃 Roda de ciranda** (`ciranda` na fase): um bloco de 3 × 3 casas marcado com a arte da roda. A cada 3 turnos (`CIRANDA_EVERY`), as 8 casas em volta do centro **giram 1 casa** no sentido da seta, levando itens e caixotes juntos; o centro fica parado. Cada roda tem sentido próprio (`dir` 1 = horário, −1 = anti-horário, arte espelhada). O contador "💃 Roda gira em N" fica no topo, e as casas pulsam no turno anterior ao giro. Item no sol continua esquentando enquanto gira (o calor vai junto).
+- **🧵 Encomenda da Maria Flor** (`flor`): a rendeira pede **3 itens, um de cada vez**, em níveis crescentes (de `lv[0]` a `lv[1]`) e de linhas alternadas. Só o item atual aparece; os próximos ficam como ❔. Cada item entregue dá **+1 turno** (`FLOR_BONUS`) e a encomenda completa paga moedas em dobro e conta também como pedido comum. Não há prazo. Só há uma por vez; a próxima chega `every` turnos depois da anterior (contador "🧵 Maria Flor em N"). Ela ocupa o lugar do pedido comum com menos itens entregues (nunca o da Dona Dadá) e, no Recife, não aparece como freguesa comum. Diferença para a Dona Dadá: a Dadá cobra rapidez (prazo); a Maria Flor cobra planejamento (não se sabe o próximo item).
+- **🐓 Chefe Galo da Madrugada** (`boss:'galo'`): a cada 5 turnos (`GALO_EVERY`) o bloco dá a volta no tabuleiro: **todas as 22 casas da borda giram 1 casa** no sentido horário, com itens e caixotes. A arte do Galo desfila por cima do tabuleiro. A roda de ciranda do meio continua girando a cada 3 turnos.
+- **🥩 Selo Carne de Sol** (Despensa): 3 itens de nível 5 de cada linha do Recife + chefe vencido. Na fase, aparecem **2 vagas de Despensa** ao lado da barra de informações. Arrastar um item até a vaga (ou tocar no item e depois na vaga) guarda o item fora do tabuleiro, livre do sol, das rodas, do Galo e do mofo. Tocar na vaga seleciona o item: depois, uma casa vazia o devolve ao tabuleiro e um pedido recebe a entrega direto. Guardar e tirar não gastam turno. O tabuleiro não é considerado travado enquanto der para guardar um item ou entregar o que está na Despensa. A mochila leva os quatro selos.
+- O **sol forte** do Nordeste volta em duas fases (parado na 3, andando na 6), para manter a identidade da região.
+
+**Fases:**
+
+| Fase | Objetivo | Turnos | Linhas | Obstáculos e regras |
+|---|---|---|---|---|
+| 1 · Bom dia, Recife | entregar 5 pedidos | 16 | Carne de sol, Queijo coalho | 2 caixotes |
+| 2 · Roda de ciranda | criar Requeijão (nível 4) | 17 | Carne de sol, Queijo coalho | 2 caixotes, 1 roda (tutorial) |
+| 3 · Chegou a cana | entregar 6 pedidos | 18 | as três | 3 caixotes, 1 roda, sol parado |
+| 4 · Encomenda da Maria Flor | 2 encomendas da Maria Flor + 4 pedidos | 19 | as três | 2 caixotes, encomenda a cada 4 turnos, níveis 1 a 3 (tutorial) |
+| 5 · Duas rodas | criar Bolo de rolo (nível 5) | 23 | as três | 2 caixotes, 2 rodas em sentidos contrários |
+| 6 · Frevo no mercado | entregar 7 pedidos + limpar 4 | 25 | as três | 5 caixotes, 1 roda, sol que anda, encomenda a cada 6 (níveis 2 a 4); tutorial do Selo |
+| Chefe · Galo da Madrugada | 7 pedidos + 1 encomenda da Maria Flor | 25 | as três | 2 caixotes, 1 roda, Galo a cada 5, encomenda a cada 5 (níveis 2 a 3) |
+
+**Balanceamento.** Um robô simples (entrega, tira itens grandes do sol, junta o que os pedidos e a meta pedem, colhe a linha que falta; sem ferramentas, selos nem Despensa; ignora as rodas) jogou cada fase 400 vezes. Esse robô é um pouco mais fraco que o da seção 3.15, por isso os números de Salvador mudaram; o que vale é a comparação na mesma coluna de robô:
+
+| Fase | Ver-o-Peso | Manaus | Salvador | Recife |
+|---|---|---|---|---|
+| 1 | 100% | 100% | 100% | 100% |
+| 2 | 9% | 11% | 11% | 15% |
+| 3 | 97% | 99% | 99% | 98% |
+| 4 | 32% | 31% | 40% | 74% |
+| 5 | 3% | 2% | 3% | 3% |
+| 6 | 75% | 56% | 62% | 52% |
+| Chefe | 70% | 68% | 53% | 43% |
+
+O robô vai mal nas metas de criar item (fases 2 e 5), como nos outros mercados. A fase 4 ficou mais fácil de propósito, por ser o tutorial da Maria Flor. O chefe ficou um pouco mais difícil que o de Salvador, seguindo a subida de dificuldade entre mercados. Na primeira versão a encomenda do chefe ia até o nível 4 e o robô vencia só 11%: o 3º item (nível 4, desconhecido até o fim) travava a fase; com níveis 2 a 3 e 25 turnos, 43%. Vigiar com jogadores: se a roda parece ajudar ou atrapalhar, e se a encomenda "um de cada vez" fica clara sem ler o tutorial.
+
+**Diário:** 7 cartões novos (Mercado de São José, Ciranda, Cana-de-açúcar, Renda renascença, Bolo de rolo, Frevo, Galo da Madrugada) e as curiosidades dos 15 ingredientes no Álbum, a validar com pesquisa e revisão local.
+
+**Arte e música:** itens 3D próprios (grade do Nano Banana) e, na mesma leva, a arte própria dos 15 itens de Manaus, que até então eram cópias da Quitanda. A casa da roda de ciranda (pixel art em quadros, como o sol), o ícone da Despensa e o Galo da Madrugada (ilustração pintada, como o saveiro). Prompts em `docs/arte/prompt-nano-banana-recife.md`. A música é a do mercado 04 da Quitanda (ciranda), em `versao-a-rota-das-feiras/musica/04.ogg`.
 
 ## 4. Versão B — Quitanda Zen (passatempo, foco em anúncios)
 

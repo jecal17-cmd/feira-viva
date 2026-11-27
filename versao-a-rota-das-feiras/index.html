@@ -232,6 +232,38 @@ button.pill{cursor:pointer}
 .order .ttl{position:absolute;top:-8px;right:-4px;font:800 10.5px/1 var(--text);background:#C9772B;color:#fff;border-radius:99px;padding:3px 5px;z-index:1}
 .order .ttl.low{background:#C8321E}
 .sub .tide.sunt{color:#C9772B}
+/* Recife: roda de ciranda (contorno tracejado coral, seta no centro), borda do Galo, encomenda da Maria Flor e Despensa */
+.cell.roda,.cell.rodac{box-shadow:inset 0 0 0 2px color-mix(in srgb,#E0795B 70%,transparent)}
+.cell.roda:not(.sun):not(.shade){background:var(--ob,none) center/var(--obz,100%) no-repeat,url(obstaculos/ciranda-1.webp) center/104% no-repeat,var(--hole)}
+.cell.roda.ccw:not(.sun):not(.shade){background-image:var(--ob,none),url(obstaculos/ciranda-1i.webp)}
+.cell.roda:not(.has):not(.crate):not(.sun):not(.shade){animation:ciranda 1.4s steps(1) infinite}
+.cell.roda.ccw:not(.has):not(.crate):not(.sun):not(.shade){animation-name:cirandai}
+@keyframes ciranda{0%{background-image:url(obstaculos/ciranda-1.webp)}50%{background-image:url(obstaculos/ciranda-2.webp)}}
+@keyframes cirandai{0%{background-image:url(obstaculos/ciranda-1i.webp)}50%{background-image:url(obstaculos/ciranda-2i.webp)}}
+.cell.has.roda:not(.sun):not(.shade){background:linear-gradient(color-mix(in srgb,var(--cell) 50%,transparent),color-mix(in srgb,var(--cell) 50%,transparent)),url(obstaculos/ciranda-1.webp) center/104% no-repeat,var(--hole)}
+.cell.rodac:not(.sun):not(.shade){background:var(--ob,none) center/var(--obz,100%) no-repeat,url(obstaculos/ciranda-4.webp) center/104% no-repeat,var(--hole)}
+.cell.has.rodac:not(.sun):not(.shade){background:linear-gradient(color-mix(in srgb,var(--cell) 50%,transparent),color-mix(in srgb,var(--cell) 50%,transparent)),url(obstaculos/ciranda-4.webp) center/104% no-repeat,var(--hole)}
+.cell.rodac::after{content:"↻";position:absolute;left:5%;top:0;font:800 calc(var(--cs)*.3)/1.2 var(--text);color:#D0603F;z-index:2;pointer-events:none}
+.cell.rodac.ccw::after{content:"↺"}
+.cell.borda{box-shadow:inset 0 0 0 2px color-mix(in srgb,#C33C7A 35%,transparent)}
+.cell.logo,.cell.roda.logo:not(.has):not(.crate):not(.sun):not(.shade){animation:logo .9s ease-in-out infinite}
+@keyframes logo{50%{box-shadow:inset 0 0 0 3px #E0795B}}
+.cell.gira{animation:gira .38s ease-out}
+@keyframes gira{0%{transform:rotate(-30deg) scale(.7);opacity:.5}100%{transform:none;opacity:1}}
+.sub .tide.rodat{color:#C3502F}
+.order.flor{position:relative;border-color:#C33C7A;background:color-mix(in srgb,#F08DB6 14%,var(--panel));box-shadow:0 0 0 2px color-mix(in srgb,#F08DB6 50%,transparent)}
+.order .ttl.flr{background:#C33C7A}
+.order.flor .need{gap:5px;font-size:19px}
+.need .no{opacity:.45;font-size:.8em}
+.info.hasdesp{flex-direction:row;flex-wrap:nowrap}.info.hasdesp p{font-size:12px}
+.desp{display:flex;align-items:center;gap:5px;margin-left:auto;flex:none}
+.desp .dl{width:26px;height:26px;background:url(itens/despensa.webp) center/contain no-repeat}
+.dslot{width:40px;height:40px;border-radius:10px;border:2px dashed color-mix(in srgb,#B4533A 55%,transparent);background:var(--hole);position:relative;display:grid;place-items:center;font-size:24px;padding:0}
+.dslot .em .ii{width:30px;height:30px;object-fit:contain}
+.dslot.has{border-style:solid;border-color:var(--lc,#B4533A);background:var(--panel)}
+.dslot.sel{box-shadow:0 0 0 3px var(--gold)}
+.dslot.want{border-color:var(--gold)}
+.dslot .lv{position:absolute;right:-4px;bottom:-4px;min-width:16px;height:16px;border-radius:99px;background:var(--lc,var(--lvl));color:#fff;font:800 10px/16px var(--text);text-align:center}
 .saveiro{position:fixed;z-index:60;pointer-events:none;transform:translate(-50%,-80%)}
 .tool .ii,.info .ii{width:1.3em;height:1.3em;object-fit:contain;vertical-align:middle}
 .cell.armed{cursor:crosshair}
@@ -249,7 +281,7 @@ button.pill{cursor:pointer}
 .basket small{font-size:10px;color:var(--muted)}
 .basket.tool{flex:.8 1 0}
 .basket.tool.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
-@media (prefers-reduced-motion: reduce){.cell.pop,.cell.hint,.cell.key,.node .ring,.cell.sun,.cell .heat.low{animation:none!important}}
+@media (prefers-reduced-motion: reduce){.cell.pop,.cell.hint,.cell.key,.node .ring,.cell.sun,.cell .heat.low,.cell.logo,.cell.gira{animation:none!important}}
 /* folhas, cartões, diário */
 .sheet{position:fixed;inset:0;z-index:20;background:var(--bg);overflow:auto;padding-block:calc(14px + env(safe-area-inset-top,0px)) calc(24px + env(safe-area-inset-bottom,0px));
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -330,19 +362,27 @@ const MAX=5, COLS=6, ROWS=7, KEY='rota-das-feiras-v1', MAX_TOOLS=2, MOLD_EVERY=3
 // Salvador (seção 3.15): sol forte (item de nível 3+ parado no sol por SUN_HEAT turnos perde 1 nível), engradado de coco
 // (2 fusões ao lado para abrir), pedido da Dona Dadá (2 itens, prazo curto, +2 turnos) e o saveiro do chefe.
 const SUN_HEAT=5, SUN_LV=3, SAVEIRO_EVERY=5, SAVEIRO_N=3, SAVEIRO_HP=2, DADA_BONUS=2;
+// Recife (seção 3.16): roda de ciranda (as 8 casas em volta do centro giram 1 casa a cada CIRANDA_EVERY turnos), encomenda
+// da Maria Flor (3 itens, um de cada vez, +FLOR_BONUS turno por item), Galo da Madrugada (a borda gira a cada GALO_EVERY)
+// e a Despensa do Selo Carne de Sol (DESP_N vagas fora do tabuleiro).
+const CIRANDA_EVERY=3, FLOR_BONUS=1, GALO_EVERY=5, DESP_N=2;
 // Linhas do Ver-o-Peso (documento de design, seção 3.2): [emoji provisório, nome pt, nome en]
 const LINES={
  ac:{name:['Açaí','Açaí'],hue:285,it:[['🍇','Cacho de açaí','Açaí bunch'],['🫐','Fruto','Açaí berries'],['🥣','Polpa','Açaí pulp'],['🥤','Açaí batido','Blended açaí'],['🍧','Tigela de açaí com tapioca','Açaí bowl with tapioca']]},
  pe:{name:['Peixe','Fish'],hue:200,it:[['🐟','Peixe pequeno','Small fish'],['🐠','Peixe limpo','Cleaned fish'],['🍣','Filé','Fillet'],['🍱','Peixe assado','Roast fish'],['🥘','Pirarucu de casaca','Pirarucu de casaca']]},
  jt:{name:['Jambu/Tucupi','Jambu/Tucupi'],hue:95,it:[['🌿','Folha de jambu','Jambu leaf'],['🥬','Maço de jambu','Jambu bunch'],['🍵','Caldo de tucupi','Tucupi broth'],['🍲','Tacacá','Tacacá'],['🦆','Pato no tucupi','Pato no tucupi']]},
- // Mercado Adolpho Lisboa (Manaus). A arte reaproveita itens 3D da Quitanda (lista em docs/arte/lista-de-arte.md).
+ // Mercado Adolpho Lisboa (Manaus). Arte própria desde 26/11/2026 (grade em docs/arte/referencias/grade-rota-manaus.jpg).
  pr:{name:['Peixes do rio','River fish'],hue:185,it:[['🦐','Camarão regional','River shrimp'],['🐟','Jaraqui','Jaraqui'],['🎣','Pirarucu','Pirarucu'],['🍲','Caldeirada de tambaqui','Caldeirada de tambaqui'],['🍱','Prato do mercado','Market lunch plate']]},
  md:{name:['Mandioca','Cassava'],hue:38,it:[['🍠','Mandioca','Cassava root'],['🌾','Farinha do Uarini','Farinha do Uarini'],['🥣','Goma de tapioca','Tapioca starch'],['🫓','Tapioca','Tapioca'],['🌮','Tapioquinha de tucumã','Tapioquinha de tucumã']]},
  fr:{name:['Frutas','Fruit'],hue:345,it:[['🌰','Castanha-do-pará','Brazil nuts'],['🍌','Banana pacovã','Pacovã banana'],['🍍','Abacaxi','Pineapple'],['🧃','Suco de frutas','Fruit juice'],['🥤','Guaraná','Guaraná']]},
  // Feira de São Joaquim (Salvador). Arte própria em itens/ (grade em docs/arte/referencias/grade-rota-salvador.jpg).
  ff:{name:['Fradinho','Black-eyed peas'],hue:44,it:[['🫘','Feijão-fradinho','Black-eyed peas'],['🥣','Fradinho de molho','Soaked black-eyed peas'],['🥄','Massa de acarajé','Acarajé batter'],['🍃','Abará','Abará'],['🧆','Acarajé','Acarajé']]},
  cm:{name:['Camarão','Shrimp'],hue:8,it:[['🦐','Camarão fresco','Fresh shrimp'],['🍤','Camarão seco','Dried shrimp'],['🍛','Vatapá','Vatapá'],['🥣','Bobó de camarão','Bobó de camarão'],['🍲','Moqueca de camarão','Moqueca de camarão']]},
- cc:{name:['Coco','Coconut'],hue:150,it:[['🥥','Coco verde','Green coconut'],['🌰','Coco seco','Dry coconut'],['❄️','Coco ralado','Grated coconut'],['🥛','Leite de coco','Coconut milk'],['🍬','Cocada','Cocada']]}
+ cc:{name:['Coco','Coconut'],hue:150,it:[['🥥','Coco verde','Green coconut'],['🌰','Coco seco','Dry coconut'],['❄️','Coco ralado','Grated coconut'],['🥛','Leite de coco','Coconut milk'],['🍬','Cocada','Cocada']]},
+ // Mercado de São José (Recife). Arte própria (grade em docs/arte/referencias/grade-rota-recife.jpg; prompts em docs/arte/prompt-nano-banana-recife.md).
+ cs:{name:['Carne de sol','Carne de sol'],hue:0,it:[['🧂','Sal grosso','Coarse salt'],['🥩','Carne de sol','Carne de sol'],['🍢','Espetinho de carne de sol','Carne de sol skewer'],['🫛','Feijão-verde','Fresh green beans'],['🍛','Baião de dois','Baião de dois']]},
+ qc:{name:['Queijo coalho','Queijo coalho'],hue:225,it:[['🥛','Leite','Milk'],['🧈','Manteiga de garrafa','Bottled butter'],['🧀','Queijo coalho','Queijo coalho'],['🧇','Requeijão','Requeijão'],['🍌','Cartola','Cartola']]},
+ cn:{name:['Cana','Sugarcane'],hue:28,it:[['🥤','Caldo de cana','Sugarcane juice'],['🟫','Rapadura','Rapadura'],['🍯','Mel de engenho','Cane molasses'],['🟥','Goiabada','Guava paste'],['🍥','Bolo de rolo','Bolo de rolo']]}
 };
 // Explicações curtas (só em inglês) dos nomes mantidos em português. Chave: linha + nível.
 const GLOSS={ac1:'berries of an Amazonian palm',pe5:'layered dish of shredded salted pirarucu and farofa',jt1:'Amazonian herb that makes your mouth tingle',jt2:'Amazonian herb that makes your mouth tingle',
@@ -350,7 +390,10 @@ const GLOSS={ac1:'berries of an Amazonian palm',pe5:'layered dish of shredded sa
  pr2:'small river fish; locals say whoever eats it never leaves Manaus',pr3:'giant Amazon river fish',pr4:'stew of tambaqui, a large Amazon fish',
  md2:'crunchy, bead-like cassava flour from Uarini, in Amazonas',md5:'tapioca filled with tucumã palm fruit and cheese',fr2:'big, sturdy banana, often eaten fried',fr5:'soda made from an Amazonian berry',
  ff3:'black-eyed pea dough whipped with onion and salt',ff4:'black-eyed pea dough steamed in a banana leaf',ff5:'black-eyed pea fritter fried in dendê oil, split and filled',
- cm3:'creamy paste of bread, coconut milk, peanuts, dried shrimp and dendê',cm4:'shrimp in a creamy cassava and coconut purée',cm5:'shrimp stew with coconut milk and dendê oil, cooked in a clay pot',cc5:'chewy coconut candy'};
+ cm3:'creamy paste of bread, coconut milk, peanuts, dried shrimp and dendê',cm4:'shrimp in a creamy cassava and coconut purée',cm5:'shrimp stew with coconut milk and dendê oil, cooked in a clay pot',cc5:'chewy coconut candy',
+ cs2:'salted beef dried in the shade and the wind',cs3:'carne de sol: salted, air-dried beef',cs5:'rice and green beans cooked together with cheese and carne de sol',
+ qc2:'clarified butter sold in bottles in the Northeast',qc3:'firm, squeaky cheese that grills without melting',qc4:'firm cooked cheese from the backlands, golden and creamy',qc5:'fried banana topped with grilled cheese, sugar and cinnamon',
+ cn2:'solid block of raw cane sugar',cn3:'thick molasses from the old sugar mills',cn5:'rolled cake with paper-thin layers and guava paste'};
 // Fases: 7 por mercado (6 normais + chefe), em sequência; m = mercado (índice em MARKETS). O índice global da fase é a
 // chave do progresso (S.best, S.cards, painel), então fases novas entram sempre no fim da lista.
 // goals: orders (entregar pedidos), make (criar item), clear (limpar obstáculos).
@@ -384,10 +427,20 @@ const PHASES=[
  {m:2,name:['Tabuleiro da baiana','The baiana’s tray'],turns:19,lines:['ff','cm','cc'],items:10,lv:[2,3],two:.2,crate:2,engr:1,mold:0,dada:{every:5,ttl:8,lv:[2,3],first:1},goals:[{t:'dada',n:3},{t:'orders',n:5}],tut:'dada'},
  {m:2,name:['O sol anda','The sun moves'],turns:23,lines:['ff','cm','cc'],items:12,lv:[2,3],two:.2,crate:2,engr:2,mold:0,sun:{w:2,x:0,step:4},goals:[{t:'make',l:'cm',lv:5,n:1}],tut:'solanda'},
  {m:2,name:['Hora do acarajé','Acarajé time'],turns:25,lines:['ff','cm','cc'],items:12,lv:[2,4],two:.3,crate:2,engr:2,mold:0,sun:{w:2,x:0,step:4},dada:{every:7,ttl:8,lv:[2,3]},goals:[{t:'orders',n:7},{t:'clear',n:4}],tut:'dende'},
- {m:2,name:['Chefe: Chegada do saveiro','Boss: The saveiro arrives'],turns:22,lines:['ff','cm','cc'],items:12,lv:[2,4],two:.3,crate:1,engr:1,mold:0,sun:{w:2,x:2,step:4},dada:{every:6,ttl:8,lv:[2,3]},goals:[{t:'orders',n:7},{t:'dada',n:2}],boss:'saveiro',tut:'saveiro'}
+ {m:2,name:['Chefe: Chegada do saveiro','Boss: The saveiro arrives'],turns:22,lines:['ff','cm','cc'],items:12,lv:[2,4],two:.3,crate:1,engr:1,mold:0,sun:{w:2,x:2,step:4},dada:{every:6,ttl:8,lv:[2,3]},goals:[{t:'orders',n:7},{t:'dada',n:2}],boss:'saveiro',tut:'saveiro'},
+ // Mercado de São José (Recife): abre ao vencer o chefe de Salvador. Linhas Carne de sol, Queijo coalho e Cana; selo Carne de Sol.
+ // ciranda: rodas (centro na linha r, coluna c; dir 1 = horário, -1 = anti-horário) que giram a cada CIRANDA_EVERY turnos.
+ // flor: encomenda da Maria Flor (3 itens, um de cada vez, níveis de lv[0] a lv[1]; chega every turnos depois da anterior).
+ {m:3,name:['Bom dia, Recife','Good morning, Recife'],turns:16,lines:['cs','qc'],items:7,lv:[2,3],two:0,crate:2,mold:0,goals:[{t:'orders',n:5}],tut:'recife'},
+ {m:3,name:['Roda de ciranda','The ciranda circle'],turns:17,lines:['cs','qc'],items:8,lv:[2,3],two:.15,crate:2,mold:0,ciranda:[{r:3,c:2,dir:1}],goals:[{t:'make',l:'qc',lv:4,n:1}],tut:'ciranda'},
+ {m:3,name:['Chegou a cana','Here comes the sugarcane'],turns:18,lines:['cs','qc','cn'],items:10,lv:[2,3],two:.2,crate:3,mold:0,ciranda:[{r:3,c:1,dir:1}],sun:{w:2,x:4,step:0},goals:[{t:'orders',n:6}],tut:'cana'},
+ {m:3,name:['Encomenda da Maria Flor','Maria Flor’s order'],turns:19,lines:['cs','qc','cn'],items:10,lv:[2,3],two:.2,crate:2,mold:0,flor:{every:4,lv:[1,3],first:1},goals:[{t:'flor',n:2},{t:'orders',n:4}],tut:'flor'},
+ {m:3,name:['Duas rodas','Two circles'],turns:23,lines:['cs','qc','cn'],items:12,lv:[2,3],two:.2,crate:2,mold:0,ciranda:[{r:2,c:1,dir:1},{r:4,c:4,dir:-1}],goals:[{t:'make',l:'cn',lv:5,n:1}],tut:'rodas'},
+ {m:3,name:['Frevo no mercado','Frevo at the market'],turns:25,lines:['cs','qc','cn'],items:12,lv:[2,4],two:.3,crate:5,mold:0,ciranda:[{r:3,c:2,dir:1}],sun:{w:2,x:0,step:4},flor:{every:6,lv:[2,4]},goals:[{t:'orders',n:7},{t:'clear',n:4}],tut:'carnesol'},
+ {m:3,name:['Chefe: Galo da Madrugada','Boss: Galo da Madrugada'],turns:25,lines:['cs','qc','cn'],items:12,lv:[2,4],two:.3,crate:2,mold:0,ciranda:[{r:3,c:2,dir:1}],flor:{every:5,lv:[2,3]},goals:[{t:'orders',n:7},{t:'flor',n:1}],boss:'galo',tut:'galo'}
 ];
-const OPEN_M=3;                                                     // mercados jogáveis neste teste: Ver-o-Peso, Manaus e Salvador
-const BOSS_IC={tide:'🌊',rios:'🌊',saveiro:'⛵'}, bossIc=c=>BOSS_IC[c.boss]||'🌊';
+const OPEN_M=4;                                                     // mercados jogáveis neste teste: Ver-o-Peso, Manaus, Salvador e Recife
+const BOSS_IC={tide:'🌊',rios:'🌊',saveiro:'⛵',galo:'🐓'}, bossIc=c=>BOSS_IC[c.boss]||'🌊';
 const mOf=i=>PHASES[i].m||0, phasesOf=m=>PHASES.map((_,i)=>i).filter(i=>mOf(i)===m), firstOf=m=>phasesOf(m)[0], bossOf=m=>phasesOf(m).find(i=>PHASES[i].boss);
 const mLines=m=>[...new Set(phasesOf(m).flatMap(i=>PHASES[i].lines))];
 const TUT={
@@ -421,7 +474,21 @@ const TUT={
  dende:['🌴',['Selo Dendê','Dendê Seal'],['Entregue 3 itens de nível 5 de cada linha de Salvador no espaço <b>🏅 Selo</b> e vença o chefe para ganhar o Selo <b>Dendê</b>: a 1ª fusão de cada fase sobe 1 nível extra.',
    'Deliver 3 level 5 items of each Salvador line to the <b>🏅 Seal</b> slot and beat the boss to earn the <b>Dendê</b> Seal: the first merge of each level jumps 1 extra level.']],
  saveiro:['⛵',['Chefe: Chegada do saveiro','Boss: The saveiro arrives'],['A cada 5 turnos um <b>saveiro</b> do Recôncavo atraca pela esquerda e descarrega <b>3 engradados</b> nas casas livres mais à esquerda. Abra-os para ganhar cocos, ou eles tomam o tabuleiro. E o sol continua andando!',
-   'Every 5 turns a <b>saveiro</b> sailboat from the Recôncavo docks on the left and unloads <b>3 coconut crates</b> on the free spaces furthest left. Open them for coconuts, or they’ll take over the board. And the sun keeps moving!']]
+   'Every 5 turns a <b>saveiro</b> sailboat from the Recôncavo docks on the left and unloads <b>3 coconut crates</b> on the free spaces furthest left. Open them for coconuts, or they’ll take over the board. And the sun keeps moving!']],
+ recife:['🎭',['Mercado de São José','Mercado de São José'],['Bem-vindo ao Recife! As linhas aqui são <b>Carne de sol</b>, <b>Queijo coalho</b> e, a partir da fase 3, <b>Cana</b>. Em Pernambuco tudo dança: prepare-se para rodas de ciranda que mexem no tabuleiro e para as encomendas da Maria Flor.',
+   'Welcome to Recife! The item lines here are <b>Carne de sol</b>, <b>Queijo coalho</b> and, from level 3, <b>Sugarcane</b>. In Pernambuco everything dances: get ready for ciranda circles that shift the board and for Maria Flor’s orders.']],
+ ciranda:['💃',['Roda de ciranda','The ciranda circle'],['As casas com a <b>roda tracejada</b> dançam a ciranda: a cada 3 turnos, as 8 casas em volta do centro <b>giram 1 casa</b> na direção da seta, levando itens e caixotes juntos. O centro fica parado. Use a roda a seu favor: ela pode juntar vizinhos que estavam longe.',
+   'Spaces with the <b>dashed ring</b> dance the ciranda: every 3 turns, the 8 spaces around the center <b>turn by 1 space</b> in the arrow’s direction, taking items and crates along. The center stays put. Use the circle to your advantage: it can bring far-off items side by side.']],
+ cana:['🎋',['Chegou a cana','Here comes the sugarcane'],['A <b>Cana</b> entra no mercado: caldo de cana, rapadura e mel de engenho, que viram goiabada e bolo de rolo. E o sol do Nordeste também chegou ao Recife: cuidado com os itens grandes nas casas ☀️.',
+   'Sugarcane arrives at the market: cane juice, rapadura and molasses, which become guava paste and bolo de rolo. And the Northeast sun has reached Recife too: watch your big items on the ☀️ spaces.']],
+ flor:['🧵',['Encomenda da Maria Flor','Maria Flor’s order'],['A rendeira Maria Flor faz uma <b>encomenda de 3 itens</b>, mas pede <b>um de cada vez</b>: o próximo só aparece depois que você entrega o anterior. Cada item entregue dá <b>+1 turno</b>, e a encomenda completa paga moedas em dobro. Ela não tem pressa.',
+   'Maria Flor, the lacemaker, places an <b>order of 3 items</b>, but asks for <b>one at a time</b>: the next one only shows up after you deliver the last. Every item you deliver gives <b>+1 turn</b>, and the full order pays double coins. She’s in no hurry.']],
+ rodas:['🔄',['Duas rodas','Two circles'],['Agora são <b>duas rodas de ciranda</b>, e uma gira ao contrário da outra (veja as setas). As duas giram juntas a cada 3 turnos.',
+   'Now there are <b>two ciranda circles</b>, and one turns the opposite way (check the arrows). Both turn together every 3 turns.']],
+ carnesol:['🥩',['Selo Carne de Sol','Carne de Sol Seal'],['Entregue 3 itens de nível 5 de cada linha do Recife no espaço <b>🏅 Selo</b> e vença o chefe para ganhar o Selo <b>Carne de Sol</b>: uma <b>Despensa</b> com 2 vagas fora do tabuleiro, onde nada mexe nos seus itens.',
+   'Deliver 3 level 5 items of each Recife line to the <b>🏅 Seal</b> slot and beat the boss to earn the <b>Carne de Sol</b> Seal: a <b>Pantry</b> with 2 spaces off the board, where nothing can touch your items.']],
+ galo:['🐓',['Chefe: Galo da Madrugada','Boss: Galo da Madrugada'],['É sábado de Carnaval e o Galo da Madrugada, o maior bloco do mundo, passa pelo mercado! A cada 5 turnos o <b>bloco</b> dá a volta no tabuleiro: <b>todas as casas da borda giram 1 casa</b> no sentido horário. A roda de ciranda do meio continua girando.',
+   'It’s Carnival Saturday and the Galo da Madrugada, the world’s biggest street parade, comes through the market! Every 5 turns the <b>parade</b> goes around the board: <b>all edge spaces shift by 1</b> clockwise. The ciranda circle in the middle keeps turning.']]
 };
 // Diário de Viagem: um cartão por fase. Textos a validar com pesquisa e revisão local antes de publicar.
 const CARDS=[
@@ -510,7 +577,36 @@ const CARDS=[
  {mk:2,em:'⛵',t:['Saveiros','Saveiros'],p:['Baía de Todos-os-Santos (BA)','Bay of All Saints, Bahia'],
   f:['Barcos de madeira a vela que levavam a produção do Recôncavo até as feiras de Salvador.','Wooden sailboats that carried produce from the Recôncavo to Salvador’s markets.'],
   m:['Durante gerações, os saveiros atracaram em Água de Meninos e na rampa do Mercado Modelo carregados de farinha, frutas, cerâmica e lenha. Hoje são poucos, mas ainda aparecem nas regatas e festas da baía.',
-   'For generations, saveiros docked at Água de Meninos and the Mercado Modelo ramp loaded with cassava flour, fruit, pottery and firewood. Few are left today, but they still sail in the bay’s regattas and festivals.']}
+   'For generations, saveiros docked at Água de Meninos and the Mercado Modelo ramp loaded with cassava flour, fruit, pottery and firewood. Few are left today, but they still sail in the bay’s regattas and festivals.']},
+ // Mercado de São José (Recife). Textos a validar com pesquisa e revisão local antes de publicar.
+ {mk:3,em:'🎭',t:['Mercado de São José','Mercado de São José'],p:['Recife (PE)','Recife, Pernambuco'],
+  f:['Mercado de ferro inaugurado em 1875 no bairro de São José, no centro do Recife.','An iron market hall opened in 1875 in the São José district, in central Recife.'],
+  m:['A estrutura de ferro foi fabricada na França e montada no Recife, e é tida como a mais antiga construção pré-fabricada em ferro do Brasil. Lá dentro e em volta há artesanato, cordel, ervas, peixe, carne de sol e queijo coalho.',
+   'Its iron frame was made in France and assembled in Recife, and it is considered the oldest prefabricated iron building in Brazil. Inside and around it you’ll find crafts, cordel booklets, herbs, fish, carne de sol and queijo coalho.']},
+ {mk:3,em:'💃',t:['Ciranda','Ciranda'],p:['Litoral de Pernambuco','Pernambuco’s coast'],
+  f:['Dança de roda de mãos dadas, nascida entre pescadores do litoral pernambucano.','A hand-in-hand circle dance born among the fishing communities of Pernambuco’s coast.'],
+  m:['Quem chega entra na roda, que gira devagar ao som da zabumba, do ganzá e da voz do mestre cirandeiro. Lia de Itamaracá, da ilha de Itamaracá, é a cirandeira mais famosa do Brasil.',
+   'Anyone can join the circle, which turns slowly to the beat of the zabumba drum, the ganzá shaker and the lead singer’s voice. Lia de Itamaracá, from the island of Itamaracá, is Brazil’s most famous ciranda singer.']},
+ {mk:3,em:'🎋',t:['Cana-de-açúcar','Sugarcane'],p:['Zona da Mata (PE)','Zona da Mata, Pernambuco'],
+  f:['Por séculos, a cana plantada nos engenhos da Zona da Mata foi a maior riqueza de Pernambuco.','For centuries, sugarcane grown on the plantations of the Zona da Mata was Pernambuco’s greatest source of wealth.'],
+  m:['Nos engenhos, a cana era moída para fazer açúcar, rapadura, mel de engenho e cachaça, com o trabalho de africanos escravizados. Essa história marca até hoje a comida, a música e a paisagem da região.',
+   'At the mills, cane was crushed to make sugar, rapadura, molasses and cachaça, with the labor of enslaved Africans. That history still shapes the region’s food, music and landscape today.']},
+ {mk:3,em:'🧵',t:['Renda renascença','Renascença lace'],p:['Agreste (PE)','Agreste, Pernambuco'],
+  f:['Renda feita à mão com agulha, linha e uma fita estreita, o lacê, que desenha as formas.','Lace made by hand with a needle, thread and a narrow tape called lacê, which outlines the shapes.'],
+  m:['No Agreste de Pernambuco e no Cariri da Paraíba, uma toalha de renascença pode levar meses. Pesqueira, em Pernambuco, é uma das cidades mais conhecidas por essa renda, e o saber passa de mãe para filha.',
+   'In Pernambuco’s Agreste and Paraíba’s Cariri, one renascença tablecloth can take months. Pesqueira, in Pernambuco, is one of the towns best known for this lace, and the skill passes from mother to daughter.']},
+ {mk:3,em:'🍥',t:['Bolo de rolo','Bolo de rolo'],p:['Recife (PE)','Recife, Pernambuco'],
+  f:['Camadas finíssimas de massa com goiabada, enroladas como um rocambole.','Paper-thin layers of cake and guava paste, rolled up like a Swiss roll.'],
+  m:['Descende de um doce português, o colchão de noiva, recheado de amêndoas; em Pernambuco, ganhou a goiabada. Uma lei estadual o declarou patrimônio cultural e imaterial de Pernambuco.',
+   'It descends from a Portuguese sweet, the “bride’s mattress”, filled with almonds; in Pernambuco it got guava paste instead. A state law declared it part of Pernambuco’s intangible cultural heritage.']},
+ {mk:3,em:'☂️',t:['Frevo','Frevo'],p:['Recife e Olinda (PE)','Recife and Olinda, Pernambuco'],
+  f:['Música e dança aceleradas do Carnaval pernambucano, com passistas e sombrinhas coloridas.','The fast music and dance of Pernambuco’s Carnival, with acrobatic dancers and colorful little umbrellas.'],
+  m:['O nome vem de “ferver”. Nasceu no fim do século 19 nas ruas do Recife, misturando marchas, bandas militares e golpes de capoeira. Em 2012, a UNESCO o declarou Patrimônio Cultural Imaterial da Humanidade.',
+   'The name comes from “ferver”, to boil. It was born in the late 19th century in Recife’s streets, mixing marches, military bands and capoeira moves. In 2012, UNESCO added it to the list of the Intangible Cultural Heritage of Humanity.']},
+ {mk:3,em:'🐓',t:['Galo da Madrugada','Galo da Madrugada'],p:['Recife (PE)','Recife, Pernambuco'],
+  f:['Bloco que toma o centro do Recife no sábado de Carnaval, ao som de frevo.','A street parade that takes over central Recife on Carnival Saturday, to the sound of frevo.'],
+  m:['Fundado em 1978, entrou para o Guinness como o maior bloco de Carnaval do mundo. Todo ano, um galo gigante é montado numa ponte sobre o rio Capibaribe para receber os foliões.',
+   'Founded in 1978, it entered the Guinness book as the world’s largest Carnival parade. Every year a giant rooster is set up on a bridge over the Capibaribe river to welcome the revelers.']}
 ];
 // Cada cartão pertence a uma fase (ph = índice em PHASES). Os do Ver-o-Peso e de Manaus seguem a posição na lista; os
 // demais mercados seguem a ordem das suas fases (as do evento ficam no meio de PHASES e não têm cartão).
@@ -579,7 +675,23 @@ const INFO={
  cc2:['O coco seco é o maduro: casca marrom e fibrosa, polpa branca e firme. É dele que sai o coco ralado.','The dry coconut is the ripe one: brown, hairy husk and firm white flesh. Grated coconut comes from it.'],
  cc3:['O coco ralado vai na cocada, no cuscuz, no bolo e no quindim. Na feira, ainda tem quem rale à mão.','Grated coconut goes into cocada, cuscuz, cake and quindim. At the market, some still grate it by hand.'],
  cc4:['O leite de coco é feito batendo o coco ralado com água morna e espremendo num pano.','Coconut milk is made by blending grated coconut with warm water and squeezing it through a cloth.'],
- cc5:['A cocada pode ser branca ou preta, feita com açúcar queimado ou rapadura. É vendida no tabuleiro das baianas.','Cocada can be white or dark, made with burnt sugar or rapadura. It’s sold on the baianas’ trays.']
+ cc5:['A cocada pode ser branca ou preta, feita com açúcar queimado ou rapadura. É vendida no tabuleiro das baianas.','Cocada can be white or dark, made with burnt sugar or rapadura. It’s sold on the baianas’ trays.'],
+ // Mercado de São José (Recife). Textos a validar com pesquisa e revisão local.
+ cs1:['Na carne de sol vai pouco sal grosso, só o bastante para secar a superfície. Quase todo o sal marinho do Brasil vem das salinas do Rio Grande do Norte.','Carne de sol takes only a little coarse salt, just enough to dry the surface. Almost all of Brazil’s sea salt comes from the salt flats of Rio Grande do Norte.'],
+ cs2:['Apesar do nome, a carne de sol seca à sombra e ao vento, depois de salgada. Fica macia por dentro e é comida em todo o Nordeste.','Despite the name, carne de sol (“sun meat”) dries in the shade and the wind after salting. It stays tender inside and is eaten all over the Northeast.'],
+ cs3:['Assada na brasa em cubos, vem com manteiga de garrafa, macaxeira e vinagrete. É petisco certo nos bares do Recife.','Grilled in cubes over charcoal, it comes with bottled butter, cassava and vinaigrette. It’s a classic bar snack in Recife.'],
+ cs4:['É o feijão colhido ainda verde, antes de secar na vagem. Cozinha rápido e entra no baião de dois e no arrumadinho.','These are beans picked while still green, before they dry in the pod. They cook fast and go into baião de dois and arrumadinho.'],
+ cs5:['Arroz e feijão cozidos juntos, com queijo coalho, carne de sol e nata. Luiz Gonzaga e Humberto Teixeira têm um baião com o nome do prato.','Rice and beans cooked together with queijo coalho, carne de sol and cream. Luiz Gonzaga and Humberto Teixeira wrote a baião song named after the dish.'],
+ qc1:['O Agreste de Pernambuco é terra de gado leiteiro: o leite de lá abastece as queijarias que fazem o queijo coalho.','Pernambuco’s Agreste is dairy country: its milk supplies the small dairies that make queijo coalho.'],
+ qc2:['É manteiga clarificada, que fica líquida e dourada e é vendida em garrafas. Vai na carne de sol, no cuscuz e na macaxeira.','It’s clarified butter that stays liquid and golden and is sold in bottles. It goes on carne de sol, cuscuz and cassava.'],
+ qc3:['Firme, o queijo coalho range nos dentes e vai à brasa no espeto sem derreter. Nas praias do Recife, é vendido assado na hora.','Firm and squeaky, queijo coalho goes on the grill on a skewer without melting. On Recife’s beaches it’s sold grilled on the spot.'],
+ qc4:['O requeijão do sertão é um queijo cozido, firme e de casca dourada, bem diferente do requeijão cremoso de copo.','Backlands requeijão is a firm cooked cheese with a golden crust, nothing like the creamy spread sold in jars.'],
+ qc5:['Banana frita coberta com queijo assado, açúcar e canela: a cartola é uma das sobremesas mais tradicionais de Pernambuco.','Fried banana topped with grilled cheese, sugar and cinnamon: cartola is one of Pernambuco’s most traditional desserts.'],
+ cn1:['A garapa sai da cana moída na hora, nas moendas das feiras e dos mercados. Toma-se gelada, com limão.','Cane juice is pressed fresh in the mills at markets and fairs. It’s drunk ice-cold, with lime.'],
+ cn2:['O caldo de cana fervido até endurecer vira tijolos de açúcar bruto. A rapadura era a energia de viajantes e vaqueiros do sertão.','Cane juice boiled until it hardens becomes bricks of raw sugar. Rapadura was the energy food of travelers and cowhands in the backlands.'],
+ cn3:['Melaço grosso e escuro, cozido do caldo de cana nos engenhos. Come-se com queijo coalho, cuscuz e farinha.','Thick, dark molasses, cooked from cane juice at the sugar mills. It’s eaten with queijo coalho, cuscuz and cassava flour.'],
+ cn4:['Goiaba cozida com açúcar até dar ponto de corte. Com queijo vira Romeu e Julieta; em Pernambuco, é o recheio do bolo de rolo.','Guava cooked with sugar until firm enough to slice. With cheese it becomes “Romeo and Juliet”; in Pernambuco it fills the bolo de rolo.'],
+ cn5:['A massa é assada em folhas finíssimas, passada na goiabada e enrolada: quanto mais voltas e mais finas, melhor o bolo.','The batter is baked in paper-thin sheets, spread with guava paste and rolled up: the more and thinner the layers, the better the cake.']
 };
 // Clientes (aba do Álbum): mercado de origem (índice de MARKETS, -1 = viaja com você), ocupação e frase. Mesmos personagens da Quitanda.
 const QUEM={
@@ -652,7 +764,7 @@ const TOOLS={hammer:['🔨',['Martelo','Hammer'],['remove um item ou obstáculo'
 // Ferramentas que aparecem: o Toldo só depois de Salvador aberto (no mercado) e só nas fases com sol (na fase).
 const toolShow=(k,c)=>k!=='toldo'||(c?!!c.sun:mOpen(2)||(S.tools.toldo||0)>0);
 const toolEm=k=>k==='toldo'?'<img class="ii" src="itens/toldo.webp" alt="" draggable="false">':TOOLS[k][0];
-const MAX_CONT=2, ORDER_COIN=2; const orderPay=o=>o.items.reduce((a,x)=>a+ORDER_COIN*x.n,0)*(o.dada?2:1);                       // continuações por fase ao ficar sem turnos; moedas por nível de item entregue
+const MAX_CONT=2, ORDER_COIN=2; const orderPay=o=>o.items.reduce((a,x)=>a+ORDER_COIN*x.n,0)*(o.dada||o.flor?2:1);                       // continuações por fase ao ficar sem turnos; moedas por nível de item entregue
 // Loja: compras com dinheiro real (simuladas neste protótipo), de US$ 0,50 a US$ 9,99. Selos e cartões nunca são vendidos.
 // UNIT é o valor de referência de cada coisa comprada avulsa; serve para calcular a economia dos kits.
 const UNIT={coins:.5/150,hammer:.33,pot:.33,turns:.5};
@@ -673,7 +785,7 @@ const REGS=['Norte','Nordeste','Centro-Oeste','Sudeste','Sul'], REGUF={ac:0,am:0
 const $=id=>document.getElementById(id), fmt=n=>Math.round(n).toLocaleString(LANG==='en'?'en-US':'pt-BR');
 const pick=a=>a[Math.floor(Math.random()*a.length)], rint=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
 // Arte (pastas itens/ e mercados/). Sem arte, fica o emoji.
-const ITEM_ART=new Set(Object.keys(LINES).flatMap(l=>[1,2,3,4,5].map(n=>l+'-'+n)));   // todas as 30 imagens prontas
+const ITEM_ART=new Set(Object.keys(LINES).flatMap(l=>[1,2,3,4,5].map(n=>l+"-"+n)));   // todas as 60 imagens prontas (12 linhas × 5 níveis)
 const ie=(l,n)=>ITEM_ART.has(l+'-'+n)?`<img class="ii" src="itens/${l}-${n}.webp" alt="" draggable="false">`:LINES[l].it[n-1][0];
 const artUrl=f=>f.img?`mercados/${f.img}.webp`:'';
 const tileHtml=(f,cls='')=>`<span class="mtile${cls?' '+cls:''}" aria-hidden="true">${f.img?`<img src="${artUrl(f)}" alt="" onerror="this.replaceWith('${f.ic}')">`:f.ic}</span>`;
@@ -687,7 +799,7 @@ const tname=k=>tx(TOOLS[k][1]), tdesc=k=>tx(TOOLS[k][2]), cap=s=>s[0].toUpperCas
 const turnsW=n=>n===1?tr('turno','turn'):tr('turnos','turns');
 const isAdj=(x,y)=>{ const d=Math.abs(x-y); return d===COLS||(d===1&&Math.floor(x/COLS)===Math.floor(y/COLS)); };
 const nbrs=i=>[i-COLS,i+COLS,i%COLS?i-1:-1,i%COLS<COLS-1?i+1:-1].filter(k=>k>=0&&k<COLS*ROWS);
-let albTab='ing', curM=0, S, P=null, screen='home', sel=null, drag=null, noClick=false, popAt=-1, obsQ=[], audio=null, toastTimer=null, quiet=false, lastAct=Date.now(), sheetName=null;
+let albTab='ing', curM=0, S, P=null, screen='home', sel=null, dsel=null, drag=null, noClick=false, popAt=-1, obsQ=[], audio=null, toastTimer=null, quiet=false, lastAct=Date.now(), sheetName=null;
 
 /* Trocar de aparelho: o progresso vira um código de texto (JSON comprimido em base64url, com verificação). */
 const b64u={ enc:u=>{ let s=''; for(let i=0;i<u.length;i+=0x8000) s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000)); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); },
@@ -707,7 +819,7 @@ function transferModal(){ modal(`<div class="big">📲</div><h2>${tr('Trocar de 
    <button class="btn ghosty" data-act="mclose">${tr('Fechar','Close')}</button>`);
   saveCode().then(c=>{ const el=$('xcode'); if(el) el.value=c; }).catch(()=>{}); }
 const starsIn=d=>Object.values(d.best||{}).reduce((a,b)=>a+(+b||0),0);
-function fresh(){ return {v:1,met:{},coins:100,best:{},cards:[],tools:{hammer:3,pot:3,turns:1,toldo:0},iap:{n:0,usd:0,once:[]},selos:[],sealOn:true,sealUse:{0:true,1:true,2:true},selo5:{ac:0,pe:0,jt:0},seen:{},diaryDone:false,diaryM:[],lastM:0,ev:EV_NEW(),
+function fresh(){ return {v:1,met:{},coins:100,best:{},cards:[],tools:{hammer:3,pot:3,turns:1,toldo:0},iap:{n:0,usd:0,once:[]},selos:[],sealOn:true,sealUse:{0:true,1:true,2:true,3:true},selo5:{ac:0,pe:0,jt:0},seen:{},diaryDone:false,diaryM:[],lastM:0,ev:EV_NEW(),
   stats:{ph:{}},opts:{sound:true,music:true,vSom:1,vMus:1,test:false,lang:LANG}}; }
 function load(){ try{ const d=JSON.parse(localStorage.getItem(KEY)); if(d&&d.v===1) return d; }catch(e){} return fresh(); }
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
@@ -831,7 +943,7 @@ function setLang(l){ LANG=l; S.opts.lang=l; applyLang(); render(); }
 
 /* ===================== FASE ===================== */
 function newOrder(){
-  const c=P.cfg, f=pick(c.dada?FACES.filter(x=>x[0]!=='dada'):FACES), o={id:P.nextId++,face:f[0],who:f[1],items:[]}, k=Math.random()<c.two?2:1;
+  const c=P.cfg, f=pick(FACES.filter(x=>!(c.dada&&x[0]==='dada')&&!((c.flor||c.m===3)&&x[0]==='flor'))), o={id:P.nextId++,face:f[0],who:f[1],items:[]}, k=Math.random()<c.two?2:1;
   if(S.met&&!S.met[f[0]]) S.met[f[0]]=1;   // o cliente entra no Álbum (aba Clientes)
   for(let j=0;j<k;j++) o.items.push({l:pick(c.lines),n:rint(c.lv[0],c.lv[1]),done:false});
   return o;
@@ -842,18 +954,28 @@ function newDada(){ const d=P.cfg.dada, ls=P.cfg.lines.slice().sort(()=>Math.ran
 function addDada(){ // ocupa o lugar do pedido com menos itens já entregues
   const dn=o=>o.items.filter(x=>x.done).length, k=P.orders.reduce((b,o,j)=>b<0||dn(o)<dn(P.orders[b])?j:b,-1);
   P.orders[k]=newDada(); }
+// Encomenda da Maria Flor (Recife): 3 itens pedidos um de cada vez (o próximo só aparece depois que o anterior é entregue),
+// em níveis crescentes e de linhas alternadas. Cada item entregue vale +FLOR_BONUS turno; a encomenda completa paga em dobro.
+function newFlor(){ const d=P.cfg.flor, a=d.lv[0], b=d.lv[1]; let ant=null;
+  const items=[a,Math.round((a+b)/2),b].map(n=>{ const l=pick(P.cfg.lines.filter(x=>x!==ant)); ant=l; return {l,n,done:false}; });
+  return {id:P.nextId++,face:'flor',who:'Maria Flor',flor:true,items}; }
+function addFlor(){ // ocupa o lugar do pedido comum com menos itens já entregues (nunca o da Dona Dadá)
+  const dn=o=>o.items.filter(x=>x.done).length, k=P.orders.reduce((b,o,j)=>o.dada?b:b<0||dn(o)<dn(P.orders[b])?j:b,-1);
+  if(k>=0) P.orders[k]=newFlor(); }
+const florNow=o=>o.items.find(x=>!x.done);                            // o item que a Maria Flor quer agora
 function startPhase(i){
   const c=PHASES[i], b=Array(COLS*ROWS).fill(null), free=()=>{ const e=[]; b.forEach((x,k)=>{ if(!x) e.push(k); }); return e; };
   for(let k=0;k<c.crate;k++) b[pick(free())]={o:'crate',u:{l:pick(c.lines),n:Math.random()<.7?1:2}};   // o caixote guarda um item embaixo
   for(let k=0;k<(c.engr||0);k++) b[pick(free())]=engr(c,2);
   for(let k=0;k<c.mold;k++){ const e=free().filter(x=>x<COLS*(ROWS-1)&&(c.boss!=='rios'||(x%COLS&&x%COLS<COLS-1))); b[pick(e)]={o:'mold'}; }
   for(let k=0;k<c.items;k++) b[pick(free())]={l:pick(c.lines),n:Math.random()<.65?1:2};
-  const seal=sealOn(0), guar=sealOn(1), dende=sealOn(2); if(!c.ev) curM=mOf(i);
-  P={i,cfg:c,board:b,turns:c.turns+(seal?3:0),seal,guar,dende,dendeOk:false,evOk:!!(c.ev&&evAtivo()),merges:0,used:0,goals:c.goals.map(g=>({...g,p:0})),orders:[],nextId:1,tide:0,shade:[],toolsUsed:0,cont:0,earned:0,armed:null,over:null};
+  const seal=sealOn(0), guar=sealOn(1), dende=sealOn(2), carne=sealOn(3); if(!c.ev) curM=mOf(i);
+  P={i,cfg:c,board:b,turns:c.turns+(seal?3:0),seal,guar,dende,dendeOk:false,carne,desp:carne?Array(DESP_N).fill(null):null,florAt:c.flor&&!c.flor.first?c.flor.every:0,girou:null,evOk:!!(c.ev&&evAtivo()),merges:0,used:0,goals:c.goals.map(g=>({...g,p:0})),orders:[],nextId:1,tide:0,shade:[],toolsUsed:0,cont:0,earned:0,armed:null,over:null};
   while(P.orders.length<3) P.orders.push(newOrder());
   if(c.dada&&c.dada.first) addDada();
+  if(c.flor&&c.flor.first) addFlor();
   if(c.tut==='solanda'&&!S.seen.solanda) S.tools.toldo=(S.tools.toldo||0)+2;          // presente do tutorial do Toldo
-  phStat(i).tries++; save(); sel=null; screen='game'; Musica.ligar();
+  phStat(i).tries++; save(); sel=null; dsel=null; screen='game'; Musica.ligar();
   if(!quiet&&c.tut&&!S.seen[c.tut]){ S.seen[c.tut]=1; const T=TUT[c.tut]; render(); modal(`<div class="big">${T[0]}</div><h2>${tx(T[1])}</h2><p>${tx(T[2])}</p><button class="btn" data-act="mclose">${tr('Entendi','Got it')}</button>`); return; }
   render();
 }
@@ -897,8 +1019,8 @@ function spawn(l){
   if(P.used%MOLD_EVERY===0){ const c=[]; P.board.forEach((x,k)=>{ if(x&&x.o==='mold') for(const j of nbrs(k)){ const y=P.board[j]; if(isItem(y)&&!y.m&&!c.includes(j)) c.push(j); } });
     if(c.length){ P.board[pick(c)].m=true; toast(tr('Um item ficou mofado 🦠','An item got moldy 🦠')); } }
   if(waterBoss(P.cfg)){ if(P.tide>0) P.tide--; else if(P.used%TIDE_EVERY===0){ P.tide=TIDE_LEN; toast(P.cfg.boss==='rios'?tr('Os rios subiram nas pontas! 🌊','The rivers rose at the edges! 🌊'):tr('A maré subiu! 🌊','The tide is in! 🌊')); } }
-  salvadorTick();
-  sel=null; checkEnd();
+  salvadorTick(); recifeTick();
+  sel=null; dsel=null; checkEnd();
 }
 // Um turno em Salvador: o sol anda e esquenta, a Dona Dadá espera (ou chega) e o saveiro descarrega.
 function salvadorTick(){
@@ -915,16 +1037,37 @@ function salvadorTick(){
     e.forEach(k=>{ P.board[k]=engr(c,SAVEIRO_HP); }); if(e.length) obsQ.push({t:'saveiro',cells:e,d:0});
     toast(tr(`⛵ O saveiro descarregou ${e.length} engradados!`,`⛵ The saveiro unloaded ${e.length} crates!`)); }
 }
-const matches=(o,it)=>o.items.find(x=>!x.done&&x.l===it.l&&x.n===it.n);
+// Recife: a roda de ciranda gira as 8 casas em volta do centro; o Galo da Madrugada gira a borda inteira do tabuleiro.
+const roda=(r,c)=>[[-1,-1],[-1,0],[-1,1],[0,1],[1,1],[1,0],[1,-1],[0,-1]].map(([a,b])=>(r+a)*COLS+c+b);   // sentido horário
+const BORDA=(()=>{ const v=[]; for(let c=0;c<COLS;c++) v.push(c); for(let r=1;r<ROWS;r++) v.push(r*COLS+COLS-1);
+  for(let c=COLS-2;c>=0;c--) v.push((ROWS-1)*COLS+c); for(let r=ROWS-2;r>0;r--) v.push(r*COLS); return v; })();
+function girar(cells,dir){ const v=cells.map(k=>P.board[k]), n=cells.length;     // dir 1: cada casa passa o que tem para a seguinte
+  cells.forEach((k,j)=>{ P.board[k]=v[(j-dir+n)%n]; }); P.girou=(P.girou||[]).concat(cells.filter(k=>P.board[k])); }
+function recifeTick(){
+  const c=P.cfg;
+  if(c.ciranda&&P.used%CIRANDA_EVERY===0){ c.ciranda.forEach(o=>{ girar(roda(o.r,o.c),o.dir||1); obsQ.push({i:o.r*COLS+o.c,t:'giro',d:0}); }); toast(tr('💃 A roda de ciranda girou','💃 The ciranda circle turned')); }
+  if(c.boss==='galo'&&P.used%GALO_EVERY===0){ girar(BORDA,1); obsQ.push({t:'galo',d:0}); toast(tr('🐓 O Galo da Madrugada passou: a borda girou!','🐓 The Galo da Madrugada went by: the edge turned!')); }
+  if(c.flor&&!P.orders.some(o=>o.flor)&&P.used>=P.florAt){ addFlor(); toast(tr('🧵 A Maria Flor chegou com uma encomenda!','🧵 Maria Flor is here with an order!')); }
+}
+const matches=(o,it)=>{ if(o.flor){ const x=florNow(o); return x&&x.l===it.l&&x.n===it.n?x:undefined; } return o.items.find(x=>!x.done&&x.l===it.l&&x.n===it.n); };
+// Despensa (Selo Carne de Sol): vagas fora do tabuleiro. Posições da despensa são 'd0', 'd1'; as do tabuleiro, números.
+const atP=i=>typeof i==='string'?P.desp[+i.slice(1)]:P.board[i];
+const clrP=i=>{ if(typeof i==='string') P.desp[+i.slice(1)]=null; else P.board[i]=null; };
+function guardar(i,k){ const it=P.board[i]; if(P.over||!P.desp||P.desp[k]||!isItem(it)||flooded(i)) return false;
+  P.desp[k]={l:it.l,n:it.n,m:it.m}; P.board[i]=null; sel=null; beep(560); toast(tr(`🥩 Na Despensa: ${item(it.l,it.n)[1]}`,`🥩 In the Pantry: ${item(it.l,it.n)[1]}`)); checkEnd(); return true; }
+function tirar(k,i){ const it=P.desp&&P.desp[k]; if(P.over||!it||!free(i)) return false; P.board[i]=it; P.desp[k]=null; popAt=i; beep(520); checkEnd(); return true; }
 function deliver(i,id){
-  if(P.over) return; const it=P.board[i]; if(!isItem(it)) return;
-  if(flooded(i)){ toast(tr('A maré está prendendo esse item.','The tide is holding that item.')); return; }
+  if(P.over) return; const it=atP(i); if(!isItem(it)) return;
+  if(typeof i==='number'&&flooded(i)){ toast(tr('A maré está prendendo esse item.','The tide is holding that item.')); return; }
   if(it.m){ toast(tr('Ninguém compra item mofado. Faça uma fusão ao lado para limpar.','Nobody buys moldy items. Merge next to it to clean it.')); return; }
   const o=id!=null?P.orders.find(x=>x.id===id):P.orders.find(x=>matches(x,it)), nd=o&&matches(o,it);
-  if(!nd){ toast(tr('Esse cliente não pediu esse item.','This customer didn’t order that.')); return; }
-  nd.done=true; P.board[i]=null; sel=null; beep(700);
+  if(!nd){ toast(o&&o.flor?tr('A Maria Flor pede um item de cada vez: veja o que ela quer agora.','Maria Flor asks for one item at a time: check what she wants now.'):tr('Esse cliente não pediu esse item.','This customer didn’t order that.')); return; }
+  nd.done=true; clrP(i); sel=null; dsel=null; beep(700);
+  if(o.flor){ P.turns+=FLOR_BONUS; P.florFx=1; const nx=florNow(o);
+    if(nx) toast(tr(`🧵 Maria Flor: +${FLOR_BONUS} turno. Agora ela quer ${item(nx.l,nx.n)[1]}`,`🧵 Maria Flor: +${FLOR_BONUS} turn. Now she wants ${item(nx.l,nx.n)[1]}`)); }
   if(o.items.every(x=>x.done)){ progress('orders'); const co=orderPay(o); S.coins+=co; P.earned+=co; P.orders[P.orders.indexOf(o)]=newOrder(); Sfx.tocar('pedido');
     if(o.dada){ progress('dada'); P.turns+=DADA_BONUS; P.dadaFx=1; toast(tr(`👩🏾‍🍳 Dona Dadá: +${DADA_BONUS} turnos · +${co} 🪙`,`👩🏾‍🍳 Dona Dadá: +${DADA_BONUS} turns · +${co} 🪙`)); }
+    else if(o.flor){ progress('flor'); P.florAt=P.used+P.cfg.flor.every; toast(tr(`🧵 Encomenda da Maria Flor completa: +${co} 🪙`,`🧵 Maria Flor’s order complete: +${co} 🪙`)); }
     else toast(`${FACE_IDS.has(o.face)?'':o.face+' '}${o.who}: +${co} 🪙`); }
   checkEnd();
 }
@@ -954,6 +1097,7 @@ function useTool(k,i){
 }
 function hasMove(){
   const b=P.board; if(b.some((x,i)=>free(i))) return true;
+  if(P.desp&&(P.desp.some(x=>!x)&&b.some((x,i)=>isItem(x)&&!flooded(i))||P.desp.some(x=>x&&!x.m&&P.orders.some(o=>matches(o,x))))) return true;
   for(let i=0;i<b.length;i++){ const x=b[i]; if(!isItem(x)||flooded(i)) continue;
     if(!x.m&&P.orders.some(o=>matches(o,x))) return true;
     if(x.n===MAX&&!x.m) return true;
@@ -995,9 +1139,9 @@ function loseModal(){
    <button class="btn${can?' ghosty':''}" data-act="phase:${P.i}">${tr('Tentar de novo','Try again')}</button><button class="btn ghosty" data-act="go:market">${tr('Voltar ao mercado','Back to the market')}</button>
    <p class="note">${tr('Dica: gaste turnos só com o que falta para o objetivo 🎯 e junte três de uma vez quando puder.','Tip: spend turns only on what the goal 🎯 still needs, and merge three at once when you can.')}</p>`);
 }
-const goalFull=g=>g.t==='orders'?tr(`Entregar ${g.n} pedidos`,`Fill ${g.n} orders`):g.t==='dada'?tr(`Atender ${g.n} pedidos da Dona Dadá`,`Serve ${g.n} of Dona Dadá’s orders`):g.t==='clear'?tr(`Limpar ${g.n} obstáculos`,`Clear ${g.n} obstacles`):tr(`Criar ${item(g.l,g.lv)[1]} (nível ${g.lv})`,`Make ${item(g.l,g.lv)[1]} (level ${g.lv})`);
-function goalText(g){ return g.t==='orders'?tr('Entregar pedidos','Fill orders'):g.t==='dada'?tr('Pedidos da Dona Dadá','Dona Dadá’s orders'):g.t==='clear'?tr('Limpar obstáculos','Clear obstacles'):tr('Criar ','Make ')+item(g.l,g.lv)[1]; }
-function goalIcon(g){ return g.t==='orders'?'🧺':g.t==='dada'?fc('dada'):g.t==='clear'?'🧹':item(g.l,g.lv)[0]; }
+const goalFull=g=>g.t==='orders'?tr(`Entregar ${g.n} pedidos`,`Fill ${g.n} orders`):g.t==='flor'?(g.n>1?tr(`Completar ${g.n} encomendas da Maria Flor`,`Complete ${g.n} of Maria Flor’s orders`):tr('Completar a encomenda da Maria Flor','Complete Maria Flor’s order')):g.t==='dada'?tr(`Atender ${g.n} pedidos da Dona Dadá`,`Serve ${g.n} of Dona Dadá’s orders`):g.t==='clear'?tr(`Limpar ${g.n} obstáculos`,`Clear ${g.n} obstacles`):tr(`Criar ${item(g.l,g.lv)[1]} (nível ${g.lv})`,`Make ${item(g.l,g.lv)[1]} (level ${g.lv})`);
+function goalText(g){ return g.t==='orders'?tr('Entregar pedidos','Fill orders'):g.t==='flor'?tr('Encomendas da Maria Flor','Maria Flor’s orders'):g.t==='dada'?tr('Pedidos da Dona Dadá','Dona Dadá’s orders'):g.t==='clear'?tr('Limpar obstáculos','Clear obstacles'):tr('Criar ','Make ')+item(g.l,g.lv)[1]; }
+function goalIcon(g){ return g.t==='orders'?'🧺':g.t==='flor'?fc('flor'):g.t==='dada'?fc('dada'):g.t==='clear'?'🧹':item(g.l,g.lv)[0]; }
 /* ---------- Loja (compras simuladas) ---------- */
 const usd=v=>LANG==='en'?'$'+v.toFixed(2):'US$ '+v.toFixed(2).replace('.',',');
 /* ===================== COMPRAS (mesmo código nos dois jogos) =====================
@@ -1133,6 +1277,7 @@ function render(){ if(S&&S.ev) evFab();
   if(screen==='game'&&P) noteSeen();
   if(obsQ.length){ const q=obsQ; obsQ=[]; if(screen==='game') requestAnimationFrame(()=>q.forEach(fxObs)); }
   if(screen==='game'&&P&&P.dadaFx){ P.dadaFx=0; requestAnimationFrame(()=>fxTurns(null,DADA_BONUS)); }
+  if(screen==='game'&&P&&P.florFx){ P.florFx=0; requestAnimationFrame(()=>fxTurns(null,FLOR_BONUS)); }
   save();
 }
 const ALB_CO=100;
@@ -1195,7 +1340,7 @@ function mapSvg(){
   const pts=MARKETS.map(f=>PXY(f.lon,f.lat));
   const ufs=Object.entries(UFMAP).map(([k,d])=>`<path class="uf r${REGUF[k]}" d="${d}"><title>${k.toUpperCase()} · ${tx(REGN[REGUF[k]])}</title></path>`).join('');
   const labs=Object.entries(UFLAB).filter(([k])=>k!=='df').map(([k,[x,y,r]])=>`<text class="uflab${r<15?' s':''}" x="${x}" y="${y}">${k.toUpperCase()}</text>`).join('');
-  const cur=[2,1,0].find(mOpen)||0;                                    // o anel marca o mercado aberto mais adiante
+  const cur=[3,2,1,0].find(mOpen)||0;                                    // o anel marca o mercado aberto mais adiante
   const nodes=pts.map((p,i)=>{ const ok=mOpen(i); return `<g class="node ${ok?'open':'lock'}" ${ok?`data-act="mk:${i}" role="button" aria-label="${tr(`Abrir ${MARKETS[i].n}`,`Open ${MARKETS[i].n}`)}"`:''} transform="translate(${p[0].toFixed(1)} ${p[1].toFixed(1)})"><title>${MARKETS[i].n}, ${MARKETS[i].c}${ok?'':i<OPEN_M?tr(' (bloqueado)',' (locked)'):tr(' (em breve)',' (coming soon)')}</title>${i===cur?'<circle class="ring" r="18"/>':''}<circle r="18"/><image href="${artUrl(MARKETS[i])}" x="-16" y="-16" width="32" height="32" preserveAspectRatio="xMidYMid slice" clip-path="url(#nclip)"/>${ok?'':'<text class="nlock">🔒</text>'}</g>`; }).join('');
   return `<svg viewBox="-8 -8 647 655" role="img" aria-label="${tr('Mapa do Brasil com os mercados da Rota das Feiras','Map of Brazil with the markets on the trail')}"><defs><clipPath id="nclip"><circle r="16"/></clipPath></defs>${ufs}${labs}<polyline class="route" points="${pts.map(p=>p.join(',')).join(' ')}"/>${nodes}</svg>`;
 }
@@ -1203,9 +1348,9 @@ function mapHtml(){
   return `<div class="head"><button class="icon" data-act="go:home" aria-label="${tr('Voltar','Back')}">◀</button><div class="t"><b>Rota das Feiras</b><small>⭐ ${totalStars()} ${tr('estrelas','stars')} · 🪙 ${fmt(S.coins)}</small></div></div>
    ${LANG==='en'?'<p class="note">In Portuguese, a <i>feira</i> is an open-air street market and a <i>mercado</i> is a covered market hall. <i>Mercadão</i> means “big market”.</p>':''}
    <div class="map">${mapSvg()}<div class="legend">${REGN.map((r,i)=>`<span><i style="background:var(--r${i})"></i>${tx(r)}</span>`).join('')}</div></div>
-    ${MARKETS.slice(0,OPEN_M).map((f,m)=>mOpen(m)?`<button class="row${m===([2,1,0].find(mOpen)||0)?' cur':''}" data-act="mk:${m}">${tileHtml(f)}<div><b>${f.n}</b> · ${f.c} (${f.uf})<p>${starsM(m)}/${phasesOf(m).length*3} ⭐ · ${tr(`${phasesOf(m).length} fases com chefe`,`${phasesOf(m).length} levels with a boss`)}</p></div><span class="btn sm">${tr('Jogar','Play')}</span></button>`
+    ${MARKETS.slice(0,OPEN_M).map((f,m)=>mOpen(m)?`<button class="row${m===([3,2,1,0].find(mOpen)||0)?' cur':''}" data-act="mk:${m}">${tileHtml(f)}<div><b>${f.n}</b> · ${f.c} (${f.uf})<p>${starsM(m)}/${phasesOf(m).length*3} ⭐ · ${tr(`${phasesOf(m).length} fases com chefe`,`${phasesOf(m).length} levels with a boss`)}</p></div><span class="btn sm">${tr('Jogar','Play')}</span></button>`
       :`<button class="row lock" data-act="mlocked:${m}">${tileHtml(f,'lock')}<div><b>${f.n}</b> · ${f.c} (${f.uf})<p>${tr(`Abre ao vencer o chefe de ${MARKETS[m-1].n}.`,`Opens when you beat the ${MARKETS[m-1].n} boss.`)}</p></div></button>`).join('')}
-    ${MARKETS.slice(OPEN_M).map(f=>`<div class="row lock">${tileHtml(f,'lock')}<div><b>${f.n}</b> · ${f.c} (${f.uf})<p>${tr('Em breve. Neste teste estão abertos o Ver-o-Peso, Manaus e Salvador.','Coming soon. Ver-o-Peso, Manaus and Salvador are open in this test.')}</p></div></div>`).join('')}
+    ${MARKETS.slice(OPEN_M).map(f=>`<div class="row lock">${tileHtml(f,'lock')}<div><b>${f.n}</b> · ${f.c} (${f.uf})<p>${tr('Em breve. Neste teste estão abertos o Ver-o-Peso, Manaus, Salvador e Recife.','Coming soon. Ver-o-Peso, Manaus, Salvador and Recife are open in this test.')}</p></div></div>`).join('')}
    <p class="note">${tr('No jogo completo, sair do Norte vai pedir 30 ⭐ e cada mercado abre ao vencer o chefe do anterior.','In the full game, leaving the North will take 30 ⭐ and each market opens when you beat the previous boss.')}</p>`;
 }
 function marketHtml(){
@@ -1219,35 +1364,48 @@ function marketHtml(){
    ${Object.entries(TOOLS).filter(([k])=>toolShow(k)).map(([k,[em,,,c]])=>`<div class="row"><span class="face">${toolEm(k)}</span><div><b>${tname(k)}</b> · ${tr('você tem','you have')} ${S.tools[k]||0}<p>${cap(tdesc(k))}. ${c?tr('Máximo de 2 ferramentas por fase.','Up to 2 tools per level.'):tr('Só na Loja.','Shop only.')}</p></div>${c?`<button class="btn sm" data-act="buy:${k}" ${S.coins<c?'disabled':''}>🪙 ${c}</button>`:`<button class="btn sm" data-act="sheet:shop">🛒 ${tr('Loja','Shop')}</button>`}</div>`).join('')}`;
 }
 function gameHtml(){
-  const left=P.turns-P.used, c=P.cfg, cur=sel!=null?P.board[sel]:null, have=new Set(P.board.filter(x=>isItem(x)&&!x.m).map(x=>x.l+x.n)), need3=Math.ceil(P.turns*.5);
+  const left=P.turns-P.used, c=P.cfg, cur=sel!=null?P.board[sel]:null, have=new Set(P.board.concat(P.desp||[]).filter(x=>isItem(x)&&!x.m).map(x=>x.l+x.n)), need3=Math.ceil(P.turns*.5);
+  // Recife: casas das rodas de ciranda (com o sentido) e borda do Galo; o que acabou de girar ganha animação uma vez.
+  const rodaS={}, rodaC={}, girou=new Set(P.girou||[]); P.girou=null;
+  (c.ciranda||[]).forEach(o=>{ rodaC[o.r*COLS+o.c]=o.dir||1; roda(o.r,o.c).forEach(k=>{ rodaS[k]=o.dir||1; }); });
+  const cl=CIRANDA_EVERY-P.used%CIRANDA_EVERY, gl0=GALO_EVERY-P.used%GALO_EVERY, galo=c.boss==='galo', bordaS=galo?new Set(BORDA):null;
+  const fl0=c.flor&&!P.orders.some(o=>o.flor)?Math.max(1,P.florAt-P.used):0;
+  const dcur=dsel!=null&&P.desp?P.desp[dsel]:null;
   // O que falta para vencer ganha destaque: pedidos, obstáculos ou a linha do item a criar.
-  const ordKey=P.goals.some(g=>(g.t==='orders'||g.t==='dada')&&!goalDone(g)), clrKey=P.goals.some(g=>g.t==='clear'&&!goalDone(g)), mk=P.goals.find(g=>g.t==='make'&&!goalDone(g));
+  const ordKey=P.goals.some(g=>(g.t==='orders'||g.t==='dada'||g.t==='flor')&&!goalDone(g)), clrKey=P.goals.some(g=>g.t==='clear'&&!goalDone(g)), mk=P.goals.find(g=>g.t==='make'&&!goalDone(g));
   const tl=TIDE_EVERY-P.used%TIDE_EVERY;
   const rios=c.boss==='rios', tide=waterBoss(c)?(P.tide>0?`<span class="tide">🌊 ${rios?tr('Rios cheios','Rivers up'):tr('Maré alta','High tide')}: ${P.tide} ${turnsW(P.tide)}</span>`:`<span class="tide">🌊 ${rios?tr(`Rios sobem em ${tl}`,`Rivers rise in ${tl}`):tr(`Maré sobe em ${tl}`,`Tide rises in ${tl}`)} ${turnsW(tl)}</span>`):'';
   const sl=c.sun&&c.sun.step?c.sun.step-P.used%c.sun.step:0, bl=SAVEIRO_EVERY-P.used%SAVEIRO_EVERY;
-  const sol=(sl?`<span class="tide sunt">☀️ ${tr(`Sol anda em ${sl}`,`Sun moves in ${sl}`)} ${turnsW(sl)}</span>`:'')+(c.boss==='saveiro'?`<span class="tide">⛵ ${tr(`Saveiro em ${bl}`,`Saveiro in ${bl}`)} ${turnsW(bl)}</span>`:'');
+  const sol=(sl?`<span class="tide sunt">☀️ ${tr(`Sol anda em ${sl}`,`Sun moves in ${sl}`)} ${turnsW(sl)}</span>`:'')+(c.boss==='saveiro'?`<span class="tide">⛵ ${tr(`Saveiro em ${bl}`,`Saveiro in ${bl}`)} ${turnsW(bl)}</span>`:'')
+    +(c.ciranda?`<span class="tide rodat">💃 ${tr(`${c.ciranda.length>1?'Rodas giram':'Roda gira'} em ${cl}`,`${c.ciranda.length>1?'Circles turn':'Circle turns'} in ${cl}`)} ${turnsW(cl)}</span>`:'')
+    +(galo?`<span class="tide rodat">🐓 ${tr(`Galo passa em ${gl0}`,`Galo comes in ${gl0}`)} ${turnsW(gl0)}</span>`:'')
+    +(fl0?`<span class="tide rodat">🧵 ${tr(`Maria Flor em ${fl0}`,`Maria Flor in ${fl0}`)} ${turnsW(fl0)}</span>`:'');
   const gl=cur&&gloss(cur.l,cur.n);
-  const info=P.armed?`<p>${toolEm(P.armed)} ${tr(`Toque numa casa para usar o <b>${tname(P.armed)}</b>.`,`Tap a space to use the <b>${tname(P.armed)}</b>.`)}</p><button class="btn sm ghosty" data-act="disarm">${tr('Cancelar','Cancel')}</button>`
+  const info=dcur?`<p><b>${item(dcur.l,dcur.n)[1]}</b>: ${tr('toque numa casa vazia ou num pedido.','tap an empty space or an order.')}</p>`
+    :P.armed?`<p>${toolEm(P.armed)} ${tr(`Toque numa casa para usar o <b>${tname(P.armed)}</b>.`,`Tap a space to use the <b>${tname(P.armed)}</b>.`)}</p><button class="btn sm ghosty" data-act="disarm">${tr('Cancelar','Cancel')}</button>`
     :cur?`<p><b>${item(cur.l,cur.n)[0]} ${item(cur.l,cur.n)[1]}</b> · ${lname(cur.l)} ${tr('nível','level')} ${cur.n}${cur.m?` · <span class="warn">${tr('mofado','moldy')}</span>`:''}${flooded(sel)?tr(' · preso pela maré',' · held by the tide'):''}${sunny(sel)&&cur.n>=SUN_LV?` · <span class="warn">☀️ ${tr(`perde 1 nível em ${heatLeft(cur)} ${turnsW(heatLeft(cur))}`,`loses 1 level in ${heatLeft(cur)} ${turnsW(heatLeft(cur))}`)}</span>`:''}${gl?`<br><i>${gl}</i>`:''}</p>`
     :`<p>${tr('Cada cesto gasta 1 turno. Juntar e entregar são de graça.','Each basket tap costs 1 turn. Merging and delivering are free.')}</p>`;
+  const desp=P.desp?`<div class="desp" role="group" aria-label="${tr('Despensa: guarde até 2 itens fora do tabuleiro','Pantry: keep up to 2 items off the board')}"><span class="dl" aria-hidden="true"></span>${P.desp.map((x,k)=>`<button class="dslot${x?' has':''}${dsel===k?' sel':''}${!x&&cur&&!flooded(sel)?' want':''}" data-desp="${k}" aria-label="${x?tr(`Despensa: ${item(x.l,x.n)[1]} nível ${x.n}`,`Pantry: ${item(x.l,x.n)[1]} level ${x.n}`):tr('Vaga livre na Despensa','Free Pantry space')}"${x?` style="--lc:${lc(x.l)}"`:''}>${x?`<span class="em">${item(x.l,x.n)[0]}</span><span class="lv">${x.n}</span>`:''}</button>`).join('')}</div>`:'';
   const gIcon=g=>goalDone(g)?'✅':g.t==='make'?`<span class="need"><span>${item(g.l,g.lv)[0]}<sub style="--lc:${lc(g.l)}">${g.lv}</sub></span></span>`:goalIcon(g);
-  return `<div class="head"><button class="icon" data-act="pause" aria-label="${tr('Pausar','Pause')}">⏸</button><div class="t"><b>${ptitle(P.i)}</b><small>${mkt(P.i).n}${P.seal?tr(' · 🏅 +3 turnos',' · 🏅 +3 turns'):''}${P.guar?` · 🥤 ${P.merges%10}/10`:''}${P.dende?` · 🌴 ${P.dendeOk?'✓':tr('1ª fusão +1','1st merge +1')}`:''}</small></div>
+  return `<div class="head"><button class="icon" data-act="pause" aria-label="${tr('Pausar','Pause')}">⏸</button><div class="t"><b>${ptitle(P.i)}</b><small>${mkt(P.i).n}${P.seal?tr(' · 🏅 +3 turnos',' · 🏅 +3 turns'):''}${P.carne?tr(' · 🥩 Despensa',' · 🥩 Pantry'):''}${P.guar?` · 🥤 ${P.merges%10}/10`:''}${P.dende?` · 🌴 ${P.dendeOk?'✓':tr('1ª fusão +1','1st merge +1')}`:''}</small></div>
     <div class="turns${left<=3?' low':''}"><b>${left}</b><small>${turnsW(left)}</small></div></div>
    <div class="win"><h3>${tr('🎯 Para vencer a fase','🎯 To win this level')}</h3>
     <div class="goals">${P.goals.map(g=>`<div class="goal${goalDone(g)?' ok':''}"><span class="e">${gIcon(g)}</span><div>${goalText(g)}<div class="bar"><i style="width:${Math.min(100,g.p/g.n*100)}%"></i></div></div><span class="cnt">${Math.min(g.p,g.n)}/${g.n}</span></div>`).join('')}</div>
     <div class="sub"><span>${tr(`3 ⭐ se sobrarem ${need3} turnos · 2 ⭐ com ${Math.ceil(P.turns*.25)}`,`3 ⭐ with ${need3} turns left · 2 ⭐ with ${Math.ceil(P.turns*.25)}`)}</span>${tide}${sol}</div></div>
    <div class="olab${ordKey?' key':''}">${ordKey?tr('🎯 Pedidos: contam para vencer','🎯 Orders: these count toward winning'):tr('Pedidos extras: não contam para vencer, mas rendem moedas','Extra orders: they don’t count toward winning, but they pay coins')}</div>
    <div class="orders ${ordKey?'key':'extra'}">${P.orders.map(o=>{ const want=cur&&!cur.m&&matches(o,cur), ready=o.items.some(x=>!x.done&&have.has(x.l+x.n));
-      return `<button class="order${want?' want':''}${ready?' ready':''}${o.dada?' dada':''}" data-order="${o.id}" aria-label="${tr(`Pedido de ${o.who}`,`${o.who}’s order`)}: ${o.items.map(x=>item(x.l,x.n)[1]+tr(' nível ',', level ')+x.n).join(tr(' e ',' and '))} · ${orderPay(o)} 🪙${o.dada?tr(` · ${o.ttl} turnos para atender · +${DADA_BONUS} turnos`,` · ${o.ttl} turns to serve · +${DADA_BONUS} turns`):''}">${o.dada?`<span class="ttl${o.ttl<=2?' low':''}">⏱️${o.ttl}</span>`:''}<span class="who">${fc(o.face)} ${o.dada?'Dadá':o.who}</span><span class="need">${o.items.map(x=>`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span><span class="pay">🪙 ${orderPay(o)}${o.dada?` · ⏳+${DADA_BONUS}`:''}</span></button>`; }).join('')}
+      const fq=o.flor?o.items.indexOf(florNow(o)):-1, oculto=j=>o.flor&&j>fq;
+      return `<button class="order${want?' want':''}${ready?' ready':''}${o.dada?' dada':''}${o.flor?' flor':''}" data-order="${o.id}" aria-label="${o.flor?tr(`Encomenda da Maria Flor, item ${fq+1} de 3`,`Maria Flor’s order, item ${fq+1} of 3`):tr(`Pedido de ${o.who}`,`${o.who}’s order`)}: ${o.items.filter((x,j)=>!oculto(j)&&!x.done).map(x=>item(x.l,x.n)[1]+tr(' nível ',', level ')+x.n).join(tr(' e ',' and '))}${o.flor?tr(` · +${FLOR_BONUS} turno por item`,` · +${FLOR_BONUS} turn per item`):''} · ${orderPay(o)} 🪙${o.dada?tr(` · ${o.ttl} turnos para atender · +${DADA_BONUS} turnos`,` · ${o.ttl} turns to serve · +${DADA_BONUS} turns`):''}">${o.dada?`<span class="ttl${o.ttl<=2?' low':''}">⏱️${o.ttl}</span>`:''}${o.flor?`<span class="ttl flr">${fq+1}/3</span>`:''}<span class="who">${fc(o.face)} ${o.dada?'Dadá':o.flor?'Flor':o.who}</span><span class="need">${o.items.map((x,j)=>oculto(j)?`<span class="no">❔</span>`:`<span class="${x.done?'ok':''}">${item(x.l,x.n)[0]}<sub style="--lc:${lc(x.l)}">${x.n}</sub></span>`).join('')}</span><span class="pay">🪙 ${orderPay(o)}${o.dada?` · ⏳+${DADA_BONUS}`:o.flor?` · ⏳+${FLOR_BONUS}`:''}</span></button>`; }).join('')}
     <button class="order seal${cur&&cur.n===MAX&&!cur.m?' want':''}" data-seal="1" aria-label="${tr('Espaço do Selo: itens de nível 5','Seal slot: level 5 items')}"><span class="who">🏅 ${tr('Selo','Seal')}</span><span style="font-size:12px;line-height:1.5">${mLines(mOf(P.i)).map(k=>`${item(k,5)[0]}${Math.min(3,S.selo5[k]||0)}`).join(' ')}</span><span class="who">${tr('nível 5','level 5')}</span></button></div>
    <div class="wrap" id="wrap"><div class="board" id="board">${P.board.map((x,i)=>{
-      const fl=(flooded(i)?' flood':'')+(inSun(i)?(P.shade.includes(i)?' shade':' sun'):P.shade.includes(i)?' shade':''), ar=P.armed?' armed':'', ky=clrKey?' key':'';
+      const fl=(flooded(i)?' flood':'')+(inSun(i)?(P.shade.includes(i)?' shade':' sun'):P.shade.includes(i)?' shade':'')
+        +(rodaS[i]?' roda'+(rodaS[i]<0?' ccw':'')+(cl===1?' logo':''):'')+(rodaC[i]?' rodac '+(rodaC[i]>0?'cw':'ccw'):'')+(bordaS&&bordaS.has(i)?' borda'+(gl0===1?' logo':''):'')+(girou.has(i)?' gira':''), ar=P.armed?' armed':'', ky=clrKey?' key':'';
       if(!x) return `<button class="cell${fl}${ar}" data-cell="${i}" aria-label="${inSun(i)&&!P.shade.includes(i)?tr('Casa vazia no sol','Empty space in the sun'):tr('Casa vazia','Empty space')}"></button>`;
       if(x.o==='engr') return `<button class="cell engr${x.hp>1?'':' cracked'}${fl}${ar}${ky}" data-cell="${i}" aria-label="${tr('Engradado de coco','Coconut crate')}${x.hp>1?'':tr(', rachado',', cracked')}"></button>`;
       if(x.o==='crate') return `<button class="cell crate${fl}${ar}${ky}" data-cell="${i}" aria-label="${tr('Caixote','Crate')}"></button>`;
       if(x.o==='mold') return `<button class="cell mold${ar}${ky}" data-cell="${i}" aria-label="${tr('Mofo','Mold')}"></button>`;
       return `<button class="cell has${x.m?' moldy':''}${fl}${ar}${sel===i?' sel':''}${popAt===i?' pop':''}" style="--lc:${lc(x.l)}" data-cell="${i}" aria-label="${item(x.l,x.n)[1]}${tr(' nível ',', level ')}${x.n}${x.m?tr(', mofado',', moldy'):''}${sunny(i)&&x.n>=SUN_LV?tr(`, no sol: perde 1 nível em ${heatLeft(x)}`,`, in the sun: loses 1 level in ${heatLeft(x)}`):''}"><span class="em">${item(x.l,x.n)[0]}</span><span class="lv">${x.n}</span>${sunny(i)&&x.n>=SUN_LV&&!x.m?`<span class="heat${heatLeft(x)<=2?' low':''}">🔥${heatLeft(x)}</span>`:''}</button>`; }).join('')}</div></div>
-   <div class="info${P.armed?' armed':''}">${info}</div>
+   <div class="info${P.armed?' armed':''}${desp?' hasdesp':''}">${info}${desp}</div>
    <div class="dock">${c.lines.map(l=>`<button class="basket" style="--lc:${lc(l)}" data-act="spawn:${l}" aria-label="${tr(`Cesto de ${lname(l)}: gasta 1 turno`,`${lname(l)} basket: costs 1 turn`)}${mk&&mk.l===l?tr('. Linha do objetivo','. Goal line'):''}">${mk&&mk.l===l?'<i class="tgt">🎯</i>':''}<span class="em">${ie(l,1)}</span><b>${lname(l)}</b><small>${tr('−1 turno','−1 turn')}</small></button>`).join('')}
     ${Object.keys(TOOLS).filter(k=>toolShow(k,c)).map(k=>`<button class="basket tool${P.armed===k?' on':''}" data-act="tool:${k}" aria-label="${tname(k)}: ${tr('você tem','you have')} ${S.tools[k]||0}" ${S.tools[k]>0&&P.toolsUsed<MAX_TOOLS?'':'disabled'}><span class="em">${toolEm(k)}</span><b>${S.tools[k]||0}</b><small>${P.toolsUsed}/${MAX_TOOLS}</small></button>`).join('')}</div>`;
 }
@@ -1354,10 +1512,11 @@ function fxHammer(r,em,color){
 }
 // Caixote e mofo: quadros da arte em sequência sobre a casa (caixa quebrando; esponja esfregando o mofo).
 const OBS_FX={crate:['caixa',[2,3,4,5],70,1.5],mold:['mofo',[2,3,4],120,1.3],limpo:['mofo',[3,4],110,1.05],
- engr:['engradado',[3,4,5],80,1.5],racha:['engradado',[2],260,1.35],calor:['sol',[5],520,1.15]};
-const OBS_PRE=[]; for(const n of ['caixa','mofo','engradado','sol']) for(let k=1;k<=5;k++){ const im=new Image(); im.src=`obstaculos/${n}-${k}.webp`; OBS_PRE.push(im); }
+ engr:['engradado',[3,4,5],80,1.5],racha:['engradado',[2],260,1.35],calor:['sol',[5],520,1.15],giro:['ciranda',[5],420,3.2]};
+const OBS_PRE=[]; for(const n of ['caixa','mofo','engradado','sol','ciranda']) for(let k=1;k<=5;k++){ const im=new Image(); im.src=`obstaculos/${n}-${k}.webp`; OBS_PRE.push(im); }
 function fxObs(f){
   if(f.t==='saveiro') return fxSaveiro(f);
+  if(f.t==='galo') return fxGalo();
   const c=cellEl(f.i); if(!c) return; const [nome,quadros,ms,esc]=OBS_FX[f.t], r=c.getBoundingClientRect(), [cx,cy]=ctr(r), s=r.width*esc;
   const d=document.createElement('div'); d.className='obsfx'; Object.assign(d.style,{left:cx+'px',top:cy+'px',width:s+'px',height:s+'px'});
   const q=k=>d.style.backgroundImage=`url(obstaculos/${nome}-${quadros[k]}.webp)`;
@@ -1372,6 +1531,13 @@ function fxSaveiro(f){
   if(RM()) return; const im=document.createElement('img'); im.src='obstaculos/saveiro.webp'; im.alt=''; im.className='saveiro'; im.style.width=w+'px'; im.style.top=y+'px'; im.style.left=(r.left-w)+'px'; document.body.appendChild(im);
   anim(im,[{transform:'translate(-50%,-50%)',opacity:0},{transform:`translate(calc(-50% + ${w*.9}px),-50%)`,opacity:1,offset:.3},{transform:`translate(calc(-50% + ${w*1.1}px),-50%) rotate(-2deg)`,opacity:1,offset:.7},{transform:`translate(calc(-50% + ${w*.2}px),-50%)`,opacity:0}],1700,'ease-in-out');
   setTimeout(()=>im.remove(),1750);
+}
+// Chefe de Recife: o Galo da Madrugada desfila por cima do tabuleiro, da esquerda para a direita, enquanto a borda gira.
+function fxGalo(){
+  const b=$('board'); if(!b) return; shake(b,2); if(RM()) return; const r=b.getBoundingClientRect(), w=Math.min(140,r.width*.45);
+  const im=document.createElement('img'); im.src='obstaculos/galo.webp'; im.alt=''; im.className='saveiro'; im.style.width=w+'px'; im.style.top=(r.top+w*.45)+'px'; im.style.left=r.left+'px'; document.body.appendChild(im);
+  anim(im,[{transform:'translate(-60%,-50%)',opacity:0},{transform:`translate(calc(-50% + ${r.width*.25}px),-50%) rotate(-4deg)`,opacity:1,offset:.25},{transform:`translate(calc(-50% + ${r.width*.75}px),-50%) rotate(4deg)`,opacity:1,offset:.75},{transform:`translate(calc(-40% + ${r.width}px),-50%)`,opacity:0}],1900,'ease-in-out');
+  setTimeout(()=>im.remove(),1950);
 }
 // Caldeirão: sobe por baixo da casa, borbulha, e o item sai brilhando um nível acima.
 function fxPot(i){
@@ -1404,7 +1570,7 @@ document.addEventListener('click',e=>{
     else if(k==='lang') setLang(v);
     else if(k==='start'||k==='evstart'){ const i=+v, c=PHASES[i];
       if(k==='evstart'){ if(!evAtivo()||!unlocked(i)){ toast(tr('Este evento não está ativo agora.','This event is not on right now.')); return; } closeModal(); }
-      modal(`<div class="big">${c.boss?bossIc(c):mkt(i).ic}</div><h2>${ptitle(i)}</h2><ul>${c.goals.map(g=>`<li>${goalIcon(g)} ${goalFull(g)}</li>`).join('')}<li>⏳ ${c.turns} ${turnsW(c.turns)}</li>${c.crate?`<li>📦 ${c.crate} ${tr('caixotes','crates')}</li>`:''}${c.mold?`<li>🦠 ${c.mold} ${c.mold>1?tr('focos de mofo','mold patches'):tr('foco de mofo','mold patch')}</li>`:''}${c.engr?`<li>🥥 ${c.engr} ${c.engr>1?tr('engradados de coco','coconut crates'):tr('engradado de coco','coconut crate')}</li>`:''}${c.sun?`<li>☀️ ${c.sun.step?tr(`Sol que anda a cada ${c.sun.step} turnos`,`Sun that moves every ${c.sun.step} turns`):tr('Sol forte em 2 colunas','Strong sun on 2 columns')}</li>`:''}${c.dada?`<li>${fc('dada')} ${tr('Pedidos da Dona Dadá','Dona Dadá’s orders')}</li>`:''}${c.boss==='saveiro'?`<li>⛵ ${tr(`Saveiro a cada ${SAVEIRO_EVERY} turnos`,`Saveiro every ${SAVEIRO_EVERY} turns`)}</li>`:''}</ul>
+      modal(`<div class="big">${c.boss?bossIc(c):mkt(i).ic}</div><h2>${ptitle(i)}</h2><ul>${c.goals.map(g=>`<li>${goalIcon(g)} ${goalFull(g)}</li>`).join('')}<li>⏳ ${c.turns} ${turnsW(c.turns)}</li>${c.crate?`<li>📦 ${c.crate} ${tr('caixotes','crates')}</li>`:''}${c.mold?`<li>🦠 ${c.mold} ${c.mold>1?tr('focos de mofo','mold patches'):tr('foco de mofo','mold patch')}</li>`:''}${c.engr?`<li>🥥 ${c.engr} ${c.engr>1?tr('engradados de coco','coconut crates'):tr('engradado de coco','coconut crate')}</li>`:''}${c.sun?`<li>☀️ ${c.sun.step?tr(`Sol que anda a cada ${c.sun.step} turnos`,`Sun that moves every ${c.sun.step} turns`):tr('Sol forte em 2 colunas','Strong sun on 2 columns')}</li>`:''}${c.dada?`<li>${fc('dada')} ${tr('Pedidos da Dona Dadá','Dona Dadá’s orders')}</li>`:''}${c.boss==='saveiro'?`<li>⛵ ${tr(`Saveiro a cada ${SAVEIRO_EVERY} turnos`,`Saveiro every ${SAVEIRO_EVERY} turns`)}</li>`:''}${c.ciranda?`<li>💃 ${c.ciranda.length>1?tr(`${c.ciranda.length} rodas de ciranda giram a cada ${CIRANDA_EVERY} turnos`,`${c.ciranda.length} ciranda circles turn every ${CIRANDA_EVERY} turns`):tr(`Roda de ciranda gira a cada ${CIRANDA_EVERY} turnos`,`Ciranda circle turns every ${CIRANDA_EVERY} turns`)}</li>`:''}${c.flor?`<li>${fc('flor')} ${tr('Encomendas da Maria Flor','Maria Flor’s orders')}</li>`:''}${c.boss==='galo'?`<li>🐓 ${tr(`Galo da Madrugada a cada ${GALO_EVERY} turnos`,`Galo da Madrugada every ${GALO_EVERY} turns`)}</li>`:''}</ul>
        ${sealChecks()}
        <button class="btn" data-act="phase:${i}">${tr('Jogar','Play')}</button><button class="btn ghosty" data-act="mclose">${tr('Voltar','Back')}</button>`); }
     else if(k==='phase'){ closeModal(); startPhase(+v); }
@@ -1447,14 +1613,23 @@ document.addEventListener('click',e=>{
     return;
   }
   if(noClick||screen!=='game'||!P||P.over) return;
+  const dp=e.target.closest('[data-desp]');
+  if(dp&&P.desp){ const k=+dp.dataset.desp;
+    if(P.desp[k]){ dsel=dsel===k?null:k; sel=null; }
+    else if(sel!=null) guardar(sel,k);
+    else toast(tr('Arraste um item até aqui (ou toque nele e depois aqui) para guardá-lo na Despensa.','Drag an item here (or tap it, then here) to keep it in the Pantry.'));
+    render(); return; }
   const o=e.target.closest('[data-order]');
   if(o){ const id=+o.dataset.order, ord=P.orders.find(x=>x.id===id); if(!ord) return;
+    if(dsel!=null){ deliver('d'+dsel,id); dsel=null; render(); return; }
     if(sel!=null){ deliver(sel,id); render(); return; }
     const i=P.board.findIndex((x,k)=>isItem(x)&&!x.m&&!flooded(k)&&matches(ord,x));
     if(i>=0) deliver(i,id); else toast(tr('Você ainda não tem o que esse cliente pediu.','You don’t have what this customer wants yet.')); render(); return; }
   if(e.target.closest('[data-seal]')){ if(sel!=null) deliverSeal(sel); else toast(tr('Entregue aqui itens de nível 5 para conquistar o Selo de Domínio.','Deliver level 5 items here to earn the Mastery Seal.')); render(); return; }
   const c=e.target.closest('[data-cell]'); if(!c) return;
   const i=+c.dataset.cell, x=P.board[i];
+  if(dsel!=null&&!P.armed){ const k=dsel; dsel=null;
+    if(!tirar(k,i)) toast(tr('Escolha uma casa vazia para tirar o item da Despensa.','Pick an empty space to take the item out of the Pantry.')); render(); return; }
   if(P.armed){ const k=P.armed, r=c.getBoundingClientRect(), em=isItem(x)?item(x.l,x.n)[0]:'', col=isItem(x)?lc(x.l):x&&x.o==='mold'?'#7FA65A':'#C99A63';
     if(useTool(k,i)){ render(); if(k==='hammer') fxHammer(r,em,col); else if(k==='pot') fxPot(i); else fxToldo(); } else render(); return; }
   if(sel!=null&&sel!==i){ const s0=P.board[sel];
@@ -1481,8 +1656,9 @@ function endDrag(e,cancel){
   if(!drag||e.pointerId!==drag.id) return; const d=drag; drag=null; if(!d.on) return;
   d.g.remove(); noClick=true; setTimeout(()=>noClick=false,60); lastAct=Date.now();
   const el=cancel?null:document.elementFromPoint(e.clientX,e.clientY);
-  const c=el&&el.closest('#board [data-cell]'), o=el&&el.closest('[data-order]'), sl=el&&el.closest('[data-seal]');
-  if(c){ const to=+c.dataset.cell; if(free(to)){ P.board[to]=P.board[d.i]; P.board[d.i]=null; } else merge(d.i,to,d.prev); }
+  const c=el&&el.closest('#board [data-cell]'), o=el&&el.closest('[data-order]'), sl=el&&el.closest('[data-seal]'), dp=el&&el.closest('[data-desp]');
+  if(dp&&P.desp){ if(!guardar(d.i,+dp.dataset.desp)) toast(tr('Essa vaga da Despensa já está ocupada.','That Pantry space is taken.')); }
+  else if(c){ const to=+c.dataset.cell; if(free(to)){ P.board[to]=P.board[d.i]; P.board[d.i]=null; } else merge(d.i,to,d.prev); }
   else if(o) deliver(d.i,+o.dataset.order); else if(sl) deliverSeal(d.i);
   sel=null; render();
 }
